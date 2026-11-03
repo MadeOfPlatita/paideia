@@ -273,6 +273,12 @@ Lecturas del día documentadas en `docs/catalogo-condiciones-20261103/EVIDENCIA.
 
 En la interfaz: tasas con estado en la biblioteca, sección separada para los productos transcritos, bloque de condiciones en la ficha y salto a Escenarios con la tasa importada como supuesto editable. **B7 (publicación) queda bloqueado** hasta que el equipo decida visibilidad y licencia del repositorio y la cuenta de hosting.
 
+## B7 — repositorio publicado
+
+Código subido a **https://github.com/MadeOfPlatita/paideia** (público). El equipo decidió que la profesora lo corrija desde el repositorio, así que debe poder descargarse y ejecutarse en su equipo: el README explica el arranque sin dependencias y qué es simulado. Sin licencia de reutilización; derechos de los autores. `.env` fuera del repositorio y sin claves en el contenido publicado.
+
+El enlace público de la web sigue pendiente: el servidor actual es `ThreadingHTTPServer` en loopback y Cloudflare Workers usa el modelo `fetch`, de modo que hay que portar la capa HTTP. Esa parte necesita la cuenta de Cloudflare del equipo.
+
 ## Registro a mantener al desarrollar
 
 En cada bloque de trabajo se anotarán el prompt o su extracto identificado como tal, herramienta/modelo si se conoce, cambios realizados, decisiones, pruebas ejecutadas con su resultado real y limitaciones pendientes. No se anotarán claves ni información personal de prueba.
