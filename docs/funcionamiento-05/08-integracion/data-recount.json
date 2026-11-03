@@ -1,0 +1,25 @@
+{
+  "candidates": 20,
+  "families": {
+    "cuenta_remunerada": 4,
+    "deposito": 4,
+    "letra_deuda_publica": 4,
+    "fondo_tradicional": 4,
+    "etf_ucits": 4
+  },
+  "facts": 62,
+  "states": {
+    "known": 45,
+    "conflict": 17
+  },
+  "fields": 43,
+  "fact_products": 16,
+  "ready": 0,
+  "source_ids": 13,
+  "permissions": {
+    "pending": 496
+  },
+  "effective_date_unknown": 53,
+  "prior_observations": 17,
+  "duplicate_fact_ids": 0
+}

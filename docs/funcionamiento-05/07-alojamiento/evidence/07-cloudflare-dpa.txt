@@ -1,0 +1,16 @@
+SOURCE: https://www.cloudflare.com/cloudflare-customer-dpa/
+RESOLVED URL: https://www.cloudflare.com/cloudflare-customer-dpa/
+TITLE: CLOUDFLARE DATA PROCESSING ADDENDUM | Cloudflare
+RETRIEVED: 2026-10-28 via web_extract
+PAGE DATE: Version 6.4, effective April 3, 2026
+SCOPE: Verbatim excerpts from retrieved official documentation.
+
+Cloudflare, Inc. (“Cloudflare”) and the counterparty agreeing to these terms (“Customer”) have entered into an Enterprise Subscription Agreement, Self-Serve Subscription Agreement or other written or electronic agreement for the Services provided by Cloudflare (the “Main Agreement”).
+
+This DPA applies where Cloudflare processes Personal Data as a Processor (or sub-Processor as applicable) on behalf of Customer to provide the Services and such Personal Data is subject to Applicable Data Protection Laws (as defined below).
+
+As between the parties, the Customer shall have sole responsibility for the accuracy, quality, and legality of Personal Data and the means by which the Customer acquired Personal Data.
+
+## 6. Data transfers from the EEA, Switzerland, and the UK
+vii) Annex I of the EU SCCs shall be deemed completed with the information set out in Annex 1 to this DPA; and
+viii) Annex II of the EU SCCs shall be deemed completed with the information set out in Annex 2 to this DPA.

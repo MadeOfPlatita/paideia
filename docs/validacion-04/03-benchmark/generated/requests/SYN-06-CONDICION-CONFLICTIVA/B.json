@@ -1,0 +1,123 @@
+{
+  "request_schema": "pai-context-request/v1",
+  "case_id": "SYN-06-CONDICION-CONFLICTIVA",
+  "variant": "B",
+  "provider_call_status": "not_called",
+  "provider": null,
+  "model": null,
+  "base": {
+    "system": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.",
+    "output_constraints": [
+      "Usa solo el texto de la pregunta, la evidencia sintética fija y el contexto de perfil materializado.",
+      "No busques en internet ni invoques herramientas.",
+      "Conserva exactamente importes, porcentajes, monedas y plazos proporcionados; no los redondees ni los cambies en silencio.",
+      "No conviertas null, desconocido o no declarado en cero, ni un cero declarado en desconocido.",
+      "Identifica conflictos entre datos, supuestos o condiciones cuando afecten a la conclusión."
+    ],
+    "fixed_evidence": {
+      "fixture_id": "SINTETICO-FIXTURE-06",
+      "status": "Datos de prueba inventados; no representan entidad, producto, fuente, oferta ni catálogo real.",
+      "claims": [
+        {
+          "label": "ficha A ficticia",
+          "rate_type": "nominal",
+          "rate_pct": 3.2,
+          "term_months": 6,
+          "minimum_amount_eur": 1000
+        },
+        {
+          "label": "ficha B ficticia y contradictoria",
+          "rate_type": "nominal",
+          "rate_pct": 3.0,
+          "term_months": 12,
+          "minimum_amount_eur": 500
+        }
+      ]
+    },
+    "question": "Tengo 900 EUR. En una ficha de prueba A se lee 3,2% nominal, 6 meses y mínimo 1.000 EUR; en una ficha de prueba B se lee 3,0% nominal, 12 meses y mínimo 500 EUR. ¿Puedo acceder y cuánto ganaría?"
+  },
+  "base_sha256": "9abbb3bdf84cdf8fa3c0e9d12e7465936a14e5ba92c0ec2d11498459d007fba8",
+  "profile_context": {
+    "status": "projected",
+    "data": {
+      "currency": "EUR",
+      "financial_goal": "evaluar una ficha didáctica ficticia sin contratar",
+      "investment_horizon_months": 12,
+      "liquid_savings_eur": 3500,
+      "planned_contribution_eur": 0,
+      "risk_tolerance": "low",
+      "risk_capacity": "moderate"
+    },
+    "selected_fields": [
+      "currency",
+      "financial_goal",
+      "investment_horizon_months",
+      "liquid_savings_eur",
+      "planned_contribution_eur",
+      "risk_tolerance",
+      "risk_capacity"
+    ],
+    "excluded_fields": [
+      {
+        "field": "age_band",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "education_level",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "monthly_net_income_eur",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "monthly_expenses_eur",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "monthly_savings_capacity_eur",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "upcoming_expenses",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "debts",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "emergency_reserve_target_months",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "employment_income_stability",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "investment_experience",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "knowledge_level",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      },
+      {
+        "field": "declared_loss_limit_pct",
+        "reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo."
+      }
+    ]
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía."
+    },
+    {
+      "role": "user",
+      "content": "EVIDENCIA SINTÉTICA FIJA\n{\"claims\":[{\"label\":\"ficha A ficticia\",\"minimum_amount_eur\":1000,\"rate_pct\":3.2,\"rate_type\":\"nominal\",\"term_months\":6},{\"label\":\"ficha B ficticia y contradictoria\",\"minimum_amount_eur\":500,\"rate_pct\":3.0,\"rate_type\":\"nominal\",\"term_months\":12}],\"fixture_id\":\"SINTETICO-FIXTURE-06\",\"status\":\"Datos de prueba inventados; no representan entidad, producto, fuente, oferta ni catálogo real.\"}\n\nPROYECCIÓN RELEVANTE B\n{\"currency\":\"EUR\",\"financial_goal\":\"evaluar una ficha didáctica ficticia sin contratar\",\"investment_horizon_months\":12,\"liquid_savings_eur\":3500,\"planned_contribution_eur\":0,\"risk_capacity\":\"moderate\",\"risk_tolerance\":\"low\"}\n\nPREGUNTA\nTengo 900 EUR. En una ficha de prueba A se lee 3,2% nominal, 6 meses y mínimo 1.000 EUR; en una ficha de prueba B se lee 3,0% nominal, 12 meses y mínimo 500 EUR. ¿Puedo acceder y cuánto ganaría?"
+    }
+  ],
+  "rendered_prompt": "SYSTEM\nEres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.\n\nUSER\nEVIDENCIA SINTÉTICA FIJA\n{\"claims\":[{\"label\":\"ficha A ficticia\",\"minimum_amount_eur\":1000,\"rate_pct\":3.2,\"rate_type\":\"nominal\",\"term_months\":6},{\"label\":\"ficha B ficticia y contradictoria\",\"minimum_amount_eur\":500,\"rate_pct\":3.0,\"rate_type\":\"nominal\",\"term_months\":12}],\"fixture_id\":\"SINTETICO-FIXTURE-06\",\"status\":\"Datos de prueba inventados; no representan entidad, producto, fuente, oferta ni catálogo real.\"}\n\nPROYECCIÓN RELEVANTE B\n{\"currency\":\"EUR\",\"financial_goal\":\"evaluar una ficha didáctica ficticia sin contratar\",\"investment_horizon_months\":12,\"liquid_savings_eur\":3500,\"planned_contribution_eur\":0,\"risk_capacity\":\"moderate\",\"risk_tolerance\":\"low\"}\n\nPREGUNTA\nTengo 900 EUR. En una ficha de prueba A se lee 3,2% nominal, 6 meses y mínimo 1.000 EUR; en una ficha de prueba B se lee 3,0% nominal, 12 meses y mínimo 500 EUR. ¿Puedo acceder y cuánto ganaría?",
+  "adapter_contract": "Enviar solo messages; provider/model se configuran fuera de este artefacto. No contiene credenciales ni ejecuta red."
+}

@@ -1,0 +1,4 @@
+GET https://public.cdr-api.gatewaybank.com.au/cds-au/v1/banking/products/27
+Request header: x-v: 5
+Observed: urllib raised HTTP Error 403: Forbidden before response headers/body were saved.
+No retry or alternate headers were attempted.

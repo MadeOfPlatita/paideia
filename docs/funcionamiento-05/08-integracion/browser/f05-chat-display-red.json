@@ -1,0 +1,1 @@
+{"upstream": "TEST ONLY synthetic provider", "http_status": 200, "provider_mode": "test_only", "response_answer": "TEST ONLY — resultado determinista: saldo final 1030.00 EUR. No es una respuesta de una IA real.", "ui_feedback": "El servicio devolvió una respuesta inesperada; este prototipo no mostrará una respuesta como si fuera IA."}

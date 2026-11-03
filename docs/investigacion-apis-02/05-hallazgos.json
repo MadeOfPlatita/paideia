@@ -1,0 +1,132 @@
+{
+  "candidates": [
+    {
+      "name": "Renault Bank — Cuenta Contigo / Depósito Tú+",
+      "role": "Importador de cuenta de ahorro líquida y depósito a plazo desde documentación contractual oficial.",
+      "coverage": "La ficha precontractual separa régimen general y promoción con TAE/TIN y fechas, elegibilidad fiscal española, titularidad, saldo diario, comisiones/cancelación, condiciones del depósito Tú+ y FGDR francés. No declara un cap comercial de remuneración ni una tabla de tipos por plazo para Tú+; no completar esos campos por inferencia.",
+      "endpoint": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+      "auth": "Sin clave ni login en la única descarga pública probada (HTTP 200).",
+      "free_limits": "No es un API/feed; no se documentó cuota. Solo se hizo una descarga de 159434 bytes.",
+      "rights": "No se confirmó permiso de automatización, retención de snapshots o redistribución; la lectura pública no concede esos derechos.",
+      "status": "Endpoint probado: PDF oficial accesible y extraíble. La tarifa actual de depósitos debe contrastarse con los términos visibles al contratar.",
+      "next_test": "Revisar una vez el PDF de tarifas https://doc.renaultbank.es/documentacion-legal/tarifas-comisiones-publico-RenaultBank.pdf y la página de producto, confirmar tipos por plazo, mínimo/máximo, frecuencia de liquidación y vigencia; revisión humana obligatoria antes de publicar.",
+      "source_urls": [
+        "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+        "https://doc.renaultbank.es/documentacion-legal/tarifas-comisiones-publico-RenaultBank.pdf",
+        "https://renaultbank.es/"
+      ]
+    },
+    {
+      "name": "MyInvestor — Cuenta corriente remunerada",
+      "role": "Importador mixto HTML + bases legales PDF enlazadas; los campos visibles sirven para proponer una ficha, no para autocertificarla.",
+      "coverage": "La página ofrece 2,5 % TAE durante seis meses, saldo máximo remunerado de 70000 euros, sin comisiones/nómina/requisitos, abono mensual, disponibilidad y FGD español. La página mezcla el bloque de campaña con tramos ligados a inversión y un FAQ de otra tarifa; conservar los fragmentos separados y dejar la oferta en revisión hasta cotejar las bases legales.",
+      "endpoint": "https://myinvestor.es/cuentas-tarjetas/cuentas",
+      "auth": "Sin clave ni login en la solicitud pública probada (HTTP 200).",
+      "free_limits": "No se documentó cuota de API/feed. HTML de 903286 bytes en la solicitud probada; aplicar límite de tamaño y peticiones condicionadas antes de cualquier monitor.",
+      "rights": "No se confirmó permiso de automatización, retención de snapshots o redistribución; consultar términos antes de automatizar.",
+      "status": "Endpoint probado: HTML oficial accesible y con texto extraíble; el contenido contiene bloques de condiciones inconsistentes y enlaza bases legales.",
+      "next_test": "Obtener y revisar https://cdn.myinvestor.es/public/legal/BBLL_cuenta_remunerada_post-sep26.pdf; resolver vigencia, tipo después del sexto mes y si hay condiciones de elegibilidad adicionales. No publicar hasta revisión humana.",
+      "source_urls": [
+        "https://myinvestor.es/cuentas-tarjetas/cuentas",
+        "https://cdn.myinvestor.es/public/legal/BBLL_cuenta_remunerada_post-sep26.pdf"
+      ]
+    },
+    {
+      "name": "Trade Republic — remuneración del efectivo",
+      "role": "Candidato a extractor manual de efectivo remunerado; el HTML sin renderizado no entrega una ficha contractual completa.",
+      "coverage": "El título de la página indica 3,04 % TAE sobre efectivo. En el HTML visible probado no se encontraron cap, elegibilidad española, vigencia, nómina, plazo, penalización, frecuencia contractual ni sistema de garantía; esos campos siguen desconocidos en esta prueba.",
+      "endpoint": "https://traderepublic.com/es-es/interes",
+      "auth": "Sin clave ni login en la solicitud pública probada (HTTP 200).",
+      "free_limits": "No se encontró documentación de cuota/API en la respuesta; el único campo de producto observado fue el titular de la página.",
+      "rights": "No se confirmó permiso de automatización, retención de snapshots o redistribución.",
+      "status": "Endpoint probado: HTTP 200 HTML; el texto extraído solo contiene título, navegación y pie, sin detalles contractuales suficientes.",
+      "next_test": "Revisar manualmente la documentación legal pública enlazada desde la web y comprobar condiciones del producto aplicables a residentes fiscales en España; no hacer scraping de áreas de cliente ni usar credenciales.",
+      "source_urls": [
+        "https://traderepublic.com/es-es/interes"
+      ]
+    },
+    {
+      "name": "Openbank — depósito a 6 meses",
+      "role": "Importador PDF-first de seguimiento; candidato pendiente de una nueva comprobación.",
+      "coverage": "No se reproduce ninguna condición comercial en esta ronda. El PDF oficial indicado en el registro local previo debe reabrirse, comprobar vigencia y extraerse antes de incorporarlo a PostgreSQL.",
+      "endpoint": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf",
+      "auth": "No probado en esta ronda.",
+      "free_limits": "No se comprobaron endpoint, cuota ni coste en esta ronda.",
+      "rights": "No se confirmó permiso de automatización, retención de snapshots o redistribución.",
+      "status": "No probado en esta ronda; solo se mantiene como objetivo de seguimiento a partir del registro de fuentes ya existente en el repositorio.",
+      "next_test": "Una solicitud pública del PDF actual; verificar fecha de vigencia, todos los tramos TAE/TIN, importe mínimo/máximo, requisito de ingresos, plazo, cancelación y FGD. No reutilizar cifras anteriores sin volver a validarlas.",
+      "source_urls": [
+        "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+      "title": "Información precontractual global - Renault Bank",
+      "claim": "Documento oficial para Cuenta Contigo y Depósito Tú+; soporta elegibilidad, promoción TAE/TIN fechada, cancelación del depósito y FGDR.",
+      "evidence": "Promoción aplicable exclusivamente a nuevos clientes que contraten la Cuenta Contigo entre el 21/10/2026 y el 18/11/2026, ambos inclusive. Para los clientes que contraten la Cuenta Contigo durante dicho periodo promocional, la TAE será del 2,61% TAE, calculada considerando los siguientes tipos de interés nominal anual: Hasta el 31/03/2027: TIN anual del 3,00%. No es posible la cancelación anticipada, en ningún caso, de las imposiciones a plazo fijo. La ENTIDAD está adherida al Fondo de Garantía de Depósitos y Resolución francés (Fonds de Garantie des Dépôts et de Résolution) que ofrece una protección de hasta 100.000 euros por titular y entidad de crédito (la misma cantidad garantizada por los fondos de garantía de depósitos en toda la Unión Europea, incluida España).",
+      "verification": "GET anónimo probado el 2026-10-26: HTTP 200, application/pdf, 159434 bytes; descarga guardada y convertida a texto UTF-8 para inspección."
+    },
+    {
+      "url": "https://myinvestor.es/cuentas-tarjetas/cuentas",
+      "title": "Cuenta corriente remunerada - MyInvestor",
+      "claim": "Página oficial con tarifa de campaña, cap, frecuencia, liquidez y FGD; también contiene secciones de FAQ con otras condiciones que requieren resolver por bases legales.",
+      "evidence": "Hazte cliente y remunera tu dinero al 2,5 % TAE durante los 6 primeros meses. Sin comisiones, sin nómina y sin requisitos. Para un saldo máximo de 70.000 €. Los intereses se abonan cada mes, coincidiendo con el día en el que abriste tu cuenta. MyInvestor Banco S.A. está adherido al Fondo de Garantía de Depósitos en España de Entidades de Crédito. El fondo garantiza los depósitos de dinero hasta 100.000 euros por titular y por entidad. Durante los primeros 12 meses desde la apertura: 1,25 % TAE (1,243 % TIN anual). Durante los primeros 6 meses desde la fecha de apertura: 2,50 % TAE (2,472 % TIN). A partir del séptimo mes: 0,30 % TAE (0,300 % TIN).",
+      "verification": "GET anónimo probado el 2026-10-26: HTTP 200, text/html; charset=utf-8, 903286 bytes. Texto visible guardado; además se comprobó en el HTML el enlace a BBLL_cuenta_remunerada_post-sep26.pdf, sin descargar ese PDF en esta ronda."
+    },
+    {
+      "url": "https://traderepublic.com/es-es/interes",
+      "title": "Interés sobre efectivo - Trade Republic",
+      "claim": "El título del HTML oficial anuncia una TAE para efectivo; el cuerpo recuperado en esta prueba no aporta campos suficientes para un importador de ficha contractual.",
+      "evidence": "Trade Republic: 3,04 % TAE sobre tu efectivo",
+      "verification": "GET anónimo probado el 2026-10-26: HTTP 200, text/html; charset=utf-8, 58315 bytes. La extracción del HTML visible devolvió 25 líneas de título/navegación/pie; no se observó el cuerpo de condiciones de la oferta."
+    },
+    {
+      "url": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf",
+      "title": "Ficha del Depósito Open 6 meses - Openbank",
+      "claim": "Objetivo de siguiente prueba; este artefacto no respalda valores de oferta en la presente ronda.",
+      "evidence": "No se descargó ni inspeccionó este PDF durante la presente ronda. El URL figura en el registro de fuentes de la investigación local previa.",
+      "verification": "No verificado de nuevo aquí. Ejecutar una descarga y comprobar la fecha efectiva antes de extraer cualquier condición."
+    }
+  ],
+  "tests": [
+    {
+      "url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+      "status": "HTTP 200; prueba pública anónima; PDF legible; sin reintento.",
+      "content_type": "application/pdf",
+      "observed_fields": [
+        "Cuenta Contigo: mayores de 18, residencia fiscal en España y sin obligaciones fiscales en otros países; un titular.",
+        "Promoción nuevos clientes del 2026-10-21 al 2026-11-18: 2,61 % TAE; TIN 3,00 % hasta 2027-03-31 y tipo posterior no garantizado.",
+        "Régimen para contratos hasta 2026-10-20: 2,27 % TAE; condiciones vigentes hasta 2026-11-03.",
+        "Sin comisión/gasto para Cuenta Contigo; cancelación gratuita salvo producto vinculado; frecuencia de interés pactada al contratar.",
+        "Depósito Tú+: plazo fijo, renovación automática por el mismo plazo; cancelación anticipada no permitida; no se extrajo tarifa concreta por plazo.",
+        "FGDR francés, hasta 100000 EUR por titular y entidad."
+      ],
+      "evidence_path": "docs/investigacion-apis-02/evidence/renault-precontractual.headers.txt; docs/investigacion-apis-02/evidence/renault-precontractual.pdf; docs/investigacion-apis-02/evidence/renault-precontractual-utf8.txt"
+    },
+    {
+      "url": "https://myinvestor.es/cuentas-tarjetas/cuentas",
+      "status": "HTTP 200; prueba pública anónima; HTML extraíble; una descarga; respuesta 903286 bytes.",
+      "content_type": "text/html; charset=utf-8",
+      "observed_fields": [
+        "2,5 % TAE durante los primeros seis meses; sin comisiones, nómina ni requisitos en el bloque principal.",
+        "Saldo máximo remunerado 70000 EUR.",
+        "Abono mensual y disponibilidad del saldo.",
+        "FGD español: 100000 EUR por titular y entidad.",
+        "El HTML tiene contenido de FAQ con referencias incompatibles de 1,25 %/12 meses y 0,30 % desde el mes 13 frente a promo 2,50 %/6 meses y 0,30 % desde el mes 7; bases legales post-sep26 enlazadas, no descargadas."
+      ],
+      "evidence_path": "docs/investigacion-apis-02/evidence/myinvestor-account.headers.txt; docs/investigacion-apis-02/evidence/myinvestor-account.html; docs/investigacion-apis-02/evidence/myinvestor-account.txt"
+    },
+    {
+      "url": "https://traderepublic.com/es-es/interes",
+      "status": "HTTP 200; prueba pública anónima; título disponible pero cuerpo sin condiciones del producto; sin reintento.",
+      "content_type": "text/html; charset=utf-8",
+      "observed_fields": [
+        "Título: Trade Republic: 3,04 % TAE sobre tu efectivo.",
+        "No observados en el HTML visible: cap, requisitos/elegibilidad, vigencia, nómina, plazo, cancelación, frecuencia y FGD."
+      ],
+      "evidence_path": "docs/investigacion-apis-02/evidence/trade-republic-interest.headers.txt; docs/investigacion-apis-02/evidence/trade-republic-interest.html; docs/investigacion-apis-02/evidence/trade-republic-interest.txt"
+    }
+  ]
+}

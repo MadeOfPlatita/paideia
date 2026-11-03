@@ -1,0 +1,40 @@
+{
+  "source": "actual normal local API, existing catalogue, no external requests",
+  "product_ids": [
+    "DEP-01",
+    "DEP-02"
+  ],
+  "comparison_kind": "educational_metadata_only",
+  "quantitative_ready": false,
+  "comparability": {
+    "schema_version": "local-comparability-diagnosis.v1",
+    "ruleset_version": "catalogue-fact-comparability.v1",
+    "criterion": "deposit_tae_12m_eur",
+    "policy_version": null,
+    "quantitative_ready": false,
+    "not_for_publication": true,
+    "status": "not_comparable",
+    "items": [
+      {
+        "product_id": "DEP-01",
+        "eligible": false,
+        "value": null,
+        "source_refs": [],
+        "reason_codes": [
+          "FRESHNESS_POLICY_NOT_CONFIGURED",
+          "METRIC_MISSING"
+        ]
+      },
+      {
+        "product_id": "DEP-02",
+        "eligible": false,
+        "value": null,
+        "source_refs": [],
+        "reason_codes": [
+          "FRESHNESS_POLICY_NOT_CONFIGURED",
+          "METRIC_MISSING"
+        ]
+      }
+    ]
+  }
+}

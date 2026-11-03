@@ -1,0 +1,103 @@
+{
+  "suite": "Paideia comparador trazable v1",
+  "status": "synthetic_design_cases_not_runtime_tests",
+  "count": 12,
+  "cases": [
+    {
+      "id": "AC-01",
+      "title": "Orden numérico dentro de cohorte de depósitos",
+      "given": "Dos depósitos EUR con contrato/clase, fecha, importe, horizonte y TAE vigente documentados; costes parciales en ambos.",
+      "when": "La persona selecciona explícitamente ordenar por TAE bruta descendente y filtra por vencimiento de 365 días.",
+      "then": ["Grupo term_deposit numeric_within_family si la métrica/bases coinciden.", "Orden por TAE bruta y etiqueta de costes incompletos; no afirmar neto ni mejor coste.", "Incluir USER_SORT_APPLIED y COSTS_PARTIAL; no añadir rank a productos con métrica esencial ausente."],
+      "must_not": ["Usar datos del perfil para cambiar el orden.", "Interpretar costes no informados como cero."]
+    },
+    {
+      "id": "AC-02",
+      "title": "Depósito frente a ETF: matriz informativa",
+      "given": "Un depósito con flujo contractual condicionado y un ETF con retorno de mercado, distinto riesgo de precio y protección/cobertura de naturaleza distinta.",
+      "when": "Se piden ambos grupos en vista cross_family_descriptive.",
+      "then": ["Presentar secciones separadas y CROSS_FAMILY_INFO_ONLY; global_rank_available=false y rank=null.", "Describir bases de rentabilidad y liquidez por separado; explicar el alcance de cualquier protección con fuente y condiciones."],
+      "must_not": ["Ordenar por porcentaje único.", "Afirmar que el ETF o su valor de mercado tiene garantía de depósitos."]
+    },
+    {
+      "id": "AC-03",
+      "title": "Desempate exacto y reproducible",
+      "given": "Dos productos comparables tienen exactamente el mismo valor en el criterio seleccionado.",
+      "when": "Se solicita orden descendente con el mismo snapshot y versiones.",
+      "then": ["Desempatar por product_id ascendente estable.", "Emitir TIE_BREAK_PRODUCT_ID para el empate; repetir la consulta devuelve el mismo orden."],
+      "must_not": ["Desempatar por orden de llegada, popularidad no definida, aleatoriedad o respuesta del LLM."]
+    },
+    {
+      "id": "AC-04",
+      "title": "Oferta cerrada para nueva contratación",
+      "given": "Un producto aparece en el catálogo, pero la fuente vigente dice que la oferta cerró.",
+      "when": "La persona activa open_for_contracting=true.",
+      "then": ["Excluir del conjunto filtrado y mantenerlo identificable como excluido.", "Emitir CONTRACTING_CLOSED con evidencia, fecha efectiva y canal si aplica."],
+      "must_not": ["Describirlo como contratable por seguir apareciendo en una página histórica."]
+    },
+    {
+      "id": "AC-05",
+      "title": "Liquidez insuficiente para fecha elegida",
+      "given": "La persona fija acceso necesario en 90 días; un depósito vence a 365 días y penalización de salida está documentada.",
+      "when": "Aplica filtro duro de acceso por fecha.",
+      "then": ["No pasar el filtro; emitir LIQUIDITY_FILTER_FAILED y mostrar vencimiento/penalización citados.", "El filtro no modifica ni borra la ficha de producto."],
+      "must_not": ["Llamar a una venta antes de vencimiento equivalente al reembolso sin pérdida."]
+    },
+    {
+      "id": "AC-06",
+      "title": "Residencia desconocida no implica elegibilidad",
+      "given": "La jurisdicción del usuario no está declarada y el producto no documenta todos los países admitidos.",
+      "when": "Se solicita filtrar por elegibilidad residencial.",
+      "then": ["No inferir ES ni país por idioma/IP; aplicar la política desconocida que se muestre.", "Emitir RESIDENCE_NOT_DECLARED y/o RESIDENCE_ELIGIBILITY_UNKNOWN; no marcar supported."],
+      "must_not": ["Convertir unknown en elegible o no elegible sin evidencia."]
+    },
+    {
+      "id": "AC-07",
+      "title": "Coste parcial bloquea clasificación neta",
+      "given": "La tasa/retorno bruto está vigente, pero falta comisión de intermediación o diferencial pertinente al horizonte.",
+      "when": "La persona pide ordenar por net_total.",
+      "then": ["Bloquear neto/ranking neto; COSTS_PARTIAL y NET_COMPARISON_BLOCKED_COSTS.", "Permitir, solo si el usuario lo elige, mostrar y ordenar la métrica bruta con rótulo de cobertura parcial."],
+      "must_not": ["Asumir coste cero o llamar al menor bruto ganador global."]
+    },
+    {
+      "id": "AC-08",
+      "title": "Campo de retorno ausente",
+      "given": "Una ficha no tiene tasa/precio/valor para la métrica solicitada y el proveedor tampoco lo publica.",
+      "when": "Se pide orden numérico de esa métrica.",
+      "then": ["Mantener value=null, emitir METRIC_MISSING y separar sin rank de la cohorte ordenable.", "Mostrar qué falta y la fuente/fecha consultada si existe."],
+      "must_not": ["Sustituir por cero, promedio, dato recordado por el LLM o valor de otro producto."]
+    },
+    {
+      "id": "AC-09",
+      "title": "Precio/tipo caducado",
+      "given": "Un valor de tasa/precio supera max_age del campo en la política vigente, aunque aún exista en caché.",
+      "when": "Se solicita una comparación actual.",
+      "then": ["Excluir ese campo del orden actual; marcarlo histórico/caducado con fecha.", "Emitir METRIC_STALE y SOURCE_STALE; no completar con memoria."],
+      "must_not": ["Mostrarlo como vigente o mantener puesto calculado con la versión vieja."]
+    },
+    {
+      "id": "AC-10",
+      "title": "Condición revisada invalida resultado anterior",
+      "given": "El emisor modifica tasa promocional, vinculación o vencimiento; conditions_version cambia.",
+      "when": "La comparación se vuelve a generar después de la fecha efectiva.",
+      "then": ["Emitir CONDITIONS_CHANGED; refrescar campos afectados, costes, filtros y cálculos.", "Conservar snapshot antiguo con su versión/fecha y crear resultado nuevo."],
+      "must_not": ["Editar retroactivamente una salida anterior como si hubiera usado las condiciones nuevas."]
+    },
+    {
+      "id": "AC-11",
+      "title": "Garantía condicional y de alcance limitado",
+      "given": "La ficha menciona protección pero falta una condición, límite, titular, entidad o evidencia completa.",
+      "when": "Se muestra la matriz de garantías o el usuario pregunta si el capital está asegurado.",
+      "then": ["Usar conditional/unknown según evidencia; emitir GUARANTEE_SCOPE_UNKNOWN cuando falte el ámbito; incluir alcance/condición y fuente.", "Explicar por separado protección de depósitos, flujo contractual y riesgo de precio."],
+      "must_not": ["Usar garantía como criterio de ganador ni afirmar protección de pérdidas de mercado."]
+    },
+    {
+      "id": "AC-12",
+      "title": "Preferencias propias sí; idoneidad de perfil no",
+      "given": "Usuario selecciona ETF, importe, horizonte, fecha de acceso, residencia declarada y coste como orden; también tiene un perfil financiero local.",
+      "when": "La persona pide la comparación y luego pregunta «¿cuál es mejor para mí?».",
+      "then": ["Aplicar los criterios que eligió, ecoarlos y permitir editarlos; PROFILE_NOT_USED_FOR_RANKING.", "Permitir EDU_ALERT_ONLY con regla/fuente visible; a «mejor para mí» no recomendar ISIN, puntuación ni asignación y ofrecer comparación/explicación neutral."],
+      "must_not": ["Eliminar la personalización por criterios del usuario.", "Usar capacidad de pérdida, ingresos, tolerancia o deuda para ordenar productos concretos."]
+    }
+  ]
+}

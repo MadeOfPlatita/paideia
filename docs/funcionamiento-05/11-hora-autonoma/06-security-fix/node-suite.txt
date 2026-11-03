@@ -1,0 +1,28 @@
+✔ consent gates request and the body contains no profile (3.0379ms)
+✔ queued ticket is never attached to an edited question while request is pending (1.5386ms)
+✔ duplicate submission while busy must not send a second request (0.9925ms)
+✔ flags, safe sources and tool events are visible; unsafe links are suppressed (1.1341ms)
+✔ 202 requires manual resend and 429 is visible without automatic calls (1.6034ms)
+✔ Continue requires a valid explicit answer; zero and deliberate non-disclosure remain valid (1.1254ms)
+✔ Declared debt requires an explicit amount or non-disclosure choice for each visible subquestion (0.7601ms)
+✔ frontend answer paths remain anchored to the existing profile05 schema (1.0747ms)
+✔ blank profile uses the profile05 paths and starts every answer as not asked (0.9541ms)
+✔ declared zero, unknown, omitted and not-asked remain distinct (0.4773ms)
+✔ decimal inputs stay strings and accept the configured inclusive boundary (0.1643ms)
+✔ flow amounts retain the declared monthly periodicity and exact decimal text (0.2218ms)
+✔ debt subanswers retain independent zero, unknown and omitted states (0.2595ms)
+✔ no-debt, no commitment and distinct risk answers use profile05 values (0.8693ms)
+✔ profile and snapshot validators reject malformed, extra and numeric-decimal values (0.2714ms)
+✔ v1 migration preserves exact compatible answers and leaves added fields unanswered (0.57ms)
+✔ v1 migration keeps ambiguous legacy choices instead of guessing a new answer (0.3211ms)
+✔ migration from an existing saved v1 snapshot preserves opt-in and writes v2 (0.4598ms)
+✔ empty storage and persistence-off do not create a saved profile or consent (0.1178ms)
+✔ saved profile deletion clears the current and every supported legacy format (0.1717ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.538

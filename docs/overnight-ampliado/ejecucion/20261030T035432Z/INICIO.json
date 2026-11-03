@@ -1,0 +1,18 @@
+{
+  "started_utc": "2026-10-30T03:54:32.719173+00:00",
+  "cutoff_utc": "2026-10-30T07:00:00+00:00",
+  "scope": "A B C D, offline only",
+  "ports": {
+    "8765": false,
+    "8768": false,
+    "8769": false,
+    "8771": false
+  },
+  "baseline_focused": {
+    "output": "----------------------------------------------------------------------\r\nRan 13 tests in 0.515s\r\n\r\nOK\r\n✔ structured fixture exposes server-owned editorial without using free answer (0.6131ms)\n✔ structured mode never falls back to an unstructured answer (0.1947ms)\n✔ structured response refuses external provenance or malformed editorial data (0.1221ms)\n✔ real local calculation schema matches scenario; tampered assumptions and extras fail (84.0537ms)\n✔ closed editorial catalogue rejects unknown, changed and duplicated claims (0.1694ms)\n✔ structured mode refuses legacy answer and arbitrary calculation without submitted scenario (0.1431ms)\nℹ tests 6\nℹ suites 0\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 144.0438",
+    "exit_code": 0,
+    "error": null
+  },
+  "real_provider_attempts_allowed": 0,
+  "goal_runtime": "user prose activation; do not assume slash goal automatically set"
+}

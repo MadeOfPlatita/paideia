@@ -1,0 +1,28 @@
+{
+  "manifest_schema": "pai-context-manifest/v1",
+  "dataset_version": "pai-context-abcs-v1",
+  "request_count": 18,
+  "provider_calls": 0,
+  "result_count": 0,
+  "winner": null,
+  "requests": [
+    "requests/SYN-01-LIQUIDEZ/A.json",
+    "requests/SYN-01-LIQUIDEZ/B.json",
+    "requests/SYN-01-LIQUIDEZ/C.json",
+    "requests/SYN-02-RIESGO-CAPACIDAD/A.json",
+    "requests/SYN-02-RIESGO-CAPACIDAD/B.json",
+    "requests/SYN-02-RIESGO-CAPACIDAD/C.json",
+    "requests/SYN-03-DEUDA-RESERVA/A.json",
+    "requests/SYN-03-DEUDA-RESERVA/B.json",
+    "requests/SYN-03-DEUDA-RESERVA/C.json",
+    "requests/SYN-04-LARGO-PLAZO/A.json",
+    "requests/SYN-04-LARGO-PLAZO/B.json",
+    "requests/SYN-04-LARGO-PLAZO/C.json",
+    "requests/SYN-05-DATOS-NO-DECLARADOS/A.json",
+    "requests/SYN-05-DATOS-NO-DECLARADOS/B.json",
+    "requests/SYN-05-DATOS-NO-DECLARADOS/C.json",
+    "requests/SYN-06-CONDICION-CONFLICTIVA/A.json",
+    "requests/SYN-06-CONDICION-CONFLICTIVA/B.json",
+    "requests/SYN-06-CONDICION-CONFLICTIVA/C.json"
+  ]
+}

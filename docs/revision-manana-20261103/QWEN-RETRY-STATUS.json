@@ -1,0 +1,7 @@
+{
+  "started": "2026-11-03T11:54:31.577187+01:00",
+  "model": "qwen3.6-35b-a3b",
+  "scope": "static/context_help.js only",
+  "type": "unverified static suggestion",
+  "previous_attempt": "QWEN-AUDIT-RAW.json; length with empty content"
+}

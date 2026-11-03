@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [],
+  "verification_blockers": [
+    "La integración móvil agotó Runtime.evaluate en el intento inicial y en un único reintento con documento nuevo; resultado móvil no verificado. No se establece causa ni defecto de aplicación."
+  ],
+  "scope": "Revisión de archivos actuales; sin diff git ni garantías generales de seguridad, proveedores o producción.",
+  "evidence": {
+    "desktop": "desktop.json",
+    "mobile": "mobile.json",
+    "mobile_first_attempt": "mobile-attempt1.json",
+    "independent_search_probes": "probes.json",
+    "syntax": "node --check app.js context_help.js c_integration_browser.js: exit 0",
+    "desktop_viewport": "CDP 1440x900; clientWidth 1440, scrollWidth 1440, devicePixelRatio 1",
+    "mobile_viewport": "CDP 390x844; clientWidth 375 previo al reintento; métricas finales no verificadas",
+    "cleanup": "Servidor propio PID 26148 terminado; conexión 127.0.0.1:18873 rechazada (10061)."
+  },
+  "summary": "No aprobado por evidencia móvil incompleta; desktop y pruebas de búsqueda independientes superadas."
+}

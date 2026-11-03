@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "source": "deleg_18f7884a",
+  "scope": "UI pending expiry/startup feedback and exact new mission whitelist",
+  "native_tk_tests": 4,
+  "additional_budget_session_tests": 14,
+  "real_model_calls": 0
+}

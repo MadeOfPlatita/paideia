@@ -1,0 +1,7 @@
+{
+  "schema": "paideia-mission.v1",
+  "mission_id": "paideia-ia-20261030T005810Z",
+  "start_utc": "2026-10-30T00:58:10.375867+00:00",
+  "deadline_utc": "2026-10-30T01:58:10.375867+00:00",
+  "max_external_attempts": 24
+}

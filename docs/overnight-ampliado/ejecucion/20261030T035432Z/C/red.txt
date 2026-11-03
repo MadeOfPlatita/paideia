@@ -1,0 +1,14 @@
+test_promote_and_restart (test_synthetic_snapshot.SnapshotTests.test_promote_and_restart) ... ERROR
+
+======================================================================
+ERROR: test_promote_and_restart (test_synthetic_snapshot.SnapshotTests.test_promote_and_restart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\aleja\Downloads\App Financiera\prototipos\paideia-local\tests\test_synthetic_snapshot.py", line 8, in test_promote_and_restart
+    import synthetic_snapshot as s
+ModuleNotFoundError: No module named 'synthetic_snapshot'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=1)

@@ -1,0 +1,22 @@
+{
+  "requests": [
+    {
+      "request": {
+        "message": "En dos frases, explica la diferencia entre ahorrar e invertir y por qué la inflación puede reducir el poder adquisitivo del ahorro. Sin productos ni promesas de rentabilidad.",
+        "consent": {
+          "notice_version": "paideia-chat-remote-v1",
+          "accepted_chat_processing": true,
+          "purpose": "free_chat",
+          "approved_fields": []
+        }
+      },
+      "status": 200,
+      "response": {
+        "answer": "Ahorrar significa conservar dinero sin riesgo de perder el capital, mientras que invertir implica usar esos fondos en activos que pueden generar rendimientos pero también conllevan riesgo de pérdida. La inflación reduce el valor real del dinero ahorrado, porque los precios suben y el poder de compra de ese capital disminuye con el tiempo.",
+        "tool_events": []
+      }
+    }
+  ],
+  "feedback": "Ahorrar significa conservar dinero sin riesgo de perder el capital, mientras que invertir implica usar esos fondos en activos que pueden generar rendimientos pero también conllevan riesgo de pérdida. La inflación reduce el valor real del dinero ahorrado, porque los precios suben y el poder de compra de ese capital disminuye con el tiempo.",
+  "visible": "Prueba de chat\n\nConsulta educativa mediante el servicio configurado. Las pruebas sintéticas se identifican y nunca se presentan como IA real.\n\nEl arranque local mantiene la IA desconectada. Si se configura un proveedor autorizado, solo se enviará tu pregunta y, cuando se habiliten, los resultados de herramientas permitidas; nunca el mapa de perfil. No incluyas nombres, documentos ni datos bancarios.\nEscribe una pregunta de prueba\n\nEl texto solo se enviará tras marcar la casilla y pulsar el botón.\n\nAutorizo enviar esta pregunta al proveedor IA si está configurado y habilitado. No se enviará mi mapa de perfil. No incluiré datos personales.\nContexto e historial: ensayo provisional SOLO FICTICIO, no aprobado por A/B. Desactivados en el servidor normal y sin envío a proveedor real. No uses datos reales en este ensayo.\nSoporte de prueba: contexto no disponible o sin verificar; historial no disponible o sin verificar.\nrespuestas.objetivo: {\"estado\":\"declarado\",\"valor\":\"aprender_conceptos\"}\nrespuestas.horizonte: {\"estado\":\"no_se\"}\ndetalle_economico.importe_objetivo: {\"estado\":\"declarado\",\"valor\":{\"min_eur\":\"0\",\"max_eur\":\"0.00\",\"moneda\":\"EUR\"}}\ndetalle_economico.colchon_liquido: {\"estado\":\"omitido\"}\nAutorizo adjuntar solo los campos ficticios seleccionados en esta prueba.\nAutorizo conservar en esta pestaña y reenviar hasta dos turnos anteriores ficticios en esta prueba; sin guardado automático.\nBorrar historial de esta pestaña\n\nSin proveedor: aviso de no conectado. Si hay cola: posición visible y reenvío manual, sin llamadas automáticas ni reintentos ocultos.\n\nEnviar pregunta\n\nAhorrar significa conservar dinero sin riesgo de perder el capital, mientras que invertir implica usar esos fondos en activos que pueden generar rendimientos pero también conllevan riesgo de pérdida. La inflación reduce el valor real del dinero ahorrado, porque los precios suben y el poder de compra de ese capital disminuye con el tiempo."
+}

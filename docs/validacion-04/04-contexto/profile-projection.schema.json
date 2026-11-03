@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:paideia:profile-projection:0.1",
+  "title": "DTO remoto selectivo de perfil educativo/financiero Paideia",
+  "description": "Contrato cerrado de salida de proyección. No es el perfil local 05 ni permite serializarlo en bloque.",
+  "type": "object",
+  "properties": {
+    "contract_version": {"const": "0.1"},
+    "purpose": {
+      "type": "string",
+      "enum": ["learn_basics", "debt_education", "risk_education", "liquidity_planning", "product_comparison"]
+    },
+    "fields": {"$ref": "#/$defs/Fields"}
+  },
+  "required": ["contract_version", "purpose", "fields"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"purpose": {"const": "learn_basics"}}, "required": ["purpose"]},
+      "then": {"properties": {"fields": {"propertyNames": {"enum": ["objective", "learning_level", "learning_topics"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "debt_education"}}, "required": ["purpose"]},
+      "then": {"properties": {"fields": {"propertyNames": {"enum": ["debt", "objective", "monthly_income_eur", "monthly_expenses_eur", "liquid_reserve_eur", "upcoming_commitments"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "risk_education"}}, "required": ["purpose"]},
+      "then": {"properties": {"fields": {"propertyNames": {"enum": ["objective", "horizon", "risk_tolerance", "loss_capacity", "upcoming_commitments"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "liquidity_planning"}}, "required": ["purpose"]},
+      "then": {"properties": {"fields": {"propertyNames": {"enum": ["objective", "horizon", "target_amount_eur", "monthly_expenses_eur", "liquidity_need", "liquid_reserve_eur", "upcoming_commitments"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "product_comparison"}}, "required": ["purpose"]},
+      "then": {"properties": {"fields": {"propertyNames": {"enum": ["objective", "horizon", "liquidity_need", "risk_tolerance", "loss_capacity", "target_amount_eur", "liquid_reserve_eur"]}}}}
+    }
+  ],
+  "$defs": {
+    "NonNegativeDecimalString": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+      "description": "Cifra no negativa exacta en decimal string. Se conserva como cadena, sin float ni redondeo."
+    },
+    "UnknownAnswer": {
+      "type": "object",
+      "properties": {"state": {"const": "unknown"}},
+      "required": ["state"],
+      "additionalProperties": false
+    },
+    "OmittedAnswer": {
+      "type": "object",
+      "properties": {"state": {"const": "omitted"}},
+      "required": ["state"],
+      "additionalProperties": false
+    },
+    "NotAskedAnswer": {
+      "type": "object",
+      "properties": {"state": {"const": "not_asked"}},
+      "required": ["state"],
+      "additionalProperties": false
+    },
+    "UndeclaredAnswer": {
+      "oneOf": [
+        {"$ref": "#/$defs/UnknownAnswer"},
+        {"$ref": "#/$defs/OmittedAnswer"},
+        {"$ref": "#/$defs/NotAskedAnswer"}
+      ]
+    },
+    "AmountRangeEUR": {
+      "type": "object",
+      "properties": {
+        "min_eur": {"$ref": "#/$defs/NonNegativeDecimalString"},
+        "max_eur": {"anyOf": [{"$ref": "#/$defs/NonNegativeDecimalString"}, {"type": "null"}]},
+        "currency": {"const": "EUR"}
+      },
+      "required": ["min_eur", "max_eur", "currency"],
+      "additionalProperties": false,
+      "description": "max_eur=null significa límite superior abierto en el perfil 05; no significa cifra desconocida."
+    },
+    "PercentRange": {
+      "type": "object",
+      "properties": {
+        "min_percent": {"$ref": "#/$defs/NonNegativeDecimalString"},
+        "max_percent": {"$ref": "#/$defs/NonNegativeDecimalString"}
+      },
+      "required": ["min_percent", "max_percent"],
+      "additionalProperties": false,
+      "description": "Puntos porcentuales 0–100, expresados como decimal-string; max_pct=null local se traduce a 100."
+    },
+    "FlowEUR": {
+      "type": "object",
+      "properties": {
+        "amount": {"$ref": "#/$defs/AmountRangeEUR"},
+        "periodicity": {"type": "string", "enum": ["weekly", "every_14_days", "twice_monthly", "monthly", "annual"]}
+      },
+      "required": ["amount", "periodicity"],
+      "additionalProperties": false
+    },
+    "CommitmentValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {"has_commitment": {"const": false}},
+          "required": ["has_commitment"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "has_commitment": {"const": true},
+            "total_eur": {"$ref": "#/$defs/AmountRangeEUR"},
+            "due_within": {"type": "string", "enum": ["under_3_months", "3_to_6_months", "6_to_12_months", "date_unclear"]}
+          },
+          "required": ["has_commitment", "total_eur", "due_within"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DebtValue": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {"situation": {"const": "no_debt"}},
+          "required": ["situation"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "situation": {"const": "has_debt"},
+            "balance_eur": {"$ref": "#/$defs/AmountAnswer"},
+            "monthly_payment_eur": {"$ref": "#/$defs/FlowAnswer"},
+            "annual_cost_percent": {"$ref": "#/$defs/PercentAnswer"}
+          },
+          "required": ["situation", "balance_eur", "monthly_payment_eur", "annual_cost_percent"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "KnownObjective": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"type": "string", "enum": ["emergency_reserve", "planned_expense", "long_term_savings", "understand_risk", "compare_families", "learn_concepts", "explore"]}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownHorizon": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"type": "string", "enum": ["under_6_months", "6_to_12_months", "1_to_3_years", "over_3_years", "no_fixed_date"]}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownLiquidityNeed": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"type": "string", "enum": ["anytime_access", "planned_date", "fictional_money_only"]}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownLearningLevel": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"type": "string", "enum": ["beginner", "read_or_compared", "has_used_one", "prefer_not_to_say"]}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownLearningTopics": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"type": "array", "uniqueItems": true, "maxItems": 5, "items": {"type": "string", "enum": ["remunerated_accounts", "term_deposits", "government_debt", "mutual_funds", "etf"]}}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownRiskTolerance": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"type": "string", "enum": ["would_prefer_to_exit", "would_wait_with_concern", "can_wait_with_drops"]}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "LossCapacityValue": {
+      "type": "object",
+      "properties": {
+        "scenario": {"const": "drop_100_of_1000"},
+        "impact": {"type": "string", "enum": ["no_change_to_need_or_goal", "would_delay_or_reduce_goal", "would_affect_essential_spending_or_commitment"]}
+      },
+      "required": ["scenario", "impact"],
+      "additionalProperties": false
+    },
+    "KnownLossCapacity": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"$ref": "#/$defs/LossCapacityValue"}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownAmount": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"$ref": "#/$defs/AmountRangeEUR"}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownFlow": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"$ref": "#/$defs/FlowEUR"}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownPercent": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"$ref": "#/$defs/PercentRange"}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownCommitments": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"$ref": "#/$defs/CommitmentValue"}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "KnownDebt": {
+      "type": "object",
+      "properties": {"state": {"const": "known"}, "value": {"$ref": "#/$defs/DebtValue"}},
+      "required": ["state", "value"],
+      "additionalProperties": false
+    },
+    "ObjectiveAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownObjective"}]},
+    "HorizonAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownHorizon"}]},
+    "LiquidityNeedAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownLiquidityNeed"}]},
+    "LearningLevelAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownLearningLevel"}]},
+    "LearningTopicsAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownLearningTopics"}]},
+    "RiskToleranceAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownRiskTolerance"}]},
+    "LossCapacityAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownLossCapacity"}]},
+    "AmountAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownAmount"}]},
+    "FlowAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownFlow"}]},
+    "PercentAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownPercent"}]},
+    "CommitmentsAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownCommitments"}]},
+    "DebtAnswer": {"oneOf": [{"$ref": "#/$defs/UndeclaredAnswer"}, {"$ref": "#/$defs/KnownDebt"}]},
+    "Fields": {
+      "type": "object",
+      "properties": {
+        "objective": {"$ref": "#/$defs/ObjectiveAnswer"},
+        "horizon": {"$ref": "#/$defs/HorizonAnswer"},
+        "liquidity_need": {"$ref": "#/$defs/LiquidityNeedAnswer"},
+        "learning_level": {"$ref": "#/$defs/LearningLevelAnswer"},
+        "learning_topics": {"$ref": "#/$defs/LearningTopicsAnswer"},
+        "target_amount_eur": {"$ref": "#/$defs/AmountAnswer"},
+        "monthly_income_eur": {"$ref": "#/$defs/FlowAnswer"},
+        "monthly_expenses_eur": {"$ref": "#/$defs/FlowAnswer"},
+        "debt": {"$ref": "#/$defs/DebtAnswer"},
+        "liquid_reserve_eur": {"$ref": "#/$defs/AmountAnswer"},
+        "upcoming_commitments": {"$ref": "#/$defs/CommitmentsAnswer"},
+        "risk_tolerance": {"$ref": "#/$defs/RiskToleranceAnswer"},
+        "loss_capacity": {"$ref": "#/$defs/LossCapacityAnswer"}
+      },
+      "minProperties": 1,
+      "maxProperties": 13,
+      "additionalProperties": false
+    }
+  }
+}

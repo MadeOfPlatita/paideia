@@ -1,0 +1,23 @@
+{
+  "checks": {
+    "empty_radio_blocked": true,
+    "four_answers_continue_without_branch_clicks": true,
+    "empty_amount_blocked": true,
+    "pause_resumes_first_pending": true,
+    "empty_debt_blocked": true,
+    "incomplete_debt_subfields_blocked": true,
+    "explicit_unknown_subfields_accepted": true,
+    "risk_follows_economy_without_branch_clicks": true,
+    "all_twelve_finish_in_summary": true,
+    "declared_zero_preserved": true,
+    "empty_edit_blocked_without_erasing_value": true,
+    "mobile_summary_no_overflow": true,
+    "mobile_blank_blocked": true,
+    "mobile_question_no_overflow": true,
+    "no_automatic_storage": true,
+    "no_profile_network_body": true
+  },
+  "passed": 16,
+  "questions": 12,
+  "viewport": 390
+}

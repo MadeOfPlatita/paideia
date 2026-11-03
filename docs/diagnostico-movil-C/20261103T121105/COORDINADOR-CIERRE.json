@@ -1,0 +1,11 @@
+{
+  "port": 18874,
+  "process": "proc_e096acc9eebf",
+  "pid": 21216,
+  "termination": "process.kill",
+  "listener_absent": true,
+  "netstat": [],
+  "endpoint": "http://127.0.0.1:18874/api/status",
+  "get_error": "WinError 10061 connection refused",
+  "independent_review": "deleg_46008d2c still pending; its separate server is not covered by this cleanup"
+}

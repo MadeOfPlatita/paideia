@@ -1,0 +1,83 @@
+{
+  "schema": "paideia.conditions/1",
+  "retrieved_at": "2026-11-03",
+  "note": "Condiciones transcritas de fuentes públicas con su URL y fecha. Los permisos de publicación siguen sin revisar; no se redistribuye el documento original.",
+  "records": [
+    {
+      "candidate_id": "DEP-02",
+      "family": "deposito",
+      "name": "Depósito Open 6 meses",
+      "provider": "Openbank",
+      "term_months": 6,
+      "minimum_eur": "1",
+      "maximum_eur": null,
+      "interest_payment": "a vencimiento",
+      "early_cancellation": "0,20 % TAE / 0,20 % TIN por el tiempo mantenido",
+      "guarantee": "FGD España, 100.000 € por titular y entidad",
+      "risk_indicator": "1/6",
+      "source": {"url": "https://www.openbank.es/deposito-a-plazo-fijo", "kind": "official", "document_date": null, "retrieved_at": "2026-11-03"},
+      "valid_to": null,
+      "tiers": [
+        {"condition": "sin_requisito", "condition_label": "Sin domiciliar ingresos", "tae": "2.75", "tin": "2.73"},
+        {"condition": "nomina_900", "condition_label": "Con nómina o ingreso mensual ≥900 € mantenido 4 meses", "tae": "3.25", "tin": "3.22"}
+      ]
+    },
+    {
+      "candidate_id": "DEP-03",
+      "family": "deposito",
+      "name": "Depósito Pibank 12 meses",
+      "provider": "Pibank (Banco Pichincha España)",
+      "term_months": 12,
+      "minimum_eur": "0",
+      "maximum_eur": null,
+      "interest_payment": "trimestral",
+      "early_cancellation": "parcial y total; se descuentan los intereses recibidos",
+      "guarantee": "FGD España, 100.000 € por titular y entidad",
+      "risk_indicator": "1/6",
+      "source": {"url": "https://pibank.es/deposito-bancario-plazo-fijo", "kind": "official", "document_date": null, "retrieved_at": "2026-11-03"},
+      "valid_to": "2026-10-31",
+      "requirements": ["cuenta Pibank asociada"],
+      "tiers": [
+        {"condition": "sin_requisito", "condition_label": "Sin importe mínimo ni máximo", "tae": "3.03", "tin": "3.00"}
+      ]
+    },
+    {
+      "candidate_id": "DEP-EBN-12",
+      "family": "deposito",
+      "name": "Depósito Nuevo Ahorro 12 meses",
+      "provider": "EBN Banco",
+      "term_months": 12,
+      "minimum_eur": "5000",
+      "maximum_eur": "400000",
+      "interest_payment": "al vencimiento",
+      "early_cancellation": "no permitida",
+      "guarantee": "FGD España, 100.000 € por titular y entidad",
+      "risk_indicator": "1/6",
+      "source": {"url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/", "kind": "official", "document_date": "2026-09-29", "retrieved_at": "2026-11-03"},
+      "valid_to": null,
+      "requirements": ["incremento de saldo en depósitos del banco"],
+      "tiers": [
+        {"condition": "sin_requisito", "condition_label": "Incremento de saldo en depósitos", "tae": "3.10", "tin": "3.06"}
+      ]
+    },
+    {
+      "candidate_id": "DEP-SELF-12",
+      "family": "deposito",
+      "name": "Depósito a 12 meses Self Bank",
+      "provider": "Self Bank",
+      "term_months": 12,
+      "minimum_eur": "6000",
+      "maximum_eur": "1000000",
+      "interest_payment": "trimestral",
+      "early_cancellation": "capital sin intereses del trimestre en curso",
+      "guarantee": "FGD España, 100.000 € por titular",
+      "risk_indicator": null,
+      "source": {"url": "https://www.rankia.com/blog/mejores-depositos/7489106-mejores-depositos-bancarios-octubre-2026", "kind": "secondary_press", "document_date": null, "retrieved_at": "2026-11-03"},
+      "valid_to": null,
+      "requirements": ["nuevos clientes o dinero nuevo", "cuenta Self asociada"],
+      "tiers": [
+        {"condition": "sin_requisito", "condition_label": "Sin vinculación adicional", "tae": "2.75", "tin": "2.72"}
+      ]
+    }
+  ]
+}

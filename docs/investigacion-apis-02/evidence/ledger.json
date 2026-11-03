@@ -1,0 +1,425 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://openbanking.org.uk/open-data-apis",
+      "title": "Open Data API Specs – Open Banking",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Open Banking do not provide direct access to live API end points. Rather, these are implemented and supported by each API provider. The API Dashboard lists all available API end points, and show which API version is supported by each provider.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Enrolment is optional for API users but is required if you wish to receive support from Open Banking. API Providers must enrol.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Providers adopting Open Banking maintain control of their information, ensuring their products are accurately represented.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1103233939/PCA+API+Specification_v2.3.0",
+      "title": "PCA API Specification v2.3.0 – Open Banking",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "This endpoint can contain multiple brands owned by a particular banking group. Each brand can own multiple PCA products.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "- 2.3 Core Product - 2.4 Credit Interest - 2.5 Overdraft/Borrowing - 2.6 Eligibility - 2.7 Features & Benefits - 2.8 Other Fees & Charges",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1077805443/Products+v3.1.2",
+      "title": "Products v3.1.2 – Open Banking",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Detailed product information is only available for BCA and PCA products.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "This endpoint will retrieve the products resources for all authorised accounts linked to a specific account-request.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| 1 | products | GET | GET /accounts/{AccountId}/product | Conditional | accounts | Authorization Code | No | | | OBReadProduct2 |",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| 2 | products | GET | GET /products | Optional | accounts | Authorization Code | No | Pagination | | OBReadProduct2 |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/127009221/Read+Write+Data+API+Specification+-+v2.0.0",
+      "title": "Read/Write Data API Specification v2.0.0 – Open Banking",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Version 2.0.0 extends the Account and Transaction API to cover other PSD2 in-scope payment accounts (limited to GBP accounts) in addition to personal and business current accounts covered by v1.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "- Payments enabled flexible savings accounts - Payments enabled deposit accounts",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://raisin.com/become-a-partner",
+      "title": "Become a Partner – Raisin",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Take advantage of the full range of Raisin’s integration solutions, providing full process automation and API for free.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "We are available in over 30 markets across Europe and operate country-dedicated platforms in Germany, France, Spain, Austria, Netherlands, Ireland and the UK.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://www.raisin.com/en/corporate/become-a-distribution-partner",
+      "title": "Become a Distribution Partner – Raisin",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Choose the integration model that suits your business – from full white-label solutions via API to fast, low-effort setups using Raisin’s co-branded front end.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "At the same time, you unlock new and recurring revenue streams through transparent commission models – without fixed costs or heavy upfront investments.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Raisin’s B2B platform supports partners across the European Union and the United Kingdom.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://www.raisin.com/en/corporate/become-an-affiliate-partner",
+      "title": "Affiliate Program – Raisin",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "If you are interested or have any further questions, please do not hesitate to contact us.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://raisin.com/corporate/press/Deposit-Solutions-And-Raisin-Merge",
+      "title": "Deposit Solutions and Raisin merge – Raisin",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Deposit Solutions is the leading B2B Open Banking platform in the savings deposit space.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Raisin DS operates its own B2C platforms across Europe under the Raisin, WeltSparen, Savedo, and ZINSPILOT brands, and in the U.S. under the brand SaveBetter.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "url": "https://yieldmeister.com/developers",
+      "title": "YieldMeister Rates API – Developers",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "GET /api/v1/rates                      # all current rates",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "url": "https://yieldmeister.com/pricing",
+      "title": "YieldMeister API pricing",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "1,000 API calls / month",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "No card required",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "url": "https://yieldmeister.com/about",
+      "title": "YieldMeister methodology",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Each value is timestamped and stored as a snapshot, so history is preserved.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://yieldmeister.com/terms",
+      "title": "YieldMeister Terms of Service",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The website, its code, design, and the compiled rate dataset (the selection, structure and history we create) are owned by Dutchcode B.V. and protected by intellectual-property law.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "You may not resell or redistribute the dataset as a standalone product without a written licence.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "url": "https://yieldmeister.com/api-terms",
+      "title": "YieldMeister API Terms",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Where you display the data to end users, a visible attribution to YieldMeister (and a link to the provider where practical) is required.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Subject to these terms and your plan, we grant you a limited, revocable, non-exclusive, non-transferable right to retrieve the rate data via the API and use it within your own applications, products and analyses.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "The API and data are provided **as is** and **as available**, without warranty of any kind, including accuracy, completeness, timeliness, or fitness for a particular purpose.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "You may not resell, sublicense or redistribute the dataset as a standalone product or as a substitute for the API, and you may not present the data so as to imply that YieldMeister, or any listed provider, endorses or is affiliated with you.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Bulk redistribution requires a separate written licence.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "url": "https://yieldmeister.com/api/v1/rates",
+      "title": "YieldMeister Rates API GET response",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "\"provider_name\":\"Openbank\",\"product\":\"Depósito Plazo Fijo 12m\",\"product_id\":\"openbank-welcome\",\"kind\":\"term_deposit\",\"market\":\"ES\",\"currency\":\"EUR\",\"term_months\":12,\"rate\":3.25,\"source\":\"scrape:fetch\",\"captured_at\":\"2026-10-09 06:01:21\",\"last_checked\":\"2026-10-26 06:01:06\",\"stale\":false,\"is_promo\":false,\"source_url\":\"https://www.openbank.es/deposito-a-plazo-fijo\"",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://depositscout.com/developers/getting-started-with-the-depositscout-api",
+      "title": "Getting Started with DepositScout API",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Live Savings Rates — `GET /v1/rates` — current AERs across Easy Access, Fixed Rate, Notice, Cash ISA and Regular Saver accounts, normalised for software.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "After you have a key, a minimal live-rates call looks like this.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Authorization: Bearer $DS_API_KEY",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Provider Directory — `GET /v1/providers` — bank and building society metadata, including FSCS coverage and eligibility signals.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "url": "https://tink.com/products/account-aggregation",
+      "title": "Tink Account Aggregation",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "We aggregate data from over 3,400 financial institutions across Europe, covering at least 95% of the population in our live markets.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Get the full picture of your customers’ finances. Access high-quality connections to financial data across Europe – that is the core of our technology.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "url": "https://apydata.com/en/blog/apydata-que-es-que-comparamos-y-como-usarlo",
+      "title": "APYData product comparison",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Yes. The rates (APY/TAE) are automatically updated daily from official sources and the platforms' APIs.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "url": "https://www.openbank.es/en/savings-accounts",
+      "title": "Openbank Savings Accounts",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The return on each savings account is indicated by the NIR (Nominal Interest Rate), which tells you how much interest you will earn.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "**3.25%1 APR** and 3.20% NIR with no maximum balance limit",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "url": "https://consumerdatastandardsaustralia.github.io/standards",
+      "title": "CDR Data Standards – Australian Banking APIs",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The Consumer Data Right (CDR) is intended to be applied sector by sector across the whole economy, beginning in the banking, energy and telecommunications sectors.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "url": "https://gatewaybank.com.au/important-information/consumer-data-right-cdr",
+      "title": "Gateway Bank Consumer Data Right",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Product reference data for all our products. This includes product-related information such as interest rates, fees and features.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "These are public APIs and do not require any authentication.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Gateway Bank’s Product Application Programming Interface (APIs) enables approved third parties to retrieve product-based information. The APIs are designed to support Australian Consumer Data Standards and cover the following products: Transaction Accounts, Savings Accounts, Term Deposits, Mortgage Loans, Consumer Loans.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "url": "https://cdrcompare.au/developers",
+      "title": "CDR Compare Developers & API terms",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Public read-only API, Markdown content negotiation and agent discovery files. No key, no auth, no rate limit, no consumer data.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Free for any use, including commercially.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Attribute figures to the provider that published them and cite the CDR Compare page URL as where you read them, including the provider's last-updated date.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "One product's full reference data. The data holder's own BankingProductDetail payload — rates, fees, features, eligibility, constraints — unmodified, with the upstream source URL alongside it.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "url": "https://public.cdr-api.gatewaybank.com.au/cds-au/v1/banking/products",
+      "title": "Gateway Bank Product Reference Data API GET",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "\"productId\":\"27\",\"effectiveFrom\":\"2019-01-22T13:30:00.0000000Z\",\"lastUpdated\":\"2026-10-21T02:00:29.2280569Z\",\"productCategory\":\"TERM_DEPOSITS\",\"name\":\"Package TD 6 Months\",\"description\":\"Package TD 6 Months\",\"brand\":\"Gateway Bank\"",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "url": "https://www.cdrcompare.au/api/v1/brands",
+      "title": "CDR Compare brands API GET",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "\"slug\": \"gateway-bank\", \"name\": \"Gateway Bank\", \"industries\": [ \"banking\" ]",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "\"slug\": \"gateway-bank\", \"name\": \"Gateway Bank\"",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "url": "https://www.cdrcompare.au/api/v1/brands/gateway-bank/products/27",
+      "title": "CDR Compare Gateway Bank product detail API GET",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "\"productCategory\": \"TERM_DEPOSITS\", \"name\": \"Package TD 6 Months\", \"description\": \"Package TD 6 Months\", \"brand\": \"Gateway Bank\"",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "\"constraintType\": \"MAX_BALANCE\", \"additionalValue\": \"1000000.00\"",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "\"depositRateType\": \"INTRODUCTORY\", \"rate\": \"0.0555\", \"calculationFrequency\": \"P1D\", \"applicationType\": \"MATURITY\", \"additionalValue\": \"P6M\"",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "url": "https://cdrcompare.au/terms",
+      "title": "CDR Compare Terms",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "CDR Compare shows product reference data published by data holders under Australia’s Consumer Data Right. Data may be incomplete or out of date — always confirm details with the provider. This is not financial advice.",
+          "added": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

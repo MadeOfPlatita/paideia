@@ -1,0 +1,139 @@
+{
+  "calls": [
+    {
+      "request": {
+        "message": "SYNTHETIC TEST ONLY: explain",
+        "consent": {
+          "notice_version": "paideia-chat-remote-v1",
+          "accepted_chat_processing": true,
+          "purpose": "free_chat",
+          "approved_fields": []
+        }
+      },
+      "status": 200,
+      "body": {
+        "answer": "Ahorrar e invertir son decisiones distintas; una inversión puede perder valor y sus resultados son inciertos.\n\nLos riesgos dependen del producto, de la entidad y de la custodia; conviene revisar sus condiciones antes de decidir.\n\nLa inflación puede reducir el poder adquisitivo del dinero aunque su importe nominal no cambie.",
+        "provider_mode": "test_only",
+        "external_sent": false,
+        "structured_education": {
+          "version": "paideia-education-v1",
+          "kind": "editorial",
+          "items": [
+            {
+              "id": "saving_investing",
+              "text": "Ahorrar e invertir son decisiones distintas; una inversión puede perder valor y sus resultados son inciertos."
+            },
+            {
+              "id": "risk",
+              "text": "Los riesgos dependen del producto, de la entidad y de la custodia; conviene revisar sus condiciones antes de decidir."
+            },
+            {
+              "id": "inflation",
+              "text": "La inflación puede reducir el poder adquisitivo del dinero aunque su importe nominal no cambie."
+            }
+          ],
+          "calculation": null
+        }
+      }
+    },
+    {
+      "request": {
+        "message": "SYNTHETIC TEST ONLY: calculate",
+        "consent": {
+          "notice_version": "paideia-chat-remote-v1",
+          "accepted_chat_processing": true,
+          "purpose": "free_chat",
+          "approved_fields": []
+        },
+        "scenario": {
+          "principal": "1000.00",
+          "annual_rate_percent": "3",
+          "years": 1,
+          "monthly_contribution": "0.00",
+          "method": "simple",
+          "inflation_percent": "0"
+        }
+      },
+      "status": 200,
+      "body": {
+        "answer": "Una simulación es hipotética y depende de sus supuestos; no predice resultados futuros ni incluye necesariamente costes o impuestos.",
+        "provider_mode": "test_only",
+        "external_sent": false,
+        "structured_education": {
+          "version": "paideia-education-v1",
+          "kind": "editorial",
+          "items": [
+            {
+              "id": "simulation",
+              "text": "Una simulación es hipotética y depende de sus supuestos; no predice resultados futuros ni incluye necesariamente costes o impuestos."
+            }
+          ],
+          "calculation": {
+            "source": "deterministic_local",
+            "data": {
+              "hypothetical": true,
+              "not_prediction": true,
+              "currency": "EUR",
+              "assumptions": {
+                "principal": "1000.00",
+                "annual_rate_percent": "3",
+                "years": 1,
+                "monthly_contribution": "0.00",
+                "method": "simple",
+                "inflation_percent": "0",
+                "annual_rate_convention": "simple_annual_rate",
+                "monthly_contribution_timing": "end_of_month",
+                "monthly_rate_conversion": "annual_simple_rate_divided_by_12",
+                "working_precision": "80_significant_decimal_digits",
+                "rounding": "half_up_to_cents_in_serialized_output; no_cent_rounding_per_month",
+                "taxes_included": false,
+                "fees_included": false
+              },
+              "summary": {
+                "contributions": "1000.00",
+                "final_balance": "1030.00",
+                "interest": "30.00",
+                "inflation_adjusted": "1030.00"
+              },
+              "series": [
+                {
+                  "month": 0,
+                  "contributions": "1000.00",
+                  "balance": "1000.00",
+                  "real_balance": "1000.00"
+                },
+                {
+                  "month": 12,
+                  "contributions": "1000.00",
+                  "balance": "1030.00",
+                  "real_balance": "1030.00"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "request": {
+        "message": "SYNTHETIC TEST ONLY: forged",
+        "consent": {
+          "notice_version": "paideia-chat-remote-v1",
+          "accepted_chat_processing": true,
+          "purpose": "free_chat",
+          "approved_fields": []
+        }
+      },
+      "status": 502,
+      "body": {
+        "error": {
+          "code": "CHAT_STRUCTURED_INVALID_RESPONSE",
+          "message": "No se pudo validar la respuesta estructurada; no se ha mostrado y no hay reintento automático.",
+          "request_id": "0491b2828b7d42a6be70d5c331623b80",
+          "retryable": false
+        }
+      }
+    }
+  ],
+  "feedback": "No se pudo validar la respuesta estructurada; no se ha mostrado y no hay reintento automático."
+}

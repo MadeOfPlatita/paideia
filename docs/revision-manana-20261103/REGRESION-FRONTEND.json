@@ -1,0 +1,56 @@
+{
+  "C/CICLO-2-desktop.json": {
+    "ok": true,
+    "passed": 27,
+    "total": 27,
+    "viewport": {
+      "client": 1440,
+      "scroll": 1440
+    }
+  },
+  "C/CICLO-2-mobile.json": {
+    "ok": true,
+    "passed": 27,
+    "total": 27,
+    "viewport": {
+      "client": 390,
+      "scroll": 390
+    }
+  },
+  "scenario-desktop.json": {
+    "ok": true,
+    "passed": 114,
+    "total": 114,
+    "viewport": {
+      "width": 1425,
+      "scrollWidth": 1425
+    }
+  },
+  "scenario-mobile.json": {
+    "ok": true,
+    "passed": 114,
+    "total": 114,
+    "viewport": {
+      "width": 390,
+      "scrollWidth": 390
+    }
+  },
+  "report-desktop.json": {
+    "ok": true,
+    "passed": 18,
+    "total": 18,
+    "viewport": {
+      "client": 1425,
+      "scroll": 1425
+    }
+  },
+  "report-mobile.json": {
+    "ok": true,
+    "passed": 18,
+    "total": 18,
+    "viewport": {
+      "client": 390,
+      "scroll": 390
+    }
+  }
+}

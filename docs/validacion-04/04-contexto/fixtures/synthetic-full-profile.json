@@ -1,0 +1,27 @@
+{
+  "classification": "synthetic_fixture",
+  "fixture_id": "synthetic-full-profile-01",
+  "profile": {
+    "version_esquema": "1.0.0",
+    "tipo": "mapa_educativo",
+    "respuestas": {
+      "objetivo": {"estado": "declarado", "valor": "colchon_imprevistos"},
+      "horizonte": {"estado": "declarado", "valor": "6_12_meses"},
+      "liquidez": {"estado": "declarado", "valor": "acceso_cualquier_momento"},
+      "experiencia": {"estado": "declarado", "valor": {"nivel": "leido_o_comparado", "temas_interes": ["depositos", "etf"]}}
+    },
+    "detalle_economico": {
+      "importe_objetivo": {"estado": "declarado", "valor": {"min_eur": 2500.00, "max_eur": 2500.00, "moneda": "EUR"}},
+      "ingresos_netos": {"estado": "declarado", "valor": {"importe": {"min_eur": 2800.00, "max_eur": 2800.00, "moneda": "EUR"}, "periodicidad": "mensual"}},
+      "gastos_esenciales": {"estado": "declarado", "valor": {"importe": {"min_eur": 1700.00, "max_eur": 1700.00, "moneda": "EUR"}, "periodicidad": "mensual"}},
+      "deuda": {"estado": "declarado", "valor": {"situacion": "con_deuda", "saldo_eur": {"estado": "declarado", "valor": {"min_eur": 1250.00, "max_eur": 1250.00, "moneda": "EUR"}}, "cuota": {"estado": "declarado", "valor": {"importe": {"min_eur": 150.00, "max_eur": 150.00, "moneda": "EUR"}, "periodicidad": "mensual"}}, "coste_anual_pct": {"estado": "declarado", "valor": {"min_pct": 8.99, "max_pct": 8.99}}}},
+      "colchon_liquido": {"estado": "declarado", "valor": {"min_eur": 3000.00, "max_eur": 3000.00, "moneda": "EUR"}},
+      "compromisos_proximos": {"estado": "declarado", "valor": {"hay_compromiso": true, "total_eur": {"min_eur": 500.00, "max_eur": 500.00, "moneda": "EUR"}, "plazo": "3_6_meses"}}
+    },
+    "riesgo": {
+      "tolerancia": {"estado": "declarado", "valor": "esperaria_con_inquietud"},
+      "capacidad_perdidas": {"estado": "declarado", "valor": {"escenario_id": "caida_100_de_1000", "impacto": "retrasaria_o_reduciria_meta"}}
+    },
+    "supuestos_escenario": []
+  }
+}

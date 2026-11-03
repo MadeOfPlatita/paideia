@@ -1,0 +1,8 @@
+{
+  "state": "active",
+  "calls": 4,
+  "limit": 24,
+  "deadline_utc": "2026-10-29T17:40:20+00:00",
+  "benchmark": "complete",
+  "test_only": false
+}

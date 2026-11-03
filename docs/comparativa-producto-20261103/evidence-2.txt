@@ -1,0 +1,7 @@
+Step 1: Initial Investment
+Step 2: Contribute
+Monthly Contribution
+Step 3: Interest Rate
+Interest rate variance range
+Range of interest rates (above and below the rate set above) that you desire to see results for.
+Step 4: Compound It

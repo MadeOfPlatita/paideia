@@ -1,0 +1,528 @@
+{
+  "fixture_set": "Paideia ingesta-calidad - solo pruebas sintéticas",
+  "test_only": true,
+  "notice": "No contiene productos, emisores, ofertas, cotizaciones ni documentos reales. Los identificadores TEST-* están reservados para fixtures y deben bloquearse en producción.",
+  "cases": [
+    {
+      "case_id": "deposito-condiciones-sin-observacion",
+      "source_text": "SYNTHETIC FIXTURE ONLY: no real product data; case=deposito-condiciones",
+      "expected_schema_valid": true,
+      "expected_gate": "manual_review",
+      "expected_publishable": false,
+      "expected_reasons": ["LICENSE_UNKNOWN", "OBSERVATION_DATE_NOT_STATED", "FIRST_IMPORT"],
+      "records": [
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "deposit_offer",
+          "source": {
+            "source_id": "test-bank-offer",
+            "source_uri": "fixture://deposito-condiciones/source",
+            "source_record_id": "TEST-OFFER-001",
+            "document_title": "FICHA SINTÉTICA DE PRUEBA; no es un documento bancario",
+            "adapter_id": "test.deposit.offer",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T09:00:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "unknown",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://deposito-condiciones/raw",
+              "sha256": "a586e21aa2e718b55494f515a4e9154b3cac4f409666df964a2b57e7ee2dbbe5",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T09:00:00Z"
+            },
+            "extraction": {"method": "manual", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "product_key": "TEST-FIXTURE:DEPOSIT:001",
+            "legal_entity_ref": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-ENTITY-001"},
+            "brand_label": "Marca artificial de prueba",
+            "offer_variant": "Variante sintética, no contratable"
+          },
+          "facts": [
+            {
+              "field_path": "terms.tae",
+              "value": "2.20",
+              "unit": "PERCENT",
+              "source_ref": "fixture://deposito-condiciones/raw#synthetic-line-1",
+              "validity": {"valid_from": "2026-10-01", "valid_to": null, "source_explicit": true},
+              "observation": {"observed_at": null, "kind": "contract_terms", "precision": "not_stated"}
+            },
+            {
+              "field_path": "terms.monthly_fee",
+              "value": "0.00",
+              "unit": "MONEY",
+              "currency": "EUR",
+              "source_ref": "fixture://deposito-condiciones/raw#synthetic-line-2",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": null, "kind": "contract_terms", "precision": "not_stated"}
+            }
+          ],
+          "idempotency_key": "fixture:deposit:001:terms.tae"
+        }
+      ]
+    },
+    {
+      "case_id": "clase-fondo-y-listing-separados",
+      "source_text": "SYNTHETIC FIXTURE ONLY: no real product data; case=fondo-clase-listing",
+      "expected_schema_valid": true,
+      "expected_gate": "manual_review",
+      "expected_publishable": false,
+      "expected_reasons": ["IDENTITY_LINK_REQUIRES_EVIDENCE", "FIRST_IMPORT"],
+      "records": [
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "fund_share_class",
+          "source": {
+            "source_id": "test-fund-document",
+            "source_uri": "fixture://fondo-clase-listing/fund-source",
+            "source_record_id": "TEST-FUND-DOC-001",
+            "document_title": "Documento ficticio de prueba de clase",
+            "adapter_id": "test.fund.class",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T09:05:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "review_required",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://fondo-clase-listing/fund-raw",
+              "sha256": "5b44d9b7986027ce1f062a82b67a1ff49456f4332afcb7be33dc95bfa7f7ad54",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T09:05:00Z"
+            },
+            "extraction": {"method": "manual", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "fund_key": "TEST-FUND-001",
+            "class_isin": "TEST-ISIN-0001",
+            "share_class_name": "Clase sintética de prueba"
+          },
+          "facts": [
+            {
+              "field_path": "document.kind",
+              "value": "KID ficticio de fixture",
+              "unit": "TEXT",
+              "source_ref": "fixture://fondo-clase-listing/fund-raw#synthetic",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-10-01", "kind": "document_version", "precision": "date"}
+            },
+            {
+              "field_path": "cost.management",
+              "value": "0.10",
+              "unit": "PERCENT",
+              "source_ref": "fixture://fondo-clase-listing/fund-raw#synthetic-cost",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-10-01", "kind": "document_version", "precision": "date"}
+            }
+          ],
+          "idempotency_key": "fixture:fund:TEST-ISIN-0001:cost.management"
+        },
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "market_listing",
+          "source": {
+            "source_id": "test-listing-feed",
+            "source_uri": "fixture://fondo-clase-listing/listing-source",
+            "source_record_id": "TEST-LISTING-001",
+            "document_title": "Cotización enteramente sintética; no corresponde a un mercado real",
+            "adapter_id": "test.market.listing",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T09:06:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "review_required",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://fondo-clase-listing/listing-raw",
+              "sha256": "5b44d9b7986027ce1f062a82b67a1ff49456f4332afcb7be33dc95bfa7f7ad54",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T09:06:00Z"
+            },
+            "extraction": {"method": "api_json", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "listing_key": "TEST-LISTING:MICX:TESTQ:EUR",
+            "ticker": "TESTQ",
+            "venue_mic": "MICX",
+            "trading_currency": "EUR",
+            "related_class_isin": "TEST-ISIN-0001"
+          },
+          "facts": [
+            {
+              "field_path": "quote.price",
+              "value": "123.45",
+              "unit": "MONEY",
+              "currency": "EUR",
+              "source_ref": "fixture://fondo-clase-listing/listing-raw#synthetic-price",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-10-26T09:00:00Z", "kind": "market_quote", "precision": "datetime"}
+            }
+          ],
+          "idempotency_key": "fixture:listing:MICX:TESTQ:EUR:quote.price"
+        }
+      ]
+    },
+    {
+      "case_id": "serie-mensual-historica-no-quote",
+      "source_text": "SYNTHETIC FIXTURE ONLY: no real product data; case=tesoro-serie-estadistica",
+      "expected_schema_valid": true,
+      "expected_gate": "historical_only",
+      "expected_publishable": false,
+      "expected_reasons": ["STATISTICAL_SERIES_NOT_INSTRUMENT_QUOTE", "FIXTURE_ONLY"],
+      "records": [
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "public_debt_observation",
+          "source": {
+            "source_id": "test-stat-series",
+            "source_uri": "fixture://tesoro-serie-estadistica/source",
+            "source_record_id": "TEST-SERIES-OBS-001",
+            "document_title": "Serie estadística ficticia de prueba; no es dato del Tesoro/BdE/BCE",
+            "adapter_id": "test.public.debt.series",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T10:00:00Z",
+            "source_published_at": null,
+            "declared_frequency": "monthly",
+            "license_status": "allowed",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://tesoro-serie-estadistica/raw",
+              "sha256": "a5fb2a3a9689aeaf219118c61474978f1a189fecc3af9b3d288ef301844f5073",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T10:00:00Z"
+            },
+            "extraction": {"method": "api_json", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "scope": "statistical_series",
+            "reference": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-SERIES-001"},
+            "security_isin": null
+          },
+          "facts": [
+            {
+              "field_path": "yield.statistical_reference",
+              "value": "3.00",
+              "unit": "PERCENT",
+              "source_ref": "fixture://tesoro-serie-estadistica/raw#synthetic-observation",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-08-31", "kind": "statistical_observation", "precision": "date"}
+            }
+          ],
+          "idempotency_key": "fixture:series:TEST-SERIES-001:2026-08-31:yield"
+        }
+      ]
+    },
+    {
+      "case_id": "pdf-ia-no-promocion-sin-revision",
+      "source_text": "SYNTHETIC FIXTURE ONLY: no real product data; case=pdf-extraccion-ia",
+      "expected_schema_valid": true,
+      "expected_gate": "manual_review",
+      "expected_publishable": false,
+      "expected_reasons": ["LLM_EXTRACTION_UNVERIFIED", "LICENSE_REVIEW_REQUIRED"],
+      "records": [
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "deposit_offer",
+          "source": {
+            "source_id": "test-pdf-source",
+            "source_uri": "fixture://pdf-extraccion-ia/source",
+            "source_record_id": "TEST-PDF-001",
+            "document_title": "PDF sintético de prueba, sin condiciones de producto reales",
+            "adapter_id": "test.pdf.extractor",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T11:00:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "review_required",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://pdf-extraccion-ia/raw",
+              "sha256": "0ad99607667efb3bcbf15e4162911baa825e50360ccc7306fce59f671019a6a7",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T11:00:00Z"
+            },
+            "extraction": {"method": "llm_assisted", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "product_key": "TEST-FIXTURE:DEPOSIT:PDF-001",
+            "legal_entity_ref": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-ENTITY-PDF-001"},
+            "brand_label": "Nombre artificial, solo fixture",
+            "offer_variant": null
+          },
+          "facts": [
+            {
+              "field_path": "terms.tin",
+              "value": "1.75",
+              "unit": "PERCENT",
+              "source_ref": "fixture://pdf-extraccion-ia/raw#synthetic-page-1",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": null, "kind": "contract_terms", "precision": "not_stated"}
+            }
+          ],
+          "idempotency_key": "fixture:deposit:pdf001:terms.tin"
+        }
+      ]
+    },
+    {
+      "case_id": "conflicto-outlier-y-stale",
+      "source_text": "SYNTHETIC FIXTURE ONLY: no real product data; case=conflicto-stale-outlier",
+      "expected_schema_valid": true,
+      "expected_gate": "manual_review",
+      "expected_publishable": false,
+      "expected_reasons": ["SOURCE_CONFLICT", "POSSIBLE_OUTLIER", "STALE"],
+      "test_only_policy": {
+        "as_of_date": "2026-10-26",
+        "max_observation_age_days": 30,
+        "max_difference": "1.00",
+        "unit": "PERCENT"
+      },
+      "records": [
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "deposit_offer",
+          "source": {
+            "source_id": "test-source-a",
+            "source_uri": "fixture://conflicto-stale-outlier/source-a",
+            "source_record_id": "TEST-CONFLICT-001",
+            "document_title": "Fuente A sintética; no real",
+            "adapter_id": "test.deposit.source-a",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T12:00:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "allowed",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://conflicto-stale-outlier/raw-a",
+              "sha256": "0263cf7571596681f94c6ceb40cc31e9d6cf93cdc26af3d777759f808e76a9ef",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T12:00:00Z"
+            },
+            "extraction": {"method": "manual", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "product_key": "TEST-FIXTURE:DEPOSIT:CONFLICT-001",
+            "legal_entity_ref": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-ENTITY-CONFLICT-001"},
+            "brand_label": "Entidad sintética común",
+            "offer_variant": "mismo scope de prueba"
+          },
+          "facts": [
+            {
+              "field_path": "terms.tae",
+              "value": "2.10",
+              "unit": "PERCENT",
+              "source_ref": "fixture://conflicto-stale-outlier/raw-a#synthetic",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-06-01", "kind": "contract_terms", "precision": "date"}
+            }
+          ],
+          "idempotency_key": "fixture:deposit:CONFLICT-001:terms.tae"
+        },
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "deposit_offer",
+          "source": {
+            "source_id": "test-source-b",
+            "source_uri": "fixture://conflicto-stale-outlier/source-b",
+            "source_record_id": "TEST-CONFLICT-002",
+            "document_title": "Fuente B sintética; no real",
+            "adapter_id": "test.deposit.source-b",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T12:01:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "allowed",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://conflicto-stale-outlier/raw-b",
+              "sha256": "0263cf7571596681f94c6ceb40cc31e9d6cf93cdc26af3d777759f808e76a9ef",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T12:01:00Z"
+            },
+            "extraction": {"method": "manual", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "product_key": "TEST-FIXTURE:DEPOSIT:CONFLICT-001",
+            "legal_entity_ref": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-ENTITY-CONFLICT-001"},
+            "brand_label": "Entidad sintética común",
+            "offer_variant": "mismo scope de prueba"
+          },
+          "facts": [
+            {
+              "field_path": "terms.tae",
+              "value": "6.50",
+              "unit": "PERCENT",
+              "source_ref": "fixture://conflicto-stale-outlier/raw-b#synthetic",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-06-01", "kind": "contract_terms", "precision": "date"}
+            }
+          ],
+          "idempotency_key": "fixture:deposit:CONFLICT-001:terms.tae"
+        }
+      ]
+    },
+    {
+      "case_id": "replay-idempotente-noop",
+      "source_text": "SYNTHETIC FIXTURE ONLY: no real product data; case=replay-idempotente",
+      "expected_schema_valid": true,
+      "expected_gate": "no_op_duplicate",
+      "expected_publishable": false,
+      "expected_reasons": ["SAME_LOGICAL_KEY_AND_CONTENT"],
+      "records": [
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "legal_institution",
+          "source": {
+            "source_id": "test-registry",
+            "source_uri": "fixture://replay-idempotente/source",
+            "source_record_id": "TEST-ENTITY-REPLAY-001",
+            "document_title": "Registro ficticio de replay",
+            "adapter_id": "test.legal.institution",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T13:00:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "allowed",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://replay-idempotente/raw",
+              "sha256": "8ade7fb5349589ca3a0bd9711311f7b9b9a6f0dca6b048521249294173b38aee",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T13:00:00Z"
+            },
+            "extraction": {"method": "manual", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "legal_entity_ref": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-ENTITY-REPLAY-001"},
+            "legal_name": "Entidad legal ficticia de prueba",
+            "brand_labels": ["Marca de prueba"],
+            "jurisdiction": "ES"
+          },
+          "facts": [
+            {
+              "field_path": "entity.status",
+              "value": "active",
+              "unit": "TEXT",
+              "source_ref": "fixture://replay-idempotente/raw#synthetic",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-10-26", "kind": "entity_status", "precision": "date"}
+            }
+          ],
+          "idempotency_key": "fixture:institution:TEST-ENTITY-REPLAY-001:status"
+        },
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "legal_institution",
+          "source": {
+            "source_id": "test-registry",
+            "source_uri": "fixture://replay-idempotente/source",
+            "source_record_id": "TEST-ENTITY-REPLAY-001",
+            "document_title": "Registro ficticio de replay",
+            "adapter_id": "test.legal.institution",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T13:00:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "allowed",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://replay-idempotente/raw",
+              "sha256": "8ade7fb5349589ca3a0bd9711311f7b9b9a6f0dca6b048521249294173b38aee",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T13:00:00Z"
+            },
+            "extraction": {"method": "manual", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "legal_entity_ref": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-ENTITY-REPLAY-001"},
+            "legal_name": "Entidad legal ficticia de prueba",
+            "brand_labels": ["Marca de prueba"],
+            "jurisdiction": "ES"
+          },
+          "facts": [
+            {
+              "field_path": "entity.status",
+              "value": "active",
+              "unit": "TEXT",
+              "source_ref": "fixture://replay-idempotente/raw#synthetic",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": "2026-10-26", "kind": "entity_status", "precision": "date"}
+            }
+          ],
+          "idempotency_key": "fixture:institution:TEST-ENTITY-REPLAY-001:status"
+        }
+      ]
+    },
+    {
+      "case_id": "rechazo-money-sin-moneda",
+      "source_text": "SYNTHETIC FIXTURE ONLY: no real product data; case=rechazo-idempotente",
+      "expected_schema_valid": false,
+      "expected_gate": "reject",
+      "expected_publishable": false,
+      "expected_reasons": ["MONEY_REQUIRES_CURRENCY"],
+      "records": [
+        {
+          "contract_version": "1.0.0",
+          "classification": "synthetic_fixture",
+          "family": "deposit_offer",
+          "source": {
+            "source_id": "test-invalid-unit",
+            "source_uri": "fixture://rechazo-idempotente/source",
+            "source_record_id": "TEST-INVALID-001",
+            "document_title": "Caso sintético inválido",
+            "adapter_id": "test.invalid.unit",
+            "adapter_version": "1.0.0",
+            "retrieved_at": "2026-10-26T14:00:00Z",
+            "source_published_at": null,
+            "declared_frequency": "unknown",
+            "license_status": "allowed",
+            "etag": null,
+            "last_modified": null,
+            "raw_evidence": {
+              "uri": "fixture://rechazo-idempotente/raw",
+              "sha256": "8ade7fb5349589ca3a0bd9711311f7b9b9a6f0dca6b048521249294173b38aee",
+              "mime_type": "text/plain",
+              "captured_at": "2026-10-26T14:00:00Z"
+            },
+            "extraction": {"method": "manual", "human_verified": false, "reviewer_ref": null}
+          },
+          "identity": {
+            "product_key": "TEST-FIXTURE:DEPOSIT:INVALID-001",
+            "legal_entity_ref": {"scheme": "TEST_FIXTURE_ID", "value": "TEST-ENTITY-INVALID-001"}
+          },
+          "facts": [
+            {
+              "field_path": "fees.monthly",
+              "value": "5.00",
+              "unit": "MONEY",
+              "source_ref": "fixture://rechazo-idempotente/raw#synthetic-invalid",
+              "validity": {"valid_from": null, "valid_to": null, "source_explicit": false},
+              "observation": {"observed_at": null, "kind": "contract_terms", "precision": "not_stated"}
+            }
+          ],
+          "idempotency_key": "fixture:deposit:invalid:fees.monthly"
+        }
+      ]
+    }
+  ]
+}

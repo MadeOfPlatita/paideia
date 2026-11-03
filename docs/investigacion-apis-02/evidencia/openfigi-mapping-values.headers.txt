@@ -1,0 +1,4 @@
+status=200
+content-type=application/json; charset=utf-8
+url=https://api.openfigi.com/v3/mapping/values/idType
+bytes_saved=465

@@ -1,0 +1,345 @@
+{
+  "titulo": "Paideia — registro de riesgos del plan D1-D7",
+  "estado": "Propuesta inicial; no acredita riesgos mitigados, pruebas ejecutadas ni app desplegada.",
+  "escala": {
+    "probabilidad": "Estimación cualitativa provisional: Baja, Media o Alta; no es una medición estadística.",
+    "impacto": "Estimación cualitativa provisional: Medio, Alto o Muy alto sobre alcance, seguridad, confianza, coste o entrega.",
+    "evidencia": "Referencias internas disponibles al redactar este plan. Los 16 informes adicionales constan como pendientes de revisión en 00-COORDINACION.md."
+  },
+  "riesgos": [
+    {
+      "id": "R-01",
+      "riesgo": "Cobertura insuficiente de productos reales y campos contractuales por familia prioritaria.",
+      "probabilidad": "Alta",
+      "impacto": "Muy alto",
+      "evidencia": [
+        "docs/investigacion/00-SINTESIS.md: no se identificó una API gratuita que cubra el catálogo contractual completo; estadísticas agregadas no son ofertas de bancos.",
+        "docs/REQUISITOS.md: el catálogo específico, las fuentes y la cobertura medible siguen pendientes de definición."
+      ],
+      "indicadores_tempranos": [
+        "Una de las cinco familias no tiene fuente primaria o producto real verificable.",
+        "Precio, TAE, comisiones, elegibilidad o condiciones se completan por inferencia o por dato no fechado."
+      ],
+      "mitigacion": [
+        "En D1 mantener inventario por familia, producto, campo, fuente, permiso, fecha efectiva y fecha de comprobación.",
+        "Mostrar valores ausentes como desconocidos; no convertir ejemplos hipotéticos en fichas reales.",
+        "Proponer un registro real por familia como prueba vertical, sin tratarlo como límite del catálogo final."
+      ],
+      "desbloqueo": [
+        "José Manuel contrasta manualmente cada dato con la fuente primaria y anota el enlace/captura permitida y las fechas.",
+        "Alejandro conecta solo registros con permisos y campos confirmados; si falta cobertura, el grupo decide expresamente el siguiente paso."
+      ],
+      "responsable_propuesto": "José Manuel (validación de fuente) y Alejandro (ingesta/visualización).",
+      "decisiones_relacionadas": ["D-02", "D-03"],
+      "contingencia_honesta": "La familia o el campo no verificado se declara pendiente y no entra en comparación; no se sustituye por datos sintéticos presentados como reales.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-02",
+      "riesgo": "Datos obsoletos o cadencia de actualización inadecuada pueden hacer engañosa una comparación.",
+      "probabilidad": "Alta",
+      "impacto": "Muy alto",
+      "evidencia": [
+        "docs/REQUISITOS.md: se acepta último dato verificado si falla actualización, pero la caducidad por tipo de dato aún no está definida.",
+        "docs/investigacion/00-SINTESIS.md: no se validó una actualización diaria completa de todas las familias."
+      ],
+      "indicadores_tempranos": [
+        "Una ficha no distingue fecha efectiva de fecha de consulta.",
+        "No existe regla aprobada para ocultar/excluir datos antiguos del comparador."
+      ],
+      "mitigacion": [
+        "Registrar fuente, fecha efectiva y fecha de comprobación por dato relevante.",
+        "En D1 proponer y acordar umbrales de frescura por tipo de dato; no aplicar un único umbral universal sin justificarlo.",
+        "Separar el último dato verificado de una cotización actual y de un escenario hipotético."
+      ],
+      "desbloqueo": [
+        "José Manuel revisa las fechas y advierte faltantes; Alejandro implementa filtros y estados según política aprobada.",
+        "Si la política sigue sin decidirse, bloquear la comparación del campo dudoso hasta decisión del grupo."
+      ],
+      "responsable_propuesto": "Ambos; José Manuel para revisión y Alejandro para regla técnica.",
+      "decisiones_relacionadas": ["D-03", "D-04"],
+      "contingencia_honesta": "Mostrar fecha, fuente y advertencia; excluir datos cuya antigüedad pueda inducir a error. No llamar «actualizado hoy» a un dato no comprobado ese día.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-03",
+      "riesgo": "No encontrar proveedor de LLM gratuito y permitido para una web pública española que satisfaga privacidad, límites y uso previsto.",
+      "probabilidad": "Alta",
+      "impacto": "Muy alto",
+      "evidencia": [
+        "docs/investigacion/00-SINTESIS.md: las condiciones de Gemini Free restringen API Clients en EEE; alternativas de Workers AI y otros proveedores no se probaron con credenciales ni para 100 usuarios.",
+        "docs/REQUISITOS.md: proveedor, cuotas, privacidad y protección de claves están pendientes."
+      ],
+      "indicadores_tempranos": [
+        "Términos no autorizan el escenario público/EEE o requieren gasto/tarjeta no aprobado.",
+        "Clave solo disponible en navegador, datos enviados no están explicados o la prueba inventa condiciones.",
+        "La cuota se agota antes de una sesión de demostración."
+      ],
+      "mitigacion": [
+        "G2 en D1 revisa términos, región, precio, cuota, retención y uso público antes de elegir proveedor.",
+        "Mantener el proveedor detrás de una interfaz y un endpoint protegido; medir consumo real con contexto de prueba.",
+        "No codificar una respuesta fija como sustituto de un LLM."
+      ],
+      "desbloqueo": [
+        "Alejandro presenta evidencia de términos y prueba manual en español basada en ficha real.",
+        "Si ningún proveedor pasa, detener la integración de chat y solicitar al grupo una decisión explícita sobre cómo mantener el requisito aprobado."
+      ],
+      "responsable_propuesto": "Alejandro (evidencia técnica) y ambos (selección y privacidad).",
+      "decisiones_relacionadas": ["D-05", "D-06"],
+      "contingencia_honesta": "Mostrar estado de chat no disponible y preservar módulos no dependientes. El chat queda bloqueado/incompleto; no aparentar que funciona con un guion.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-04",
+      "riesgo": "La web o el chat no soportan el peor caso previsto de 100 usuarios, especialmente por límites compartidos o NAT del aula.",
+      "probabilidad": "Alta",
+      "impacto": "Muy alto",
+      "evidencia": [
+        "docs/REQUISITOS.md: dimensionamiento para 100 usuarios concurrentes es una expectativa, no una prueba completada.",
+        "docs/investigacion/00-SINTESIS.md y docs/planificacion-03/00-COORDINACION.md: cuotas teóricas no acreditan concurrencia; la NAT compartida puede afectar límites por IP."
+      ],
+      "indicadores_tempranos": [
+        "No existe prueba de carga ni límite de uso configurado.",
+        "El proveedor limita por IP o cuota y no se simula el patrón de la clase.",
+        "El chat falla aunque los assets estáticos carguen."
+      ],
+      "mitigacion": [
+        "Separar activos estáticos/cálculos locales de llamadas al chat.",
+        "En D6 probar carga controlada en entorno autorizado, con límites y sin usar cuentas/servicios no aprobados.",
+        "Documentar el resultado, duración, configuración y límites; no inferir capacidad desde una respuesta HTTP o un límite por minuto."
+      ],
+      "desbloqueo": [
+        "Alejandro registra prueba reproducible y límites reales; ambos deciden qué nivel de acceso anunciar antes de invitar a la clase.",
+        "Si no se logra probar 100, comunicar el riesgo y obtener aprobación para el modo de demo/capacidad sin retirar silenciosamente el objetivo."
+      ],
+      "responsable_propuesto": "Alejandro; ambos para la decisión de publicación/aforo.",
+      "decisiones_relacionadas": ["D-07"],
+      "contingencia_honesta": "Usar limitación visible y mantener funciones estáticas si es posible; no quitar protección ni anunciar «100 concurrentes soportados» sin prueba.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-05",
+      "riesgo": "Añadir PostgreSQL antes de conocer la necesidad amplía trabajo, coste, seguridad y operación, y puede crear dependencia de una cuenta/servidor.",
+      "probabilidad": "Media",
+      "impacto": "Alto",
+      "evidencia": [
+        "docs/planificacion-03/00-COORDINACION.md: PostgreSQL es una propuesta nueva, no autorizada ni creada.",
+        "docs/REQUISITOS.md: no hay registro de usuarios y el perfil aprobado es local al navegador."
+      ],
+      "indicadores_tempranos": [
+        "Se implementa esquema o se crea una cuenta DB antes del gate G3.",
+        "Se propone guardar perfiles personales centralmente sin requisito ni aprobación.",
+        "No están probados coste cero, acceso con PC apagado, secreto, backup y recuperación."
+      ],
+      "mitigacion": [
+        "G3 decide con criterios de lectura/escritura, búsqueda, actualización, coste, seguridad y operación.",
+        "Evaluar primero catálogo estático JSON versionado y perfil local; tratarlo como propuesta, no como decisión del usuario.",
+        "No permitir SQL arbitrario ni escrituras autónomas por el modelo."
+      ],
+      "desbloqueo": [
+        "Documentar una necesidad funcional que no resuelva el catálogo versionado.",
+        "Presentar alternativa DB alojada gratuita y compatible, sin instalar ni crear servicio hasta aprobación explícita."
+      ],
+      "responsable_propuesto": "Alejandro propone; ambos deciden.",
+      "decisiones_relacionadas": ["D-08"],
+      "contingencia_honesta": "Si no hay necesidad y evidencia de alojamiento, posponer DB sin reemplazar datos reales ni cambiar el alcance funcional.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-06",
+      "riesgo": "Exposición de perfil local, preguntas del chat o claves a proveedores, logs, bundle público o repositorio.",
+      "probabilidad": "Media",
+      "impacto": "Muy alto",
+      "evidencia": [
+        "docs/REQUISITOS.md: el perfil debe ser local, pero un proveedor IA puede recibir datos externos; flujo y protección aún pendientes.",
+        "docs/planificacion-03/00-COORDINACION.md: privacidad, logs y amenazas requieren verificación."
+      ],
+      "indicadores_tempranos": [
+        "Clave visible en HTML/JS, historial del repositorio o URL del cliente.",
+        "Perfil completo o PII se envía sin aviso/consentimiento o se registra en logs.",
+        "No funciona el botón de borrar el perfil."
+      ],
+      "mitigacion": [
+        "Minimizar contexto enviado y explicar proveedor/datos antes de la llamada.",
+        "Mantener secretos en configuración del servidor; excluirlos del repo, bundle, logs y capturas.",
+        "Probar consentimiento, borrado local y flujo de red antes de publicar."
+      ],
+      "desbloqueo": [
+        "Alejandro documenta flujo de datos y verifica bundle/commit/logs; José Manuel revisa el texto visible.",
+        "Ante exposición potencial, detener publicación/rotar credencial con aprobación y corregir antes de reabrir."
+      ],
+      "responsable_propuesto": "Alejandro (controles) y José Manuel (claridad UX).",
+      "decisiones_relacionadas": ["D-05", "D-09"],
+      "contingencia_honesta": "Deshabilitar temporalmente el envío externo y comunicar que el chat no está disponible; no recopilar datos adicionales para compensar.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-07",
+      "riesgo": "La personalización o el lenguaje de la interfaz puede interpretarse como recomendación financiera profesional o idoneidad garantizada.",
+      "probabilidad": "Media",
+      "impacto": "Muy alto",
+      "evidencia": [
+        "docs/REQUISITOS.md: lenguaje/encaje normativo pendientes; tolerancia al riesgo no equivale a capacidad de pérdida.",
+        "docs/investigacion/00-SINTESIS.md: adaptar explicaciones no resuelve por sí mismo el encaje jurídico de recomendaciones personales."
+      ],
+      "indicadores_tempranos": [
+        "La UI dice «mejor para ti», «recomendado» o sugiere compra personalizada sin revisión.",
+        "La respuesta del chat confunde educación, comparación y asesoramiento.",
+        "Un interés de alto riesgo se usa como única señal de encaje."
+      ],
+      "mitigacion": [
+        "Usar filtros y comparaciones trazables con límites visibles; separar conocimientos, preferencias y capacidad económica.",
+        "Revisar textos y respuestas en QA; no declarar autorización o cumplimiento jurídico.",
+        "Acordar un vocabulario prudente y una explicación de límites antes de publicar."
+      ],
+      "desbloqueo": [
+        "José Manuel hace lectura UX y marca frases potencialmente engañosas; Alejandro añade límites de salida y trata valores desconocidos.",
+        "Si se pretende una recomendación personalizada sobre instrumentos, solicitar revisión profesional y decisión del grupo antes de esa función."
+      ],
+      "responsable_propuesto": "Ambos; asesoría profesional externa si se pretende ampliar el servicio.",
+      "decisiones_relacionadas": ["D-10"],
+      "contingencia_honesta": "Limitar la salida a información educativa/comparativa verificable y dejar la función más fuerte pendiente; no afirmar que el disclaimer resuelve la cuestión legal.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-08",
+      "riesgo": "Incumplir condiciones de reutilización de datos, licencias de código o titularidad al publicar en GitHub y Moodle.",
+      "probabilidad": "Media",
+      "impacto": "Alto",
+      "evidencia": [
+        "docs/investigacion/00-SINTESIS.md: permisos de datos y licencias de servicios deben revisarse por separado; MIT en tres repos estudiados no cubre datos ni servicios.",
+        "docs/REQUISITOS.md: licencia y titularidad del repositorio aún pendientes."
+      ],
+      "indicadores_tempranos": [
+        "Se copian código, marca o dataset sin aviso/licencia aplicable.",
+        "El README anuncia redistribución libre sin fuente o condiciones comprobadas.",
+        "Se publica el repo sin licencia aunque se presente como open source."
+      ],
+      "mitigacion": [
+        "Preferir código original y documentar toda dependencia/copia con versión, licencia y avisos.",
+        "Revisar permisos de consulta, almacenamiento y publicación para cada proveedor de datos.",
+        "Elegir licencia del proyecto junto con la titularidad antes de D6; no inventar una decisión."
+      ],
+      "desbloqueo": [
+        "Alejandro prepara inventario de dependencias/avisos; José Manuel verifica fuentes citadas y el README.",
+        "Publicar solo después de que el grupo confirme titularidad/licencia y queden incluidas las atribuciones requeridas."
+      ],
+      "responsable_propuesto": "Ambos; Alejandro mantiene inventario técnico.",
+      "decisiones_relacionadas": ["D-11"],
+      "contingencia_honesta": "Retirar componente de origen dudoso antes de publicar y dejar la licencia/permiso como pendiente; no atribuir licencias de código a datos financieros.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-09",
+      "riesgo": "No completar todos los requisitos aprobados en una semana por dependencias técnicas, disponibilidad o decisiones tardías.",
+      "probabilidad": "Alta",
+      "impacto": "Alto",
+      "evidencia": [
+        "docs/REQUISITOS.md: plazo deseado de una semana, fecha exacta y campos del catálogo no definidos; José Manuel no tiene conocimientos técnicos.",
+        "docs/DIARIO_DESARROLLO.md: no se ha construido ni desplegado la aplicación."
+      ],
+      "indicadores_tempranos": [
+        "G1, G2 o G3 sigue sin resultado al cerrar D1.",
+        "Se agregan extras antes de cerrar los DoD Must.",
+        "La validación de datos, privacidad, licencia o demo se deja para D7."
+      ],
+      "mitigacion": [
+        "Atacar los gates de D1; ejecutar en paralelo solo trabajo no dependiente.",
+        "Mantener tablero de estado por DoD: pendiente, probado con resultado, bloqueado; no usar «hecho» sin evidencia.",
+        "No añadir extras antes de aceptar Must/Should."
+      ],
+      "desbloqueo": [
+        "Reasignar validación no técnica y técnica de forma explícita sin cargar código a José Manuel.",
+        "Si una función aprobada queda incompleta, exponer el bloqueo y solicitar decisión/plazo; no recortar alcance unilateralmente."
+      ],
+      "responsable_propuesto": "Ambos; Alejandro coordina ruta técnica y José Manuel validaciones/diario/demo.",
+      "decisiones_relacionadas": ["D-01", "D-12"],
+      "contingencia_honesta": "Entregar estado real por feature y no presentar planificación, mockup o demo local como app pública terminada.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-10",
+      "riesgo": "La web pública o demo falla por red, alojamiento, configuración o dependencia del equipo local.",
+      "probabilidad": "Media",
+      "impacto": "Alto",
+      "evidencia": [
+        "docs/REQUISITOS.md: PC apagado es requisito de operación; proveedor y alojamiento están pendientes.",
+        "docs/investigacion/00-SINTESIS.md: arquitectura estática/servicio de chat es propuesta no desplegada."
+      ],
+      "indicadores_tempranos": [
+        "El sitio solo funciona en localhost o con el PC de Alejandro encendido.",
+        "No se prueba URL pública desde otro dispositivo/red antes de la demo.",
+        "La demo requiere llamadas externas sin mensaje alternativo."
+      ],
+      "mitigacion": [
+        "Separar frontend estático y chat; confirmar que el hosting elegido mantiene los assets disponibles con los equipos del grupo apagados.",
+        "Probar enlace desde otro dispositivo y registrar hora/resultado, sin confundir una prueba con garantía de disponibilidad.",
+        "Preparar un recorrido local estático etiquetado como contingencia, no sustituto de publicación."
+      ],
+      "desbloqueo": [
+        "Alejandro verifica el enlace público, configuración y recuperación; José Manuel ensaya la ruta alternativa y explica sus límites.",
+        "Si falla el hosting, corregir/reintentar con aprobación y actualizar el estado de Wiki/entrega antes de afirmar disponibilidad."
+      ],
+      "responsable_propuesto": "Alejandro (hosting) y José Manuel (ensayo y comunicación).",
+      "decisiones_relacionadas": ["D-07", "D-12"],
+      "contingencia_honesta": "Usar captura/local de respaldo identificada; decir que no es interacción en vivo ni demuestra acceso público.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-11",
+      "riesgo": "Confundir respuestas esperadas o informes aún no revisados con evidencia comprobada e integrarlos sin resolver contradicciones.",
+      "probabilidad": "Media",
+      "impacto": "Alto",
+      "evidencia": [
+        "docs/planificacion-03/00-COORDINACION.md: 16 informes adicionales están pendientes de revisión; despachar no equivale a recibir/verificar.",
+        "El mismo documento exige reproducir scripts y validar contratos antes de consolidar."
+      ],
+      "indicadores_tempranos": [
+        "Se cita como resultado un informe que no existe o no se leyó.",
+        "Un proveedor, fórmula, fuente o schema cambia por recomendación de un subagente sin aprobación del grupo.",
+        "Resultados de verificadores aislados se presentan como integración desplegada."
+      ],
+      "mitigacion": [
+        "Usar solo el estado de los informes comprobados al ejecutar D1; no esperar ni sondear los 16 frentes.",
+        "Si llega nuevo material, verificar archivo, evidencia, permisos, límites y coherencia con REQUISITOS antes de modificar decisiones.",
+        "Registrar propuesta y fuente por separado de decisión aprobada y prueba ejecutada."
+      ],
+      "desbloqueo": [
+        "Alejandro integra solo findings reproducidos que cambien una decisión; José Manuel comprueba comprensión y alcance.",
+        "Conflicto sin resolver queda explícitamente pendiente y no retrasa trabajo independiente."
+      ],
+      "responsable_propuesto": "Alejandro (auditoría técnica) y ambos (cambios de alcance).",
+      "decisiones_relacionadas": ["D-01", "D-08"],
+      "contingencia_honesta": "No afirmar que la investigación adicional está completada; conservar la última evidencia verificable y anotar el vacío.",
+      "estado": "Abierto"
+    },
+    {
+      "id": "R-12",
+      "riesgo": "La simulación de contratación se confunde con un flujo contractual real o una confirmación válida.",
+      "probabilidad": "Media",
+      "impacto": "Muy alto",
+      "evidencia": [
+        "docs/REQUISITOS.md: solo se aprueba una simulación; sin transacciones, credenciales, documentos de identidad ni pagos.",
+        "docs/planificacion-03/00-COORDINACION.md: justificante no debe parecer contrato válido."
+      ],
+      "indicadores_tempranos": [
+        "Pantallas piden DNI, datos bancarios, tarjeta o una firma real.",
+        "El botón final, PDF o mensaje afirma que se contrató un producto.",
+        "La UI no mantiene visible el rótulo de simulación."
+      ],
+      "mitigacion": [
+        "Usar datos ficticios y evitar conexión con entidad o proveedor transaccional.",
+        "Mantener el rótulo «SIMULACIÓN — no contrata» en todo el recorrido y en cualquier comprobante.",
+        "Probar el cierre con lectura UX de José Manuel."
+      ],
+      "desbloqueo": [
+        "Alejandro verifica que no existan endpoints/transacciones ni campos sensibles; José Manuel intenta interpretar el flujo como usuario.",
+        "Corregir cualquier elemento ambiguo antes de aceptar la feature."
+      ],
+      "responsable_propuesto": "Alejandro (controles técnicos) y José Manuel (UX).",
+      "decisiones_relacionadas": ["D-10"],
+      "contingencia_honesta": "Ocultar el paso ambiguo y marcar la feature bloqueada hasta aclararlo; no llamarlo contratación real ni confirmación válida.",
+      "estado": "Abierto"
+    }
+  ]
+}

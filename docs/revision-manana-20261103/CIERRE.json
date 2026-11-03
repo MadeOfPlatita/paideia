@@ -1,0 +1,19 @@
+{
+  "closure_time": "2026-11-03T11:57:51.741048+01:00",
+  "status": "partial_blocked",
+  "reason": "C independent mobile verification incomplete after final correction cycle; no third automatic cycle",
+  "C_accepted": false,
+  "A_B": "previous independent approvals retained and current frontend regression passed",
+  "qwen_small_review": "completed_no_changes",
+  "broad_audit": "not_completed_length_empty_content",
+  "qwen_source_changes_applied": false,
+  "regression_files_verified": 6,
+  "test_ports_netstat": [],
+  "ports_checked": [8765, 18871, 18872, 18873],
+  "artifacts_present": true,
+  "results": "RESULTADOS.md",
+  "demo": "GUIA-DEMO.md",
+  "qwen_contrast": "QWEN-CONTRASTE.md",
+  "remaining_automatic_tasks": [],
+  "next_step": "Human decision on a separate mobile automation diagnosis; no extension of expired missions"
+}

@@ -1,0 +1,22 @@
+{
+  "source": "deleg_4b58ad72",
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [
+    {
+      "file": "financial_quality.py",
+      "reproduction": "No es posible tener deudas, ahorrar es sin riesgo.",
+      "actual": [],
+      "expected": [
+        "ABSOLUTE_NO_RISK"
+      ]
+    }
+  ],
+  "targeted_tests": 18,
+  "new_provider_calls": 0,
+  "ports_listening": {
+    "8768": false,
+    "8769": false
+  },
+  "state": "stopped_for_approach_review_not_ready_for_groq"
+}

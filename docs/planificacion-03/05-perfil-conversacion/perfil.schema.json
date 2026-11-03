@@ -1,0 +1,693 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:paideia:perfil-educativo:1.0.0",
+  "title": "Mapa educativo local de Paideia",
+  "description": "Perfil de aprendizaje estructurado, sin identificadores ni texto libre. Un supuesto de escenario no es una respuesta ni un dato del perfil.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version_esquema",
+    "tipo",
+    "respuestas",
+    "detalle_economico",
+    "riesgo",
+    "supuestos_escenario"
+  ],
+  "properties": {
+    "version_esquema": {
+      "const": "1.0.0"
+    },
+    "tipo": {
+      "const": "mapa_educativo"
+    },
+    "respuestas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objetivo",
+        "horizonte",
+        "liquidez",
+        "experiencia"
+      ],
+      "properties": {
+        "objetivo": {
+          "$ref": "#/$defs/respuesta_objetivo"
+        },
+        "horizonte": {
+          "$ref": "#/$defs/respuesta_horizonte"
+        },
+        "liquidez": {
+          "$ref": "#/$defs/respuesta_liquidez"
+        },
+        "experiencia": {
+          "$ref": "#/$defs/respuesta_experiencia"
+        }
+      }
+    },
+    "detalle_economico": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "importe_objetivo",
+        "ingresos_netos",
+        "gastos_esenciales",
+        "deuda",
+        "colchon_liquido",
+        "compromisos_proximos"
+      ],
+      "properties": {
+        "importe_objetivo": {
+          "$ref": "#/$defs/respuesta_importe"
+        },
+        "ingresos_netos": {
+          "$ref": "#/$defs/respuesta_flujo"
+        },
+        "gastos_esenciales": {
+          "$ref": "#/$defs/respuesta_flujo"
+        },
+        "deuda": {
+          "$ref": "#/$defs/respuesta_deuda"
+        },
+        "colchon_liquido": {
+          "$ref": "#/$defs/respuesta_importe"
+        },
+        "compromisos_proximos": {
+          "$ref": "#/$defs/respuesta_compromisos"
+        }
+      }
+    },
+    "riesgo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tolerancia",
+        "capacidad_perdidas"
+      ],
+      "properties": {
+        "tolerancia": {
+          "$ref": "#/$defs/respuesta_tolerancia"
+        },
+        "capacidad_perdidas": {
+          "$ref": "#/$defs/respuesta_capacidad"
+        }
+      }
+    },
+    "supuestos_escenario": {
+      "type": "array",
+      "description": "Solo constantes o entradas explícitas de un escenario hipotético. No reutilizar como respuestas del perfil.",
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/supuesto_escenario"
+      }
+    }
+  },
+  "$defs": {
+    "respuesta_no_declarada": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "no_se"
+            }
+          },
+          "required": [
+            "estado"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "omitido"
+            }
+          },
+          "required": [
+            "estado"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "sin_preguntar"
+            }
+          },
+          "required": [
+            "estado"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "rango_eur": {
+      "type": "object",
+      "description": "Banda en euros, con límites inclusivos. max_eur=null representa una banda superior abierta.",
+      "properties": {
+        "min_eur": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_eur": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "moneda": {
+          "const": "EUR"
+        }
+      },
+      "required": [
+        "min_eur",
+        "max_eur",
+        "moneda"
+      ],
+      "additionalProperties": false,
+      "$comment": "La validación en ejecución debe exigir max_eur=null o min_eur <= max_eur y que ambos límites correspondan a una banda publicada. JSON Schema no compara dos propiedades numéricas."
+    },
+    "rango_porcentaje": {
+      "type": "object",
+      "description": "Banda de porcentaje anual expresada en puntos porcentuales; null en el máximo significa 100 %.",
+      "properties": {
+        "min_pct": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "max_pct": {
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "min_pct",
+        "max_pct"
+      ],
+      "additionalProperties": false,
+      "$comment": "La validación en ejecución debe exigir max_pct=null o min_pct <= max_pct. No convertir un dato desconocido en 0 %."
+    },
+    "flujo_eur": {
+      "type": "object",
+      "properties": {
+        "importe": {
+          "$ref": "#/$defs/rango_eur"
+        },
+        "periodicidad": {
+          "enum": [
+            "semanal",
+            "cada_14_dias",
+            "dos_veces_al_mes",
+            "mensual",
+            "anual"
+          ]
+        }
+      },
+      "required": [
+        "importe",
+        "periodicidad"
+      ],
+      "additionalProperties": false
+    },
+    "respuesta_objetivo": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "enum": [
+                "colchon_imprevistos",
+                "gasto_previsto",
+                "ahorro_largo_plazo",
+                "entender_riesgo",
+                "comparar_familias",
+                "aprender_conceptos",
+                "curiosear"
+              ]
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_horizonte": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "enum": [
+                "menos_6_meses",
+                "6_12_meses",
+                "1_3_anos",
+                "mas_3_anos",
+                "sin_fecha"
+              ]
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_liquidez": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "enum": [
+                "acceso_cualquier_momento",
+                "planificar_fecha",
+                "solo_dinero_ficticio"
+              ]
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_experiencia": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "type": "object",
+              "properties": {
+                "nivel": {
+                  "enum": [
+                    "empezando",
+                    "leido_o_comparado",
+                    "ha_tenido_alguno",
+                    "prefiere_no_contar"
+                  ]
+                },
+                "temas_interes": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "cuentas_remuneradas",
+                      "depositos",
+                      "deuda_publica",
+                      "fondos",
+                      "etf"
+                    ]
+                  },
+                  "uniqueItems": true,
+                  "maxItems": 5
+                }
+              },
+              "required": [
+                "nivel",
+                "temas_interes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_importe": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "$ref": "#/$defs/rango_eur"
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_flujo": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "$ref": "#/$defs/flujo_eur"
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_tasa": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "$ref": "#/$defs/rango_porcentaje"
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "valor_deuda": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "situacion": {
+              "const": "sin_deuda"
+            }
+          },
+          "required": [
+            "situacion"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "situacion": {
+              "const": "con_deuda"
+            },
+            "saldo_eur": {
+              "$ref": "#/$defs/respuesta_importe"
+            },
+            "cuota": {
+              "$ref": "#/$defs/respuesta_flujo"
+            },
+            "coste_anual_pct": {
+              "$ref": "#/$defs/respuesta_tasa"
+            }
+          },
+          "required": [
+            "situacion",
+            "saldo_eur",
+            "cuota",
+            "coste_anual_pct"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "respuesta_deuda": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "$ref": "#/$defs/valor_deuda"
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "valor_compromisos": {
+      "type": "object",
+      "properties": {
+        "hay_compromiso": {
+          "const": true
+        },
+        "total_eur": {
+          "$ref": "#/$defs/rango_eur"
+        },
+        "plazo": {
+          "enum": [
+            "menos_3_meses",
+            "3_6_meses",
+            "6_12_meses",
+            "fecha_no_clara"
+          ]
+        }
+      },
+      "required": [
+        "hay_compromiso",
+        "total_eur",
+        "plazo"
+      ],
+      "additionalProperties": false
+    },
+    "respuesta_compromisos": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "$ref": "#/$defs/valor_compromisos"
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "type": "object",
+              "properties": {
+                "hay_compromiso": {
+                  "const": false
+                }
+              },
+              "required": [
+                "hay_compromiso"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_tolerancia": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "enum": [
+                "preferiria_salir",
+                "esperaria_con_inquietud",
+                "podria_esperar_aceptando_caidas"
+              ]
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "respuesta_capacidad": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "estado": {
+              "const": "declarado"
+            },
+            "valor": {
+              "type": "object",
+              "properties": {
+                "escenario_id": {
+                  "const": "caida_100_de_1000"
+                },
+                "impacto": {
+                  "enum": [
+                    "sin_cambio_en_necesidad_o_meta",
+                    "retrasaria_o_reduciria_meta",
+                    "afectaria_gasto_esencial_o_compromiso"
+                  ]
+                }
+              },
+              "required": [
+                "escenario_id",
+                "impacto"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "estado",
+            "valor"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/respuesta_no_declarada"
+        }
+      ]
+    },
+    "supuesto_escenario": {
+      "type": "object",
+      "properties": {
+        "campo": {
+          "enum": [
+            "capital_inicial",
+            "aportacion_periodica",
+            "horizonte_meses",
+            "tipo_hipotetico_anual"
+          ]
+        },
+        "valor": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unidad": {
+          "enum": [
+            "EUR",
+            "meses",
+            "porcentaje_anual"
+          ]
+        },
+        "origen": {
+          "enum": [
+            "valor_didactico_pai",
+            "entrada_escenario_usuario"
+          ]
+        },
+        "confirmado_por_usuario": {
+          "type": "boolean"
+        },
+        "hipotetico": {
+          "const": true
+        },
+        "revisado_en_pantalla": {
+          "const": true
+        },
+        "no_es_dato_del_perfil": {
+          "const": true
+        }
+      },
+      "required": [
+        "campo",
+        "valor",
+        "unidad",
+        "origen",
+        "confirmado_por_usuario",
+        "hipotetico",
+        "revisado_en_pantalla",
+        "no_es_dato_del_perfil"
+      ],
+      "additionalProperties": false,
+      "$comment": "La validación en ejecución debe impedir más de un supuesto por campo y exigir unidad compatible con campo. No copiar estos valores a respuestas ni a un cálculo de idoneidad."
+    }
+  }
+}

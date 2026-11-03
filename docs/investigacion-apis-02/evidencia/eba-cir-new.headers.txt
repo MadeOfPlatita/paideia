@@ -1,0 +1,4 @@
+status=200
+content-type=text/html
+url=https://euclid.eba.europa.eu/register/cir/disclaimer
+bytes_saved=685

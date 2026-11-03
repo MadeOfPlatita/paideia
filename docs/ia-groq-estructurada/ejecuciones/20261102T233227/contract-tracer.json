@@ -1,0 +1,5 @@
+{
+  "output": "{\"tracer\": \"contract only, no network\", \"direct_result_rejected\": true, \"render_forces_fake_provenance\": true, \"builder_model\": \"openai/gpt-oss-20b\", \"builder_tokens\": 256, \"next_required\": \"pure result parser and trusted metadata before real structured session assembly\"}",
+  "exit_code": 0,
+  "error": null
+}

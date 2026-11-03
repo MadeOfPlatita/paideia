@@ -1,0 +1,4 @@
+status=200
+content-type=application/json
+url=https://api.gleif.org/api/v1/lei-records?filter%5Blei%5D=HWUPKR0MPOU8FGXBT394&page%5Bsize%5D=1
+bytes_saved=3460

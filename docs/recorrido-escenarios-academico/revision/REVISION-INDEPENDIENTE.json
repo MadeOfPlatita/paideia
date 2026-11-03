@@ -1,0 +1,21 @@
+{
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [
+    {
+      "severity": "media",
+      "title": "La guía Guardar desplaza pero no traslada foco al área de acciones",
+      "location": "static/app.js:1681-1685",
+      "reproduction": "Con ambos escenarios actualizados, enfocar el enlace Guardar, pulsar Enter y luego Tab. El hash sigue #escenarios pero el foco pasa al capital inicial A y el navegador vuelve al formulario, no al control Descargar informe.",
+      "expected": "El recorrido de teclado debe alcanzar el área de guardado sin perder la ruta; el enlace no debe dejar el foco en la guía.",
+      "evidence": "teclado.json"
+    }
+  ],
+  "verification_blockers": [
+    "No se ha probado impresión real ni PDF; la impresión se simula o desactiva mediante guardia.",
+    "No se ha realizado una auditoría completa de accesibilidad ni de seguridad."
+  ],
+  "scope": "recorrido académico; no aprobación global",
+  "evidence": "evidence.json",
+  "download_verified": true
+}

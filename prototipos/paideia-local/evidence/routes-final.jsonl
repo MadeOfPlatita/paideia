@@ -1,0 +1,16 @@
+{"route": "#inicio", "viewport": 390, "scrollWidth": 390, "title": "Tu ruta, a tu ritmo", "errors": [], "size": "mobile", "passed": true}
+{"route": "#perfil", "viewport": 390, "scrollWidth": 390, "title": "Tu mapa para explorar", "errors": [], "size": "mobile", "passed": true}
+{"route": "#biblioteca", "viewport": 390, "scrollWidth": 390, "title": "Biblioteca de candidatos", "errors": [], "size": "mobile", "passed": true}
+{"route": "#comparar", "viewport": 390, "scrollWidth": 390, "title": "Comparar candidatos", "errors": [], "size": "mobile", "passed": true}
+{"route": "#escenarios", "viewport": 390, "scrollWidth": 390, "title": "Prueba otros supuestos", "errors": [], "size": "mobile", "passed": true}
+{"route": "#simulacion", "viewport": 390, "scrollWidth": 390, "title": "Ensayo de una decisión", "errors": [], "size": "mobile", "passed": true}
+{"route": "#glosario", "viewport": 390, "scrollWidth": 390, "title": "Un glosario para leer con calma", "errors": [], "size": "mobile", "passed": true}
+{"route": "#privacidad", "viewport": 390, "scrollWidth": 390, "title": "Tu perfil y tu alcance", "errors": [], "size": "mobile", "passed": true}
+{"route": "#inicio", "viewport": 1440, "scrollWidth": 1440, "title": "Tu ruta, a tu ritmo", "errors": [], "size": "desktop", "passed": true}
+{"route": "#perfil", "viewport": 1440, "scrollWidth": 1440, "title": "Tu mapa para explorar", "errors": [], "size": "desktop", "passed": true}
+{"route": "#biblioteca", "viewport": 1425, "scrollWidth": 1425, "title": "Biblioteca de candidatos", "errors": [], "size": "desktop", "passed": true}
+{"route": "#comparar", "viewport": 1425, "scrollWidth": 1425, "title": "Comparar candidatos", "errors": [], "size": "desktop", "passed": true}
+{"route": "#escenarios", "viewport": 1425, "scrollWidth": 1425, "title": "Prueba otros supuestos", "errors": [], "size": "desktop", "passed": true}
+{"route": "#simulacion", "viewport": 1425, "scrollWidth": 1425, "title": "Ensayo de una decisión", "errors": [], "size": "desktop", "passed": true}
+{"route": "#glosario", "viewport": 1425, "scrollWidth": 1425, "title": "Un glosario para leer con calma", "errors": [], "size": "desktop", "passed": true}
+{"route": "#privacidad", "viewport": 1425, "scrollWidth": 1425, "title": "Tu perfil y tu alcance", "errors": [], "size": "desktop", "passed": true}

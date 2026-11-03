@@ -1,0 +1,116 @@
+{
+  "estado": "propuesta_tecnica_no_aprobada",
+  "base_documental": {
+    "requisitos": "docs/REQUISITOS.md",
+    "planes": "docs/planificacion-03/01-16",
+    "revision_parcial": "docs/planificacion-03/00-REVISION-PARCIAL.md",
+    "fecha_corte_documental": "2026-10-26",
+    "ronda_apis_02": "pendiente_no_revisada",
+    "contratos_json": "auditados_por_otro_agente_no_repetir"
+  },
+  "defaults_tecnicos": [
+    {
+      "id": "DEF-01",
+      "area": "chat_llm",
+      "default": "LLM_real_obligatorio_para_aceptar_chat; gateway_de_servidor; sin_stub_presentado_como_IA",
+      "hasta_aprobacion": "chat_bloqueado_con_estado_visible; catalogo_calculos_y_contenido_estatico_siguen_disponibles",
+      "degradacion": "no_respuesta_determinista_que_pretenda_ser_generada_por_LLM",
+      "costo": "0_EUR; sin_pago_automatico; smoke_solo_con_cuota_gratuita_comprobada_y_autorizacion_explicita"
+    },
+    {
+      "id": "DEF-02",
+      "area": "catalogo_y_base_de_datos",
+      "default": "snapshot_JSON_versionado_de_solo_lectura_para_servir_catalogo_publico",
+      "postgresql": "mantener_como_opcion_detras_de_interfaz_de_repositorio; usar_local_para_preparacion_si_aporta_valor; DB_cloud_solo_tras_necesidad_y_aprobacion",
+      "restricciones": ["sin_perfil_usuario_en_DB", "sin_conexion_directa_modelo_DB", "sin_exigir_PostgreSQL_cloud_para_demo"]
+    },
+    {
+      "id": "DEF-03",
+      "area": "tools_llm",
+      "default": "allowlist_cerrada_de_busqueda_detalle_comparacion_fuentes_y_calculo_determinista",
+      "ejecucion": "backend_dispatch; schemas_y_semantica_validados; consultas_predefinidas_parametrizadas",
+      "limite": "maximo_un_ciclo_tool_por_turno; recalcular_presupuesto_de_tokens_y_llamadas",
+      "prohibido": ["SQL_libre", "URL_o_fetch_arbitrario", "shell", "filesystem", "escrituras", "pagos", "compras", "contratacion_real", "cambios_de_catalogo"]
+    },
+    {
+      "id": "DEF-04",
+      "area": "perfil_y_contexto",
+      "default": "perfil_en_memoria_local; persistencia_en_dispositivo_solo_opt_in_y_borrable; selector_educativo_local",
+      "transmision": "no_adjuntar_perfil_ni_historial_automaticamente; mostrar_vista_previa_y_seleccion_por_peticion",
+      "campos_financieros": "no_enviar_por_defecto; habilitar_solo_tras_decision_del_grupo_y_revision_del_proveedor_y_privacidad"
+    },
+    {
+      "id": "DEF-05",
+      "area": "fuentes_y_productos",
+      "default": "proveniencia_estado_y_fechas_por_campo_y_por_accion_de_uso",
+      "unknown": "evidencia_insuficiente_en_esta_revision; no_equivale_a_inexistencia_o_prohibicion_universal",
+      "publicacion": "no_publicar_el_campo_y_uso_mientras_el_permiso_no_este_aclarado; no_inventar_valor_o_fuente",
+      "simulacion": "hechos_de_producto_real_mantienen_fuente_y_estado; importes_y_operacion_son_ficticios; nunca_ejecutar_transacciones"
+    },
+    {
+      "id": "DEF-06",
+      "area": "capacidad_y_rate_limit",
+      "default": "cuota_efimera_por_sesion_mas_techo_global_y_cola_justa",
+      "ip_nat": "IP_solo_senal_secundaria; no_cuota_dura_por_IP_compartida",
+      "afirmaciones": "sin_promesa_de_100_respuestas_LLM_hasta_prueba_independiente; separar_frontend_catalogo_stub_y_proveedor_real",
+      "reintentos": "ningun_retry_automatico_de_LLM; stop_ante_429_o_costo; funciones_no_IA_no_dependen_del_chat"
+    },
+    {
+      "id": "DEF-07",
+      "area": "graficos_y_pdf",
+      "default": "SVG_simple_mas_tabla_HTML_accesible",
+      "pdf": "print_CSS_y_vista_HTML_primero; exportacion_pdf_opcional_y_diferible",
+      "dependencias": "no_anadir_Chart_js_ECharts_o_jsPDF_sin_necesidad_probada_y_revision_de_licencia"
+    },
+    {
+      "id": "DEF-08",
+      "area": "alcance_y_plazo",
+      "default": "PLAN_D1_D7_es_ruta_condicional_no_garantia_de_entrega",
+      "bloqueos": "si_datos_proveedor_permisos_o_pruebas_no_pasan_registrar_feature_bloqueada_y_pedir_cambio_explicito",
+      "prohibido": "no_reducir_silenciosamente_requisitos_ni_contar_simulacion_determinista_como_chat_real"
+    }
+  ],
+  "decisiones_usuario_pendientes": [
+    {
+      "id": "USR-01",
+      "tema": "transmision_de_contexto_financiero",
+      "default_tecnico": "no_enviar_datos_financieros_al_LLM; vista_previa_y_campos_seleccionados_por_peticion",
+      "decision": "autorizar_o_no_la_transmision_de_campos_financieros_seleccionados_tras_informacion_del_proveedor",
+      "impacto": "personalizacion_externa_del_chat_y_privacidad"
+    },
+    {
+      "id": "USR-02",
+      "tema": "proveedor_LLM_y_cero_euros",
+      "default_tecnico": "no_activar_servicio_que_requiera_pago_o_tarjeta_no_aprobada; chat_real_bloqueado_si_no_hay_opcion_publica_aceptable",
+      "decision": "si_se_mantiene_estrictamente_cero_euros_y_que_hacer_si_ningun_proveedor_elegible_lo_cumple",
+      "impacto": "disponibilidad_del_chat_y_creacion_de_cuentas"
+    },
+    {
+      "id": "USR-03",
+      "tema": "cobertura_minima_de_productos_reales",
+      "default_tecnico": "sin_productos_o_campos_sinteticos_presentados_como_reales; cobertura_y_faltantes_explicitos",
+      "decision": "objetivo_inicial_medible_para_las_cinco_familias_y_aceptacion_de_bloqueos_por_fuente_o_permiso",
+      "impacto": "alcance_de_catalogo_y_demo"
+    },
+    {
+      "id": "USR-04",
+      "tema": "capacidad_para_100_usuarios",
+      "default_tecnico": "no_prometer_100_respuestas_LLM; degradacion_visible_y_funciones_estaticas_independientes",
+      "decision": "si_la_invitacion_publica_exige_evidencia_de_100_usuarios_por_capa_o_se_acepta_chat_best_effort_limitado",
+      "impacto": "criterio_de_publicacion_y_expectativas_de_la_clase"
+    },
+    {
+      "id": "USR-05",
+      "tema": "publicacion_open_source",
+      "default_tecnico": "no_publicar_repositorio_como_open_source_hasta_confirmar_titularidad_y_licencia",
+      "decision": "titularidad_de_contribuciones_y_licencia_del_codigo_propio",
+      "impacto": "derechos_de_autor_y_publicacion"
+    }
+  ],
+  "limites": [
+    "No_es_dictamen_juridico_ni_garantia_de_legalidad",
+    "No_se_consulto_red_ni_se_hicieron_pruebas_de_proveedor_cuentas_DB_o_despliegue",
+    "No_se_reviso_investigacion_APIs_02_porque_sigue_pendiente",
+    "No_se_afirma_que_una_fuente_o_permiso_no_exista_por_no_haberse_localizado_en_una_revision"
+  ]
+}

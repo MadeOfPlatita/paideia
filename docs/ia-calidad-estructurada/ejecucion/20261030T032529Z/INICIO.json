@@ -1,0 +1,16 @@
+{
+  "started_utc": "2026-10-30T03:25:29.742477+00:00",
+  "cutoff_utc": "2026-10-30T07:00:00+00:00",
+  "ports_listening": {
+    "8765": false,
+    "8768": false,
+    "8769": false
+  },
+  "baseline_targeted": {
+    "output": "test_prefix_denial_does_not_become_a_risk_free_promise (test_financial_quality_known_gap.KnownNegationGapTests.test_prefix_denial_does_not_become_a_risk_free_promise) ... ok\r\ntest_unrelated_prefix_denial_does_not_hide_comma_separated_assertion (test_financial_quality_known_gap.KnownNegationGapTests.test_unrelated_prefix_denial_does_not_hide_comma_separated_assertion) ... FAIL\r\n\r\n======================================================================\r\nFAIL: test_unrelated_prefix_denial_does_not_hide_comma_separated_assertion (test_financial_quality_known_gap.KnownNegationGapTests.test_unrelated_prefix_denial_does_not_hide_comma_separated_assertion)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\Users\\aleja\\Downloads\\App Financiera\\prototipos\\paideia-local\\tests\\test_financial_quality_known_gap.py\", line 12, in test_unrelated_prefix_denial_does_not_hide_comma_separated_assertion\r\n    self.assertEqual(\r\nAssertionError: Tuples differ: () != ('ABSOLUTE_NO_RISK',)\r\n\r\nSecond tuple contains 1 additional elements.\r\nFirst extra element 0:\r\n'ABSOLUTE_NO_RISK'\r\n\r\n- ()\r\n+ ('ABSOLUTE_NO_RISK',)\r\n\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.001s\r\n\r\nFAILED (failures=1)",
+    "exit_code": 1,
+    "error": null
+  },
+  "provider_calls_allowed": 0,
+  "mission_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\IA-CALIDAD-OVERNIGHT-GOAL.md"
+}

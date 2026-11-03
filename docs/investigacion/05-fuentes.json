@@ -1,0 +1,198 @@
+[
+  {
+    "url": "https://developers.cloudflare.com/workers/platform/limits",
+    "title": "Cloudflare Workers limits",
+    "claim": "Workers Free permite 100.000 solicitudes dinámicas al día y 10 ms de CPU por petición HTTP; Cloudflare dice que escala y no fija un límite general de solicitudes por segundo, pero eso no es una prueba de 100 chats concurrentes.",
+    "evidence": "Workers scale automatically across the Cloudflare global network. There is no general limit on requests per second. Accounts on the Workers Free plan have a daily request limit of 100,000 requests, resetting at midnight UTC. | Requests | 100,000/day | No limit | | CPU time per HTTP request | 10 ms | 5 min (default: 30 seconds) | | CPU time per Cron Trigger | 10 ms | 30 seconds (< 1 hour interval) 15 min (>= 1 hour interval) | | Number of Cron Triggers per account | 5 | 250 |",
+    "verification": "Documentación primaria leída el 2026-10-26. La cuota diaria y el tiempo de CPU son explícitos; la página no publica una garantía de rendimiento para Paideia ni una cuota de concurrencia para el modelo."
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers/platform/pricing",
+    "title": "Cloudflare Workers pricing",
+    "claim": "Workers Paid cuesta como mínimo 5 USD al mes por cuenta; para mantener el gasto en cero se debe permanecer en Workers Free y no activar el plan de pago.",
+    "evidence": "The Workers Paid plan includes Workers, Pages Functions, Workers KV, Hyperdrive, and Durable Objects usage for a minimum charge of $5 USD per month for an account.",
+    "verification": "Página oficial de precios leída el 2026-10-26; se cita el precio mínimo publicado, no se ha cambiado ningún plan."
+  },
+  {
+    "url": "https://developers.cloudflare.com/pages/platform/limits",
+    "title": "Cloudflare Pages limits",
+    "claim": "Pages Free admite 500 builds al mes, un build simultáneo, 20.000 archivos y 25 MiB por archivo; al actualizar el repositorio Pages construye y despliega el sitio.",
+    "evidence": "Each time you push new code to your Git repository, Pages will build and deploy your site. Builds | 1 build at a time | 5 concurrent builds | 20 concurrent builds | Builds per month | 500. Pages sites can contain up to 20,000 files on the Free plan. The maximum file size for a single Cloudflare Pages site asset is 25 MiB.",
+    "verification": "Documentación primaria Cloudflare Pages leída el 2026-10-26; límites de build y archivos están en la tabla de Free."
+  },
+  {
+    "url": "https://developers.cloudflare.com/pages/functions/pricing",
+    "title": "Cloudflare Pages Functions pricing",
+    "claim": "Las solicitudes a assets estáticos de Pages son gratuitas e ilimitadas; las Pages Functions consumen la cuota diaria de Workers Free.",
+    "evidence": "On both free and paid plans, requests to static assets are free and unlimited. A request is considered static when it does not invoke Functions. Requests to your Pages Functions count towards your quota for the Workers Free plan.",
+    "verification": "Página oficial de precios de Pages Functions leída el 2026-10-26; diferencia explícita entre rutas estáticas y dinámicas."
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers/configuration/cron-triggers",
+    "title": "Cloudflare Cron Triggers",
+    "claim": "Los Cron Triggers ejecutan un handler programado en UTC y pueden llamar APIs de terceros; la cuota de CPU de una ejecución Cron Free es 10 ms y el máximo es cinco triggers por cuenta Free (estos dos límites constan en Workers Limits).",
+    "evidence": "Cron Triggers allow users to map a cron expression to a scheduled() handler that enables Workers to be executed on a schedule. Cron Triggers are ideal for running periodic jobs, such as for maintenance or calling third-party APIs to collect up-to-date data. Cron Triggers execute on UTC time.",
+    "verification": "Documentación primaria de Cron leída el 2026-10-26; los límites de CPU y número de triggers se verificaron por separado en la página oficial de Workers Limits."
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers-ai/platform/pricing",
+    "title": "Cloudflare Workers AI pricing",
+    "claim": "Workers AI incluye 10.000 Neurons por día sin coste; el contador reinicia a las 00:00 UTC y, en Free, sobrepasar la asignación hace fallar las operaciones posteriores.",
+    "evidence": "Our free allocation allows anyone to use a total of 10,000 Neurons per day at no charge. All limits reset daily at 00:00 UTC. If you exceed any one of the above limits, further operations will fail with an error.",
+    "verification": "Documentación primaria de precios de Workers AI leída el 2026-10-26; cuota diaria y comportamiento al excederla explícitos."
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers-ai/platform/limits",
+    "title": "Cloudflare Workers AI limits",
+    "claim": "La página publica un límite predeterminado de 300 solicitudes por minuto para generación de texto, salvo modelos que requieren Workers Paid; no establece una capacidad de ejecuciones simultáneas ni una latencia garantizada.",
+    "evidence": "300 requests per minute, unless the model requires the Workers Paid plan. Rate limits are default per task type, with some per-model limits defined as follows.",
+    "verification": "Límites oficiales de Workers AI leídos el 2026-10-26; se comprobó el valor de generación de texto y que hay excepciones por modelo."
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers/configuration/secrets",
+    "title": "Cloudflare Workers Secrets",
+    "claim": "Una clave de proveedor externo debe guardarse como Secret del Worker, no en el JavaScript público; Cloudflare indica que el valor queda oculto en Wrangler y en el dashboard.",
+    "evidence": "This secret will be made available to your Worker but the value will be hidden in Wrangler and the dashboard.",
+    "verification": "Documentación primaria de Secrets leída el 2026-10-26; la ocultación del valor y el acceso desde el Worker están descritos."
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit",
+    "title": "Cloudflare Workers Rate Limiting API",
+    "claim": "El limiter nativo es aproximado y separado por ubicación Cloudflare; puede dejar pasar solicitudes por encima del umbral. Para un límite global estricto, Cloudflare remite a Durable Objects. La documentación desaconseja usar IP como identidad única por usuarios detrás de NAT.",
+    "evidence": "Rate limits are approximate and apply separately in each Cloudflare location. Requests can exceed your configured limit while counts update in the background. For a strict limit across locations, refer to Strict limits. It is not recommended to use IP addresses or locations (regions or countries), since they can be shared by many users in many valid cases.",
+    "verification": "Documentación primaria de Rate Limiting leída el 2026-10-26; se revisaron secciones Accuracy, Locality y Strict limits. La página no publica una cuota o precio independiente del binding."
+  },
+  {
+    "url": "https://developers.cloudflare.com/durable-objects/platform/pricing",
+    "title": "Cloudflare Durable Objects pricing",
+    "claim": "Workers Free permite Durable Objects con almacenamiento SQLite: 100.000 solicitudes y 13.000 GB-s al día; las lecturas/escrituras/storage SQLite comparten cuotas D1. Para un contador global estricto, sigue siendo necesario probar el hot key y su latencia.",
+    "evidence": "Requests | 100,000 / day. Duration | 13,000 GB-s / day. Workers Free plan can only create and access SQLite-backed Durable Objects.",
+    "verification": "Precios y límites oficiales de Durable Objects leídos el 2026-10-26; la opción gratuita es solo backend SQLite."
+  },
+  {
+    "url": "https://developers.cloudflare.com/kv/platform/pricing",
+    "title": "Cloudflare Workers KV pricing",
+    "claim": "KV Free permite 100.000 lecturas, 1.000 escrituras y 1 GB almacenado; los topes gratuitos reinician diariamente a las 00:00 UTC.",
+    "evidence": "Keys read | 100,000 / day. Keys written | 1,000 / day. Stored data | 1 GB. All limits reset daily at 00:00 UTC.",
+    "verification": "Página oficial de precios de KV leída el 2026-10-26; tabla Free y nota de reinicio verificadas."
+  },
+  {
+    "url": "https://developers.cloudflare.com/kv/concepts/how-kv-works",
+    "title": "How Cloudflare KV works",
+    "claim": "KV es adecuado para lecturas compartidas y frecuentes con pocas escrituras, pero es eventualmente consistente: cambios pueden tardar 60 segundos o más en otras ubicaciones.",
+    "evidence": "KV is optimized for high-read applications. It stores data centrally and uses a hybrid push/pull-based replication to store data in cache. Changes may take up to 60 seconds or more to be visible in other global network locations.",
+    "verification": "Documentación primaria de KV leída el 2026-10-26; se revisaron Guidance, Performance y Consistency."
+  },
+  {
+    "url": "https://developers.cloudflare.com/d1/platform/pricing",
+    "title": "Cloudflare D1 pricing",
+    "claim": "D1 Free permite 5 millones de filas leídas al día, 100.000 escritas al día y 5 GB de almacenamiento total; superar límites diarios bloquea consultas hasta el reinicio.",
+    "evidence": "Rows read | 5 million / day. Rows written | 100,000 / day. Storage (per GB stored) | 5 GB (total). Free limits reset daily at 00:00 UTC. When your account hits the daily read and/or write limits, you will not be able to run queries against D1.",
+    "verification": "Página oficial de precios de D1 leída el 2026-10-26; valores de cuota y reinicio UTC verificados."
+  },
+  {
+    "url": "https://developers.cloudflare.com/d1/platform/limits",
+    "title": "Cloudflare D1 limits",
+    "claim": "Una base D1 individual es single-threaded y procesa consultas de una en una; no es la elección por defecto para resolver un hotspot de chat concurrente sin benchmark.",
+    "evidence": "Each individual D1 database is inherently single-threaded, and processes queries one at a time.",
+    "verification": "Página oficial de límites D1, actualizada el 2026-10-24 y leída el 2026-10-26; la frase aparece en Concurrency and throughput."
+  },
+  {
+    "url": "https://developers.cloudflare.com/turnstile/plans",
+    "title": "Cloudflare Turnstile plans",
+    "claim": "Turnstile Free cuesta 0 USD, permite hasta 20 widgets por cuenta y desafíos/verificaciones ilimitados.",
+    "evidence": "Pricing | Free. Number of widgets | Up to 20 widgets. Unlimited challenges (traffic or verification requests) | Yes.",
+    "verification": "Página oficial de planes de Turnstile leída el 2026-10-26; la tabla Free y sus límites están explícitos."
+  },
+  {
+    "url": "https://developers.cloudflare.com/turnstile/get-started/server-side-validation",
+    "title": "Cloudflare Turnstile server-side validation",
+    "claim": "La validación en servidor es obligatoria; el token dura 300 segundos y solo se puede validar una vez.",
+    "evidence": "You must call the Siteverify API to complete your Turnstile implementation. The client-side widget alone does not protect your forms. Each token is valid for 300 seconds (5 minutes) after generation. Tokens are single-use.",
+    "verification": "Documentación primaria de Siteverify leída el 2026-10-26; recomendación, validez y uso único están explícitos."
+  },
+  {
+    "url": "https://vercel.com/docs/plans/hobby",
+    "title": "Vercel Hobby plan",
+    "claim": "Vercel Hobby es gratuito y publica asignaciones mensuales de 100 GB de transferencia rápida y 1 millón de invocaciones de Functions; el sobreconsumo normalmente exige esperar 30 días.",
+    "evidence": "The Hobby plan is free and aimed at developers with personal projects, and small-scale applications. Fast Data Transfer | First 100 GB. Function Invocations | First 1,000,000. As the Hobby plan is a free tier there are no billing cycles. In most cases, if you exceed your usage limits on the Hobby plan, you will have to wait until 30 days have passed before you can use the feature again.",
+    "verification": "Página oficial de Vercel Hobby leída el 2026-10-26; cuotas copiadas de la tabla de uso incluido."
+  },
+  {
+    "url": "https://vercel.com/docs/limits/fair-use-guidelines",
+    "title": "Vercel Fair Use Guidelines",
+    "claim": "Hobby se restringe a uso personal no comercial; la guía también enumera el load testing sin autorización entre usos no permitidos.",
+    "evidence": "Hobby teams are restricted to non-commercial personal use only. Load Testing without authorization.",
+    "verification": "Guía oficial de uso justo, actualizada el 2026-07-29 y leída el 2026-10-26; no se interpreta aquí si el proyecto académico cumple la condición."
+  },
+  {
+    "url": "https://vercel.com/docs/cron-jobs/usage-and-pricing",
+    "title": "Vercel Cron Jobs usage and pricing",
+    "claim": "Vercel Hobby admite cron una vez al día, con precisión horaria de ±59 minutos; cron invoca Functions y comparte sus límites.",
+    "evidence": "Hobby | 100 cron jobs | Once per day | Per-hour (±59 min). Cron jobs invoke Vercel Functions. This means the same usage and pricing limits will apply.",
+    "verification": "Página oficial consultada en navegador el 2026-10-26; la tabla y las restricciones de Hobby se verificaron en vivo."
+  },
+  {
+    "url": "https://vercel.com/docs/functions/limitations",
+    "title": "Vercel Functions limitations",
+    "claim": "Vercel declara autoescalado de Functions hasta 30.000 concurrencias en Hobby y Pro, pero eso no prueba el rendimiento extremo a extremo del proveedor LLM.",
+    "evidence": "Concurrency | Auto-scales up to 30,000 (Hobby and Pro) or 100,000+ (Enterprise) concurrency.",
+    "verification": "Documentación oficial de límites de Functions leída el 2026-10-26; es un límite publicado de plataforma, no una medición de Paideia."
+  },
+  {
+    "url": "https://docs.netlify.com/build/functions/scheduled-functions",
+    "title": "Netlify Scheduled Functions",
+    "claim": "Las Scheduled Functions están disponibles en todos los planes, pero cada ejecución programada tiene límite de 30 segundos.",
+    "evidence": "Pricing Information: This feature is available on all pricing plans. Scheduled functions have a 30 second execution limit.",
+    "verification": "Documentación oficial de Netlify leída el 2026-10-26; precio del feature y limitación copiados de la página."
+  },
+  {
+    "url": "https://www.netlify.com/pricing",
+    "title": "Netlify plans and pricing",
+    "claim": "Netlify Free anuncia 300 créditos al mes y precio 0 USD.",
+    "evidence": "Free — $0 forever. Credits: 300 credit limit.",
+    "verification": "Página oficial de precios Netlify leída el 2026-10-26; se considera el plan credit-based actual, no el legacy plan."
+  },
+  {
+    "url": "https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work",
+    "title": "Netlify credit usage",
+    "claim": "Netlify cuenta 15 créditos por despliegue de producción, 10 créditos/GB-hora de cómputo, 2 créditos/10.000 peticiones y 20 créditos/GB de ancho de banda; al agotarse la asignación mensual Free los proyectos se pausan.",
+    "evidence": "Production deploys | 15 credits each. Compute | 10 credits per GB-hour. Bandwidth | 20 credits per GB. Web requests | 2 credits per 10,000 requests. Once your credit balance is completely used up, all of your web projects (sites/apps) are paused.",
+    "verification": "Documentación oficial de créditos Netlify leída el 2026-10-26; medidores y pausa por agotamiento verificados. Cálculo derivado: 30 despliegues diarios de producción al mes consumen 450 créditos."
+  },
+  {
+    "url": "https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits",
+    "title": "GitHub Pages limits",
+    "claim": "GitHub Pages tiene un límite blando de 100 GB/mes y puede aplicar rate limits; sus términos dicen que no está destinado ni permitido como hosting gratuito de un servicio cuya finalidad principal sea ofrecer SaaS comercial.",
+    "evidence": "GitHub Pages sites have a soft bandwidth limit of 100 GB per month. GitHub Pages is not intended for or allowed to be used as a free web-hosting service to run your online business, e-commerce site, or any other website that is primarily directed at either facilitating commercial transactions or providing commercial software as a service (SaaS).",
+    "verification": "Documentación oficial GitHub Pages leída el 2026-10-26; límites y política citados textualmente."
+  },
+  {
+    "url": "https://docs.github.com/en/actions/reference/usage-limits-billing-and-administration",
+    "title": "GitHub Actions usage and billing",
+    "claim": "Los runners standard alojados por GitHub son gratuitos e ilimitados para repositorios públicos; en repositorios privados dependen de la asignación del plan.",
+    "evidence": "GitHub Actions usage is free for standard GitHub-hosted runners in public repositories, and for self-hosted runners. For private repositories, each GitHub account receives a quota of free minutes and storage for use with GitHub-hosted runners, depending on the account's plan. Any usage beyond the included amounts is billed to your account.",
+    "verification": "Documentación oficial de billing de Actions leída el 2026-10-26; se distingue explícitamente público frente a privado."
+  },
+  {
+    "url": "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows",
+    "title": "GitHub Actions scheduled workflow events",
+    "claim": "GitHub avisa que `schedule` puede retrasarse o perder ejecuciones en picos de carga y que en repositorios públicos se deshabilita tras 60 días sin actividad del repositorio.",
+    "evidence": "The schedule event can be delayed during periods of high loads of GitHub Actions workflow runs. High load times include the start of every hour. If the load is sufficiently high enough, some queued jobs may be dropped. In a public repository, scheduled workflows are automatically disabled when no repository activity has occurred in 60 days.",
+    "verification": "Página oficial Events that trigger workflows leída en navegador el 2026-10-26; se inspeccionó la sección schedule."
+  },
+  {
+    "url": "https://supabase.com/pricing",
+    "title": "Supabase pricing",
+    "claim": "Supabase Free publica 50.000 MAU, 500 MB de base de datos, 5 GB de egress y pausa de proyectos por inactividad de una semana; MAU no equivale a concurrencia instantánea.",
+    "evidence": "50,000 monthly active users. 500 MB database size. 5 GB egress. Free projects are paused after 1 week of inactivity.",
+    "verification": "Página oficial de precios Supabase leída el 2026-10-26; cuotas actuales copiadas. La página no presenta MAU como una métrica de simultaneidad."
+  },
+  {
+    "url": "https://supabase.com/docs/guides/platform/free-project-pausing",
+    "title": "Supabase Free project pausing",
+    "claim": "Supabase pausa proyectos Free que muestran actividad insuficiente durante siete días.",
+    "evidence": "Supabase pauses Free Plan projects that show low activity over a 7-day period to save server resources.",
+    "verification": "Documentación oficial de pausa de proyectos leída el 2026-10-26; comportamiento por inactividad verificado."
+  }
+]

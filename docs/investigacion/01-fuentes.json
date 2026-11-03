@@ -1,0 +1,198 @@
+[
+  {
+    "url": "https://www.bde.es/webbe/es/estadisticas/recursos/api-estadisticas-bde.html",
+    "title": "Servicio web de Estadísticas (API) - Banco de España",
+    "claim": "El Banco de España documenta una API JSON para consultar series estadísticas, con metadatos y frecuencias. No es una API de ofertas bancarias individuales.",
+    "evidence": "El servicio web JSON (JavaScript Object Notation) ... permite acceder mediante peticiones URL a toda la información disponible tanto en la sección de Estadísticas del Banco de España como en la aplicación HERMES. La documentación define codFrecuencia D: diaria, M: mensual, Q: trimestral, A: anual.",
+    "verification": "Documentación oficial extraída el 2026-10-26. La página muestra formatos/endpoints estadísticos; no detalla cuotas o licencia de reutilización."
+  },
+  {
+    "url": "https://app.bde.es/bierest/resources/srdatosapp/favoritas?idioma=es&series=DN_1TI1T0010,DN_1TI2T0026",
+    "title": "Respuesta API BDE: tipos medios agregados de depósitos",
+    "claim": "La API entrega TEDR mensual para categorías agregadas de depósitos de hogares e ISFLSH, no condiciones de una oferta bancaria concreta.",
+    "evidence": "\"descripcionCorta\": \"TEDR. Depósitos de hogares e ISFLSH. De 1 a 2 años\", \"codFrecuencia\": \"M\", \"fechaValor\": \"2026-08-01T08:15:00Z\", \"valor\": 2.15",
+    "verification": "Comprobado en endpoint público el 2026-10-26 mediante GET anónimo: HTTP 200 JSON, sin credenciales. La serie identifica tasa mensual agregada, no TAE/TIN por producto."
+  },
+  {
+    "url": "https://app.bde.es/bierest/resources/srdatosapp/listaSeries?idioma=es&series=DN_1TI2T0026&rango=30M",
+    "title": "Respuesta API BDE: historial de TEDR de depósitos a plazo",
+    "claim": "La API permite descargar el historial de la serie y declara frecuencia mensual, primer y último periodo disponibles.",
+    "evidence": "\"Número de observaciones\": \"284\"; \"Primer valor\": \"[Ene 2003] 2,47 %\"; \"Último valor\": \"[Ago 2026] 2,15 %\"; \"codFrecuencia\": \"M\".",
+    "verification": "Comprobado en endpoint público el 2026-10-26 mediante GET anónimo: HTTP 200 JSON, sin credenciales. Rango solicitado 30M."
+  },
+  {
+    "url": "https://www.bde.es/webbe/es/estadisticas/compartido/datos/csv/be1907.csv",
+    "title": "Series temporales 19.7 - Banco de España",
+    "claim": "La tabla oficial 19.7 da TEDR mensual de nuevas operaciones por grandes tipos de depósito; no incluye condiciones de cada entidad/oferta.",
+    "evidence": "\"DESCRIPCIÓN DE LA SERIE\",\"Tipos de interés. Nuevas operaciones. Entidades de crédito y EFC. TEDR. Hogares e ISFLSH. Depósitos a plazo hasta 1 año\"; \"FRECUENCIA\",\"MENSUAL\".",
+    "verification": "CSV oficial extraído el 2026-10-26. Reutilización/licencia no indicada en el contenido extraído."
+  },
+  {
+    "url": "https://www.bde.es/webbe/es/estadisticas/otras-clasificaciones/publicaciones/boletin-estadistico/capitulo-19.html",
+    "title": "Boletín Estadístico, capítulo 19 - Banco de España",
+    "claim": "La tabla de tipos de nuevas operaciones 19.7 es para el total de entidades de crédito y establecimientos financieros de crédito.",
+    "evidence": "Depósitos de hogares e ISFLSH y sociedades no financieras — 19.7 - Total entidades de crédito y establecimientos financieros de crédito.",
+    "verification": "Página oficial extraída el 2026-10-26; confirma el nivel agregado de la tabla, no un catálogo de productos."
+  },
+  {
+    "url": "https://datos.gob.es/es/solicitud-de-datos/historico-de-tipos-de-interes-de-productos-hipotecarios-y-de-ahorro-comunicados-por",
+    "title": "Petición de apertura de tipos de ahorro comunicados al Banco de España - datos.gob.es",
+    "claim": "La página es una petición de datos para publicar tipos por entidad y fecha; no es el dataset ni una API del Banco de España.",
+    "evidence": "Fecha de la petición 21/10/2026. Solicito que el Banco de España publique como datos abiertos, en formato reutilizable (CSV, JSON o similar), el histórico completo disponible de los tipos de interés ... desglosados por entidad.",
+    "verification": "Página de solicitud extraída el 2026-10-26. No se encontró en el contenido extraído un endpoint/dataset ni respuesta oficial; no se interpreta como prueba concluyente de inexistencia de todo dato no publicado."
+  },
+  {
+    "url": "https://data.ecb.europa.eu/help/api/data",
+    "title": "ECB Data API - Data",
+    "claim": "El BCE documenta el acceso a sus series a través de SDMX, con CSV/JSON y filtros de observaciones; no es una API de ofertas.",
+    "evidence": "All the data stored in the ECB Data Portal can be retrieved using the query string... The web service entry point is ... data-api.ecb.europa.eu/service/ ... format ... csvdata ... jsondata.",
+    "verification": "Documentación oficial extraída el 2026-10-26. Sin claves de acceso en la consulta probada; documentación revisada no especifica precio ni licencia de reutilización."
+  },
+  {
+    "url": "https://data.ecb.europa.eu/data/datasets/MIR/data-information",
+    "title": "MFI Interest Rate Statistics (MIR) - ECB",
+    "claim": "MIR es estadística de tasas y volúmenes de depósitos/préstamos, frecuencia mensual y tipos AAR/NDER agregados mediante ponderaciones.",
+    "evidence": "Frequency of data collection Monthly. Nature of weights: weighted averages. For Interest rates: annualized agreed rate (AAR), or narrowly defined effective rate (NDER). For New business: all new agreements on interest rates ... during the course of one month.",
+    "verification": "Metadatos oficiales extraídos el 2026-10-26. No contiene TAE/TIN ni condiciones de una oferta individual."
+  },
+  {
+    "url": "https://data-api.ecb.europa.eu/service/data/MIR/M.ES.B.L22.A.R.A.2250.EUR.N?lastNObservations=1&format=csvdata",
+    "title": "Respuesta API BCE: intereses depósitos hogares España",
+    "claim": "Una consulta pública devuelve una observación mensual para nuevos depósitos de hogares en España, no una oferta concreta.",
+    "evidence": "MIR.M.ES.B.L22.A.R.A.2250.EUR.N ... 2026-08,2.02 ... Bank interest rates on deposits from households with agreed maturity (new business).",
+    "verification": "Comprobado en endpoint SDMX el 2026-10-26 con GET anónimo: HTTP 200 CSV; no se enviaron credenciales. El dato es mensual y AAR/NDER según metadatos MIR."
+  },
+  {
+    "url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/depositor-protection/deposit-guarantee-schemes-data",
+    "title": "Deposit Guarantee Schemes data - EBA",
+    "claim": "EBA publica información de los sistemas nacionales de garantía y el límite armonizado, pero no las condiciones comerciales de cada depósito.",
+    "evidence": "The level of deposit protection in the EU is harmonised at €100,000 ... All Member States extend this guarantee to their depositors. ES — Name of DGS (English): Deposit Guarantee Fund of Credit Institutions.",
+    "verification": "Página oficial extraída el 2026-10-26. Datos de sistemas/países, no feed de ofertas o relaciones por producto."
+  },
+  {
+    "url": "https://www.eba.europa.eu/publications-and-media/press-releases/eu-deposit-guarantee-scheme-funds-protect-depositors-against-bank-failures-continue-grow-and-have",
+    "title": "EBA: datos anuales de sistemas de garantía 2025",
+    "claim": "La EBA publica anualmente un Excel agregado de datos DGS, con cobertura histórica 2015-2025; no actualización diaria de condiciones bancarias.",
+    "evidence": "This annual publication, covering each Member State ... Documents — DGSD data - public file - 2015-2025.",
+    "verification": "Comunicado extraído el 2026-10-26. El enlace XLSX asociado respondió HTTP 200 a HEAD anónimo; Content-Type XLSX, Content-Length 1,053,349 bytes."
+  },
+  {
+    "url": "https://www.eba.europa.eu/sites/default/files/2026-06/dc34bbd2-f4d1-48d2-884e-f9217fb072fb/DGSD%20data%20-%20public%20file%20-%202015-2025_0.xlsx",
+    "title": "DGSD data - public file 2015-2025 - EBA",
+    "claim": "La descarga pública de EBA es un fichero Excel anual de sistemas de garantía, no un catálogo diario de productos.",
+    "evidence": "El comunicado de EBA enlaza el documento como ‘DGSD data - public file - 2015-2025’ y lo identifica como Excel Spreadsheet.",
+    "verification": "Enlace extraído de la página de EBA; HEAD anónimo 2026-10-26 devolvió HTTP 200 y tipo XLSX. No se deduce una licencia no mostrada."
+  },
+  {
+    "url": "https://www.fgd.es/entidades-adheridas/",
+    "title": "Buscador de entidades adheridas - FGD",
+    "claim": "El FGD español ofrece un buscador de entidades adheridas y permite identificar el fondo de sucursales comunitarias; la página no documenta API pública.",
+    "evidence": "Esta web le permite consultar las entidades de crédito adheridas al FGD ... así como sucursales en España de entidades de crédito comunitarias indicando, en este caso, el fondo de garantía al que están adheridas.",
+    "verification": "Página accesible públicamente y extraída el 2026-10-26. En la carga inspeccionada no se detectó recurso público /api, /wp-json o admin-ajax; no es una prueba de que no exista una API privada/no documentada."
+  },
+  {
+    "url": "https://www.fgd.es/wp-content/uploads/2025/04/triptico-depositos-protegidos-es-fgd.pdf",
+    "title": "Tus depósitos están protegidos - FGD",
+    "claim": "El folleto del FGD identifica supuestos de adhesión y confirma como regla general 100.000 € por depositante y entidad; para bancos de la UE puede aplicar el fondo del país de origen.",
+    "evidence": "Las Entidades de Crédito de Estados miembro de la Unión Europea están adheridas al Fondo de Garantía de Depósitos de su país de origen... El importe máximo garantizado por el FGD: 100.000€ con independencia del número de depósitos que tenga cada titular.",
+    "verification": "PDF oficial extraído el 2026-10-26; información de garantía, no de remuneración/producto."
+  },
+  {
+    "url": "https://www.raisin.es/colabora-con-raisin/",
+    "title": "Colabora con Raisin",
+    "claim": "Raisin anuncia API/integración para bancos colaboradores; no documenta un endpoint público de datos para cualquier consumidor.",
+    "evidence": "Aprovecha las ventajas de una amplia variedad de soluciones de integración de Raisin, con acceso a la automatización completa y nuestra API de forma gratuita.",
+    "verification": "Página comercial extraída el 2026-10-26; el contexto es bancos colaboradores. No se hallaron documentación técnica, esquema, condiciones contractuales ni coste de la relación de distribución para Paideia."
+  },
+  {
+    "url": "https://www.raisin.com/en/corporate/become-a-distribution-partner/",
+    "title": "Become a Distribution Partner - Raisin",
+    "claim": "Raisin ofrece integración B2B por API/white-label para distribución de depósitos, sujeta a relación de partner; tarifas y acceso no se publican en la página consultada.",
+    "evidence": "Choose the integration model that suits your needs – from full white-label solutions via API to fast, low-effort setups using Raisin’s co-branded front end. Raisin’s B2B platform supports partners across the European Union and the United Kingdom.",
+    "verification": "Página B2B extraída el 2026-10-26. No es API documentada ni acceso anónimo; precio, registro/onboarding, permisos de datos y cobertura específica de España no verificados."
+  },
+  {
+    "url": "https://raisin.es/depositos-a-plazo-fijo",
+    "title": "Depósitos a plazo fijo - Raisin España",
+    "claim": "La página de mercado de Raisin presenta productos de su red con TAE, plazos, importes y aspectos contractuales, pero es contenido de comparación y no feed API.",
+    "evidence": "Actualizado el:2 de octubre de 2026. ... fíjate en la rentabilidad, los importes mínimo y máximo, y en si tiene cancelación anticipada y renovación automática.",
+    "verification": "Página pública extraída el 2026-10-26. La fecha visible es 2026-10-02; no promete actualización diaria ni licencia de republicación."
+  },
+  {
+    "url": "https://raisin.es/cuenta-ahorro",
+    "title": "Cuentas de ahorro - Raisin España",
+    "claim": "La página de cuentas muestra TAE/TIN, límites de saldo, requisitos de nuevos clientes y comisiones en ejemplos de su plataforma; disponibilidad restringida a su catálogo/mercados.",
+    "evidence": "Cuenta Bienvenida: 3,10 % TAE (3,06 % TIN) durante 3 meses ... Importe mínimo y máximo: desde 1,00 € hasta 60.000,00 € ... Solo para nuevos clientes.",
+    "verification": "Página pública extraída el 2026-10-26; ejemplo de condiciones de una oferta de plataforma, no cobertura exhaustiva del mercado ni API diaria."
+  },
+  {
+    "url": "https://www.openbank.es/deposito-a-plazo-fijo",
+    "title": "Depósito a Plazo Fijo 6 meses - Openbank",
+    "claim": "Una ficha bancaria pública es una fuente primaria que presenta tiers de TAE/TIN, condiciones, plazo, liquidez y garantía; no es un feed automatizado.",
+    "evidence": "Entidad adherida al Fondo de Garantía de Depósitos de Entidades de Crédito Español ... 3,25% TAE y 3,22% TIN anual ... Sin límite ... 0,20% TAE y 0,20% TIN anual si lo sacas antes de tiempo.",
+    "verification": "Página oficial extraída el 2026-10-26. Condiciones mostradas en una página de producto; hay que contrastarlas con la ficha contractual vigente."
+  },
+  {
+    "url": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf",
+    "title": "Ficha del Depósito Open 6 meses - Openbank",
+    "claim": "La ficha precontractual oficial contiene prácticamente todos los campos necesarios para un producto: entidad, TAE/TIN, duración, mínimo/máximo, requisitos, cancelación, comisiones y fondo de garantía.",
+    "evidence": "Vigente desde 08.10.2026. Importe mínimo: 1 €; Importe máximo: no aplica máximo. ... 3,25% TAE y 3,22% TIN anual ... La entidad adherida ... FGD ... 100.000 € por depositante. ... No se cobrará ningún tipo de comisión por cancelación anticipada.",
+    "verification": "PDF oficial extraído el 2026-10-26. El documento requiere además una cuenta Openbank y describe ingresos/requisitos para aplicar un tipo superior; residencia elegible no está explícita en el fragmento revisado. No es endpoint/API."
+  },
+  {
+    "url": "https://kelisto.es/depositos/mejor-compra/los-mejores-depositos-2854",
+    "title": "Los mejores depósitos a plazo fijo - Kelisto",
+    "claim": "Kelisto publica ranking de octubre con fecha de actualización, TIN/TAE, plazo, importe desde y fondo de garantía; algunos puestos están identificados como patrocinados.",
+    "evidence": "Última actualización de los depósitos de este artículo: 23 de octubre de 2026. ... Inversión desde ... Plazo ... Fondo de garantía ... TIN ... TAE ... OFERTAS PATROCINADAS.",
+    "verification": "Página comparadora extraída el 2026-10-26; información editorial/comercial, no API ni garantía de actualización diaria. Verificar valores con la entidad."
+  },
+  {
+    "url": "https://www.kelisto.es/terminos-de-uso",
+    "title": "Términos de uso - Kelisto",
+    "claim": "Los términos de Kelisto restringen comercializar o divulgar información obtenida del portal; no debe asumirse que su contenido pueda incorporarse a otro comparador.",
+    "evidence": "El Usuario se compromete a abstenerse de ... comercializar o divulgar de cualquier modo dicha información.",
+    "verification": "Términos oficiales extraídos el 2026-10-26. La cláusula se refiere a la información obtenida del Portal; no se infiere permiso para scraping ni reutilización. Solicitar autorización escrita."
+  },
+  {
+    "url": "https://www.helpmycash.com/mejores-depositos/",
+    "title": "Mejores depósitos - HelpMyCash",
+    "claim": "HelpMyCash presenta comparativas con condiciones y declara que su filtro incluye residentes nuevos en España; debe tomarse como una regla editorial, no como validación contractual por producto.",
+    "evidence": "Después miramos que cualquier nuevo cliente residente en España pueda contratarlo. ... comprueba la TAE, el importe mínimo, la cancelación anticipada y si el banco exige dinero nuevo o vinculación.",
+    "verification": "Página pública extraída el 2026-10-26; ranking identificado como octubre de 2026. No se verificó API ni permiso de reutilización."
+  },
+  {
+    "url": "https://api.github.com/search/repositories?q=cuentas+remuneradas",
+    "title": "Búsqueda pública de repositorios GitHub: cuentas remuneradas",
+    "claim": "La búsqueda de repositorios devuelve tres resultados, pero no una API mantenida de ofertas para España: uno es artículo 2025, otro una calculadora y otro una cuenta descrita como remunerada sin licencia declarada.",
+    "evidence": "\"total_count\":3 ... \"full_name\":\"smanriquezr/dashboard-rem-tenpo\" ... \"license\":null ... \"full_name\":\"ignacioisocial/mejores-cuentas-remuneradas\" ... \"full_name\":\"OliverMp28/ahorro-tranquilo\".",
+    "verification": "Búsqueda pública GitHub extraída y GET anónimo HTTP 200 el 2026-10-26; consulta exploratoria, no censo exhaustivo."
+  },
+  {
+    "url": "https://api.github.com/search/repositories?q=depositos+Spain+interest",
+    "title": "Búsqueda pública de repositorios GitHub: deposits Spain interest",
+    "claim": "La consulta exploratoria exacta no devuelve repositorios.",
+    "evidence": "\"total_count\": 0,\n\"incomplete_results\": false,\n\"items\": []", 
+    "verification": "Búsqueda pública GitHub extraída el 2026-10-26; no prueba que no exista ningún repo con otra terminología."
+  },
+  {
+    "url": "https://github.com/ignacioisocial/mejores-cuentas-remuneradas",
+    "title": "mejores-cuentas-remuneradas - GitHub",
+    "claim": "El repositorio es una publicación estática sobre cuentas remuneradas de 2025, no un origen de condiciones actualizadas; su descripción de licencia es contradictoria.",
+    "evidence": "Este repositorio contiene contenido curado y estructurado sobre las mejores cuentas remuneradas de 2025. ... README: CC BY-NC 4.0 — Atribución / No Comercial. ... GitHub muestra CC0-1.0 license.",
+    "verification": "Página del repo extraída el 2026-10-26; la fecha de actualización de la API de GitHub fue 2025-09-22. No se reutiliza por discrepancia de licencia y por ser snapshot."
+  },
+  {
+    "url": "https://github.com/ignacioisocial/mejores-cuentas-remuneradas/blob/main/LICENSE",
+    "title": "LICENSE - mejores-cuentas-remuneradas - GitHub",
+    "claim": "El archivo LICENSE contiene el texto CC0, pero el README declara CC BY-NC y enlaza contenido fuente de un tercero; el permiso sobre la base/contenido de origen no queda aclarado.",
+    "evidence": "CC0 1.0 Universal. ... CC0 ... no proporciona garantías ... de título ... ni de exactitud.",
+    "verification": "Archivo LICENSE extraído el 2026-10-26; contradice la etiqueta de README y no acredita derechos sobre contenido original enlazado. No usar sin aclaración del titular."
+  },
+  {
+    "url": "https://github.com/OliverMp28/ahorro-tranquilo",
+    "title": "ahorro-tranquilo - GitHub",
+    "claim": "El repo es una calculadora personal, no un catálogo de ofertas ni una fuente de tipos de bancos.",
+    "evidence": "Sin registro. Sin cuentas. Sin base de datos. ... No recomienda ningún banco. Los tipos los elige la persona.",
+    "verification": "README extraído el 2026-10-26; GitHub API reportó license=null para este resultado. No se ejecutó ni descargó código."
+  }
+]

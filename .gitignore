@@ -1,0 +1,12 @@
+# Secretos locales: nunca al repositorio
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+
+
+# (clave retirada de este archivo; ahora vive solo en prototipos/paideia-local/.env)

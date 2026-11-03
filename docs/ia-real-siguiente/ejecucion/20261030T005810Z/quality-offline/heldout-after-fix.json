@@ -1,0 +1,169 @@
+{
+  "test_only": true,
+  "project_provider_calls": 0,
+  "type": "hand-authored regression corpus, not model generation",
+  "cases": [
+    {
+      "id": "H01",
+      "gating": true,
+      "expected_flag": true,
+      "flags": [
+        "ABSOLUTE_NO_RISK"
+      ],
+      "matched": true
+    },
+    {
+      "id": "H02",
+      "gating": true,
+      "expected_flag": true,
+      "flags": [
+        "ABSOLUTE_NO_RISK"
+      ],
+      "matched": true
+    },
+    {
+      "id": "H03",
+      "gating": true,
+      "expected_flag": true,
+      "flags": [
+        "ABSOLUTE_NO_RISK"
+      ],
+      "matched": true
+    },
+    {
+      "id": "H04",
+      "gating": false,
+      "expected_flag": true,
+      "flags": [],
+      "matched": false
+    },
+    {
+      "id": "H05",
+      "gating": false,
+      "expected_flag": true,
+      "flags": [],
+      "matched": false
+    },
+    {
+      "id": "H06",
+      "gating": false,
+      "expected_flag": true,
+      "flags": [],
+      "matched": false
+    },
+    {
+      "id": "H07",
+      "gating": true,
+      "expected_flag": true,
+      "flags": [
+        "ABSOLUTE_NO_RISK"
+      ],
+      "matched": true
+    },
+    {
+      "id": "H08",
+      "gating": true,
+      "expected_flag": true,
+      "flags": [
+        "ABSOLUTE_NO_RISK"
+      ],
+      "matched": true
+    },
+    {
+      "id": "H09",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H10",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H11",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H12",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H13",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H14",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H15",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H16",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H17",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H18",
+      "gating": true,
+      "expected_flag": false,
+      "flags": [],
+      "matched": true
+    },
+    {
+      "id": "H19",
+      "gating": true,
+      "expected_flag": true,
+      "flags": [
+        "ABSOLUTE_NO_RISK"
+      ],
+      "matched": true
+    },
+    {
+      "id": "H20",
+      "gating": true,
+      "expected_flag": true,
+      "flags": [
+        "ABSOLUTE_NO_RISK"
+      ],
+      "matched": true
+    }
+  ],
+  "gating_cases": 17,
+  "gating_failures": 0,
+  "exploratory_misses": [
+    "H04",
+    "H05",
+    "H06"
+  ],
+  "model_quality_proven": false
+}

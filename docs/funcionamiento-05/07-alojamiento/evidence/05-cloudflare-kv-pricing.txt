@@ -1,0 +1,22 @@
+SOURCE: https://developers.cloudflare.com/kv/platform/pricing/
+RESOLVED URL: https://developers.cloudflare.com/kv/platform/pricing/
+TITLE: Pricing — Cloudflare Workers KV docs
+RETRIEVED: 2026-10-28 via web_extract
+PAGE DATE: Last updated Apr 21, 2026
+SCOPE: Verbatim excerpts from retrieved official documentation.
+
+Workers KV is included in both the Free and Paid Workers plans.
+
+| | Free plan 1 | Paid plan |
+| --- | --- | --- |
+| Keys read | 100,000 / day | 10 million/month, + $0.50/million |
+| Keys written | 1,000 / day | 1 million/month, + $5.00/million |
+| Keys deleted | 1,000 / day | 1 million/month, + $5.00/million |
+| List requests | 1,000 / day | 1 million/month, + $5.00/million |
+| Stored data | 1 GB | 1 GB, + $0.50/ GB-month |
+
+The Workers Free plan includes limited Workers KV usage. All limits reset daily at 00:00 UTC. If you exceed any one of these limits, further operations of that type will fail with an error.
+
+Does Workers KV charge for data transfer / egress?
+
+No.

@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "formularios y secciones existentes",
+      "pass": true
+    },
+    {
+      "name": "formularios antes del resumen",
+      "pass": true
+    },
+    {
+      "name": "resumen antes de guardar",
+      "pass": true
+    },
+    {
+      "name": "enlace Empezar/ajustar",
+      "pass": true
+    },
+    {
+      "name": "enlace Comparar/entender",
+      "pass": true
+    },
+    {
+      "name": "enlace Guardar",
+      "pass": true
+    }
+  ]
+}

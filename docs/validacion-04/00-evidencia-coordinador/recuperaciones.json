@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-27T00:41:43.825069+00:00",
+  "retrieval_tool": "web_extract",
+  "sources": [
+    {
+      "id": 1,
+      "requested_url": "https://ai.google.dev/gemini-api/terms",
+      "title": "Gemini API Additional Terms of Service  |  Google AI for Developers",
+      "saved_path": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\validacion-04\\00-evidencia-coordinador\\01.md",
+      "error": null
+    },
+    {
+      "id": 2,
+      "requested_url": "https://console.groq.com/docs/legal/services-agreement",
+      "title": "Groq Services Agreement - GroqDocs",
+      "saved_path": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\validacion-04\\00-evidencia-coordinador\\02.md",
+      "error": null
+    },
+    {
+      "id": 3,
+      "requested_url": "https://console.groq.com/docs/legal/ai-policy",
+      "title": "Groq Acceptable Use & Responsible AI Policy - GroqDocs",
+      "saved_path": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\validacion-04\\00-evidencia-coordinador\\03.md",
+      "error": null
+    }
+  ]
+}

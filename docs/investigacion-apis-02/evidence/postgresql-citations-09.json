@@ -1,0 +1,221 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "If no policy exists for the table, a default-deny policy is used, meaning that no rows are visible or can be modified.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://docs.postgrest.org/en/stable/references/api/tables_views.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "All tables and views of the exposed schema and accessible by the active database role are available for querying.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://docs.postgrest.org/en/stable/references/api/functions.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Functions can perform any operation allowed by PostgreSQL",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://docs.postgrest.org/en/stable/references/transactions.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The access mode determines whether the transaction can modify the database or not.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://docs.postgrest.org/en/stable/references/connection_pool.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "A connection pool is a cache of reusable database connections. It allows serving many HTTP requests using few database connections.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://docs.postgrest.org/en/stable/references/api.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "PostgREST exposes three database objects of a schema as resources: tables, views and functions.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://supabase.com/pricing",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Free projects are paused after 1 week of inactivity.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://supabase.com/docs/guides/api",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Supabase auto-generates an API directly from your database schema allowing you to connect to your database through a restful interface, directly from the browser.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "url": "https://supabase.com/docs/guides/api/securing-your-api",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Grants control whether a role can access an object. RLS controls which rows the role can access.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "url": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Connecting from a frontend application? You don't need a connection string.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "url": "https://supabase.com/docs/guides/cron",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Every Job can run SQL snippets or database functions with zero network latency or make an HTTP request, such as invoking a Supabase Edge Function, with ease.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://supabase.com/docs/guides/functions/limits",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Maximum CPU Time: 2s (Amount of actual time spent on the CPU per request - does not include async I/O.)",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "url": "https://supabase.com/docs/guides/database/extensions/pgvector",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "pgvector is a Postgres extension for vector similarity search.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "url": "https://neon.com/docs/introduction/plans",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "100 CU-hours of compute per project per month",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://neon.com/pricing",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "All Neon databases can use pooled connections built on pgBouncer",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "url": "https://neon.com/docs/serverless/serverless-driver",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "For manually parameterized queries, use the query() function",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "url": "https://github.com/pgvector/pgvector",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "exact and approximate nearest neighbor search",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "url": "https://supabase.com/docs/guides/api/rest/client-libs",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Supabase provides client libraries for the REST and Realtime APIs.",
+          "added": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

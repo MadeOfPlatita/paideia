@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+
+
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>VDOS: Datos</title>
+        <meta name="description" content="VDOS recopila, enriquece y distribuye la información más completa y fiable de los vehículos de inversión en una única fuente.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="keywords" content="VDOS, fondos de inversión, planes de pensiones, sociedades de inversión, IIC extranjeras, servicios de información, datos, gestión de activos">
+        <link href="../img/vdos-icon.ico" rel="icon">
+        <link href="https://fonts.googleapis.com/css?family=Karla" rel="stylesheet">
+        <script type="text/javascript">
+    var $mcGoal = {'settings':{'uuid':'e7db15bc5c3386511ab115e74','dc':'us1'}};
+    (function() {
+        var sp = document.createElement('script'); sp.type = 'text/javascript'; sp.async = true; sp.defer = true;
+        sp.src = ('https:' == document.location.protocol ? 'https://s3.amazonaws.com/downloads.mailchimp.com' : 'http://downloads.mailchimp.com') + '/js/goal.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(sp, s);
+
+    })();
+</script>
+
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.0.1/dist/cookieconsent.css">
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/bootstrap-theme.css">
+        <link rel="stylesheet" href="../css/fonts.css">
+        <link rel="stylesheet" href="../css/main.css">
+
+    </head>
+
+    <body>
+
+                
+
+        <nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">
+                        Desplegar navegación
+                    </span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="inicio.html" title="Inicio">
+                <img src="../img/logo-menu-vdos.png" alt="VDOS" title="Ir a la página principal de VDOS" class="nav-logo"/>
+                </a>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <div class="container">
+                    <ul class="nav navbar-nav">
+                    
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                            
+                                <li><a href='soluciones.html' title='Soluciones'>Soluciones</a></li>
+                            
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                            
+                                <li class="active"><span>Datos</span></li>
+                            
+
+                        
+
+                    
+
+                        
+
+                            
+                                <li><a href='historia.html' title='Nuestra empresa'>Nuestra empresa</a></li>
+                            
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                    
+
+                        
+
+                            
+                                <li><a href='contacto.html' title='Contacto'>Contacto</a></li>
+                            
+
+                        
+
+                    
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right navbar-lang">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                Español <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Español <b class="caret"></b></a></li>
+                                <li>
+                                    
+                                    
+                                    <a href='../en/data.html' title="English">
+                                        English
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+        <!-- **************************************************************************************************** -->
+        <!-- HEADER -->
+        <!-- **************************************************************************************************** -->
+        <header class="container margin-top40 margin-bottom40 hidden-xs">
+            <a href="inicio.html"><img src="../img/logo-header-vdos.png" alt="VDOS" title="Ir a la página principal de VDOS" class="header-logo" /></a>
+        </header>
+
+
+        <main>
+
+                        <section class="container-fluid no-padding bg-datos2">
+                <div class="container">
+                    <div class="row reset-row-margins">
+                        <div class="col-xs-12 col-md-12">
+                            <!-- En este snippet se manda el lang por incluirse directamente en los html y no en el layout default como el resto de snippet -->
+
+
+
+
+<ol class="breadcrumb white-color">
+    
+        <li><a href="inicio.html">Inicio</a></li>
+    
+    
+    
+    <li>Datos</li>
+</ol>
+
+                        </div>
+                        <h1 class="col-xs-12 col-md-6 col-md-offset-3 text-size36 text-center font-kanit-light white-color margin-top100 margin-xs-top15 margin-bottom100 margin-xs-bottom15">
+                            Más de 60.000 productos y 350 gestoras en una única fuente de referencia
+                        </h1>
+                    </div>
+                </div>
+            </section>
+            <section class="margin-top100 margin-bottom100">
+                <div class="row reset-row-margins">
+                    <div class="col-xs-12 col-md-10 col-md-offset-2 bg-datos-metodologia">
+                        <div class="row reset-row-margins">
+                            <div class="col-xs-12 col-sm-7 col-md-7 col-lg-6">
+                                <div class="padding-top40 padding-left40
+                                    padding-bottom40 reset-xs-paddings">
+                                    <h1 class="font-kanit-extralight">Fuente primaria de información</h1>
+                                    <p class="margin-bottom10">La base de datos de VDOS está fundamentada en la información diaria que nos propocionan directamente las entidades gestoras, tanto nacionales como internacionales, registros oficiales tales como la Comisión Nacional del Mercado de Valores (CNMV) y la Dirección General de Seguros.</p>
+                                    <ul class="reset-row-margins padding-left20 ul-li-padding-bottom15">
+                                        <li>100 % fondos de inversión y sociedades de inversión nacionales</li>
+                                        <li>95 % fondos de inversión internacionales registrados en España</li>
+                                        <li>100 % planes de pensiones individuales</li>
+                                    </ul>
+                                    <p class="margin-bottom10">Con ellos, se consolida una base de datos de más de 60.000 productos de inversión, distribuidas entre fondos de inversión, planes de pensiones, IICs extranjeras y sicavs, de más de 350 gestoras y que nos convierten en la principal referencia en el mercado español.</p>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 reset-col-paddings">
+                                <img src="../img/img-datos-metodologia-sm.png" class="img-responsive visible-xs" alt="datos metodologia" title="Datos metodologia" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="margin-top200 margin-bottom100">
+                <div class="row bg-lines padding-bottom100 reset-row-margins">
+                    <div class="col-xs-12 col-md-8 col-md-offset-2">
+                        <h2 class="margin-left20 brand-color font-kanit-extralight">Infraestructura de datos</h2>
+                    </div>
+                </div>
+
+                <div class="row reset-row-margins">
+                    <div class="col-sm-12 col-md-8 col-md-offset-2 bg-light-grey-color">
+                        <div class="row">
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                <p class="margin-top70 margin-left20 brand-color">VDOS proporciona a través de su infraestructura de datos información relativa a datos identificativos del producto, valores liquidativos, series históricas, rentabilidades, documentación legal, MIFID y datos ASG, entre otros.</p>
+                                <p class="margin-bottom20 margin-left20 brand-color">Dicha base de datos es enriquecida con el conocimiento y experiencia de la industria propio y de nuestros clientes a lo largo de los años, dando lugar a métricas y rankings propios, consolidados en las Categorías VDOS y el Rating VDOS.</p>
+                                <div class="row padding-bottom20 text-center">
+                                    <a href="criterios-clasificacion.html" class="btn btn-primary margin-left20 reset-xs-paddings btn-xs-full-width" role="button">Criterios clasificación VDOS</a>
+                                    <a href="RatingVDOS.pdf" class="btn btn-primary margin-left20 reset-xs-paddings btn-xs-full-width" role="button">Rating VDOS</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-5 col-md-5 col-md-offset-1">
+                                <img src="../img/img-datos-prisma.png" class="img-datos-infraestructura img-responsive" alt="Prisma datos" title="Prisma datos" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="margin-top200 margin-bottom100">
+                <div class="row reset-row-margins bg-lines">
+                    <div class="col-xs-12 col-md-8 col-md-offset-2 padding-top20 padding-bottom100">
+                        <h2 class="brand-color font-kanit-extralight">Si eres fuente de información</h2>
+                    </div>
+                </div>
+                <div class="row reset-row-margins">
+                    <div class="col-xs-12 col-md-9 col-md-offset-2 padding-bottom80 padding-xs-bottom15 bg-datos-fuentes">
+                        <div class="row reset-row-margins">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 margin-bottom40">
+                                <label class="font-kanit-regular text-size21 brand-color text-letter-spacing16 margin-top70 margin-left20">Ventajas</label>
+                                <p class="margin-xs-top65 brand-color margin-left20">El envío de la información a VDOS representa importantes ventajas para las entidades gestoras.</p>
+                                <ul class="padding-left20 padding-right20 ul-li-padding-bottom15 brand-color margin-left20">
+                                    <li>Estar presente en uno de los principales proveedores de datos españoles.</li>
+                                    <li>Otorgar acceso a la información de mis productos a las principales entidades distribuidoras españolas, tanto banca retail como banca privada.</li>
+                                    <li>Dar a conocer al mercado español su gama de productos, sus características y su rentabilidad.</li>
+                                    <li>Facilidad para incorporar su gama a la base de datos de VDOS, adaptándonos a sus propios formatos.</li>
+                                    <li>Interlocución directa con el equipo de datos.</li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 margin-bottom40 padding-left40">
+                                <label class="font-kanit-regular text-size21 brand-color text-letter-spacing16 margin-top70">¿Qué ocurre con mis datos?</label>
+                                <p class="reset-xs-paddings margin-xs-top65 brand-color padding-right200">
+                                    Los datos proporcionados por las distintas fuentes de información pasan por un estricto control de calidad con el objetivo de validar tanto la completitud como la calidad de la información. 
+                                </p>
+                                <p class="reset-xs-paddings brand-color padding-right200">
+                                    Es con la mejor base de datos con la que se construyen las Soluciones VDOS para la industria de gestión de activos.
+                                </p>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-xs-12">
+                                    <a href="https://mailchi.mp/vdos/alta-fuentes" target="_blank" class="btn btn-primary btn-xs-full-width text-uppercase d-inline-block" role="button">darme de alta como fuente</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+                    <script type="module" src="../js/cookieconsent-config.js"></script>
+        <script src="../js/jquery-1.12.4.js"></script>
+        <script src="../js/jquery-ui.js"></script>
+        <script src="../js/bootstrap.min.js"></script>
+        <script src="../js/main.js"></script>
+
+        </main>
+
+        
+
+
+
+        <!-- **************************************************************************************************** -->
+        <!-- FOOTER -->
+        <!-- **************************************************************************************************** -->
+        <footer class="container-fluid warm-grey2-color">
+            <div class="row">
+                <ol class="breadcrumb">
+
+                    
+                        <li><a href="inicio.html">Inicio</a></li>
+                    
+                    <li>Datos</li>
+
+                </ol>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 col-md-2">
+                        <p class="padding-bottom10">
+                            <a href="soluciones.html">Soluciones</a>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-md-2">
+                        <p class="padding-bottom10">
+                            <a href="datos.html">Datos</a>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-md-2">
+                        <p class="padding-bottom10">
+                            <a href="historia.html">Nuestra empresa</a>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-md-3 col-md-offset-3">
+                        <p class="padding-bottom10">
+                            <a href="contacto.html">Contacto</a>
+                        </p>
+                        <p>
+                            C/ Maldonado 52 1º A
+                            <br> 28006 Madrid, España
+                            <br> (+34) 914 02 02 92
+                            <br> <a href="mailto:info@vdos.com">info@vdos.com</a>
+                            <br>
+                        </p>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="https://www.linkedin.com/company/vdos-stochastics" target="_blank">
+                                    <img src="../img/logo-footer-linkedin.png" title="linkedin" alt="linkedin" />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com/VDOSStochastics" target="_blank">
+                                    <img src="../img/logo-footer-twitter.png" title="twitter" alt="twitter" />
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            
+
+
+
+        <!-- **************************************************************************************************** -->
+        <!-- FOOTER2 -->
+        <!-- **************************************************************************************************** -->
+            <div class="container footer-legal separator-dark">
+                <div class="row">
+                    <div class="col-xs-12 col-md-2 padding-top20 padding-bottom20">
+                        <a href="inicio.html"><img src="../img/logo-footer-vdos.png" alt="VDOS" title="Ir a la página principal de VDOS" /></a>
+                    </div>
+                    <div class="col-xs-12 col-md-8 padding-top20 padding-bottom20 text-center">
+                        <p>© 2024 VDOS Stochastics. Todos los derechos reservados |
+                            <a class="warm-grey2-color text-underline" href="legal.html" title="Aviso legal">Aviso legal</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
+        </footer>
+
+
+                <!-- **************************************************************************************************** -->
+        <!-- GOOGLE ANALYTICS -->
+        <!-- **************************************************************************************************** -->
+        <script type="text/plain" data-category="analytics">
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments);
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m);
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            ga('create', 'UA-3126011-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+
+        <!-- Google tag (gtag.js) -->
+        <script async type="text/plain" data-category="analytics" src="https://www.googletagmanager.com/gtag/js?id=G-DV2QD30MRL"></script>
+        <script type="text/plain" data-category="analytics"> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-DV2QD30MRL'); </script>
+
+    </body>
+
+</html>

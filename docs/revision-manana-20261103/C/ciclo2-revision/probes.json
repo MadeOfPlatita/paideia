@@ -1,0 +1,100 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "native limit",
+      "pass": true,
+      "detail": {
+        "maxLength": 100
+      }
+    },
+    {
+      "name": "trailing",
+      "pass": true,
+      "detail": {
+        "requests": 0,
+        "literal": true,
+        "filter": "deposito",
+        "aria": "true"
+      }
+    },
+    {
+      "name": "trailing navigation",
+      "pass": true,
+      "detail": {
+        "requests": 0
+      }
+    },
+    {
+      "name": "leading",
+      "pass": true,
+      "detail": {
+        "requests": 0,
+        "literal": true,
+        "filter": "deposito",
+        "aria": "true"
+      }
+    },
+    {
+      "name": "leading navigation",
+      "pass": true,
+      "detail": {
+        "requests": 0
+      }
+    },
+    {
+      "name": "spaces",
+      "pass": true,
+      "detail": {
+        "requests": 0,
+        "literal": true,
+        "filter": "deposito",
+        "aria": "true"
+      }
+    },
+    {
+      "name": "spaces navigation",
+      "pass": true,
+      "detail": {
+        "requests": 0
+      }
+    },
+    {
+      "name": "valid100",
+      "pass": true,
+      "detail": {
+        "urls": [
+          "/api/catalogue?q=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&family=deposito"
+        ],
+        "aria": "false"
+      }
+    },
+    {
+      "name": "spaces trimmed",
+      "pass": true,
+      "detail": {
+        "urls": [
+          "/api/catalogue?q=banco+test&family=deposito"
+        ],
+        "aria": "false"
+      }
+    },
+    {
+      "name": "empty",
+      "pass": true,
+      "detail": {
+        "urls": [
+          "/api/catalogue?family=deposito"
+        ],
+        "aria": "false"
+      }
+    }
+  ],
+  "requests": [
+    "/api/catalogue",
+    "/api/catalogue?family=deposito",
+    "/api/catalogue?q=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&family=deposito",
+    "/api/catalogue?q=banco+test&family=deposito",
+    "/api/catalogue?family=deposito"
+  ]
+}

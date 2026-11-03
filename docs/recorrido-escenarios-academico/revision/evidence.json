@@ -1,0 +1,139 @@
+{
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [
+    {
+      "severity": "media",
+      "title": "La guía Guardar desplaza pero no traslada foco al área de acciones",
+      "location": "static/app.js:1681-1685",
+      "reproduction": "Con ambos escenarios actualizados, enfocar el enlace Guardar, pulsar Enter y luego Tab. El hash sigue #escenarios pero el foco pasa al capital inicial A y el navegador vuelve al formulario, no al control Descargar informe.",
+      "expected": "El recorrido de teclado debe alcanzar el área de guardado sin perder la ruta; el enlace no debe dejar el foco en la guía.",
+      "evidence": "teclado.json"
+    }
+  ],
+  "verification_blockers": [
+    "No se ha probado impresión real ni PDF; la impresión se simula o desactiva mediante guardia.",
+    "No se ha realizado una auditoría completa de accesibilidad ni de seguridad."
+  ],
+  "unit": {
+    "node_check": true,
+    "node_tests": 41,
+    "passed": 41,
+    "failed": 0
+  },
+  "regressions": {
+    "1280": {
+      "report_browser.js": {
+        "passed": true,
+        "checks": 18,
+        "failed": []
+      },
+      "scenario_browser.js": {
+        "passed": true,
+        "checks": 114,
+        "failed": []
+      },
+      "report_download_browser.js": {
+        "passed": true,
+        "checks": 14,
+        "failed": []
+      },
+      "qa_layout_browser.js": {
+        "passed": true,
+        "checks": 5,
+        "failed": []
+      },
+      "c_integration_browser.js": {
+        "passed": true,
+        "checks": 27,
+        "failed": []
+      },
+      "scenario_journey_browser.js": {
+        "passed": true,
+        "checks": 33,
+        "failed": []
+      }
+    },
+    "390": {
+      "report_browser.js": {
+        "passed": true,
+        "checks": 18,
+        "failed": []
+      },
+      "scenario_browser.js": {
+        "passed": true,
+        "checks": 114,
+        "failed": []
+      },
+      "report_download_browser.js": {
+        "passed": true,
+        "checks": 14,
+        "failed": []
+      },
+      "qa_layout_browser.js": {
+        "passed": true,
+        "checks": 5,
+        "failed": []
+      },
+      "c_integration_browser.js": {
+        "passed": true,
+        "checks": 27,
+        "failed": []
+      },
+      "scenario_journey_browser.js": {
+        "passed": true,
+        "checks": 33,
+        "failed": []
+      }
+    }
+  },
+  "independent_probes": {
+    "1280": {
+      "passed": true,
+      "checks": 17,
+      "failed": []
+    },
+    "390": {
+      "passed": true,
+      "checks": 17,
+      "failed": []
+    }
+  },
+  "html": {
+    "file": "informe-recorrido-propio.html",
+    "bytes": 4821,
+    "sha256": "26550e50d4d8010a91c099411a202d751cf7b09921d35043a4160ad524246d71",
+    "five_tables": true,
+    "scenario_a": true,
+    "scenario_b": true,
+    "rates_exact": [
+      true,
+      true
+    ],
+    "simple": true,
+    "hypothetical": true,
+    "profile_marker_absent": true
+  },
+  "keyboard": {
+    "before": {
+      "focus": "<a href=\"#scenario-report-host\">Guardar</a>",
+      "hash": "#escenarios",
+      "top": 8472.265625
+    },
+    "enter": {
+      "focus": "<a href=\"#scenario-report-host\">Guardar</a>",
+      "hash": "#escenarios",
+      "top": 121.265625
+    },
+    "tab": {
+      "focus": "<input type=\"number\" id=\"scenario-principal\" step=\"0.01\" min=\"0\" required=\"\" inputmode=\"decimal\" autocomplete=\"off\">",
+      "hash": "#escenarios",
+      "top": 7973.265625
+    }
+  },
+  "notes": [
+    "El ejemplo no produjo fetch ni cambios de localStorage/sessionStorage en el probe; no se ha inspeccionado exhaustivamente toda persistencia posible.",
+    "Las tasas del HTML se conservan con punto decimal; la comparación visual usa coma.",
+    "La primera pasada usó una navegación al mismo hash sin recargar; se descartó y repitió con documentos nuevos."
+  ]
+}

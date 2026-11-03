@@ -1,0 +1,66 @@
+[
+  {
+    "url": "https://developers.cloudflare.com/workers-ai/platform/pricing",
+    "resolved_url": "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+    "status": 200,
+    "content_type": "text/html",
+    "checked_at": "2026-10-26T19:17:09.409980+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\01.txt"
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers-ai/platform/limits",
+    "resolved_url": "https://developers.cloudflare.com/workers-ai/platform/limits/",
+    "status": 200,
+    "content_type": "text/html",
+    "checked_at": "2026-10-26T19:17:09.416933+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\02.txt"
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers-ai/models/llama-3.2-3b-instruct",
+    "resolved_url": "https://developers.cloudflare.com/workers-ai/models/llama-3.2-3b-instruct/",
+    "status": 200,
+    "content_type": "text/html",
+    "checked_at": "2026-10-26T19:17:09.446800+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\03.txt"
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers-ai/models/llama-3.3-70b-instruct-fp8-fast",
+    "resolved_url": "https://developers.cloudflare.com/workers-ai/models/llama-3.3-70b-instruct-fp8-fast/",
+    "status": 200,
+    "content_type": "text/html",
+    "checked_at": "2026-10-26T19:17:09.436780+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\04.txt"
+  },
+  {
+    "url": "https://console.groq.com/docs/rate-limits?plan=free",
+    "resolved_url": "https://console.groq.com/docs/rate-limits?plan=free",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:17:09.611377+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\05.txt"
+  },
+  {
+    "url": "https://console.groq.com/docs/models",
+    "resolved_url": "https://console.groq.com/docs/models",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:17:09.896785+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\06.txt"
+  },
+  {
+    "url": "https://console.groq.com/docs/model/openai/gpt-oss-20b",
+    "resolved_url": "https://console.groq.com/docs/model/openai/gpt-oss-20b",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:17:09.784844+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\07.txt"
+  },
+  {
+    "url": "https://console.groq.com/docs/model/openai/gpt-oss-120b",
+    "resolved_url": "https://console.groq.com/docs/model/openai/gpt-oss-120b",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:17:09.804820+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia\\restauracion\\08.txt"
+  }
+]

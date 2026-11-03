@@ -1,0 +1,429 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+      "title": "Renault Bank — Información precontractual global",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Promoción aplicable exclusivamente a nuevos clientes que contraten la Cuenta Contigo entre el 21/10/2026 y el 18/11/2026, ambos inclusive.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "la TAE será del 2,61% TAE",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://myinvestor.es/cuentas-tarjetas/cuentas",
+      "title": "MyInvestor — Cuenta corriente remunerada",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Hazte cliente y remunera tu dinero al 2,5 % TAE durante los 6 primeros meses.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Para un saldo máximo de 70.000 €.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://www.openbank.es/cuenta-remunerada",
+      "title": "Openbank — Cuenta Remunerada",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Cuenta Remunerada sin Nómina al 3,25% TAE",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "3,25% TAE 1 y 3,20% TIN",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://www.pibank.es/cuenta-remunerada",
+      "title": "Pibank — Cuenta Remunerada",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Cuenta Remunerada Pibank",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Remuneración al 2,02% TAE1",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf",
+      "title": "Openbank — Depósito a 6 meses, ficha oficial",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Vigente desde 08.10.2026.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "3,25% TAE y 3,22% TIN anual.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://www.pibank.es/deposito-bancario-plazo-fijo",
+      "title": "Pibank — Depósito a plazo fijo",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Saber más https://www.pibank.es/deposito-bancario-plazo-fijo/",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://img.pibank.es/pdfs/deposito/deposito_ip.pdf",
+      "title": "Pibank — Ficha precontractual del Depósito Pibank",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Divisa : EURO.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Duración de la Imposición: 12 meses.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://www.deutsche-bank.es/es/particulares/ahorro-inversion/productos/depositos/deposito-mas.html",
+      "title": "Deutsche Bank — Depósito Más DB",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "# Depósito Más DB",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Plazo: 12 meses",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "TAE 2,75 %",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "url": "https://www.tesoro.es/en/deuda-publica/valores-del-tesoro/valores-en-circulacion",
+      "title": "Tesoro Público — Valores en circulación",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "ES0L02701156 | 01/15/2027 | 8,780.5",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "ES0L02702055 | 02/05/2027 | 8,597.1",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "ES0L02703053 | 03/05/2027 | 8,623.1",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "ES0L02704093 | 04/09/2027 | 9,010.2",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Data as at 10/16/2026.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "url": "https://www.bestinver.es/fondos-de-inversion/bestinver-bolsa",
+      "title": "Bestinver — Bestinver Bolsa, F.I.",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Bestinver Bolsa, F.I.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Código ISIN: ES0147622031",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+      "title": "CNMV — Ficha OLEA NEUTRAL, FI",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "OLEA NEUTRAL, FI",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "4231 14/05/2010 ES0118537002 01/10/2026 08/06/2026",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://www.azvalor.com/fondos-de-inversion/azvalor-internacional",
+      "title": "Azvalor — Azvalor Internacional FI",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "# Azvalor Internacional FI",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Fecha de Registro en la CNMV 23/10/2015",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "url": "https://www.cobasam.com/productos/inversion-libre/cobas_seleccion",
+      "title": "Cobas AM — Cobas Selección FI",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Cobas Selección FI Clase B",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Domicilio Paseo de la Castellana 53. Segunda planta. 28046 Madrid. España.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "url": "https://www.cobasam.com/wp-content/uploads/2026/01/Comentario-Segundo-Semestre-2025.pdf",
+      "title": "Cobas AM — Informe de clases de Cobas Selección FI",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Clase A - ES0124037039 Clase B - ES0124037021 Clase C - ES0124037005 Clase D - ES0124037013",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+      "title": "BlackRock/iShares — KID español IE00B4K48X80",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "iShares Core MSCI Europe UCITS ETF EUR (Acc), EUR Accu, ISIN: IE00B4K48X80",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "La fecha de este documento es 03 septiembre 2026.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+      "title": "DWS — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "NAV (23.10.2026): 104.46 USD All-in-fee (TER): 0.15%",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+      "title": "State Street — SPDR MSCI Europe Industrials UCITS ETF",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "State Street® SPDR® MSCI Europe Industrials UCITS ETF",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "NAV EUR (Official NAV) €411,94 as of 23 Oct 2026",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
+      "title": "VanEck — Semiconductor UCITS ETF",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "VanEck Semiconductor UCITS ETF",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "NAV $97.02 as of 23 Oct 2026",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "url": "https://www.bestinver.es/fondos-de-inversion/bestinver-internacional",
+      "title": "Bestinver — Bestinver Internacional, F.I.",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Bestinver Internacional, Fondo de Inversión",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Código ISIN: ES0114638036",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "url": "https://www.pibank.es",
+      "title": "Pibank — página de inicio y productos",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Depósito Pibank a 12 meses",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Cuenta Remunerada Pibank",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "url": "https://yieldmeister.com/api/v1/rates",
+      "title": "YieldMeister — respuesta pública de rates, fila Openbank",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Depósito Plazo Fijo 12m",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "url": "https://www.ebnbanco.com/ahorro/deposito-sinycon-plus",
+      "title": "EBN Banco — Depósito Sinycon Plus",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Depósito Sinycon Plus",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "rentabilidad de hasta el 2,85% TAE.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "A partir de 5.000€ y hasta 400.000€",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "No, la cancelación anticipada en este producto no está permitida.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "url": "https://www.openbank.es/cuentas-de-ahorro",
+      "title": "Openbank — Cuentas de ahorro, incluida Open Young",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Cuenta de Ahorro Open Young",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Una cuenta de ahorro infantil pensada para que su dinero crezca con ellos.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "0,15 % TAE1 y TIN anual.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "url": "https://traderepublic.com/es-es/interes",
+      "title": "Trade Republic — Interés sobre efectivo",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Trade Republic: 3,04 % TAE sobre tu efectivo",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf",
+      "title": "Vanguard — FTSE All-World UCITS ETF USD Acc factsheet",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "ISIN IE00BK5BQT80 USD Accumulating",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "This document is directed at professional investors and should not be distributed to, or relied upon by retail investors.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "url": "https://www.cnmv.es/portal/consultas/mostrarlistados?id=26&lang=es&page=1",
+      "title": "CNMV — Listado completo de UCITS",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "CNMV - Listado completo de UCITS",
+          "added": "2026-10-27"
+        }
+      ]
+    }
+  ]
+}

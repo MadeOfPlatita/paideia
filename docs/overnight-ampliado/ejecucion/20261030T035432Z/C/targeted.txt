@@ -1,0 +1,14 @@
+test_real_loopback_readonly_test_only_and_no_source_leak (test_synthetic_snapshot.HttpFixtureTests.test_real_loopback_readonly_test_only_and_no_source_leak) ... ok
+test_corruption_truncation_hash_duplicate_and_staleness_rejected (test_synthetic_snapshot.SnapshotFailureTests.test_corruption_truncation_hash_duplicate_and_staleness_rejected) ... ok
+test_failed_write_keeps_last_good (test_synthetic_snapshot.SnapshotFailureTests.test_failed_write_keeps_last_good) ... ok
+test_invalid_source_preserves_bytes (test_synthetic_snapshot.SnapshotFailureTests.test_invalid_source_preserves_bytes) ... ok
+test_reserved_filename (test_synthetic_snapshot.SnapshotFailureTests.test_reserved_filename) ... ok
+test_restart_real_process (test_synthetic_snapshot.SnapshotFailureTests.test_restart_real_process) ... ok
+test_same_instance_threads_and_defensive_copies (test_synthetic_snapshot.SnapshotFailureTests.test_same_instance_threads_and_defensive_copies) ... ok
+test_write_and_replace_failures_preserve_bytes_and_cleanup (test_synthetic_snapshot.SnapshotFailureTests.test_write_and_replace_failures_preserve_bytes_and_cleanup) ... ok
+test_promote_and_restart (test_synthetic_snapshot.SnapshotTests.test_promote_and_restart) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.772s
+
+OK

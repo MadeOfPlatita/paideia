@@ -1,0 +1,30 @@
+{
+  "status": 200,
+  "body": {
+    "items": [
+      {
+        "id": "SYN-01",
+        "name": "SYNTHETIC TEST ONLY — ejemplo",
+        "family": "deposito",
+        "issuer": null,
+        "isin": null,
+        "identity_state": "proposed",
+        "primary_url": null,
+        "as_of": "2026-10-30",
+        "publication_ready": false,
+        "conditions_state": "pending",
+        "conflicts": [],
+        "unknown_fields": [
+          "synthetic_test",
+          "permissions",
+          "conditions"
+        ]
+      }
+    ],
+    "count": 1,
+    "not_for_publication": true
+  },
+  "visibleSynthetic": true,
+  "notOffer": true,
+  "comparisonReady": true
+}

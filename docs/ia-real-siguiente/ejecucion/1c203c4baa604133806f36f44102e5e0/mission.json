@@ -1,0 +1,11 @@
+{
+  "schema": "paideia-ai-mission.v1",
+  "mission_id": "1c203c4baa604133806f36f44102e5e0",
+  "start_utc": "2026-10-29T18:25:00.525905+00:00",
+  "cutoff_utc": "2026-10-29T19:25:00.525905+00:00",
+  "max_external_attempts": 24,
+  "real_calls_authorized": false,
+  "authorization_gate": "masked_window_and_free_confirmation_required",
+  "state": "offline_preflight",
+  "scope": "point1_only_no_deploy_no_db_no_payments_no_real_profiles"
+}

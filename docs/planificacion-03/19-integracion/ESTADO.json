@@ -1,0 +1,53 @@
+{
+  "updated_at": "2026-10-27T00:07:37.217680+00:00",
+  "phase": "research_and_design_consolidated_not_implemented",
+  "api_topics_reviewed": 10,
+  "planning_topics": 16,
+  "audits_reviewed": 2,
+  "source_observations_api_round_02": 177,
+  "distinct_source_urls_api_round_02": 169,
+  "manifest_refs_resolved": 10,
+  "implemented_application": false,
+  "database_created": false,
+  "llm_smoke_run": false,
+  "load_test_run": false,
+  "contract_changes_verified": [
+    "accepted_chat_processing_true_required"
+  ],
+  "documentary_corrections": [
+    "reason_code_class_not_mandatory_CONTROL_prefix",
+    "five_tools_preserved_not_removed_from_MVP",
+    "financial_profile_local_preserved",
+    "PostgreSQL_candidate_not_silently_replaced_by_JSON"
+  ],
+  "implementation_blockers": [
+    "remote_context_projection_and_privacy_decision",
+    "unknown_fact_nullable_state_schema_migration",
+    "fact_citation_dto_mapping",
+    "HTTP_error_envelope_schema_and_adapter",
+    "provider_and_hosting_selection_with_actual_tests",
+    "catalogue_permissions_and_measurable_coverage"
+  ],
+  "group_confirmed": {
+    "delivery_date": "2026-11-03",
+    "catalogue_initial_target": 20,
+    "initial_target_per_family": 4,
+    "catalogue_target_is_ceiling": false,
+    "catalogue_expansion_desired": true,
+    "queued_limited_real_chat_accepted": true,
+    "selected_financial_context_accepted_in_principle": true,
+    "context_strategy_approved": false,
+    "live_personal_data_transmission_authorized": false
+  },
+  "context_evaluation": {
+    "protocol": "EVALUACION-CONTEXTO.md",
+    "status": "specified_not_run",
+    "data": "synthetic_only",
+    "provider_selected": false
+  },
+  "human_decisions_pending": [
+    "delivery_time",
+    "context_strategy_after_synthetic_quality_cost_privacy_comparison",
+    "code_ownership_and_license_before_publication"
+  ]
+}

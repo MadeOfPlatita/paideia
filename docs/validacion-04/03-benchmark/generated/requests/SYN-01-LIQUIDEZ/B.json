@@ -1,0 +1,111 @@
+{
+  "request_schema": "pai-context-request/v1",
+  "case_id": "SYN-01-LIQUIDEZ",
+  "variant": "B",
+  "provider_call_status": "not_called",
+  "provider": null,
+  "model": null,
+  "base": {
+    "system": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.",
+    "output_constraints": [
+      "Usa solo el texto de la pregunta, la evidencia sintética fija y el contexto de perfil materializado.",
+      "No busques en internet ni invoques herramientas.",
+      "Conserva exactamente importes, porcentajes, monedas y plazos proporcionados; no los redondees ni los cambies en silencio.",
+      "No conviertas null, desconocido o no declarado en cero, ni un cero declarado en desconocido.",
+      "Identifica conflictos entre datos, supuestos o condiciones cuando afecten a la conclusión."
+    ],
+    "fixed_evidence": {
+      "claim": "El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.",
+      "catalogue": "No se proporciona catálogo ni oferta real."
+    },
+    "question": "Tengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?"
+  },
+  "base_sha256": "bfa88391ec767046805ecb96bbacefeff065484693df14a690f573b7be7e5c56",
+  "profile_context": {
+    "status": "projected",
+    "data": {
+      "currency": "EUR",
+      "financial_goal": "preservar liquidez para gastos próximos y comprender alternativas educativas",
+      "investment_horizon_months": 4,
+      "liquid_savings_eur": 12000,
+      "monthly_expenses_eur": 1800,
+      "upcoming_expenses": [
+        {
+          "label": "reparacion esencial",
+          "amount_eur": 4800,
+          "months_until_due": 4
+        }
+      ],
+      "risk_capacity": "low",
+      "emergency_reserve_target_months": 3
+    },
+    "selected_fields": [
+      "currency",
+      "financial_goal",
+      "investment_horizon_months",
+      "liquid_savings_eur",
+      "monthly_expenses_eur",
+      "upcoming_expenses",
+      "risk_capacity",
+      "emergency_reserve_target_months"
+    ],
+    "excluded_fields": [
+      {
+        "field": "age_band",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "education_level",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "monthly_net_income_eur",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "monthly_savings_capacity_eur",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "planned_contribution_eur",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "debts",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "risk_tolerance",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "employment_income_stability",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "investment_experience",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "knowledge_level",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      },
+      {
+        "field": "declared_loss_limit_pct",
+        "reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia."
+      }
+    ]
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía."
+    },
+    {
+      "role": "user",
+      "content": "EVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real.\",\"claim\":\"El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.\"}\n\nPROYECCIÓN RELEVANTE B\n{\"currency\":\"EUR\",\"emergency_reserve_target_months\":3,\"financial_goal\":\"preservar liquidez para gastos próximos y comprender alternativas educativas\",\"investment_horizon_months\":4,\"liquid_savings_eur\":12000,\"monthly_expenses_eur\":1800,\"risk_capacity\":\"low\",\"upcoming_expenses\":[{\"amount_eur\":4800,\"label\":\"reparacion esencial\",\"months_until_due\":4}]}\n\nPREGUNTA\nTengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?"
+    }
+  ],
+  "rendered_prompt": "SYSTEM\nEres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.\n\nUSER\nEVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real.\",\"claim\":\"El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.\"}\n\nPROYECCIÓN RELEVANTE B\n{\"currency\":\"EUR\",\"emergency_reserve_target_months\":3,\"financial_goal\":\"preservar liquidez para gastos próximos y comprender alternativas educativas\",\"investment_horizon_months\":4,\"liquid_savings_eur\":12000,\"monthly_expenses_eur\":1800,\"risk_capacity\":\"low\",\"upcoming_expenses\":[{\"amount_eur\":4800,\"label\":\"reparacion esencial\",\"months_until_due\":4}]}\n\nPREGUNTA\nTengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?",
+  "adapter_contract": "Enviar solo messages; provider/model se configuran fuera de este artefacto. No contiene credenciales ni ejecuta red."
+}

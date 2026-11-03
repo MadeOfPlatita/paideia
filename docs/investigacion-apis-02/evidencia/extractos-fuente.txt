@@ -1,0 +1,138 @@
+[S1 Twelve Data pricing]
+API credits
+8 (800 a day)
+55+
+610+
+2,584+
+
+[S2 Twelve Data time series docs]
+The time series endpoint provides detailed historical data for a specified financial instrument.
+
+[S5 Twelve Data commercial/personal]
+Price data for regions outside the United States requires additional approval for commercial use. Any redistribution of data requires a separate agreement with Twelve Data.
+
+[S7 Twelve Data EU equities]
+Access to Cboe Europe is granted via the Data add-ons page inside the Dashboard.
+
+[S8 EODHD pricing]
+| [End-of-Day prices](https://eodhd.com/lp/historical-eod-api) Stocks _Global_ ETF _Global_ Forex _Global_ Crypto _Global_ Indices _Global_ | 1 yr | 30+ yrs | 30+ yrs | – Not included | 30+ yrs |
+
+[S9 EODHD terms]
+All CFDs (stocks, indices, mutual funds, ETFs), cryptocurrencies, and Forex are not provided by exchanges but rather by market makers, and so prices may not be accurate and may differ from the actual market price, meaning prices are indicative and not appropriate for trading purposes.
+
+[S10 EODHD history fields]
+| open | number | Opening price, as traded — not adjusted |
+| adjusted_close | number | Closing price adjusted for both splits and dividends |
+
+[S11 EODHD exchange list]
+| EUFUND | Europe Fund Virtual Exchange | European mutual funds, quoted in EUR |
+
+[S13 EODHD limits]
+Free plan — 20 API calls per day. Enough to try the endpoints out, not to run an application.
+
+[S15 Finnhub pricing]
+|  | Basic | Standard | Professional |
+| Pricing | $49.99/month | $129.99/month | $199.99/month |
+| Billing Frequency | Quarterly | Quarterly | Annually |
+
+[S16 Finnhub ETF pricing]
+* Global coverage for ETF and Mutual funds data is available for advanced users and enterprise clients. Contact us at support@finnhub.io to learn more.
+
+[S17 Finnhub API docs]
+ISIN. This field is only available for EU stocks and selected Asian markets. Entitlement from Finnhub is required to access this field.
+
+[S19 Finnhub terms]
+You hereby agree to not redistribute or share access to data or derived results from the data obtained from Finnhub with anyone or any 3rd party without written approval from Finnhub.
+
+[S21 FMP pricing]
+Displaying or redistributing data sourced from FMP requires a specific Data Display and Licensing Agreement with FMP.
+
+[S23 FMP price adjustment]
+Yes, the 'close' price is adjusted only for stock splits and 'adjClose' is adjusted for stock splits and dividends.
+
+[S24 FMP ISIN API]
+The API provides details such as the company name, stock symbol, ISIN, and market capitalization for financial securities.
+
+[S26 FMP terms]
+The Customer may not share FMP Services or Data, resell, permit other users access to our Services through the Customer’s account, integrate the Data or Services into any tools or applications accessible by any third parties, or use the Services to host, share, display, or provide content for others.
+
+[S27 Alpha Vantage pricing]
+75 requests/min + premium support: $49.99/month
+
+[S28 Alpha Vantage API docs]
+The "full" outputsize is available to premium keys.
+
+[S29 Alpha Vantage terms]
+iii. You plan to use or provide information accessed through the Alpha Vantage Platform as part of any type of commercial activity that allows individuals or entities other than User to access information directly or indirectly even if the scope of such activity falls outside of the securities industry.
+
+[S30 Alpha Vantage support]
+We are pleased to provide free stock API service covering the majority of our datasets for 25 API requests per day and unlimited API requests for verified open-source or educational projects.
+
+[S31 Marketstack pricing]
++ 100 Requests / mo
++ No Support
++ End-of-Day Data
++ 1 Year History
++ Splits & Dividends
+
+[S32 Marketstack docs]
+The Marketstack API provides real-time, intraday, and historical stock market data through a RESTful JSON interface — covering 125,000+ tickers across 72+ global exchanges , plus indices, bonds, ETFs, commodities, and company fundamentals.
+
+[S35 Tiingo pricing]
+License
+Internal Use Only
+
+[S36 Tiingo symbology]
+Right now the Tiingo API supports Equity, Mutual Fund, and ETF prices for US markets and Equity Prices for Chinese markets.
+
+[S4 Twelve Data trial]
+# Venture Plan
+- Various credit options from **610 API credits + 500 WebSocket API credits** starting at **$149/month.**
+
+[S40 EODHD fundamentals/pricing]
+From $19.99/mo Paid plans Full history, every API
+
+[S21 FMP pricing tiers]
+Ultimate
+$139
+$99.00/monthSave 29%
+billed annually
+
+[S31 Marketstack Basic pricing]
+Basic level — supporting intraday data and up to 10 years of historical data.
+$9.99 per month or $8.99 if billed yearly
++ Commercial Use
++ Non-Commercial Use
+
+[S38 EODHD commercial terms]
+The packages on the pricing page are intended for personal use only as commercial use requires a more thorough approach to licensing and data use.
+
+[S39 EODHD commercial pricing]
+Commercial Internal use Single-company use $399.00/mo.
+| $399.00/mo. | $2499.00/mo. | from $399.00/mo. |
+No. With the internal-usage package, data may only be used inside your company. Displaying it or sharing it with people outside your company is not permitted.
+
+[S5 Twelve Data cache]
+The Pro plan allows programmatic API use for internal AI assistants, while the Venture plan permits temporary caching and portfolio calculations.
+
+[S19 Finnhub cache termination]
+All data must be deleted should your subscription to that data ends.
+
+[S26 FMP cache termination]
+Upon termination of this Agreement, Customer must delete all Data it has received from FMP under all applicable Order Forms, including data cached, and sign the Data Deletion Agreement in Exhibit A.
+
+[S28 Alpha Vantage quote freshness]
+By default, the quote endpoint is updated at the end of each trading day for all users.
+
+[S32 Marketstack adjusted EOD]
+Stock Prices — Real-time, intraday, and historical End-of-Day (EOD) data with adjusted prices for 125,000+ tickers
+
+[S44 Twelve Data ETF directory]
+The ETFs endpoint provides a daily updated list of all available Exchange-Traded Funds.
+ISIN access is activating in the Data add-ons section
+
+[S42 Twelve Data series fields]
+The time series consists of chronological entries with Open, High, Low, and Close prices, and for applicable instruments, it also includes trading volume.
+
+[S20 Finnhub enterprise license]
+|License |Commercial use. Redistribution right. |

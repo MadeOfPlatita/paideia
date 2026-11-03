@@ -1,0 +1,25 @@
+# Extractos textuales de páginas primarias consultadas
+
+## Banco de España — TAE de un depósito
+El cálculo de la TAE, o tasa anual equivalente, está basado en el tipo de interés compuesto y en la hipótesis de que los intereses obtenidos se vuelven a invertir al mismo tipo de interés.
+
+## Tesoro Público — Letras del Tesoro
+Son valores emitidos al descuento o a premio, por lo que su precio de adquisición puede ser inferior o superior al importe que el inversor recibirá en el momento del reembolso. La diferencia entre el valor de reembolso de la Letra (1.000 euros) y su precio de adquisición será la rentabilidad generada por la Letra del Tesoro.
+
+## Reglamento Delegado (UE) 2021/2268 — escenarios PRIIPs
+A fin de evitar que los escenarios de rentabilidad se consideren previsiones que brindan la mejor estimación, es necesario imponer advertencias más visibles sobre dichos escenarios. La divulgación, en términos sencillos, de detalles adicionales sobre las hipótesis en las que se basan dichos escenarios también debería reducir el riesgo de que se generen expectativas inadecuadas en cuanto a los posibles rendimientos futuros.
+
+## CNMV — decisiones de inversión
+Defina sus objetivos de inversión. Es importante definir el objetivo de su ahorro, lo que implica, entre otras cuestiones, determinar el plazo de la inversión y el riesgo que se desea asumir.
+
+## W3C WAI — contraste
+The visual presentation of text and images of text has a contrast ratio of at least 4.5:1, except for the following:
+
+## W3C WAI — etiquetado de controles
+Provide labels to identify all form controls, including text fields, checkboxes, radio buttons, and drop-down menus.
+
+## W3C WAI — tamaño de objetivo
+The size of the target for pointer inputs is at least 24 by 24 CSS pixels, except when:
+
+## W3C WAI — teclado
+All functionality of the content is operable through a keyboard interface without requiring specific timings for individual keystrokes, except where the underlying function requires input that depends on the path of the user's movement and not just the endpoints.

@@ -1,0 +1,21 @@
+{
+  "mounted": true,
+  "without_consent": {
+    "feedback": "Marca la confirmación de privacidad antes de enviar el texto.",
+    "requests": []
+  },
+  "with_consent": {
+    "feedback": "Ahora no puedo responder con IA. No voy a inventar una respuesta. El chat no está conectado en este prototipo.",
+    "requests": [
+      {
+        "url": "/api/chat",
+        "method": "POST",
+        "keys": [
+          "message"
+        ]
+      }
+    ],
+    "errors": []
+  },
+  "passed": true
+}

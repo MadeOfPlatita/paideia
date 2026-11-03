@@ -1,0 +1,7 @@
+# Integridad del diario de misión
+
+El diario de la misión ligada al manifiesto usa cabecera v2 ligada a su SHA-256 y registros canónicos encadenados por SHA-256: contador, fecha, hash del snapshot y hash del registro anterior. Cada lectura valida toda la cadena, secuencia, fechas y snapshot final frente al ledger. El diario se sincroniza antes de escribir y sincronizar el ledger; una escritura interrumpida que deja discordancia bloquea nuevos intentos. Se rechaza un diario preexistente vacío, corrupto o de formato v1 sin migrar, reparar ni reinicializarlo. El comportamiento de la misión anterior sin digest no cambia.
+
+**Alcance de confianza:** detección de corrupción y replay parcial bajo confianza en el operador local; no hay HMAC ni protección frente a manipulación adversarial. Restaurar coordinadamente todos los archivos a un estado antiguo coherente queda fuera de alcance. No eliminar ni editar archivos de misión para superar un bloqueo; conservarlos para revisión.
+
+Verificación offline: regresión RED previa para corrupción intermedia literal y cambio hexadecimal; GREEN tras el arreglo. `python -m unittest tests.test_mission_journal_integrity -v`: 5 tests; `python -m unittest discover -s tests`: 232 tests; `node --test tests/*.test.cjs`: 24 tests, todos OK. Se verifican corrupción, truncamiento, eliminación, duplicación, replay de snapshot, reinicio, exclusión, límite 24, deadline y fallo sintético de fsync. No se realizaron llamadas reales ni se usaron claves.

@@ -1,0 +1,5 @@
+{
+  "output": "Traceback (most recent call last):\r\n  File \"C:\\Users\\aleja\\AppData\\Local\\hermes\\profiles\\trabajos\\cache\\scratch\\paideia_regression_no_tk.py\", line 15, in <module>\r\n    suite.addTests(loader.discover(str(ROOT / 'tests'), pattern=file.name, top_level_dir=str(ROOT)))\r\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\aleja\\AppData\\Local\\hermes\\hermes-agent\\.hermes-runtime\\python\\generation-1785329975-9264-00defd5f\\cpython-3.11-windows-x86_64-none\\Lib\\unittest\\loader.py\", line 332, in discover\r\n    raise ImportError('Start directory is not importable: %r' % start_dir)\r\nImportError: Start directory is not importable: 'C:\\\\Users\\\\aleja\\\\Downloads\\\\App Financiera\\\\prototipos\\\\paideia-local\\\\tests'",
+  "exit_code": 1,
+  "error": null
+}

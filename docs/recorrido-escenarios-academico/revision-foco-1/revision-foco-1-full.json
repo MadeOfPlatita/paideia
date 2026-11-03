@@ -1,0 +1,529 @@
+{
+  "review": "revision-foco-1",
+  "records": [
+    {
+      "kind": "test",
+      "test": "scenario_journey_focus_browser.js",
+      "width": 1280,
+      "result": {
+        "ok": true,
+        "checks": [
+          {
+            "name": "foco Empezar/ajustar",
+            "pass": true,
+            "active": "scenario-start"
+          },
+          {
+            "name": "ruta Empezar/ajustar",
+            "pass": true
+          },
+          {
+            "name": "sin cambios ni solicitudes Empezar/ajustar",
+            "pass": true
+          },
+          {
+            "name": "foco Comparar/entender",
+            "pass": true,
+            "active": "scenario-comparison-summary"
+          },
+          {
+            "name": "ruta Comparar/entender",
+            "pass": true
+          },
+          {
+            "name": "sin cambios ni solicitudes Comparar/entender",
+            "pass": true
+          },
+          {
+            "name": "foco Guardar",
+            "pass": true,
+            "active": "scenario-report-host"
+          },
+          {
+            "name": "ruta Guardar",
+            "pass": true
+          },
+          {
+            "name": "sin cambios ni solicitudes Guardar",
+            "pass": true
+          }
+        ],
+        "viewport": {
+          "client": 1265,
+          "scroll": 1265,
+          "inner": 1280
+        }
+      }
+    },
+    {
+      "kind": "test",
+      "test": "scenario_journey_focus_browser.js",
+      "width": 390,
+      "result": {
+        "ok": true,
+        "checks": [
+          {
+            "name": "foco Empezar/ajustar",
+            "pass": true,
+            "active": "scenario-start"
+          },
+          {
+            "name": "ruta Empezar/ajustar",
+            "pass": true
+          },
+          {
+            "name": "sin cambios ni solicitudes Empezar/ajustar",
+            "pass": true
+          },
+          {
+            "name": "foco Comparar/entender",
+            "pass": true,
+            "active": "scenario-comparison-summary"
+          },
+          {
+            "name": "ruta Comparar/entender",
+            "pass": true
+          },
+          {
+            "name": "sin cambios ni solicitudes Comparar/entender",
+            "pass": true
+          },
+          {
+            "name": "foco Guardar",
+            "pass": true,
+            "active": "scenario-report-host"
+          },
+          {
+            "name": "ruta Guardar",
+            "pass": true
+          },
+          {
+            "name": "sin cambios ni solicitudes Guardar",
+            "pass": true
+          }
+        ],
+        "viewport": {
+          "client": 390,
+          "scroll": 390,
+          "inner": 390
+        }
+      }
+    },
+    {
+      "kind": "test",
+      "test": "scenario_journey_browser.js",
+      "width": 1280,
+      "result": {
+        "ok": true,
+        "checks": [
+          {
+            "name": "formularios y secciones existentes",
+            "pass": true
+          },
+          {
+            "name": "formularios antes del resumen",
+            "pass": true
+          },
+          {
+            "name": "resumen antes de guardar",
+            "pass": true
+          },
+          {
+            "name": "enlace Empezar/ajustar",
+            "pass": true
+          },
+          {
+            "name": "navegación Empezar/ajustar conserva ruta",
+            "pass": true
+          },
+          {
+            "name": "enlace Comparar/entender",
+            "pass": true
+          },
+          {
+            "name": "navegación Comparar/entender conserva ruta",
+            "pass": true
+          },
+          {
+            "name": "enlace Guardar",
+            "pass": true
+          },
+          {
+            "name": "navegación Guardar conserva ruta",
+            "pass": true
+          },
+          {
+            "name": "botón de ejemplo ficticio",
+            "pass": true
+          },
+          {
+            "name": "ejemplo rellena A",
+            "pass": true
+          },
+          {
+            "name": "ejemplo no calcula ni modifica B",
+            "pass": true
+          },
+          {
+            "name": "pedir confirmación sin modificar",
+            "pass": true
+          },
+          {
+            "name": "confirmación identifica A",
+            "pass": true
+          },
+          {
+            "name": "cancelar disponible",
+            "pass": true
+          },
+          {
+            "name": "cancelar conserva escenarios",
+            "pass": true
+          },
+          {
+            "name": "botón copiar A a B",
+            "pass": true
+          },
+          {
+            "name": "copiar campos actuales",
+            "pass": true
+          },
+          {
+            "name": "copia deja B pendiente de calcular",
+            "pass": true
+          },
+          {
+            "name": "ambos calculados con API local",
+            "pass": true
+          },
+          {
+            "name": "resumen explica diferencias",
+            "pass": true
+          },
+          {
+            "name": "supuestos iguales explícitos",
+            "pass": true
+          },
+          {
+            "name": "edición oculta diferencias",
+            "pass": true
+          },
+          {
+            "name": "decimales equivalentes no cambian supuesto",
+            "pass": true
+          },
+          {
+            "name": "diferencia y aviso de horizonte",
+            "pass": true
+          },
+          {
+            "name": "confirmación de B no cambia datos",
+            "pass": true
+          },
+          {
+            "name": "cancelar copia conserva ambos",
+            "pass": true
+          },
+          {
+            "name": "confirmación revalida A y conserva B",
+            "pass": true
+          },
+          {
+            "name": "B pendiente real",
+            "pass": true
+          },
+          {
+            "name": "copia invalida respuesta pendiente de B",
+            "pass": true
+          },
+          {
+            "name": "A pendiente real",
+            "pass": true
+          },
+          {
+            "name": "copia campos de A pendiente sin modificar A",
+            "pass": true
+          },
+          {
+            "name": "A pendiente se resuelve normalmente",
+            "pass": true
+          }
+        ]
+      }
+    },
+    {
+      "kind": "test",
+      "test": "scenario_journey_browser.js",
+      "width": 390,
+      "result": {
+        "ok": true,
+        "checks": [
+          {
+            "name": "formularios y secciones existentes",
+            "pass": true
+          },
+          {
+            "name": "formularios antes del resumen",
+            "pass": true
+          },
+          {
+            "name": "resumen antes de guardar",
+            "pass": true
+          },
+          {
+            "name": "enlace Empezar/ajustar",
+            "pass": true
+          },
+          {
+            "name": "navegación Empezar/ajustar conserva ruta",
+            "pass": true
+          },
+          {
+            "name": "enlace Comparar/entender",
+            "pass": true
+          },
+          {
+            "name": "navegación Comparar/entender conserva ruta",
+            "pass": true
+          },
+          {
+            "name": "enlace Guardar",
+            "pass": true
+          },
+          {
+            "name": "navegación Guardar conserva ruta",
+            "pass": true
+          },
+          {
+            "name": "botón de ejemplo ficticio",
+            "pass": true
+          },
+          {
+            "name": "ejemplo rellena A",
+            "pass": true
+          },
+          {
+            "name": "ejemplo no calcula ni modifica B",
+            "pass": true
+          },
+          {
+            "name": "pedir confirmación sin modificar",
+            "pass": true
+          },
+          {
+            "name": "confirmación identifica A",
+            "pass": true
+          },
+          {
+            "name": "cancelar disponible",
+            "pass": true
+          },
+          {
+            "name": "cancelar conserva escenarios",
+            "pass": true
+          },
+          {
+            "name": "botón copiar A a B",
+            "pass": true
+          },
+          {
+            "name": "copiar campos actuales",
+            "pass": true
+          },
+          {
+            "name": "copia deja B pendiente de calcular",
+            "pass": true
+          },
+          {
+            "name": "ambos calculados con API local",
+            "pass": true
+          },
+          {
+            "name": "resumen explica diferencias",
+            "pass": true
+          },
+          {
+            "name": "supuestos iguales explícitos",
+            "pass": true
+          },
+          {
+            "name": "edición oculta diferencias",
+            "pass": true
+          },
+          {
+            "name": "decimales equivalentes no cambian supuesto",
+            "pass": true
+          },
+          {
+            "name": "diferencia y aviso de horizonte",
+            "pass": true
+          },
+          {
+            "name": "confirmación de B no cambia datos",
+            "pass": true
+          },
+          {
+            "name": "cancelar copia conserva ambos",
+            "pass": true
+          },
+          {
+            "name": "confirmación revalida A y conserva B",
+            "pass": true
+          },
+          {
+            "name": "B pendiente real",
+            "pass": true
+          },
+          {
+            "name": "copia invalida respuesta pendiente de B",
+            "pass": true
+          },
+          {
+            "name": "A pendiente real",
+            "pass": true
+          },
+          {
+            "name": "copia campos de A pendiente sin modificar A",
+            "pass": true
+          },
+          {
+            "name": "A pendiente se resuelve normalmente",
+            "pass": true
+          }
+        ]
+      }
+    },
+    {
+      "kind": "enter_tab",
+      "width": 1280,
+      "results": [
+        {
+          "label": "Empezar/ajustar",
+          "expectedTarget": "scenario-start",
+          "enter": {
+            "activeId": "scenario-start",
+            "activeTag": "DIV",
+            "activeText": "Escenario A · controlesCapital inicial (",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          },
+          "tab": {
+            "activeId": "scenario-principal",
+            "activeTag": "INPUT",
+            "activeText": "",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          }
+        },
+        {
+          "label": "Comparar/entender",
+          "expectedTarget": "scenario-comparison-summary",
+          "enter": {
+            "activeId": "scenario-comparison-summary",
+            "activeTag": "SECTION",
+            "activeText": "Comparación de escenariosEscenarioEstado",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          },
+          "tab": {
+            "activeId": "",
+            "activeTag": "BUTTON",
+            "activeText": "Descargar informe (HTML)",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          }
+        },
+        {
+          "label": "Guardar",
+          "expectedTarget": "scenario-report-host",
+          "enter": {
+            "activeId": "scenario-report-host",
+            "activeTag": "SECTION",
+            "activeText": "Informe de comparaciónLa impresión está ",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          },
+          "tab": {
+            "activeId": "",
+            "activeTag": "BUTTON",
+            "activeText": "Descargar informe (HTML)",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          }
+        }
+      ]
+    },
+    {
+      "kind": "enter_tab",
+      "width": 390,
+      "results": [
+        {
+          "label": "Empezar/ajustar",
+          "expectedTarget": "scenario-start",
+          "enter": {
+            "activeId": "scenario-start",
+            "activeTag": "DIV",
+            "activeText": "Escenario A · controlesCapital inicial (",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          },
+          "tab": {
+            "activeId": "scenario-principal",
+            "activeTag": "INPUT",
+            "activeText": "",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          }
+        },
+        {
+          "label": "Comparar/entender",
+          "expectedTarget": "scenario-comparison-summary",
+          "enter": {
+            "activeId": "scenario-comparison-summary",
+            "activeTag": "SECTION",
+            "activeText": "Comparación de escenariosEscenarioEstado",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          },
+          "tab": {
+            "activeId": "",
+            "activeTag": "BUTTON",
+            "activeText": "Descargar informe (HTML)",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          }
+        },
+        {
+          "label": "Guardar",
+          "expectedTarget": "scenario-report-host",
+          "enter": {
+            "activeId": "scenario-report-host",
+            "activeTag": "SECTION",
+            "activeText": "Informe de comparaciónLa impresión está ",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          },
+          "tab": {
+            "activeId": "",
+            "activeTag": "BUTTON",
+            "activeText": "Descargar informe (HTML)",
+            "hash": "#escenarios",
+            "callsDelta": 0,
+            "snapSame": true
+          }
+        }
+      ]
+    }
+  ]
+}

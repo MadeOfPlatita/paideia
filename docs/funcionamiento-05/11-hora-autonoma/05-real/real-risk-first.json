@@ -1,0 +1,21 @@
+{
+  "http_status": 200,
+  "body": {
+    "answer": "No, afirmar que ahorrar siempre carece de riesgo es incorrecto, ya que la pérdida de poder adquisitivo por inflación, fluctuaciones de tipos o riesgos de contraparte pueden afectar el valor real del ahorro. La inflación reduce el valor del dinero con el tiempo, por lo que los rendimientos nominales deben superar la tasa inflacionaria para mantener o aumentar el poder de compra.",
+    "refused": false,
+    "truncated": false,
+    "provider_mode": "external",
+    "external_sent": true,
+    "tool_events": [],
+    "sources": []
+  },
+  "request": {
+    "message": "Prueba educativa con datos ficticios. Responde en dos frases como máximo, sin tablas: ¿es correcto afirmar que ahorrar siempre carece de riesgo? Explica la inflación sin recomendar productos concretos.",
+    "consent": {
+      "notice_version": "paideia-chat-remote-v1",
+      "accepted_chat_processing": true,
+      "purpose": "free_chat",
+      "approved_fields": []
+    }
+  }
+}

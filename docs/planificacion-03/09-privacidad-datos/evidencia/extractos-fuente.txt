@@ -1,0 +1,45 @@
+Extractos literales capturados de las fuentes consultadas para el informe. Se mantienen los cortes de línea visibles en el texto extraído cuando aparecen.
+
+[1] EUR-Lex — RGPD, texto español
+la existencia de decisiones automatizadas, incluida la elaboración de perfiles, a que se refiere el artículo 22, apartados 1 y 4, y, al menos en tales casos, información significativa sobre la lógica aplicada, así como la importancia y las consecuencias previstas de dicho tratamiento para el interesado.
+
+[2] AEPD — Protección de Datos: Guía para el Ciudadano
+referidos a tu situación laboral, fi-
+nanciera o de salud.
+
+También existen las categorías especiales de datos, en los que además de los datos de salud, se en-
+cuentran los que puedan revelar tu origen étnico o racial, opiniones políticas, convicciones religio-
+sas, o afiliación sindical, así como el tratamiento de tus datos genéticos, biométricos (si te identificasen de manera unívoca), así como los relativos a tu vida sexual u orientación sexual.
+
+[3] EDPB — Process personal data lawfully
+If a data controller uses consent as a legal basis for the processing of personal data, they must ensure that this consent is freely given, informed, specific and unambiguous.
+
+For consent to be unambiguous, there should be a clear affirmative action (without pre-ticked boxes and made separately from applicable general conditions).
+
+[5] AEPD — Guía uso de cookies para herramientas de medición de audiencia, enero de 2024
+Para limitarse a lo estrictamente necesario para la prestación del servicio y, por tanto, estar exentos de consentimiento de conformidad con el artículo 22.2 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico, estas cookies, o tecnologías similares, deben tener una finalidad estrictamente limitada a la medición exclusiva de la audiencia del sitio o de la aplicación. Este tratamiento ha de ser realizado en nombre exclusivo del editor y ser utilizadas para producir datos estadísticos anónimos únicamente.
+
+[6] OWASP — Logging Cheat Sheet
+The level and content of security monitoring, alerting, and reporting needs to be set during the requirements and design stage of projects, and should be proportionate to the information security risks.
+
+[8] OpenAI — Data controls in the API platform
+Abuse monitoring logs may contain certain customer content, such as prompts and responses, as well as metadata derived from that customer content, such as classifier outputs. By default, abuse monitoring logs are generated for all API feature usage and retained for up to 30 days, unless longer retention is required by law, or is reasonably necessary to protect our services or any third party from harm.
+
+[9] Cloudflare — Turnstile documentation
+Turnstile performs client-side security challenges on behalf of the website operator to distinguish human visitors from automated traffic. To do so, Turnstile processes only the data strictly necessary to provide this security function. Turnstile does not access, store, or transmit user communications, form entries, or other page inputs.
+
+[10] Cloudflare — Turnstile Privacy Addendum
+Cloudflare Turnstile processes a variety of client-side signals (“Signals”) such as client IP address, TLS Fingerprint, User-Agent Header and Sitekey and associated origin.
+
+Cloudflare is a data processor of Signals that we process to provide the Turnstile service to our customers, that is, securing our customers’ websites.
+
+Cloudflare is a data controller of Signals that we process to improve Turnstile’s bot detection capabilities.
+
+[11] Comisión Europea — Standard Contractual Clauses
+According to the General Data Protection Regulation (GDPR), contractual clauses ensuring appropriate data protection safeguards can be used as a ground for data transfers from the EU to third countries. This includes model contract clauses – so-called standard contractual clauses (SCCs) – that have been “pre-approved” by the European Commission.
+
+[4] AEPD — página sobre protección de datos por defecto
+Protección de datos por defecto
+
+[7] Google AI — Gemini API Additional Terms of Service
+Gemini API Additional Terms of Service

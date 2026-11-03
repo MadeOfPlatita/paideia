@@ -1,0 +1,27 @@
+{
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [],
+  "verification_blockers": [
+    "No se comprobó salir y volver para cada uno de los cuatro valores inválidos; solo se comprobó para 101 espacios. Tampoco se ejercitó independientemente el cambio de filtro con texto inválido."
+  ],
+  "suggestions": [],
+  "summary": "Integración y probes disponibles pasan; aceptación integral incompleta.",
+  "evidence": {
+    "mobile": "mobile.json",
+    "desktop": "desktop.json",
+    "probes": "probes.json",
+    "integration_checks_each": 27,
+    "raw_checks": 9,
+    "keyboard": "CDP rawKeyDown + char + keyUp en escritorio; primer intento sin char conservado",
+    "server": "python app.py --port 18875; status ai.connected=false; proceso propio detenido; netstat sin LISTENING 18875 y curl exit 7",
+    "scope": "emulación CDP, no dispositivo físico ni auditoría integral de accesibilidad o layout; Home móvil inicial client 390 scroll 448 inner 448 visual 390; estado final client/scroll/inner/visual 390; sin atribución causal",
+    "references": [
+      "static/app.js:1091-1113",
+      "static/app.js:1203-1239",
+      "static/app.js:1353-1404",
+      "static/context_help.js:43-52",
+      "tests/c_integration_browser.js:8-35"
+    ]
+  }
+}

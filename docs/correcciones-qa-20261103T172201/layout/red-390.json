@@ -1,0 +1,43 @@
+{
+  "ok": false,
+  "checks": [
+    {
+      "name": "home bounds",
+      "pass": false,
+      "detail": {
+        "client": 390,
+        "scroll": 448,
+        "bounds": [
+          {
+            "text": "respuestas.objetivo: {\"estado\":\"declarado\",\"valor\":\"aprender_conceptos\"}",
+            "right": 448.171875
+          },
+          {
+            "text": "detalle_economico.importe_objetivo: {\"estado\":\"declarado\",\"valor\":{\"min_eur\":\"0\",\"max_eur\":\"0.00\",\"moneda\":\"EUR\"}}",
+            "right": 430.109375
+          }
+        ]
+      }
+    },
+    {
+      "name": "temporal notice",
+      "pass": false,
+      "detail": "Selección para comparar · 0 de 4Elige al menos dos candidatos. La selección no cambia sin que pulses aquí.Selecciona 2 para comparar"
+    },
+    {
+      "name": "different horizons",
+      "pass": false,
+      "detail": "Comparación de escenariosEscenarioEstadoAportadoSaldo nominalSaldo realAActualizado6100,00 €6751,74 €6112,26 €BActualizado6200,00 €6689,95 €6365,26 €"
+    },
+    {
+      "name": "edit retains B and hides stale A",
+      "pass": false,
+      "detail": "Comparación de escenariosEscenarioEstadoAportadoSaldo nominalSaldo realAPendiente de calcular———BActualizado6200,00 €6689,95 €6365,26 €"
+    },
+    {
+      "name": "equal horizons no warning",
+      "pass": false,
+      "detail": "Comparación de escenariosEscenarioEstadoAportadoSaldo nominalSaldo realAActualizado3100,00 €3261,35 €3103,06 €BActualizado6200,00 €6689,95 €6365,26 €"
+    }
+  ]
+}

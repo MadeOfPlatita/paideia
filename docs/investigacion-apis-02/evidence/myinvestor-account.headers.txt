@@ -1,0 +1,30 @@
+HTTP/1.1 308 Permanent Redirect
+Date: Mon, 26 Oct 2026 18:39:15 GMT
+Transfer-Encoding: chunked
+Connection: keep-alive
+Server: nginx
+location: /cuentas-tarjetas/cuentas/
+Refresh: 0;url=/cuentas-tarjetas/cuentas/
+Set-Cookie: visid_incap_3223903=vsCyUCh0RF+P4+V8Yysmv1Oe32oAAAAAQUIPAAAAAAC8guRk7a0pToh0Fq1+VqdR; expires=Mon, 25 Oct 2027 22:30:19 GMT; HttpOnly; path=/; Domain=.myinvestor.es; Secure; SameSite=None
+Set-Cookie: nlbi_3223903=F6b7agaWr3uMhYhZyu85vwAAAADfuGopHVzW5t2coCUn8zyx; HttpOnly; path=/; Domain=.myinvestor.es; Secure; SameSite=None
+Set-Cookie: incap_ses_611_3223903=1YnsUXCHmRsBNSYbebV6CFOe32oAAAAA/55piwkqtQXlZNH00JNVYQ==; path=/; Domain=.myinvestor.es; Secure; SameSite=None
+Strict-Transport-Security: max-age=31536000
+X-CDN: Imperva
+X-Iinfo: 44-123900390-123900419 NNNY CT(20 45 0) RT(1793039955540 156) q(0 0 0 0) r(1 1) U11
+
+HTTP/1.1 200 OK
+Date: Mon, 26 Oct 2026 18:39:15 GMT
+Content-Type: text/html; charset=utf-8
+Connection: keep-alive
+Server: nginx
+Content-Security-Policy: frame-ancestors https://myinvestor.es https://*.myinvestor.es https://*.mydevplatform.es app://app.myinvestor.es 'self'
+Cache-Control: private, no-cache, no-store, max-age=0, must-revalidate
+ETag: "yeh6rug0dmj45i"
+Vary: Accept-Encoding
+Set-Cookie: visid_incap_3223903=7DejZBNMT2ea/tJ8rO5nC1Oe32oAAAAAQUIPAAAAAAAOHrQJSyYmuA8xDgLY78n0; expires=Mon, 25 Oct 2027 22:30:19 GMT; HttpOnly; path=/; Domain=.myinvestor.es; Secure; SameSite=None
+Set-Cookie: incap_ses_611_3223903=CDh5VkTbc06ANyYbebV6CFOe32oAAAAAjIydC6fXCLD8erZbmrtxFg==; path=/; Domain=.myinvestor.es; Secure; SameSite=None
+Strict-Transport-Security: max-age=31536000
+X-CDN: Imperva
+Transfer-Encoding: chunked
+X-Iinfo: 44-123900390-123900419 SNNy RT(1793039955540 227) q(0 0 0 -1) r(2 2) U12
+

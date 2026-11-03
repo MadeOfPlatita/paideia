@@ -1,0 +1,15 @@
+test_editorial_response_is_rendered_server_side (test_structured_education.StructuredEducationTests.test_editorial_response_is_rendered_server_side) ... ERROR
+
+======================================================================
+ERROR: test_editorial_response_is_rendered_server_side (test_structured_education.StructuredEducationTests.test_editorial_response_is_rendered_server_side)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\aleja\Downloads\App Financiera\prototipos\paideia-local\tests\test_structured_education.py", line 19, in test_editorial_response_is_rendered_server_side
+    s = LocalChatService(provider=p, enabled=True, test_only=True, structured_mode=True)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: LocalChatService.__init__() got an unexpected keyword argument 'structured_mode'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=1)

@@ -1,0 +1,19 @@
+{
+  "timestamp_utc": "2026-11-03T11:22:38.381207+00:00",
+  "owned_server": {
+    "pid": 26380,
+    "port": 18876,
+    "process_manage": "killed",
+    "netstat_observation": "No LISTENING 18876; una conexión TIME_WAIT PID 0",
+    "get_status": "curl exit 7, conexión rechazada"
+  },
+  "fetch_restored": true,
+  "source_sha256": {
+    "app.py": "0e6dac4d2a764e818e198dd2b8ebdb6516cc9e7738026c73e6e943194283c036",
+    "static/app.js": "e949c7bb8fd8ad30ad1a861c9586bf3ab5e0005c9460f81860965542a5c4a85a",
+    "static/context_help.js": "c392638b1d5b9012f97c37b9a6ed6fa2b59a6f968feb7a8e7b6c165600c2ef8d",
+    "static/context_help.css": "b7a61d3798d503193349c4bbaf8702b80aa075ee6c5ad2a028839775895bdfdb",
+    "tests/c_integration_browser.js": "b48df313e17322dda5bbbdfabddb93129228ed83dad4e092722fc4708268cb75"
+  },
+  "source_matches_baseline": true
+}

@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://openfigi.com/api/documentation",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The OpenFIGI API allows mapping from third-party identifiers to FIGIs.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://openfigi.com/docs/faqs",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The FIGI symbology, under the auspice of the Object Management Group, is provided free of charge to all, and for the public trust and benefit. There is no cost recovery, licensing or re-use restrictions or hidden fees for access, use, or redistribution of the FIGI symbology.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://openfigi.com/docs/terms-of-service",
+      "title": "",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 4,
+      "url": "https://www.esma.europa.eu/document/firds-instructions-access-and-download-full-and-delta-reference-data-files",
+      "title": "",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 5,
+      "url": "https://www.esma.europa.eu/document/firds-reference-data-xml-schema-v121",
+      "title": "",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 6,
+      "url": "https://api.gleif.org/docs",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The GLEIF API gives developers access to full LEI Data search engine functionality, including filters, full-text and single-field searches of Level 1 (LEI Record) Data, retrieval of LEI Records (including links to their Level 2 data, where available), based on a search of their associated Level 2 (relationship) data, and \"fuzzy\" matching of important data fields such as names and addresses.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://gleif.org/en/meta/lei-data-terms-of-use",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The data available through the Access Service are provided under the CC0 licence.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://www.cnmv.es/portal/menu/registros-oficiales?lang=es",
+      "title": "",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 9,
+      "url": "https://www.cnmv.es/portal/consultas/mostrarlistados.aspx?id=26&lang=es",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Listado completo de UCITS. Número y fecha de registro oficial: 107 - 04/08/1997.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "url": "https://eba.europa.eu/risk-analysis-and-data/credit-institutions-register",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The fact that a credit institution is covered by a particular deposit guarantee scheme does not necessarily imply that all types or amounts of deposits are eligible for compensation under the scheme.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "url": "https://eba.europa.eu/activities/single-rulebook/regulatory-activities/depositor-protection/deposit-guarantee-schemes-data",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The data published by the EBA is point-in-time data as of 31 December, and, therefore, does not reflect any subsequent changes to the amount of covered deposits or available financial means in individual DGSs.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://www.ecb.europa.eu/stats/financial_corporations/list_of_financial_institutions/html/index.en.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The ECB releases updated information on the list of MFIs on a daily basis. Downloads are available as tab-delimited CSV files.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "url": "https://www.esma.europa.eu/sites/default/files/library/esma65-8-5014_firds_-_instructions_for_download_of_full_and_delta_reference_files.pdf",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The full file contains the full reference data received by ESMA before the applicable cut-off time, for all instruments that are still active and that have been admitted to trading on RM, including where a request for admission to trading has been made, or that are traded on a MTF, OTF, or SI.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "url": "https://www.cnmv.es/portal/Utilidades/NotaLegal.aspx",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "La información que se difunde por este medio se hace únicamente a título informativo.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://euclid.eba.europa.eu/register/cir/disclaimer",
+      "title": "",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 16,
+      "url": "https://registers.esma.europa.eu/solr/esma_registers_firds_files/select?q=%2A&wt=json&indent=true&start=0&rows=3&sort=publication_date+desc",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "\"file_name\":\"DLTINS_20261026_01of01.zip\", \"file_type\":\"DLTINS\", \"publication_date\":\"2026-10-26T00:00:00Z\", \"download_link\":\"https://firds.esma.europa.eu/firds/DLTINS_20261026_01of01.zip\"",
+          "added": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

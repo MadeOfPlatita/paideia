@@ -1,0 +1,20 @@
+SOURCE: https://developers.cloudflare.com/workers/languages/python/
+RESOLVED URL: https://developers.cloudflare.com/workers/languages/python/
+TITLE: Write Cloudflare Workers in Python
+RETRIEVED: 2026-10-28 via web_extract
+PAGE DATE: Last updated Sep 17, 2026
+SCOPE: Verbatim excerpts from retrieved official documentation.
+
+Cloudflare Workers provides a first-class Python experience, including support for:
+
+- Easy to install and fast-booting Packages, including FastAPI, Langchain, Pydantic and more.
+- A robust foreign function interface (FFI) that lets you use JavaScript objects and functions directly from Python — including all Runtime APIs
+- An ecosystem of services on the Workers Platform accessible via bindings, including:
+- State storage and databases like KV, D1, Durable Objects
+- Access to Environment Variables, Secrets, and other Workers using Service Bindings
+
+Similar to other Workers, the main entry point for a Python worker is the `fetch` handler which handles incoming requests sent to the Worker.
+
+In a Python Worker, this handler is placed in a `Default` class that extends the `WorkerEntrypoint` class (which you can import from the `workers` SDK module).
+
+You must add the `python_workers` compatibility flag to your Worker.

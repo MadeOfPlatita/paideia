@@ -1,0 +1,17 @@
+{
+  "race": {
+    "whitelist": true,
+    "race": true,
+    "calls": 1
+  },
+  "extreme": {
+    "enabled": true,
+    "nominal": "452592596605447027503912597676958730429147429671389.28",
+    "reportLength": 6272,
+    "viewport": {
+      "client": 390,
+      "scroll": 390
+    },
+    "hugeVisible": true
+  }
+}

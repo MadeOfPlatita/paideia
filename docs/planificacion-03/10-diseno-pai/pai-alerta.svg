@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc" focusable="false">
+  <title id="title">Pai — alerta</title>
+  <desc id="desc">Mascota triangular azul con ojos atentos y una señal de aviso terracota; usar junto a un mensaje textual.</desc>
+  <path d="M80 12 148 145H12Z" fill="#3157B7" stroke="#18272D" stroke-width="5" stroke-linejoin="round"/>
+  <path d="m80 28 22 38H58Z" fill="#B74734"/>
+  <path d="M80 39v13" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="80" cy="59" r="2.2" fill="#FFFFFF"/>
+  <ellipse cx="56" cy="91" rx="5" ry="7" fill="#FFFFFF"/>
+  <ellipse cx="104" cy="91" rx="5" ry="7" fill="#FFFFFF"/>
+  <ellipse cx="80" cy="116" rx="5" ry="7" fill="#FFFFFF"/>
+</svg>

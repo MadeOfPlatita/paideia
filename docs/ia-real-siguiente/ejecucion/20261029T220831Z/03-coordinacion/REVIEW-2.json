@@ -1,0 +1,10 @@
+{
+  "source": "deleg_a2409cb2",
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "suggestions": [],
+  "tests": 34,
+  "subtests": 7,
+  "scope": "mission_budget.py and essential secure_groq_session.py integration; offline only; no coordinated full-file rollback defense"
+}

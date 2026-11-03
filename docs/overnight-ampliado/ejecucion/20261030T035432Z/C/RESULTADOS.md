@@ -1,0 +1,19 @@
+# Hito C — experimental, solo fixture sintética
+
+Estado: implementación y HTTP loopback focalizado verificados; **no producción, no fuente real, no integración en el servidor normal ni revisión independiente**. Nada modifica app.py, backend_services.py, catalogue_facts.py, candidatos.json ni ledger. Reutiliza el diseño del spike 005 (hash, temporal mismo directorio, fsync y reemplazo), no su TTL por defecto sin caducidad.
+
+## Contrato
+
+`SyntheticSnapshotRepository(path, clock=...)`: ruta con nombre obligatorio `synthetic-snapshot.json`, directorio aislado propiedad exclusiva del llamador. `promote(source)` valida schema cerrado `synthetic-source.v1`, clasificación, `complete`, lista de IDs esperados, registros sin duplicados, identidad rotulada sintética, origen `synthetic_test:fixture`, timestamps UTC por campo, permiso `unknown` y política `fixture-only.v1` explícita; rechaza campos extra y fechas futuras o caducadas. La lista de esperados y `complete` son afirmaciones de una fuente fixture; no demuestran completitud frente a una fuente real ni son autorización.
+
+`count`, `list_products(q=None,family=None)`, `get_product(id)` cumplen el contrato usado por `app.create_server(..., repository=repo)`. DTO expone nombre rotulado `SYNTHETIC TEST ONLY`, `unknown_fields` con `synthetic_test`, no publicable, condiciones pendientes; no expone documento fuente ni política. El comparador por defecto permanece sin hechos ni política: no se configura ni prueba comparabilidad positiva. El servidor `tests/serve_synthetic_snapshot.py` crea directorio temporal y solo enlaza loopback: `python -B tests/serve_synthetic_snapshot.py`. No habilitar ni conectar a producción.
+
+Validación previa a promoción, escritura de temporal en la misma carpeta, flush/fsync del archivo, `os.replace`, limpieza; el archivo anterior permanece ante errores probados antes o durante replace fallido. Lecturas abren y verifican schema, duplicados JSON y SHA-256 cada vez; rechazan caducidad/corrupción en vez de servir datos. Hash sin clave detecta alteración accidental, no autentica adversarios. No directorio fsync, backup, recuperación automática o garantía ante pérdida eléctrica. Solo una instancia y proceso con un escritor y múltiples hilos; no hay lock compartido entre instancias/procesos, ni seguridad frente a otros procesos, enlaces simbólicos o directorio hostil. La restricción de nombre es un guardarraíl, no sandbox. Ningún cliente de red/DB en el repositorio; HTTP exclusivamente loopback en fixture.
+
+## Evidencia propia
+
+- `red.txt`: primera prueba ejecutada antes de la implementación, salida 1 por `ModuleNotFoundError`; es fallo de módulo ausente, no una aserción de comportamiento. Subsecuentes casos se añadieron después de la primera implementación; no afirmar TDD rojo individual para todos.
+- `targeted.txt`: `python -B -m unittest discover -s tests -p test_synthetic_snapshot.py -v`, 9 tests, salida 0. Prueba reinicio en subproceso, fuente parcial/política ausente y otras entradas inválidas, fallo parcial de escritura/creación/fsync/reemplazo y limpieza/preservación de bytes, hash/JSON truncado/duplicados/caducidad, 100 operaciones con 8 hilos en una instancia, DTO HTTP de catálogo/producto, POST/DELETE 405, y respuesta 500 saneada ante corrupción. Servidor detenido y directorio eliminado por la prueba.
+- `python -B -m unittest discover -s tests -p test_backend.py -q`: 18 tests OK; `python -B -m unittest discover -s spikes/005-api-cache-vs-direct -p test_storage_spike.py -q`: 11 OK.
+
+Pendiente: revisión independiente del contrato y seguridad; no se ha ensayado navegador ni comparador HTTP con este fixture, ni se han ejercitado almacenamiento hostil, fuente real, permiso real, coordinación multiproceso, fallo eléctrico o producción. Una integración productiva requeriría autorización de uso/fuente, política real por campo, mapeo, auditoría y diseño independiente; no extrapolar este fixture.

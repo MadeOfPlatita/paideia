@@ -1,0 +1,159 @@
+{
+  "engine": "pytest",
+  "collected": [
+    {
+      "id": "53c10580f3a791fecbd0a18b91113fa1b3dcac2bca0604942f959635a95fb4e0",
+      "kind": "unittest"
+    },
+    {
+      "id": "562174283b337a3939950d2be5583f743c7e4e2735f285b2861196bc9111f653",
+      "kind": "unittest"
+    },
+    {
+      "id": "531ba659c58f81b6c4c0d516a42319c5705834706af5f57197ef4f46d07298b1",
+      "kind": "unittest"
+    },
+    {
+      "id": "9986cc0f9dea05e2d825bbba95d500f4b01f9d04ed7c486b5c702ac7c80b9b77",
+      "kind": "unittest"
+    },
+    {
+      "id": "c39a3b565c006d301e7c3857f9b4c6e32e388581e346ea84e1b79829a1abb562",
+      "kind": "unittest"
+    },
+    {
+      "id": "56eed6ca9f162162e7aa1d646166aade1ed2f9b2d140ae675071e481f31cf455",
+      "kind": "unittest"
+    },
+    {
+      "id": "800b960a3297a7f9f1020085ffd314d6d67c793949aa12924f12955ebf696570",
+      "kind": "unittest"
+    },
+    {
+      "id": "9a109346216c08cf6bf854a714639ae4036a6ea4bdbac0d4e92e7441e28398a2",
+      "kind": "unittest"
+    },
+    {
+      "id": "9ce19441c1065da85d8eee19feabf21a126f4910a32c6e9cddbcefa6c09d027f",
+      "kind": "unittest"
+    },
+    {
+      "id": "46583bef92f79a1bc124ddd4c608cc2d64803d61b95e1364910da7aab72a6ac2",
+      "kind": "unittest"
+    },
+    {
+      "id": "69e31bc148f04ab626be1be7b6933d19f1965e9532858f74291bb39178df530a",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "cb47965ae19a71c730084c98e74b37ee5f946ef607f6cc989d252eeb8bf071b0",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "2b681aeb2545e4418c749f7205eff0fa6f7f35005951da27cb37d882d5153d35",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "0d4f85ddde4e13f5c677c9c7b713e90034d948e04e4c8dfb29bb50e56cd9aee3",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "fc45e6dbe639f4884e27bf686d3cea72aa9305d6add1e0036ae59565aab08ebb",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "d5d3f6ce8c468234fa2480626e4bcf993c3db92afcbc7bcdff6f79b25bd282c6",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "8dfdcf8b339569f1b069f4a439dd916e10c5afea65597b2e0c91de4b37b29db7",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "ebaa71f46af37427629608d2a4548817700d81a07572e0db846c22dfcc19a98a",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "bdeab42b7781063481022b9191c7bfadc564d308a37fe25d95899d2b820545f4",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "d593fe9b7eb39ce9ac589dd672ca5e55e3a5ef50fc5299ef065c1da9fcac94f1",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "2de2c646db20dea5ff0eea1536d05f024e0d001a1ce966ec7c978dde45aea1f7",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "716831d6fa196f89d0a41dbc09b24af169bb1161bff794196c0d24f398e5235a",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "2a7cbe062b43e28b10e9c3fe128bbc46775157c65bdf05c709aad33025cb39d7",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "d5e8bc3628485d95f44e59e09f6f355bf841ad05219917a350b818bb079e2f04",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "048c6060b423bc09b9604694b00ff38b04ff1ed3434f140ec14cd728f0444676",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "82944ceb2650942af852d194d9ec2974846d5c35e275f3839052d5cad975075a",
+      "kind": "pytest_other"
+    },
+    {
+      "id": "28afbdab5f32bfb2404bab156a66c8f09265a14311b4f5d961904b8a860f8026",
+      "kind": "pytest_other"
+    }
+  ],
+  "counts": {
+    "unittest": 10,
+    "pytest_other": 17
+  },
+  "gui_exclusions": {
+    "tests/test_secure_groq_smoke.py::TestSecureGroqSmoke::test_window_masks_key_and_does_not_submit_on_open": "constructs a real Tk window",
+    "tests/test_secure_groq_smoke.py::TestSecureGroqSmoke::test_window_roundtrip_saves_sanitized_result_without_key": "constructs a real Tk window",
+    "tests/test_session_ui_feedback.py::UIFeedbackTests::test_failed_start_is_terminal_and_explains_occupied_port": "constructs a real Tk window",
+    "tests/test_session_ui_feedback.py::UIFeedbackTests::test_pending_expiry_erases_entry_and_disables_start": "constructs a real Tk window",
+    "tests/test_session_ui_feedback.py::UIFeedbackTests::test_mission_cutoff_overrides_legacy_on_button_invoke": "constructs a real Tk window",
+    "tests/test_session_ui_feedback.py::UIFeedbackTests::test_invalid_clock_fails_closed_without_leaking": "constructs a real Tk window"
+  },
+  "deselected": [],
+  "outcomes": {
+    "53c10580f3a791fecbd0a18b91113fa1b3dcac2bca0604942f959635a95fb4e0": "passed",
+    "562174283b337a3939950d2be5583f743c7e4e2735f285b2861196bc9111f653": "passed",
+    "531ba659c58f81b6c4c0d516a42319c5705834706af5f57197ef4f46d07298b1": "passed",
+    "9986cc0f9dea05e2d825bbba95d500f4b01f9d04ed7c486b5c702ac7c80b9b77": "passed",
+    "c39a3b565c006d301e7c3857f9b4c6e32e388581e346ea84e1b79829a1abb562": "passed",
+    "56eed6ca9f162162e7aa1d646166aade1ed2f9b2d140ae675071e481f31cf455": "passed",
+    "800b960a3297a7f9f1020085ffd314d6d67c793949aa12924f12955ebf696570": "passed",
+    "9a109346216c08cf6bf854a714639ae4036a6ea4bdbac0d4e92e7441e28398a2": "passed",
+    "9ce19441c1065da85d8eee19feabf21a126f4910a32c6e9cddbcefa6c09d027f": "passed",
+    "46583bef92f79a1bc124ddd4c608cc2d64803d61b95e1364910da7aab72a6ac2": "passed",
+    "69e31bc148f04ab626be1be7b6933d19f1965e9532858f74291bb39178df530a": "passed",
+    "cb47965ae19a71c730084c98e74b37ee5f946ef607f6cc989d252eeb8bf071b0": "passed",
+    "2b681aeb2545e4418c749f7205eff0fa6f7f35005951da27cb37d882d5153d35": "passed",
+    "0d4f85ddde4e13f5c677c9c7b713e90034d948e04e4c8dfb29bb50e56cd9aee3": "passed",
+    "fc45e6dbe639f4884e27bf686d3cea72aa9305d6add1e0036ae59565aab08ebb": "passed",
+    "d5d3f6ce8c468234fa2480626e4bcf993c3db92afcbc7bcdff6f79b25bd282c6": "passed",
+    "8dfdcf8b339569f1b069f4a439dd916e10c5afea65597b2e0c91de4b37b29db7": "passed",
+    "ebaa71f46af37427629608d2a4548817700d81a07572e0db846c22dfcc19a98a": "passed",
+    "bdeab42b7781063481022b9191c7bfadc564d308a37fe25d95899d2b820545f4": "passed",
+    "d593fe9b7eb39ce9ac589dd672ca5e55e3a5ef50fc5299ef065c1da9fcac94f1": "passed",
+    "2de2c646db20dea5ff0eea1536d05f024e0d001a1ce966ec7c978dde45aea1f7": "passed",
+    "716831d6fa196f89d0a41dbc09b24af169bb1161bff794196c0d24f398e5235a": "passed",
+    "2a7cbe062b43e28b10e9c3fe128bbc46775157c65bdf05c709aad33025cb39d7": "passed",
+    "d5e8bc3628485d95f44e59e09f6f355bf841ad05219917a350b818bb079e2f04": "passed",
+    "048c6060b423bc09b9604694b00ff38b04ff1ed3434f140ec14cd728f0444676": "passed",
+    "82944ceb2650942af852d194d9ec2974846d5c35e275f3839052d5cad975075a": "passed",
+    "28afbdab5f32bfb2404bab156a66c8f09265a14311b4f5d961904b8a860f8026": "passed"
+  },
+  "exit_status": 0,
+  "guard_scope": "in-process only; child processes do not inherit guards; not a sandbox; audit tests and children for offline/headless behavior",
+  "ignored_modules": [],
+  "collection_errors": []
+}

@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Date: Mon, 26 Oct 2026 19:03:32 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Server: cloudflare
+set-cookie: __cf_bm=RfLMi.wr9MtQGKiLgL1tzjSaBDYaQ5Ai_H2mVFu9qC4-1793041412.396088-1.0.1.1-js0htn3hB3bRfKOUE42VSWAmC30eqzvd67kseg1DyG_NbJwa9XduIH_Lhab5eRbGnuoWq6iEhsIJkLellS8QoeM0jvnqFmu0C9ZqjUD4E1SDQB0eQqRsDSUAPyi9Num1; HttpOnly; SameSite=None; Secure; Path=/; Domain=cdr-api.gatewaybank.com.au; Expires=Mon, 26 Oct 2026 19:33:32 GMT
+Access-Control-Allow-Origin: *
+x-v: 5
+x-fapi-interaction-id: 55044db5-4de1-4265-99e8-6145ee967447
+cf-cache-status: DYNAMIC
+CF-RAY: a50bb8bb7dcdf403-MAD
+

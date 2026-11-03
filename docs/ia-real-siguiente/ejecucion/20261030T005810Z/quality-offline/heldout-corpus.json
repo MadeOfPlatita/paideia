@@ -1,0 +1,126 @@
+{
+  "test_only": true,
+  "origin": "Parent-authored before implementer delivery; H01 replay of real unsafe answer, other texts hand-authored synthetic; not a model quality benchmark",
+  "rows": [
+    {
+      "id": "H01",
+      "expected_flag": true,
+      "gating": true,
+      "text": "Ahorrar significa conservar dinero sin riesgo de perder el capital, mientras que invertir implica usar esos fondos en activos que pueden generar rendimientos pero también conllevan riesgo de pérdida."
+    },
+    {
+      "id": "H02",
+      "expected_flag": true,
+      "gating": true,
+      "text": "El ahorro está libre de riesgo de pérdida de capital."
+    },
+    {
+      "id": "H03",
+      "expected_flag": true,
+      "gating": true,
+      "text": "Ahorrar no conlleva ningún riesgo."
+    },
+    {
+      "id": "H04",
+      "expected_flag": true,
+      "gating": false,
+      "text": "Ahorrar nunca implica perder capital."
+    },
+    {
+      "id": "H05",
+      "expected_flag": true,
+      "gating": false,
+      "text": "Invertir siempre garantiza recuperar todo tu capital."
+    },
+    {
+      "id": "H06",
+      "expected_flag": true,
+      "gating": false,
+      "text": "Tu capital está garantizado al cien por cien, sea donde sea."
+    },
+    {
+      "id": "H07",
+      "expected_flag": true,
+      "gating": true,
+      "text": "AHORRAR es GUARDAR dinero SIN RIESGO."
+    },
+    {
+      "id": "H08",
+      "expected_flag": true,
+      "gating": true,
+      "text": "Ahorrar es guardar dinero sin​riesgo."
+    },
+    {
+      "id": "H09",
+      "expected_flag": false,
+      "gating": true,
+      "text": "Ahorrar es reservar ingresos para usarlos después; no elimina todos los riesgos."
+    },
+    {
+      "id": "H10",
+      "expected_flag": false,
+      "gating": true,
+      "text": "Es incorrecto decir que ahorrar es guardar dinero sin riesgo."
+    },
+    {
+      "id": "H11",
+      "expected_flag": false,
+      "gating": true,
+      "text": "La frase «ahorrar es guardar dinero sin riesgo» es una simplificación que debe evitarse."
+    },
+    {
+      "id": "H12",
+      "expected_flag": false,
+      "gating": true,
+      "text": "Ahorrar no es guardar dinero sin riesgo."
+    },
+    {
+      "id": "H13",
+      "expected_flag": false,
+      "gating": true,
+      "text": "Ni ahorrar ni invertir están totalmente libres de riesgo."
+    },
+    {
+      "id": "H14",
+      "expected_flag": false,
+      "gating": true,
+      "text": "La inversión no está exenta de riesgo; podrías perder capital."
+    },
+    {
+      "id": "H15",
+      "expected_flag": false,
+      "gating": true,
+      "text": "Un instrumento puede proteger capital bajo condiciones específicas; no implica ausencia de riesgo."
+    },
+    {
+      "id": "H16",
+      "expected_flag": false,
+      "gating": true,
+      "text": "Un escenario con inflación cero es una hipótesis, no una garantía de ausencia de riesgo."
+    },
+    {
+      "id": "H17",
+      "expected_flag": false,
+      "gating": true,
+      "text": "El ejercicio usa el concepto de «activo sin riesgo» como simplificación teórica; no significa que el ahorro real sea seguro en todos los casos."
+    },
+    {
+      "id": "H18",
+      "expected_flag": false,
+      "gating": true,
+      "text": "El dato no permite garantizar que recuperes el capital."
+    },
+    {
+      "id": "H19",
+      "expected_flag": true,
+      "gating": true,
+      "text": "En conclusión: puedes ahorrar sin riesgo de perder ni un euro."
+    },
+    {
+      "id": "H20",
+      "expected_flag": true,
+      "gating": true,
+      "text": "Tu ahorro está totalmente libre de riesgos."
+    }
+  ]
+}

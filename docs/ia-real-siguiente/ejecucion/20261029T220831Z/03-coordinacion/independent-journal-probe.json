@@ -1,0 +1,5 @@
+{
+  "output": "{\"test_only\": true, \"external_model_calls\": 0, \"intermediate_corruption_rejected\": true, \"passed\": true}",
+  "exit_code": 0,
+  "error": null
+}

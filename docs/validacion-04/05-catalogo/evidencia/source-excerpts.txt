@@ -1,0 +1,128 @@
+# Extractos mínimos para identificar claims de catálogo
+# No contiene PDFs ni históricos descargados; los fragmentos de búsquedas son snippets.
+
+[SOURCE 1] https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf
+método: ronda 2, GET anónimo HTTP 200 y extracción del PDF oficial (26-10-2026)
+Promoción aplicable exclusivamente a nuevos clientes que contraten la Cuenta Contigo entre el 21/10/2026 y el 18/11/2026, ambos inclusive.
+Para los clientes que contraten la Cuenta Contigo durante dicho periodo promocional, la TAE será del 2,61% TAE, calculada considerando los siguientes tipos de interés nominal anual:
+
+[SOURCE 2] https://myinvestor.es/cuentas-tarjetas/cuentas
+método: ronda 2, GET anónimo HTTP 200 y extracción del HTML oficial (26-10-2026)
+Hazte cliente y remunera tu dinero al 2,5 % TAE durante los 6 primeros meses. Sin comisiones, sin nómina y sin requisitos.
+Para un saldo máximo de 70.000 €.
+Los intereses se abonan cada mes, coincidiendo con el día en el que abriste tu cuenta.
+
+[SOURCE 3] https://www.openbank.es/cuenta-remunerada
+método: búsqueda pública del 27-10-2026; solo snippet del resultado oficial, no GET de página
+Cuenta Remunerada sin Nómina al 3,25% TAE
+3,25% TAE 1 y 3,20% TIN anual durante un año si traes tu Bizum.
+
+[SOURCE 4] https://www.pibank.es/cuenta-remunerada/
+método: búsqueda pública del 27-10-2026; snippet de página oficial, no GET de página
+Cuenta Remunerada Pibank
+Remuneración al 2,02% TAE1
+La remuneración de tu Cuenta Remunerada Pibank se aplica desde el primer euro y sin límite de cantidad.
+
+[SOURCE 5] https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf
+método: ronda 1, ficha precontractual oficial extraída y citada en docs/investigacion/01-fuentes.json (26-10-2026)
+Vigente desde 08.10.2026. Importe mínimo: 1 €; Importe máximo: no aplica máximo.
+3,25% TAE y 3,22% TIN anual.
+
+[SOURCE 6] https://www.pibank.es/deposito-bancario-plazo-fijo/
+método: URL de producto enlazada desde resultado público oficial Pibank; no se abrió la página
+Saber más https://www.pibank.es/deposito-bancario-plazo-fijo/
+
+[SOURCE 7] https://img.pibank.es/pdfs/deposito/deposito_ip.pdf
+método: búsqueda pública del 27-10-2026; snippet de ficha precontractual oficial, no descarga del PDF
+Producto : El Depósito Pibank es un producto de ahorro con un plazo fijo
+Divisa : EURO.
+Duración de la Imposición: 12 meses.
+Tipo de Interés Nominal anual aplicable: 3,00% TIN.
+
+[SOURCE 8] https://www.deutsche-bank.es/es/particulares/ahorro-inversion/productos/depositos/deposito-mas.html
+método: búsqueda pública del 27-10-2026; solo snippet del resultado oficial, no GET de página
+# Depósito Más DB
+Plazo: 12 meses
+TAE 2,75 %
+TIN 2,75%
+
+[SOURCE 9] https://www.tesoro.es/en/deuda-publica/valores-del-tesoro/valores-en-circulacion
+método: ronda 2, GET oficial HTTP 200; filas de Letras extraídas de HTML guardado (26-10-2026)
+Outstanding Letras del Tesoro
+ISIN code | Maturity date | Outstanding amount (*)
+ES0L02701156 | 01/15/2027 | 8,780.5
+ES0L02702055 | 02/05/2027 | 8,597.1
+ES0L02703053 | 03/05/2027 | 8,623.1
+ES0L02704093 | 04/09/2027 | 9,010.2
+Data as at 10/16/2026. The outstanding amount for each reference is updated on its corresponding settlement date.
+
+[SOURCE 10] https://www.bestinver.es/fondos-de-inversion/bestinver-bolsa
+método: ronda 2, página oficial extraída; identidad literal en evidencia local (26-10-2026)
+Bestinver Bolsa, F.I.
+Valor liquidativo: 140,3 €
+Datos a fecha: 23/10/2026
+Código ISIN: ES0147622031
+
+[SOURCE 11] https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447
+método: ronda 2, GET oficial CNMV HTTP 200 y ficha extraída (26-10-2026)
+OLEA NEUTRAL, FI
+Fondo de inversión armonizado Nº Registro oficial Fecha registro oficial ISIN Fecha último folleto Folleto DFI (*) Fecha último reglamento Reglamento de gestión 4231 14/05/2010 ES0118537002 01/10/2026 08/06/2026
+
+[SOURCE 12] https://www.azvalor.com/fondos-de-inversion/azvalor-internacional
+método: búsqueda pública del 27-10-2026; snippet de página oficial, no GET de página
+# Azvalor Internacional FI
+ISIN
+ES0112611001
+Fecha de Registro en la CNMV
+23/10/2015
+
+[SOURCE 13] https://www.cobasam.com/productos/inversion-libre/cobas_seleccion/
+método: búsqueda pública del 27-10-2026; snippet de página oficial, consultado dos veces en esta tarea
+Cobas Selección FI Clase B
+Gestora Cobas Asset Management SGIIC SA
+Domicilio Paseo de la Castellana 53. Segunda planta. 28046 Madrid. España.
+
+[SOURCE 14] https://www.cobasam.com/wp-content/uploads/2026/01/Comentario-Segundo-Semestre-2025.pdf
+método: búsqueda pública del 27-10-2026; snippet de documento oficial, no descarga del PDF
+Clase A - ES0124037039 Clase B - ES0124037021 Clase C - ES0124037005 Clase D - ES0124037013
+
+[SOURCE 15] https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf
+método: ronda 2, KID PRIIPs español oficial extraído y comprobado por ISIN (26-10-2026)
+iShares Core MSCI Europe UCITS ETF EUR (Acc), EUR Accu, ISIN: IE00B4K48X80
+La fecha de este documento es 03 septiembre 2026.
+Hemos clasificado este producto en la clase de riesgo 4 en una escala de 7
+
+[SOURCE 16] https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d
+método: ronda 2, página oficial extraída; XLSX de holdings ya probado en ronda previa (26-10-2026)
+Xtrackers S&P 500 Equal Weight UCITS ETF 2D
+NAV (23.10.2026): 104.46 USD All-in-fee (TER): 0.15%
+
+[SOURCE 17] https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp
+método: ronda 2, página oficial State Street extraída; fichero de holdings probado en ronda previa (26-10-2026)
+State Street® SPDR® MSCI Europe Industrials UCITS ETF
+ISIN | IE00BKWQ0J47
+NAV EUR (Official NAV) €411,94 as of 23 Oct 2026
+TER 0,18%
+
+[SOURCE 18] https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true
+método: ronda 2, página oficial VanEck extraída (26-10-2026)
+VanEck Semiconductor UCITS ETF
+ISIN: IE00BMC38736
+NAV $97.02 as of 23 Oct 2026
+Total Expense Ratio 0.35%
+
+[SOURCE 19] https://www.bestinver.es/fondos-de-inversion/bestinver-internacional/
+método: búsqueda pública del 27-10-2026; snippet de página oficial, no GET de página
+Bestinver Internacional, Fondo de Inversión
+Código ISIN: ES0114638036
+Categoría: Renta Variable Internacional
+
+[SOURCE 20] https://www.pibank.es/
+método: búsqueda pública del 27-10-2026; snippet de página oficial, no GET de página
+Depósito Pibank a 12 meses
+Un depósito a plazo fijo al 3,03% TAE
+Cuenta Remunerada Pibank
+
+[SOURCE 21] https://yieldmeister.com/api/v1/rates
+método: ronda 2, respuesta pública GET JSON inspeccionada y guardada en evidencia/yieldmeister-body.txt (26-10-2026)
+\"provider_name\":\"Openbank\",\"product\":\"Depósito Plazo Fijo 12m\",\"product_id\":\"openbank-welcome\",\"kind\":\"term_deposit\",\"market\":\"ES\",\"currency\":\"EUR\",\"term_months\":12,\"rate\":3.25,\"source_url\":\"https://www.openbank.es/deposito-a-plazo-fijo\"

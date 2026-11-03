@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "verification_blockers": [],
+  "suggestions": [],
+  "summary": "Aprobado solo para el alcance local revisado.",
+  "scope": "Archivos actuales y navegador aislado; sin garantía global, proveedor real ni impresión nativa/PDF. Guardado host indicado por coordinador; archivo leído independientemente, sin repetir interacción.",
+  "browser_assertions_by_script": {
+    "qa_layout_browser.js": {
+      "checks": 5,
+      "failed": 0,
+      "ok": true
+    },
+    "c_integration_browser.js": {
+      "checks": 27,
+      "failed": 0,
+      "ok": true
+    },
+    "scenario_browser.js": {
+      "checks": 114,
+      "failed": 0,
+      "ok": true
+    },
+    "report_browser.js": {
+      "checks": 18,
+      "failed": 0,
+      "ok": true
+    },
+    "report_download_browser.js": {
+      "checks": 14,
+      "failed": 0,
+      "ok": true
+    },
+    "independent_export": {
+      "checks": 5,
+      "failed": 0,
+      "ok": true
+    }
+  },
+  "node": {
+    "command": "node --test tests/*.test.cjs tests/report_unit.js",
+    "tests": 41,
+    "pass": 41,
+    "fail": 0,
+    "report_unit": "aserciones internas ejecutadas; contadas como archivo por Node"
+  },
+  "host_artifact": {
+    "source": "coordinator reports Windows native save; file independently read only",
+    "bytes": 5203,
+    "sha256": "11ff1ae2888af4047c8395a176a7ebc9d27eae654c6899de0e08a61c767ef907",
+    "expected_amounts_present": true,
+    "no_scripts": true,
+    "no_external_http": true,
+    "scenario_a_b": true
+  },
+  "limitations": [
+    "No se ha validado impresión nativa ni archivo PDF.",
+    "La comprobación de la revocación ejecutó manualmente el callback programado de 60000 ms; no esperó 60 segundos reales.",
+    "Sin ejecución de Python no modificado; sin proveedor externo."
+  ]
+}

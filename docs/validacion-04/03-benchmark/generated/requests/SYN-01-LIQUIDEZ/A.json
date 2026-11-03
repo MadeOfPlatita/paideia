@@ -1,0 +1,119 @@
+{
+  "request_schema": "pai-context-request/v1",
+  "case_id": "SYN-01-LIQUIDEZ",
+  "variant": "A",
+  "provider_call_status": "not_called",
+  "provider": null,
+  "model": null,
+  "base": {
+    "system": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.",
+    "output_constraints": [
+      "Usa solo el texto de la pregunta, la evidencia sintética fija y el contexto de perfil materializado.",
+      "No busques en internet ni invoques herramientas.",
+      "Conserva exactamente importes, porcentajes, monedas y plazos proporcionados; no los redondees ni los cambies en silencio.",
+      "No conviertas null, desconocido o no declarado en cero, ni un cero declarado en desconocido.",
+      "Identifica conflictos entre datos, supuestos o condiciones cuando afecten a la conclusión."
+    ],
+    "fixed_evidence": {
+      "claim": "El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.",
+      "catalogue": "No se proporciona catálogo ni oferta real."
+    },
+    "question": "Tengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?"
+  },
+  "base_sha256": "bfa88391ec767046805ecb96bbacefeff065484693df14a690f573b7be7e5c56",
+  "profile_context": {
+    "status": "not_provided",
+    "data": null,
+    "selected_fields": [],
+    "excluded_fields": [
+      {
+        "field": "age_band",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "currency",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "education_level",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "financial_goal",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "investment_horizon_months",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "liquid_savings_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "monthly_net_income_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "monthly_expenses_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "monthly_savings_capacity_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "planned_contribution_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "upcoming_expenses",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "debts",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "risk_tolerance",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "risk_capacity",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "emergency_reserve_target_months",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "employment_income_stability",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "investment_experience",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "knowledge_level",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "declared_loss_limit_pct",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      }
+    ]
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía."
+    },
+    {
+      "role": "user",
+      "content": "EVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real.\",\"claim\":\"El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.\"}\n\nPREGUNTA\nTengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?"
+    }
+  ],
+  "rendered_prompt": "SYSTEM\nEres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.\n\nUSER\nEVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real.\",\"claim\":\"El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.\"}\n\nPREGUNTA\nTengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?",
+  "adapter_contract": "Enviar solo messages; provider/model se configuran fuera de este artefacto. No contiene credenciales ni ejecuta red."
+}

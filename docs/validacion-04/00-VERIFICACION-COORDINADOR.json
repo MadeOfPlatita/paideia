@@ -1,0 +1,70 @@
+{
+  "checked_at": "2026-10-27T00:41:00.373224+00:00",
+  "scope": "isolated_local_tests_and_structural_catalogue_review_not_llm_or_application_integration",
+  "checks": [
+    {
+      "name": "benchmark_tests",
+      "command": "python -B -m unittest -v test_benchmark",
+      "cwd": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\validacion-04\\03-benchmark",
+      "result": {
+        "output": "test_validate_reports_six_synthetic_cases_and_lossless_projection_contract (test_benchmark.DatasetValidationTests.test_validate_reports_six_synthetic_cases_and_lossless_projection_contract) ... ok\r\ntest_b_request_records_all_excluded_fields_and_their_reason (test_benchmark.RequestGenerationTests.test_b_request_records_all_excluded_fields_and_their_reason) ... ok\r\ntest_generation_is_offline_preserves_dataset_and_materializes_only_selected_context (test_benchmark.RequestGenerationTests.test_generation_is_offline_preserves_dataset_and_materializes_only_selected_context) ... ok\r\ntest_projection_preserves_unknown_zero_and_omission_as_distinct_states (test_benchmark.RequestGenerationTests.test_projection_preserves_unknown_zero_and_omission_as_distinct_states) ... ok\r\ntest_record_requires_explicit_non_secret_settings_for_controlled_comparison (test_benchmark.ResultRegistrationTests.test_record_requires_explicit_non_secret_settings_for_controlled_comparison) ... ok\r\ntest_record_requires_explicit_real_provider_call_attestation (test_benchmark.ResultRegistrationTests.test_record_requires_explicit_real_provider_call_attestation) ... ok\r\ntest_summary_starts_with_zero_results_and_no_winner (test_benchmark.ResultRegistrationTests.test_summary_starts_with_zero_results_and_no_winner) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 7 tests in 12.555s\r\n\r\nOK",
+        "exit_code": 0,
+        "error": null
+      }
+    },
+    {
+      "name": "benchmark_validate",
+      "command": "python -B pai_context_benchmark.py validate",
+      "cwd": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\validacion-04\\03-benchmark",
+      "result": {
+        "output": "{\"case_count\": 6, \"dataset_version\": \"pai-context-abcs-v1\", \"provider_calls\": 0, \"result_count\": 0, \"valid\": true, \"winner\": null}",
+        "exit_code": 0,
+        "error": null
+      }
+    },
+    {
+      "name": "benchmark_summary",
+      "command": "python -B pai_context_benchmark.py summary",
+      "cwd": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\validacion-04\\03-benchmark",
+      "result": {
+        "output": "{\"by_provider\": {\"gemini\": 0, \"groq\": 0}, \"by_variant\": {\"A\": 0, \"B\": 0, \"C\": 0}, \"provider_call_count\": 0, \"result_count\": 0, \"winner\": null, \"winner_status\": \"not_evaluated; requiere rúbrica humana, revisión de errores y puertas no compensables\"}",
+        "exit_code": 0,
+        "error": null
+      }
+    },
+    {
+      "name": "projection_tests",
+      "command": "python -B -m unittest -v",
+      "cwd": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\validacion-04\\04-contexto",
+      "result": {
+        "output": "test_debt_zero_and_unknown_remain_distinct_from_no_debt (test_profile_projection.ProfileProjectionTests.test_debt_zero_and_unknown_remain_distinct_from_no_debt) ... ok\r\ntest_emits_only_selected_field_for_its_purpose (test_profile_projection.ProfileProjectionTests.test_emits_only_selected_field_for_its_purpose) ... ok\r\ntest_full_benchmark_projection_is_tagged_and_uses_only_synthetic_fixture (test_profile_projection.ProfileProjectionTests.test_full_benchmark_projection_is_tagged_and_uses_only_synthetic_fixture) ... ok\r\ntest_full_projection_rejects_non_synthetic_input (test_profile_projection.ProfileProjectionTests.test_full_projection_rejects_non_synthetic_input) ... ok\r\ntest_maps_declared_no_debt_without_conflating_zero (test_profile_projection.ProfileProjectionTests.test_maps_declared_no_debt_without_conflating_zero) ... ok\r\ntest_maps_income_and_liquid_reserve_only_when_selected (test_profile_projection.ProfileProjectionTests.test_maps_income_and_liquid_reserve_only_when_selected) ... ok\r\ntest_maps_liquidity_need_without_inference (test_profile_projection.ProfileProjectionTests.test_maps_liquidity_need_without_inference) ... ok\r\ntest_maps_monthly_expenses_as_decimal_flow (test_profile_projection.ProfileProjectionTests.test_maps_monthly_expenses_as_decimal_flow) ... ok\r\ntest_maps_upcoming_commitment_and_explicit_absence (test_profile_projection.ProfileProjectionTests.test_maps_upcoming_commitment_and_explicit_absence) ... ok\r\ntest_preserves_horizon_answer_state (test_profile_projection.ProfileProjectionTests.test_preserves_horizon_answer_state) ... ok\r\ntest_preserves_selected_financial_decimal_exactly (test_profile_projection.ProfileProjectionTests.test_preserves_selected_financial_decimal_exactly) ... ok\r\ntest_projects_risk_tolerance_separately_from_loss_capacity (test_profile_projection.ProfileProjectionTests.test_projects_risk_tolerance_separately_from_loss_capacity) ... ok\r\ntest_projects_selected_learning_preferences (test_profile_projection.ProfileProjectionTests.test_projects_selected_learning_preferences) ... ok\r\ntest_rejects_a_field_withdrawn_after_consent (test_profile_projection.ProfileProjectionTests.test_rejects_a_field_withdrawn_after_consent) ... ok\r\ntest_rejects_profile_full_boolean_on_production_projector (test_profile_projection.ProfileProjectionTests.test_rejects_profile_full_boolean_on_production_projector) ... ok\r\ntest_rejects_projection_without_chat_processing_consent (test_profile_projection.ProfileProjectionTests.test_rejects_projection_without_chat_processing_consent) ... ok\r\ntest_all_schemas_are_valid_without_network_resolution (test_projection_schemas.ProjectionSchemaTests.test_all_schemas_are_valid_without_network_resolution) ... ok\r\ntest_consent_schema_is_closed_and_keeps_rejection_representable (test_projection_schemas.ProjectionSchemaTests.test_consent_schema_is_closed_and_keeps_rejection_representable) ... ok\r\ntest_each_purpose_projection_conforms_to_closed_remote_schema (test_projection_schemas.ProjectionSchemaTests.test_each_purpose_projection_conforms_to_closed_remote_schema) ... ok\r\ntest_full_fixture_is_valid_local_but_benchmark_dto_is_not_production_dto (test_projection_schemas.ProjectionSchemaTests.test_full_fixture_is_valid_local_but_benchmark_dto_is_not_production_dto) ... ok\r\ntest_remote_projection_schema_rejects_extra_properties_and_wrong_purpose (test_projection_schemas.ProjectionSchemaTests.test_remote_projection_schema_rejects_extra_properties_and_wrong_purpose) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 21 tests in 0.060s\r\n\r\nOK",
+        "exit_code": 0,
+        "error": null
+      }
+    }
+  ],
+  "catalogue": {
+    "selected": 20,
+    "unique_ids": 20,
+    "by_family": {
+      "cuenta_remunerada": 4,
+      "deposito": 4,
+      "letra_deuda_publica": 4,
+      "fondo_tradicional": 4,
+      "etf_ucits": 4
+    },
+    "identity_states": {
+      "verified": 14,
+      "proposed": 6
+    },
+    "applicable_isins": 12,
+    "unique_isins": 12,
+    "invalid_isins": [],
+    "pending_outside_selection": 1,
+    "declared_publication_ready": 0
+  },
+  "generated_request_files": 18,
+  "llm_calls_by_coordinator": 0,
+  "app_or_db_deployed": false,
+  "remaining_mapping": "Benchmark dataset uses its own profile fields; production projector consumes profile05. Explicit adapter and joint tests still needed."
+}

@@ -1,0 +1,293 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://www.tesoro.es/deuda-publica/estad%C3%ADsticas-mensuales",
+      "title": "Tesoro: estadísticas mensuales",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "If no policy exists for the table, a default-deny policy is used, meaning that no rows are visible or can be modified.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "- Deuda del Estado: Nominal en circulación [PDF](/documents/d/tesoro/01-pdf) [XLSX](/documents/d/tesoro/01-xlsx)",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://www.tesoro.es/documents/d/tesoro/01-xlsx",
+      "title": "Tesoro: XLSX nominal en circulación",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "All tables and views of the exposed schema and accessible by the active database role are available for querying.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "DEUDA DEL ESTADO EN CIRCULACIÓN *",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://tesoro.es/en/deuda-publica/valores-del-tesoro/valores-en-circulacion",
+      "title": "Tesoro: valores en circulación",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Functions can perform any operation allowed by PostgreSQL",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| ISIN code | Maturity date | Outstanding amount (*) | Indexation coefficient | Face value |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://tesoro.es/deuda-publica/los-valores-del-tesoro/bonos-y-obligaciones-del-estado",
+      "title": "Tesoro: bonos y obligaciones",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The access mode determines whether the transaction can modify the database or not.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "El cupón que devenga se paga cada año y representa el tipo de interés \"nominal\" del Bono o la Obligación.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://tesoro.es/en/deuda-publica/noticias/treasury-announces-bonos-and-obligaciones-will-be-issued-october-1st-2026",
+      "title": "Tesoro: anuncio de emisión, 1 octubre 2026",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "A connection pool is a cache of reusable database connections. It allows serving many HTTP requests using few database connections.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| **ISIN** | **Reference** | **Coupon** | **Maturity** | **Accrued** **Interest** | **Short coupon amount** | **Indexation** **Coefficient** |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://www.tesoro.es/deuda-publica/subastas/resultado-ultimas-subastas/obligaciones-del-estado",
+      "title": "Tesoro: últimas subastas de obligaciones",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "PostgREST exposes three database objects of a schema as resources: tables, views and functions.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| Precio medio ex-cupón | 93,731 | 78,445 | 94,345 | 46,526 |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://www.tesoro.es/en/deuda-publica/subastas/resultados-subastas-anteriores",
+      "title": "Tesoro: resultados históricos de subastas",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Free projects are paused after 1 week of inactivity.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://boe.es/datosabiertos/api/api.php",
+      "title": "BOE API de datos abiertos",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Supabase auto-generates an API directly from your database schema allowing you to connect to your database through a restful interface, directly from the browser.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "url": "https://boe.es/datosabiertos/faq/boe.php",
+      "title": "BOE FAQ reutilización",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Grants control whether a role can access an object. RLS controls which rows the role can access.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "La Agencia Estatal BOE ha puesto a disposición de los reutilizadores una API REST que permite la descarga, uso y reutilización de las disposiciones y actos publicados en el BOE, mediante el acceso al sumario correspondiente a la fecha seleccionada.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "url": "https://www.boe.es/informacion/aviso_legal/index.php",
+      "title": "BOE: condiciones de reutilización",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Connecting from a frontend application? You don't need a connection string.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Las presentes condiciones permiten la reutilización de los documentos sometidos a ellas para fines comerciales y no comerciales, siempre que dicho uso no constituya una actividad administrativa pública y que se realice una utilización diligente de los contenidos, sin incurrir en actividades que puedan ser consideradas ilícitas, contrarias a las presentes condiciones o a los usos generalmente aceptados.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "url": "https://www.bolsasymercados.es/en/bme-exchange/prices-and-markets/market-data-services/end-of-day-and-historical-services.html",
+      "title": "BME: servicios EOD e históricos",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Every Job can run SQL snippets or database functions with zero network latency or make an HTTP request, such as invoking a Supabase Edge Function, with ease.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "BME offers End-of-Day and Historical Information. This is done through files that include all the financial instruments admitted for trading in the different BME trading centers.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://www.bolsasymercados.es/bme-exchange/en/Prices-and-Markets/Statistics/Public-Debt-Trades-Bulletin",
+      "title": "BME: boletín de negociación de deuda pública",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Maximum CPU Time: 2s (Amount of actual time spent on the CPU per request - does not include async I/O.)",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "url": "https://web.apiportal.six-group.com/portal/bfi/data-dictionary",
+      "title": "SIX API: diccionario de datos",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "pgvector is a Postgres extension for vector similarity search.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "url": "https://web.apiportal.six-group.com/portal/bfi/catalog/instrumentBase",
+      "title": "SIX API: Instrument Base",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "100 CU-hours of compute per project per month",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://www.six-group.com/en/products-services/financial-information/delivery-methods/api.html",
+      "title": "SIX: APIs financieras",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "All Neon databases can use pooled connections built on pgBouncer",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "With a consistent framework and a simple data model that leverages modern technologies to enhance your data understanding, SIX API streamlines your data integration.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "url": "https://www.six-group.com/dam/download/financial-information/reference-pricing-data/fixed-income-data/six-fixed-income-data.pdf",
+      "title": "SIX: datos de renta fija",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "For manually parameterized queries, use the query() function",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "The dataset spans the full bond lifecycle – from new issuance terms to maturity and redemption – providing decision-ready information across major fixed income asset classes.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "url": "https://www.six-group.com/en/market-data/bonds/closing-prices.html",
+      "title": "SIX: precios de cierre de bonos",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "exact and approximate nearest neighbor search",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "url": "https://data.ecb.europa.eu/data/datasets/csec/data-information?destination=/data/datasets/csec/data-information",
+      "title": "ECB: CSEC Securities Issues Statistics",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Supabase provides client libraries for the REST and Realtime APIs.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "CSEC series are compiled using security-by-security micro data from the Centralised Securities Databases (CSDB).",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "url": "https://ecb.europa.eu/stats/financial_markets_and_interest_rates/securities/shared/pdf/CSEC-SEC_differences_Factsheet.en.pdf",
+      "title": "ECB: diferencias entre SEC y CSEC",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 20,
+      "url": "https://esma.europa.eu/sites/default/files/2023-12/ESMA65-8-5240_FIRDS_Transparency_Download_Instructions.pdf",
+      "title": "ESMA: descargas FITRS transparency results",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "FIRDS Transparency System Instructions on download and use of full and delta transparency results files",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "url": "https://esma.europa.eu/sites/default/files/2025-11/ESMA65-8-1776_FIRDS_Transparency_Reporting_Instructions_v2.4.pdf",
+      "title": "ESMA: instrucciones FIRDS 2025",
+      "accessed": "2026-10-26"
+    }
+  ]
+}

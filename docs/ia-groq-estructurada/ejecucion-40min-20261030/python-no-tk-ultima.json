@@ -1,0 +1,5 @@
+{
+  "output": "Excluded modules: test_mission_session.py, test_secure_groq_smoke.py, test_session_ui_feedback.py\r\n..........................................................................................................................................................................................................................................READY test_only=True\r\nREADY test_only=True\r\n...........READY test_only=True\r\n.READY test_only=True\r\n.READY test_only=True\r\n.READY test_only=True\r\n.READY test_only=False\r\n..............................................................................\r\n----------------------------------------------------------------------\r\nRan 327 tests in 37.279s\r\n\r\nOK",
+  "exit_code": 0,
+  "error": null
+}

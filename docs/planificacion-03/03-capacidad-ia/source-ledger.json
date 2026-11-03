@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://developers.cloudflare.com/workers-ai/platform/pricing",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Our free allocation allows anyone to use a total of 10,000 Neurons per day at no charge . To use more than 10,000 Neurons per day, you need to sign up for the Workers Paid plan . On Workers Paid, you will be charged at $0.011 / 1,000 Neurons for any usage above the free allocation of 10,000 Neurons per day. You can monitor your Neuron usage in the Cloudflare Workers",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "@cf/meta/llama-3.2-3b-instruct $0.051 per M input tokens $0.335 per M output tokens 4625 neurons per M input tokens 30475 neurons per M output tokens @cf/meta/llama-3.1-8b-instruct-fp8-fast $0.045 per M input tokens $0.384 per M output tokens 4119 neurons per M input tokens 34868 neurons per M output tokens @cf/meta/llama-3.2-11b-vision-instruct $0.049 per M input tokens $0.676",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "@cf/meta/llama-3.3-70b-instruct-fp8-fast $0.293 per M input tokens $2.253 per M output tokens 26668 neurons per M input tokens 204805 neurons per M output tokens @cf/deepseek-ai/deepseek-r1-distill-qwen-32b $0.497 per M input tokens $4.881 per M output tokens 45170 neurons per M input tokens 443756 neurons per M output tokens @cf/deepseek-ai/deepseek-v4-flash-0731 $0.440 per M input toke",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://developers.cloudflare.com/workers-ai/platform/limits",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "300 requests per minute, unless the model requires the Workers Paid plan Paid models The following limits apply per account, per model to any model that requires the Workers Paid plan — each model page states whether it does. These models are the only models that do not receive the default limit: Billing Rate limit Standard Workers AI billing 20 requests per minute Prepa",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://developers.cloudflare.com/workers-ai/models/llama-3.2-3b-instruct",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Context Window ↗ 80,000 tokens Terms and License link ↗ LoRA Yes Unit Pricing $0.0509 per M input tokens, $0.335 per M output tokens Playground Try out this model with Workers AI LLM Playground. It does not require any setup or authentication and is an instant way to preview and test a model directly in the browser. Launch the LLM Playground Usage export interfa",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://developers.cloudflare.com/workers-ai/models/llama-3.3-70b-instruct-fp8-fast",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Context Window ↗ 24,000 tokens Terms and License link ↗ Function calling ↗ Yes Batch Yes Unit Pricing $0.293 per M input tokens, $2.253 per M output tokens Playground Try out this model with Workers AI LLM Playground. It does not require any setup or authentication and is an instant way to preview and test a model directly in the browser. Launch the LLM Playgrou",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://console.groq.com/docs/rate-limits?plan=free",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Rate limits apply at the organization level, not individual users. You can hit any limit type depending on which threshold you reach first. Example: Let's say your RPM = 50 and your TPM = 200K. If you were to send 50 requests with only 100 tokens within a minute, you would reach your limit even though you did not send 200K tokens within those 50 requests. Input and",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "openai/gpt-oss-120b 30 1K 8K 200K - - openai/gpt-oss-20b 30 1K 8K 200K - - openai/gpt-oss-safeguard-20b 3 1K 2K 200K - - qwen/qwen3.8-27b 30 1K 8K 200K - - whisper-large-v3 20 2K - - 7.2K 28.8K whisper-large-v3-turbo 20 2K - - 7.2K 28.8K Rate Limit Headers In addition to viewing your limits on your account's limits page, you can also view rate limit information such",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "openai/gpt-oss-20b 30 1K 8K 200K - - openai/gpt-oss-safeguard-20b 3 1K 2K 200K - - qwen/qwen3.8-27b 30 1K 8K 200K - - whisper-large-v3 20 2K - - 7.2K 28.8K whisper-large-v3-turbo 20 2K - - 7.2K 28.8K Rate Limit Headers In addition to viewing your limits on your account's limits page, you can also view rate limit information such as remaining requests and tokens in H",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://console.groq.com/docs/models",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "GPT OSS 120B openai/gpt-oss-120b 500 $0.15 input $0.60 output 250K TPM 1K RPM 131,072 65,536 - GPT OSS 20B openai/gpt-oss-20b 1000 $0.075 input $0.30 output 250K TPM 1K RPM 131,072 65,536 - Whisper whisper-large-v3 - $0.111 per hour 200K ASH 300 RPM - - 100 MB Whisper Large V3 Turbo whisper-large-v3-turbo - $0.04 per hour 400K ASH 400 RPM - - 100 MB Preview Mo",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://console.groq.com/docs/model/openai/gpt-oss-20b",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "PRICING Input $0.075 13M / $1 Cached Input $0.037 27M / $1 Output $0.30 3.3M / $1 LIMITS CONTEXT WINDOW 131,072 MAX OUTPUT TOKENS 65,536 QUANTIZATION This uses Groq's TruePoint Numerics, which reduces precision only in areas that don't affect accuracy, preserving quality while delivering significant speedup over traditional approaches. Learn more here . K",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "CAPABILITIES Tool Use , Browser Search , Code Execution , JSON Object Mode , JSON Schema Mode , Reasoning OpenAI Model card OpenAI's compact open-weight Mixture-of-Experts (MoE) model with 20B total parameters. Optimized for cost-efficient deployment and agentic workflows, it supports long-context reasoning, tool use, and function calling in a small memory foo",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://console.groq.com/docs/model/openai/gpt-oss-120b",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "PRICING Input $0.15 6.7M / $1 Cached Input $0.075 13M / $1 Output $0.60 1.7M / $1 LIMITS CONTEXT WINDOW 131,072 MAX OUTPUT TOKENS 65,536 QUANTIZATION This uses Groq's TruePoint Numerics, which reduces precision only in areas that don't affect accuracy, preserving quality while delivering significant speedup over traditional approaches. Learn more here . K",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "CAPABILITIES Tool Use , Browser Search , Code Execution , JSON Object Mode , JSON Schema Mode , Reasoning OpenAI Model card OpenAI's flagship open-weight MoE model with 120B total parameters. Designed for high-capability agentic use, it matches or surpasses proprietary models like OpenAI o4-mini on many benchmarks. With long-context reasoning, competitive math",
+          "added": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

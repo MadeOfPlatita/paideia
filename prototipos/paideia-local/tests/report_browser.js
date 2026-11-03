@@ -1,0 +1,22 @@
+(async () => {
+ const checks=[]; const ok=(x,n)=>{checks.push({name:n,pass:!!x});if(!x)throw Error(n)}; const sleep=ms=>new Promise(r=>setTimeout(r,ms)); const wait=async f=>{for(let i=0;i<200;i++){if(f())return;await sleep(20)}throw Error('timeout')};
+ const edit=(id,v)=>{const e=document.getElementById(id);e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}))}; const sub=i=>document.querySelectorAll('.scenario-form')[i].requestSubmit(); const snap=()=>window.getScenarioComparisonSnapshot(); const button=()=>document.querySelector('#scenario-report-host button'); const status=()=>document.querySelector('#scenario-report-host [role=status]').textContent;
+ const origFetch=window.fetch, origPrint=window.print; let prints=0; window.print=()=>{prints++};
+ try {
+  ok(button().disabled,'initial disabled');
+  for(const [id,v] of Object.entries({'scenario-principal':'1000','scenario-rate':'-99','scenario-years':'3','scenario-contribution':'20','scenario-inflation':'2','scenario-method':'simple','scenario-principal-b':'0','scenario-rate-b':'0','scenario-years-b':'1','scenario-contribution-b':'0','scenario-inflation-b':'0','scenario-method-b':'compound'})) edit(id,v);
+  sub(0); sub(1); await wait(()=>snap().scenarios.every(s=>s.status==='current')); ok(!button().disabled,'current enabled'); button().click(); ok(prints===1,'print action');
+  let p=document.getElementById('comparison-report-print'); ok(p.textContent.includes('Diferencia B − A') && p.textContent.includes('no predicción'),'report summary and warning'); ok(p.querySelectorAll('table').length===5,'separate series tables');
+  ok(!p.textContent.includes('PROFILE_MARKER_SYNTHETIC'),'no profile marker');
+  let release,held=new Promise(r=>release=r),intercept=false; window.fetch=async(...args)=>{const res=await origFetch(...args);if(String(args[0])==='/api/calculate'&&!intercept){intercept=true;await held}return res};
+  edit('scenario-rate','-8'); ok(!p.textContent && button().disabled,'edit invalidates'); sub(0); await wait(()=>intercept); ok(button().disabled && snap().scenarios[0].status==='pending','pending disabled'); edit('scenario-rate','-10'); release(); await sleep(150); ok(button().disabled && snap().scenarios[0].status==='dirty','late result discarded');
+  window.fetch=origFetch; sub(0); await wait(()=>snap().scenarios[0].status==='current'); ok(!button().disabled,'recompute enabled');
+  window.fetch=async(...args)=>{if(String(args[0])==='/api/calculate') throw Error('synthetic'); return origFetch(...args)}; edit('scenario-rate','-11');sub(0);await wait(()=>snap().scenarios[0].status==='error');ok(button().disabled && status().length>0,'error disabled explained'); window.fetch=origFetch;
+  edit('scenario-rate','-99');sub(0);await wait(()=>snap().scenarios[0].status==='current');button().click();ok(p.textContent.includes('Escenario A'),'fresh report');
+  const accessor=window.getScenarioComparisonSnapshot; window.getScenarioComparisonSnapshot=()=>{const s=accessor();s.profile='PROFILE_MARKER_SYNTHETIC';s.scenarios[0].label='<img src=x>';return s};button().click();ok(!p.innerHTML.includes('PROFILE_MARKER_SYNTHETIC')&&!p.querySelector('img'),'whitelist escapes and excludes profile marker');
+  const before=prints; window.getScenarioComparisonSnapshot=()=>{const s=accessor();s.scenarios[0].inputs.principal='987';return s};button().click();ok(prints===before&&!p.textContent&&button().disabled,'click revalidates mismatched assumptions');window.getScenarioComparisonSnapshot=accessor;window.dispatchEvent(new Event('scenario-comparison-change'));
+  button().click();window.getScenarioComparisonSnapshot=()=>{const s=accessor();s.scenarios[0].inputs.principal='987';return s}; window.dispatchEvent(new Event('beforeprint'));ok(!p.textContent,'beforeprint rejects mixed state');window.getScenarioComparisonSnapshot=accessor;
+  button().click();ok(p.textContent.includes('Escenario B'),'recapture');location.hash='#inicio';await sleep(100);ok(!p.textContent,'navigation invalidates');location.hash='#escenarios';await sleep(150);ok(!document.querySelector('#scenario-report-host button').disabled,'route return current');
+  return {ok:true,checks,viewport:{client:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth},snapshot:snap()};
+ } catch(e) {return {ok:false,error:String(e),checks, status:status()};} finally {window.fetch=origFetch;window.print=origPrint}
+})()

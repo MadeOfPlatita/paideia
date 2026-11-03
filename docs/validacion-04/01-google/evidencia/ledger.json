@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://ai.google.dev/gemini-api/terms",
+      "title": "Gemini API Additional Terms of Service",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "You may use only Paid Services when making API Clients available to users in the European Economic Area, Switzerland, or the United Kingdom.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "apply to all Services, including Google AI Studio and unpaid quota in the Gemini API, even though they are offered free of charge.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "When you use Unpaid Services, including, for example, Google AI Studio and the unpaid quota on Gemini API, Google uses the content you submit to the Services and any generated responses to provide, improve, and develop Google products and services and machine learning technologies, including Google's enterprise features, products, and services, consistent with our Privacy Policy.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Your access to Gemini API is a \"Paid Service\" only when accessing the API through a Cloud Project associated with an active billing account.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "For Paid Services, Google logs prompts and responses for a limited period of time, solely for detecting and preventing violations of the Prohibited Use Policy to maintain the safety and security of the Services, and any required legal or regulatory disclosures.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Don't rely on the Services for medical, mental health, legal, financial, or other professional advice. Any content regarding those topics is provided for informational purposes only, does not constitute medical diagnosis or treatment, and is not a substitute for advice from a qualified professional.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "When using Grounding with Google Search, Google will store prompts, contextual information that you may provide, and output for thirty (30) days for the purposes of creating Grounded Results and Search Suggestions and the stored information can be used for debugging and testing of systems that support Grounding with Google Search.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Use of Google AI Studio and Gemini API is for developers building with Google AI models for professional or business purposes, not for consumer use.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "You must be 18 years of age or older to use the APIs. You also will not use the Services as part of a website, application, or other service (collectively, \"**API Clients**\") that is directed towards or is likely to be accessed by individuals under the age of 18.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Any Services that are offered free of charge like direct interactions with Google AI Studio or unpaid quota in Gemini API are unpaid Services (the \"**Unpaid Services**\").",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "When you use Paid Services, including, for example, the paid quota of the Gemini API, Google doesn't use your prompts (including associated system instructions, cached content, and files such as images, videos, or documents) or responses to improve our products",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Last updated 2026-04-28 UTC.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://developers.google.com/terms",
+      "title": "Google APIs Terms of Service",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "If there is a conflict between these terms and additional terms applicable to a given API, the additional terms will control for that conflict.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Developer credentials (such as passwords, keys, and client IDs) are intended to be used by you and identify your API Client. You will keep your credentials confidential and make reasonable efforts to prevent and discourage other API Clients from using your credentials. Developer credentials may not be embedded in open source projects.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "You will provide and adhere to a privacy policy for your API Client that clearly and accurately describes to users of your API Client what user information you collect and how you use and share such information (including for advertising) with Google and third parties.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "For the sole purpose of enabling Google to provide, secure, and improve the APIs (and the related service(s)) and only in accordance with the applicable Google privacy policies, you give Google a perpetual, irrevocable, worldwide, sublicensable, royalty-free, and non-exclusive license to Use content submitted, posted, or displayed to or from the APIs through your API Client.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://ai.google.dev/gemini-api/docs/pricing",
+      "title": "Gemini Developer API pricing",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "A cost-efficient model, optimized for high-volume agentic tasks, translation, and simple data processing.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Input price Free of charge $0.30 (text / image / video / audio)",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Output price (including thinking tokens) Free of charge $2.50",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Used to improve our products Yes No",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://ai.google.dev/gemini-api/docs/rate-limits",
+      "title": "Gemini API rate limits",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Rate limits are applied per project, not per API key. Requests per day (RPD) quotas reset at midnight Pacific time.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Rate limits depend on a variety of factors (such as your usage tier) and can be viewed in Google AI Studio. As your tier and account status change over time, your rate limits will automatically update. Specified rate limits are not guaranteed and actual capacity may vary.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://ai.google.dev/gemini-api/docs/billing",
+      "title": "Gemini API billing",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "New accounts begin on the Free Tier, which allows access to certain models in the Gemini API and AI Studio, up to the models' free tier rate limits.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "New users will have a project and API key created for them by default.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Upgrading from the Free Tier to the Paid Tier means linking a billing account and prepaying to add a minimum of $5 (or equivalent in other currencies) of credits to your account.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "Can I use the Gemini API for free in EEA (including EU), the UK, and CH?\n\nYes, we make the free tier and paid tier available in many regions.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite",
+      "title": "Gemini 3.5 Flash-Lite model documentation",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Read the [model version patterns](https://ai.google.dev/gemini-api/docs/models/gemini#model-versions) for more details.<br>- Stable: `gemini-3.5-flash-lite`",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "**[Function calling](https://ai.google.dev/gemini-api/docs/function-calling)**<br>Supported<br>**[Grounding with Google Maps](https://ai.google.dev/gemini-api/docs/maps-grounding)**<br>Supported<br>**[Image generation](https://ai.google.dev/gemini-api/docs/image-generation)**<br>Not supported",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "**[Structured outputs](https://ai.google.dev/gemini-api/docs/structured-output)**<br>Supported<br>**[Thinking](https://ai.google.dev/gemini-api/docs/thinking)**<br>Supported<br>**[URL context](https://ai.google.dev/gemini-api/docs/url-context)**<br>Supported",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://policies.google.com/terms/generative-ai/use-policy",
+      "title": "Generative AI Prohibited Use Policy",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "Makes automated decisions that have a material detrimental impact on individual rights without human supervision in high-risk domains -- for example, in employment, healthcare, finance, legal, housing, insurance, or social welfare.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "We may make exceptions to these policies based on educational, documentary, scientific, or artistic considerations, or where harms are outweighed by substantial benefits to the public.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "3. Facilitating misleading claims of expertise or capability in sensitive areas -- for example in health, finance, government services, or the law, in order to deceive.",
+          "added": "2026-10-27"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://ai.google.dev/gemini-api/docs/available-regions",
+      "title": "Available regions for Google AI Studio and Gemini API",
+      "accessed": "2026-10-27",
+      "quotes": [
+        {
+          "text": "The Gemini API and Google AI Studio are available in the following countries and territories.",
+          "added": "2026-10-27"
+        },
+        {
+          "text": "- Spain\n- Sri Lanka\n- Sudan",
+          "added": "2026-10-27"
+        }
+      ]
+    }
+  ]
+}

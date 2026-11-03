@@ -1,0 +1,17 @@
+{
+  "start": "2026-11-02T23:32:27+01:00",
+  "cutoff": "2026-11-03T00:32:27+01:00",
+  "closure_check": "2026-11-03T00:21:05+01:00",
+  "closed_at": "2026-11-03T00:22:34+01:00",
+  "status": "primary_objective_complete_optional_partial",
+  "primary_A": "complete_reviewed",
+  "primary_B": "complete_reviewed",
+  "optional_structured_integration": "partial_synthetic_reviewed_real_https_not_integrated",
+  "python_passed": 404,
+  "native_gui_deselected": 6,
+  "node_passed": 40,
+  "http_passed": 19,
+  "real_provider_calls": 0,
+  "report": "RESULTADOS.md",
+  "early_stop_reason": "viable milestones verified; further real integration outside completed slice"
+}

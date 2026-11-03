@@ -1,0 +1,86 @@
+{
+  "checked_at": "2026-10-30T01:10:34.358850+00:00",
+  "base_url": "http://127.0.0.1:8765",
+  "scope": "actual_local_http_not_external_llm_or_load",
+  "checks": [
+    {
+      "name": "real_html_and_blocking_csp",
+      "ok": true
+    },
+    {
+      "name": "honest_service_status",
+      "ok": true
+    },
+    {
+      "name": "candidate_metadata_not_verified_quotes",
+      "ok": true
+    },
+    {
+      "name": "family_filter",
+      "ok": true
+    },
+    {
+      "name": "empty_search_not_fabricated",
+      "ok": true
+    },
+    {
+      "name": "real_candidate_detail",
+      "ok": true
+    },
+    {
+      "name": "missing_product_safe_error",
+      "ok": true
+    },
+    {
+      "name": "cross_family_metadata_not_false_ranking",
+      "ok": true
+    },
+    {
+      "name": "duplicate_comparison_rejected",
+      "ok": true
+    },
+    {
+      "name": "comparability_explains_missing_facts_and_unapproved_policy",
+      "ok": true
+    },
+    {
+      "name": "client_cannot_upload_comparison_facts",
+      "ok": true
+    },
+    {
+      "name": "zero_rate_end_month_contributions",
+      "ok": true
+    },
+    {
+      "name": "annual_effective_percent_not_ratio",
+      "ok": true
+    },
+    {
+      "name": "negative_return_is_visible_loss",
+      "ok": true
+    },
+    {
+      "name": "simple_interest_two_years",
+      "ok": true
+    },
+    {
+      "name": "nan_rejected_without_retry",
+      "ok": true
+    },
+    {
+      "name": "no_fabricated_ai_response",
+      "ok": true
+    },
+    {
+      "name": "foreign_origin_rejected",
+      "ok": true
+    },
+    {
+      "name": "encoded_traversal_rejected",
+      "ok": true
+    }
+  ],
+  "passed": 19,
+  "total": 19,
+  "ok": true
+}

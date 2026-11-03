@@ -1,0 +1,58 @@
+{
+  "checked_at": "2026-10-26T23:20:11.947755+00:00",
+  "scope": "read_only_local_reference_tests_not_application_or_provider",
+  "api_round_source_records": 177,
+  "api_round_distinct_urls": 169,
+  "checks": [
+    {
+      "check": "consent",
+      "command": "python test_consent_contract.py",
+      "workdir": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\19-integracion",
+      "result": {
+        "output": "test_explicit_consent_without_profile_is_valid (__main__.ConsentContractTests.test_explicit_consent_without_profile_is_valid) ... ok\r\ntest_missing_consent_is_invalid (__main__.ConsentContractTests.test_missing_consent_is_invalid) ... ok\r\ntest_remote_turn_rejects_processing_consent_false (__main__.ConsentContractTests.test_remote_turn_rejects_processing_consent_false) ... ok\r\ntest_unselected_profile_is_invalid (__main__.ConsentContractTests.test_unselected_profile_is_invalid) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 4 tests in 0.001s\r\n\r\nOK",
+        "exit_code": 0,
+        "error": null
+      }
+    },
+    {
+      "check": "motor",
+      "command": "python -m unittest -q test_motor_financiero.py",
+      "workdir": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\04-motor-financiero",
+      "result": {
+        "output": "----------------------------------------------------------------------\r\nRan 29 tests in 0.001s\r\n\r\nOK",
+        "exit_code": 0,
+        "error": null
+      }
+    },
+    {
+      "check": "capacity",
+      "command": "python -m unittest -q test_capacity_model.py",
+      "workdir": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\03-capacidad-ia",
+      "result": {
+        "output": "----------------------------------------------------------------------\r\nRan 6 tests in 0.005s\r\n\r\nOK",
+        "exit_code": 0,
+        "error": null
+      }
+    },
+    {
+      "check": "scenarios",
+      "command": "python reproducir_escenarios.py --check",
+      "workdir": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\06-escenarios-visuales",
+      "result": {
+        "output": "OK: 3 escenarios, salidas coinciden; invariantes y topes de retiro verificados.",
+        "exit_code": 0,
+        "error": null
+      }
+    },
+    {
+      "check": "ingesta",
+      "command": "python verifica_fixtures.py",
+      "workdir": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\planificacion-03\\14-ingesta-calidad",
+      "result": {
+        "output": "OK: 7 casos JSON; 10 registros; JSON Schema Draft 2020-12 válido; 1 rechazo(s) estructural(es) esperado(s); ninguna fixture publicable.",
+        "exit_code": 0,
+        "error": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "output": "{\"test_only\": true, \"external_model_calls\": 0, \"cases\": [{\"case\": \"invalid_intermediate\", \"corruption_rejected\": true}, {\"case\": \"valid_hex_intermediate\", \"corruption_rejected\": true}, {\"case\": \"missing_last_entry\", \"corruption_rejected\": true}], \"passed\": true}",
+  "exit_code": 0,
+  "error": null
+}

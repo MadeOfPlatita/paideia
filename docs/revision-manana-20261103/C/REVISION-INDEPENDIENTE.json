@@ -1,0 +1,30 @@
+{
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [
+    {
+      "severity": "low",
+      "location": "prototipos/paideia-local/static/app.js:1092-1097,1225-1229",
+      "finding": "La validación programática mide la búsqueda después de trim(), no el texto preservado en el control. Con 100 letras seguidas de un espacio (101 caracteres inyectados), envía una petición y no muestra el error de límite, incumpliendo el requisito literal de 101 inyectados sin fetch con texto, filtro y error preservados.",
+      "evidence": "Probe independiente desktop: longitud DOM 101, filtro deposito, error vacío; se observó /api/catalogue?q= seguido de 100 x y family=deposito. La matriz requests del probe también contiene peticiones posteriores realizadas para preparar la prueba de teclado, no atribuibles al texto de 101 caracteres."
+    }
+  ],
+  "original_failure_retained": "docs/noche-funcional/20261103T003723/C/REVISION-INDEPENDIENTE.json (no modificado); los dos fallos originales, maxlength 120 y respuesta retenida tras navegación, pasan en la prueba integrada actual para sus casos concretos.",
+  "evidence": {
+    "desktop": "docs/revision-manana-20261103/C/desktop.json",
+    "mobile": "docs/revision-manana-20261103/C/mobile.json",
+    "existing_browser_test": "tests/c_integration_browser.js ejecutado asíncronamente en window contra API local real, 24/24 comprobaciones por tamaño en documentos nuevos.",
+    "lifecycle": "El wrapper de fetch espera primero la respuesta HTTP real y la retiene después: navegar Comparar→Inicio→Comparar con los mismos IDs descarta su resultado sin autofetch; el reintento manual funciona; cambiar selección invalida otra respuesta retenida.",
+    "contract": "Filtro y ficha, payload limitado a product_ids y criterion, motivos explícitos, glosario compartido, bloqueo de familias mixtas y maxlength nativo 100 pasan la prueba integrada. Enter y Escape reales vía CDP sobre la ayuda TAE: abierto y foco restaurado al cerrar.",
+    "status": "GET /api/status: mode local_prototype, ai.connected false, status not_configured, synthetic_only true, 20 candidatos y publication_ready 0; sin claves ni proveedores.",
+    "security_scan": "Búsqueda estática selectiva en app.js, context_help.js y context_help.css de eval/exec, asignación innerHTML y asignaciones literales de credenciales: sin coincidencias. No es una auditoría integral.",
+    "cleanup": "Servidor propio app.py --port 18871 detenido mediante process.kill; connect_ex 10061 y netstat sin entradas TCP 18871."
+  },
+  "limitations": [
+    "Revisión de archivos actuales sin repositorio Git ni diff; no se modifica código, no se verifica una suite completa ni se certifica seguridad o accesibilidad integral.",
+    "CDP solicitó 1440×900 y 390×844. Anchos clientWidth registrados respectivamente 1425 al inicio desktop y 1440 al final de la prueba, y 390 móvil; en móvil innerWidth/innerHeight iniciales fueron 448×970, por escalado del navegador. No equivale a prueba en dispositivo físico.",
+    "El test integrado comprueba el rechazo de 101 letras sin espacios; el probe propio detectó la excepción con espacio final. La prueba de teclado real cubre Enter y Escape en TAE, no todas las teclas y conceptos.",
+    "Se usa motor y datos locales; sin proveedores externos, pagos, datos personales, base de datos o despliegue. No se afirma cierre general."
+  ],
+  "summary": "Hito C no aprobado: corregidos los dos casos originales comprobados, pero el límite de 101 caracteres se elude con un espacio final."
+}

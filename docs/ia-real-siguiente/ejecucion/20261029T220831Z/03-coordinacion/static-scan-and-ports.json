@@ -1,0 +1,10 @@
+{
+  "scope": "current-file scan; no Git diff",
+  "findings": [],
+  "ports_listening": {
+    "8765": true,
+    "8768": false
+  },
+  "external_model_calls": 0,
+  "independent_review": "pending"
+}

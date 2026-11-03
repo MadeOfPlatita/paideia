@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:paideia:synthetic-benchmark-projection:0.1",
+  "title": "Proyección completa de fixture sintética para benchmark únicamente",
+  "description": "Este DTO es deliberadamente incompatible con el contrato de producción selectivo y no debe enviarse a un proveedor.",
+  "type": "object",
+  "properties": {
+    "classification": {"const": "synthetic_benchmark_only"},
+    "contract_version": {"const": "0.1"},
+    "purpose": {"const": "complete_synthetic_benchmark"},
+    "fixture_id": {"const": "synthetic-full-profile-01"},
+    "fields": {
+      "allOf": [
+        {"$ref": "urn:paideia:profile-projection:0.1#/$defs/Fields"},
+        {"required": ["objective", "horizon", "liquidity_need", "learning_level", "learning_topics", "target_amount_eur", "monthly_income_eur", "monthly_expenses_eur", "debt", "liquid_reserve_eur", "upcoming_commitments", "risk_tolerance", "loss_capacity"]}
+      ]
+    }
+  },
+  "required": ["classification", "contract_version", "purpose", "fixture_id", "fields"],
+  "additionalProperties": false
+}

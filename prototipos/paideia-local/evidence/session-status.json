@@ -1,0 +1,11 @@
+{
+  "state": "revoked",
+  "calls": 0,
+  "limit": 24,
+  "mission_remaining": null,
+  "run_id": null,
+  "final_pending": false,
+  "deadline_utc": "2026-10-29T17:00:00+00:00",
+  "benchmark": "not_started",
+  "test_only": true
+}

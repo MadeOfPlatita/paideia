@@ -1,0 +1,4 @@
+status=200
+content-type=text/html; charset=UTF-8
+url=https://data.ecb.europa.eu/data/data-categories/non-bank-financial-corporations/list-financial-institutions/data?layerType=AL
+bytes_saved=646135

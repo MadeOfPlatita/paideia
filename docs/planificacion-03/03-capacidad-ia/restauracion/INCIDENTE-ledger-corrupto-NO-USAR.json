@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://clientebancario.bde.es/pcb/es/menu-horizontal/productosservici/relacionados/tiposinteres/guia-textual/latae/tae_deposito.html",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Our free allocation allows anyone to use a total of **10,000 Neurons per day at no charge**.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "On Workers Paid, you will be charged at $0.011 / 1,000 Neurons for any usage above the free allocation of 10,000 Neurons per day.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Last updated Oct 20, 2026",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://clientebancario.bde.es/pcb/es/menu-horizontal/productosservici/cuentasdepositos/depositosplazo/guia-textual/publicidadinform",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "300 requests per minute, unless the model requires the Workers Paid plan",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://tesoro.es/sites/default/files/calendarios/Calendario%20Tesoro%20Publico%202026%20Ingles-12.pdf",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Unit Pricing | $0.0509 per M input tokens, $0.335 per M output tokens",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://www.tesoro.es/deuda-publica/los-valores-del-tesoro/letras-del-tesoro",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Function calling [ ↗](/workers-ai/function-calling/) | Yes |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://www.tesoro.es/4-cual-es-la-rentabilidad-de-los-bonos-y-obligaciones",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "| openai/gpt-oss-20b | 30 | 1K | 8K | 200K | - | - |",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Rate limits apply at the organization level, not individual users. You can hit any limit type depending on which threshold you reach first.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://www.cnmv.es/portal/inversor/fondos-comisiones?lang=es",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "| [![OpenAI](/_next/static/media/openailogo.523c87a0.svg)GPT OSS 120B](/docs/model/openai/gpt-oss-120b) openai/gpt-oss-120b | 500 | $0.15 input$0.60 output | 250K TPM1K RPM | 131,072 | 65,536 | - |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://www.cnmv.es/DocPortal/Publicaciones/Guias/LosFondosCotizadosEnBolsa%28ETF%29.pdf",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Input\n\n$0.075\n\nCached Input\n\n$0.037\n\nOutput\n\n$0.30",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "[Tool Use](/docs/tool-use), [Browser Search](/docs/browser-search), [Code Execution](/docs/code-execution), [JSON Object Mode](/docs/structured-outputs#json-object-mode), [JSON Schema Mode](/docs/structured-outputs), [Reasoning](/docs/reasoning)",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://www.cnmv.es/portal/inversor/fondos-como-invertir?lang=es",
+      "title": "",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Input\n\n$0.15\n\nCached Input\n\n$0.075\n\nOutput\n\n$0.60",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "[Tool Use](/docs/tool-use), [Browser Search](/docs/browser-search), [Code Execution](/docs/code-execution), [JSON Object Mode](/docs/structured-outputs#json-object-mode), [JSON Schema Mode](/docs/structured-outputs), [Reasoning](/docs/reasoning)",
+          "added": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

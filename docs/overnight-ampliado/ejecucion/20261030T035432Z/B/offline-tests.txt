@@ -1,0 +1,14 @@
+test_default_policy_and_default_synthetic_exclusion (test_catalogue_mapping_offline.OfflineMappingTests.test_default_policy_and_default_synthetic_exclusion) ... ok
+test_exact_permissions_do_not_alias_display_to_app_display (test_catalogue_mapping_offline.OfflineMappingTests.test_exact_permissions_do_not_alias_display_to_app_display) ... ok
+test_explicit_unlimited_threshold_policy_currently_allows_old_synthetic_facts (test_catalogue_mapping_offline.OfflineMappingTests.test_explicit_unlimited_threshold_policy_currently_allows_old_synthetic_facts) ... ok
+test_family_and_scope_tokens_are_exact_and_never_normalized (test_catalogue_mapping_offline.OfflineMappingTests.test_family_and_scope_tokens_are_exact_and_never_normalized) ... ok
+test_http_synthetic_positive_and_permission_exclusion (test_catalogue_mapping_offline.OfflineMappingTests.test_http_synthetic_positive_and_permission_exclusion) ... ok
+test_missing_source_fact_fails_closed (test_catalogue_mapping_offline.OfflineMappingTests.test_missing_source_fact_fails_closed) ... ok
+test_stale_future_missing_and_conflicting_evidence_excludes (test_catalogue_mapping_offline.OfflineMappingTests.test_stale_future_missing_and_conflicting_evidence_excludes) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.013s
+
+OK
+
+EXIT_CODE=0

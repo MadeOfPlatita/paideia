@@ -1,0 +1,163 @@
+[
+  {
+    "url": "https://eur-lex.europa.eu/legal-content/ES/TXT/?uri=CELEX:02014L0065-20260606",
+    "title": "Directiva 2014/65/UE, texto consolidado español a 6 junio 2026",
+    "claim": "MiFID II define el asesoramiento como recomendación personalizada sobre operaciones con instrumentos financieros; la Directiva también trata específicamente los depósitos estructurados y contiene una excepción limitada para ciertos asesoramientos no remunerados en otra actividad profesional.",
+    "evidence": "4)«asesoramiento en materia de inversión» : la prestación de recomendaciones personalizadas a un cliente, ya sea a petición de este o por iniciativa de la empresa de servicios de inversión, con respecto a una o más operaciones relativas a instrumentos financieros;\nLas siguientes disposiciones se aplicarán también a las empresas de servicios de inversión y a las entidades de crédito autorizadas, de conformidad con la Directiva 2013/36/UE, cuando vendan a sus clientes depósitos estructurados o les asesoren al respecto:\nlas personas que prestan asesoramiento en materia de inversión en el ejercicio de otra actividad profesional no regulada por la presente Directiva, siempre que la prestación de dicho asesoramiento no esté específicamente remunerada",
+    "verification": "Texto consolidado EUR-Lex consultado el 2026-10-26; la página identificaba versión consolidada de 2026-06-06. Evidencia contrastada en artículos 1, 2 y 4."
+  },
+  {
+    "url": "https://boe.es/datosabiertos/api/legislacion-consolidada/id/BOE-A-2023-7053/texto/bloque/a2",
+    "title": "Ley 6/2023, art. 2: instrumentos financieros",
+    "claim": "El ámbito español de instrumentos financieros comprende deuda negociable, bonos/obligaciones y participaciones o acciones de instituciones de inversión colectiva.",
+    "evidence": "2.º Bonos y obligaciones u otras formas de deuda titulizada, incluidos los recibos de depositario representativos de tales valores.\nc) participaciones y acciones en instituciones de inversión colectiva",
+    "verification": "Bloque del artículo 2 de la Ley 6/2023 consultado en BOE Datos Abiertos el 2026-10-26; citas literales del apartado 1."
+  },
+  {
+    "url": "https://boe.es/datosabiertos/api/legislacion-consolidada/id/BOE-A-2023-7053/texto/bloque/a1-37",
+    "title": "Ley 6/2023, art. 125: servicios de inversión",
+    "claim": "La Ley 6/2023 incluye el asesoramiento en materia de inversión como servicio y distingue las recomendaciones genéricas no personalizadas y las divulgadas exclusivamente al público.",
+    "evidence": "g) El asesoramiento en materia de inversión.\nNo se considerará que constituya asesoramiento, a los efectos de lo dispuesto en este apartado, las recomendaciones de carácter genérico y no personalizadas que se puedan realizar en el ámbito de la comercialización de valores e instrumentos financieros. Dichas recomendaciones tendrán el valor de comunicaciones de carácter comercial. Asimismo, tampoco se considerará recomendación personalizada las recomendaciones que se divulguen exclusivamente al público.",
+    "verification": "Bloque del artículo 125 de la Ley 6/2023 consultado en BOE Datos Abiertos el 2026-10-26; cita literal de los apartados 1.g y párrafo de exclusiones."
+  },
+  {
+    "url": "https://boe.es/datosabiertos/api/legislacion-consolidada/id/BOE-A-2023-7053/texto/bloque/a2-16",
+    "title": "Ley 6/2023, art. 204: evaluación de idoneidad",
+    "claim": "En el asesoramiento sujeto al régimen, se recaban conocimientos/experiencia, situación financiera incluida capacidad para soportar pérdidas y objetivos incluidos tolerancia al riesgo; si falta la información legalmente exigida, no se recomienda; procede declaración de idoneidad en los términos legales.",
+    "evidence": "obtendrá la información necesaria sobre los conocimientos y experiencia del cliente o posible cliente en el ámbito de inversión correspondiente al tipo concreto de producto o servicio, su situación financiera, incluida su capacidad para soportar pérdidas, y sus objetivos de inversión incluida su tolerancia al riesgo\nCuando la empresa no obtenga la información prevista en el primer apartado, no le recomendará servicios y actividades de inversión o instrumentos financieros al cliente o cliente potencial.\nAl prestar asesoramiento en materia de inversión, la empresa de servicios de inversión proporcionará al cliente, antes de que se efectúe la operación, una declaración de idoneidad en soporte duradero",
+    "verification": "Bloque del artículo 204 de la Ley 6/2023 consultado en BOE Datos Abiertos el 2026-10-26; citas literales de los apartados 1, 5 y 6."
+  },
+  {
+    "url": "https://esma.europa.eu/publications-data/questions-answers/1130",
+    "title": "ESMA Q&A 1130: información de situación financiera",
+    "claim": "ESMA recoge como datos pertinentes, cuando proceda, ingresos regulares, activos —incluidos líquidos, inversiones e inmuebles— y compromisos financieros regulares.",
+    "evidence": "financial situation including his ability to bear losses” that “shall include, where relevant, information on the source and extent of his regular income, his assets, including liquid assets, investments and real property, and his regular financial commitments",
+    "verification": "Respuesta publicada de ESMA Q&A 1130 consultada el 2026-10-26; el texto cita MiFID II y el artículo 54 del Reglamento Delegado."
+  },
+  {
+    "url": "https://eur-lex.europa.eu/eli/reg_del/2021/1253/oj/spa",
+    "title": "Reglamento Delegado (UE) 2021/1253, preferencias de sostenibilidad",
+    "claim": "La información de objetivos puede incluir horizonte temporal, preferencias de asunción de riesgos, tolerancia al riesgo, finalidad y preferencias de sostenibilidad.",
+    "evidence": "La información relativa a los objetivos de inversión del cliente o posible cliente incluirá, cuando proceda, información sobre el horizonte temporal deseado para la inversión, sus preferencias en relación con la asunción de riesgos, su tolerancia al riesgo, la finalidad de la inversión y, con carácter adicional, sus preferencias de sostenibilidad.",
+    "verification": "Reglamento Delegado (UE) 2021/1253 consultado en EUR-Lex el 2026-10-26; evidencia literal de la modificación del artículo 54, apartado 5, del Reglamento 2017/565."
+  },
+  {
+    "url": "https://www.esma.europa.eu/sites/default/files/2023-07/ESMA35-43-3861_Supervisory_briefing_on_understanding_the_definition_of_advice_under_MiFID_II.pdf",
+    "title": "ESMA (2023), briefing supervisor sobre definición de asesoramiento MiFID II",
+    "claim": "El briefing supervisor organiza el análisis de asesoramiento mediante preguntas sobre recomendación, instrumento, adecuación a circunstancias y difusión exclusivamente pública.",
+    "evidence": "3.3 Is the recommendation presented as suitable?\n3.4 Is the recommendation based on a consideration of the person’s circumstances?\n3.5 Is the recommendation issued otherwise than exclusively to the public?",
+    "verification": "Briefing supervisor ESMA35-43-3861, publicado el 2023-07-11; evidencia contrastada en la tabla de contenidos del PDF consultado el 2026-10-26."
+  },
+  {
+    "url": "https://www.esma.europa.eu/sites/default/files/2024-05/ESMA35-335435667-5924__Public_Statement_on_AI_and_investment_services.pdf",
+    "title": "ESMA (2024), statement sobre IA en servicios de inversión minorista",
+    "claim": "Para las firmas que prestan servicios de inversión, ESMA atribuye a los órganos de dirección la responsabilidad por decisiones tomadas por personas o herramientas de IA y advierte de sesgo, calidad de datos y transparencia.",
+    "evidence": "Importantly, firms’ decisions remain the responsibility of management bodies, irrespective of whether those decisions are taken by people or AI based tools.",
+    "verification": "Statement público ESMA35-335435667-5924, 2024-05-30; texto del párrafo 2 consultado el 2026-10-26. La aplicación directa a Paideia depende de si presta un servicio regulado."
+  },
+  {
+    "url": "https://clientebancario.bde.es/pcb/es/menu-horizontal/productosservici/relacionados/tiposinteres/guia-textual/latae/tae_deposito.html",
+    "title": "Banco de España, TAE de un depósito o producto de ahorro",
+    "claim": "El BdE diferencia TIN y TAE, incluye gastos/comisiones asociados en la explicación de la TAE y describe su hipótesis de interés compuesto y reinversión.",
+    "evidence": "La TAE o tasa anual equivalente, a diferencia del TIN o tipo de interés, que sólo recoge la retribución o compensación que recibimos por depositar el dinero en un banco, tiene en cuenta, los gastos y las comisiones asociados.\nEl cálculo de la TAE, o tasa anual equivalente, está basado en el tipo de interés compuesto y en la hipótesis de que los intereses obtenidos se vuelven a invertir al mismo tipo de interés.",
+    "verification": "Página de Cliente Bancario del Banco de España consultada el 2026-10-26; citas literales del apartado sobre depósitos/productos de ahorro."
+  },
+  {
+    "url": "https://clientebancario.bde.es/pcb/es/menu-horizontal/productosservici/cuentasdepositos/depositosplazo/guia-textual/publicidadinform",
+    "title": "Banco de España, información precontractual de depósitos a plazo",
+    "claim": "La información precontractual del depósito debe detallar comisiones/gastos, penalización de cancelación anticipada, posibles vinculaciones y TAE.",
+    "evidence": "Todas las comisiones o gastos que el banco nos pueda cobrar y en particular, la comisión o penalización que pagaríamos si se nos permite cancelar el depósito anticipadamente.\nLa retribución ofrecida y la posibilidad de que el banco lo condicione a la contratación de otros servicios.",
+    "verification": "Página de Cliente Bancario del Banco de España consultada el 2026-10-26; evidencia literal de la lista de información precontractual."
+  },
+  {
+    "url": "https://www.cnmv.es/DocPortal/Publicaciones/Guias/LosFondosCotizadosEnBolsa%28ETF%29.pdf",
+    "title": "CNMV/BME, guía Los fondos cotizados en bolsa (ETF)",
+    "claim": "Los ETF cotizan en mercados secundarios y soportan costes del fondo y costes directos del intermediario.",
+    "evidence": "Las participaciones en ETF pueden comprarse y venderse en un mercado secundario, como las acciones o los bonos.\nInvertir en ETF implica asumir dos tipos de gastos: por una parte, las comisiones de gestión y depósito del propio fondo de inversión; y por otra, los que debe soportar directamente el inversor a favor del intermediario en el que estén depositadas las participaciones",
+    "verification": "Guía divulgativa CNMV/BME consultada el 2026-10-26; citas literales de secciones sobre operativa y gastos. Usada para mecánica/costes, no como fuente de requisitos actuales de KID."
+  },
+  {
+    "url": "https://www.cnmv.es/portal/inversor/fondos-comisiones?lang=es",
+    "title": "CNMV, principales comisiones de fondos de inversión",
+    "claim": "Gestión/depositaría son costes implícitos deducidos del valor liquidativo; TER incluye otros gastos del fondo.",
+    "evidence": "Estas comisiones son implícitas, es decir, ya están deducidas del valor liquidativo del fondo, puesto que se cargan directamente al fondo de inversión.\nLos gastos totales incluyen las comisiones de gestión y depositario, los servicios exteriores y otros gastos de explotación.",
+    "verification": "Página de orientación al inversor de la CNMV consultada el 2026-10-26; citas literales sobre comisiones y TER."
+  },
+  {
+    "url": "https://www.tesoro.es/deuda-publica/los-valores-del-tesoro/letras-del-tesoro",
+    "title": "Tesoro Público, Letras del Tesoro: características y rentabilidad",
+    "claim": "Las Letras se emiten a descuento o premio; el rendimiento a vencimiento procede de la diferencia entre precio de compra y reembolso.",
+    "evidence": "Son valores emitidos al descuento o a premio, por lo que su precio de adquisición puede ser inferior o superior al importe que el inversor recibirá en el momento del reembolso. La diferencia entre el valor de reembolso de la Letra (1.000 euros) y su precio de adquisición será la rentabilidad generada por la Letra del Tesoro.",
+    "verification": "Página de Deuda Pública del Tesoro consultada el 2026-10-26; evidencia literal de la sección Letras del Tesoro."
+  },
+  {
+    "url": "https://fgd.es/preguntas-frecuentes",
+    "title": "Fondo de Garantía de Depósitos, preguntas frecuentes",
+    "claim": "La cobertura general de depósitos es hasta 100.000 € por titular y entidad; la cobertura de valores no cubre pérdidas de valor de mercado.",
+    "evidence": "En general, el FGD garantiza hasta 100.000 € por titular y entidad.\nEl FGD no cubre las pérdidas de valor de los títulos citados, solo la no devolución de estos.",
+    "verification": "FAQ oficial del FGD consultada el 2026-10-26; citas literales de cobertura de depósitos y valores."
+  },
+  {
+    "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c11-ganancias-perdidas-patrimoniales/determinacion-importe-ganancias-perdidas-patrimon-especificas/transmisiones-reembolsos-acciones-iic/regimen-especial-diferimiento-tributacion.html",
+    "title": "AEAT, IRPF 2025: régimen de diferimiento para IIC/ETF",
+    "claim": "El régimen español de diferimiento tiene requisitos para IIC elegibles y no se aplica en general a fondos cotizados/ETF; hay tratamiento transitorio para ciertas posiciones antiguas.",
+    "evidence": "1. En los reembolsos de participaciones en instituciones de inversión colectiva que tengan la consideración de fondos de inversión.\nCuando la transmisión o reembolso o, en su caso, la suscripción o adquisición tenga por objeto participaciones representativas del patrimonio de los fondos de inversión cotizados",
+    "verification": "Manual práctico IRPF 2025 de la AEAT consultado el 2026-10-26; el manual incluye los requisitos y exclusiones del régimen, además de supuestos transitorios. No se reproducen tipos impositivos."
+  },
+  {
+    "url": "https://eur-lex.europa.eu/eli/reg/2014/1286",
+    "title": "Reglamento (UE) 1286/2014, documento de datos fundamentales PRIIPs",
+    "claim": "El KID PRIIPs es información precontractual y debe ser precisa, imparcial, clara y no engañosa.",
+    "evidence": "La información contenida en el documento de datos fundamentales se considerará información precontractual. Será precisa, imparcial, clara y no engañosa.",
+    "verification": "Reglamento PRIIPs consultado en EUR-Lex el 2026-10-26; evidencia literal del artículo 6, apartado 1."
+  },
+  {
+    "url": "https://finance.ec.europa.eu/system/files/2022-01/220111-financial-competence-framework-adults_en.pdf",
+    "title": "UE/OCDE-INFE, marco de competencias financieras para adultos (2022)",
+    "claim": "El marco puede reutilizarse para enseñar elaboración/seguimiento de presupuesto y bienestar financiero, no para convertir alfabetización en idoneidad de producto.",
+    "evidence": "Motivated to take time to create and follow a budget as a strategy for maintaining or increasing financial well-being",
+    "verification": "Marco conjunto UE/OCDE-INFE publicado en 2022, consultado el 2026-10-26; evidencia literal de competencia relativa a presupuestos."
+  },
+  {
+    "url": "https://www.tesoro.es/4-cual-es-la-rentabilidad-de-los-bonos-y-obligaciones",
+    "title": "Tesoro Público, rentabilidad de bonos y obligaciones",
+    "claim": "El Tesoro define la TIR como tipo que iguala el capital invertido y el valor actualizado de los cobros futuros.",
+    "evidence": "La rentabilidad suele medirse por la tasa interna de rendimiento (TIR) de la inversión, que es el tipo de interés que iguala financieramente el importe del capital que se invierte y el valor actualizado de todos los cobros futuros derivados de la tenencia del valor.",
+    "verification": "Página de atención al inversor del Tesoro consultada el 2026-10-26; cita literal de definición de TIR."
+  },
+  {
+    "url": "http://cnmv.es/DocPortal/Publicaciones/Guias/G08_Renta_fija.pdf",
+    "title": "CNMV, guía Los productos de renta fija",
+    "claim": "En renta fija, cálculo exacto de rentabilidad requiere producto a tipo fijo mantenido hasta vencimiento; venta anticipada o tipo variable deja una estimación.",
+    "evidence": "Pero no siempre es posible calcular de antemano estas rentabilidades. En los valores con tipo de interés fijo, el inversor puede conocer con certeza los ingresos y gastos asociados a la inversión y calcular exactamente la rentabilidad, siempre que el producto se mantenga hasta su vencimiento. Sin embargo, en los productos de tipo variable y/o si el inversor vende antes del vencimiento, el cálculo inicial no dejará de ser una mera estimación.",
+    "verification": "Guía de la CNMV sobre renta fija consultada el 2026-10-26; cita literal del ejemplo de rentabilidad. Guía divulgativa, no dictamen jurídico."
+  },
+  {
+    "url": "https://esma.europa.eu/publications-data/questions-answers/1119",
+    "title": "ESMA Q&A 1119: disclosure de costes ex ante",
+    "claim": "En el ámbito MiFID, ESMA explica que deben informarse con antelación costes y cargos del servicio de inversión/auxiliar y del instrumento financiero.",
+    "evidence": "firms shall inform clients in good time before the provision of the service of all costs and associated charges relating to the investment and/or ancillary service and the financial instrument.",
+    "verification": "Respuesta publicada ESMA Q&A 1119 consultada el 2026-10-26; la respuesta cita MiFID II art. 24(4) y Reglamento Delegado art. 50(5)."
+  },
+  {
+    "url": "https://www.tesoro.es/deuda-publica/los-valores-del-tesoro/fiscalidad/residentes/impuesto-sobre-la-renta-de-las-personas-fisicas/tributacion-de-las-letras-del-tesoro",
+    "title": "Tesoro: tributación de las Letras del Tesoro (IRPF)",
+    "claim": "El rendimiento de Letras está sujeto a IRPF como rendimiento de capital mobiliario aunque no haya retención a cuenta.",
+    "evidence": "la diferencia entre el importe obtenido en la venta o amortización de la letra y el pagado en su compra tiene la consideración de rendimiento de capital mobiliario sujeto, en consecuencia, al IRPF.\nNo existe retención a cuenta sobre dicho rendimiento, cualquiera que sea el perceptor del mismo.",
+    "verification": "Página de fiscalidad de Letras del Tesoro consultada el 2026-10-26; citas literales. No se reproducen tipos fiscales."
+  },
+  {
+    "url": "https://www.cnmv.es/portal/inversor/fondos-como-invertir?lang=es",
+    "title": "CNMV, suscripciones, reembolsos y traspasos de fondos",
+    "claim": "En fondos tradicionales el valor liquidativo aplicable suele ser el del día de la solicitud y se publica al día siguiente; ETF se cotiza en mercado.",
+    "evidence": "En general, el valor liquidativo aplicable es el del mismo día de la solicitud (que se publicará al día siguiente).",
+    "verification": "Página de orientación al inversor CNMV consultada el 2026-10-26; cita literal de suscripción."
+  },
+  {
+    "url": "https://eur-lex.europa.eu/eli/reg_del/2021/2268/oj/spa",
+    "title": "Reglamento Delegado (UE) 2021/2268: metodología y narrativa de escenarios PRIIPs",
+    "claim": "La modificación de los RTS exige evitar que los escenarios PRIIPs se interpreten como previsiones de mejor estimación y reforzar advertencias e hipótesis.",
+    "evidence": "A fin de evitar que los escenarios de rentabilidad se consideren previsiones que brindan la mejor estimación, es necesario imponer advertencias más visibles sobre dichos escenarios. La divulgación, en términos sencillos, de detalles adicionales sobre las hipótesis en las que se basan dichos escenarios también debería reducir el riesgo de que se generen expectativas inadecuadas en cuanto a los posibles rendimientos futuros.",
+    "verification": "Reglamento Delegado (UE) 2021/2268 consultado en EUR-Lex el 2026-10-26; cita literal del considerando 3."
+  }
+]

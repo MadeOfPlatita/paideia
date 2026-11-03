@@ -1,0 +1,17 @@
+{
+  "cycle": 1,
+  "scope": ["pending diagnosis navigation invalidation", "native catalogue search maxlength 100"],
+  "files_modified": ["prototipos/paideia-local/static/app.js", "prototipos/paideia-local/tests/c_integration_browser.js"],
+  "red": [
+    {"test": "navigation discards held response without auto-fetch and permits manual retry", "result": "failed before navigation fix against real local API"},
+    {"test": "native search maxLength is 100", "result": "failed before maxlength fix; actual 120"}
+  ],
+  "green": {
+    "browser_desktop": {"viewport": [1440, 900], "checks_passed": 24, "checks_failed": 0, "client_width": 1440, "scroll_width": 1440},
+    "browser_mobile": {"viewport": [390, 844], "checks_passed": 24, "checks_failed": 0, "client_width": 390, "scroll_width": 390},
+    "node": {"command": "node --test tests/*.test.cjs", "passed": 40, "failed": 0},
+    "syntax": ["node --check static/app.js", "node --check tests/c_integration_browser.js"]
+  },
+  "cleanup": {"server": "127.0.0.1:18867", "process": "killed", "netstat": "no entries", "connect": "ECONNREFUSED"},
+  "limitations": ["Independent re-review pending; original failed review retained.", "No full Python suite rerun.", "One synchronous browser evaluation timed out; final fresh-document runs used asynchronous result collection.", "No real providers or personal data used."]
+}

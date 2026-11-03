@@ -1,0 +1,74 @@
+{
+  "checked_at": "2026-10-28T20:00:49.863671+00:00",
+  "delegation": "deleg_09c6c535",
+  "workstreams_received_and_reviewed": {
+    "storage": true,
+    "tools": true,
+    "profile": true,
+    "data": true,
+    "runtime": true,
+    "admission": true,
+    "hosting": true
+  },
+  "scope": "local_integration_and_bounded_research_not_production",
+  "verification": {
+    "python_app_tests": 155,
+    "node_profile_tests": 13,
+    "actual_default_http_passed": 19,
+    "actual_default_http_total": 19,
+    "route_viewport_combinations": 16,
+    "spike_tests_separate": 11,
+    "admission_suite_repetitions": 20,
+    "all_ok": true
+  },
+  "data": {
+    "candidates": 20,
+    "families": {
+      "cuenta_remunerada": 4,
+      "deposito": 4,
+      "letra_deuda_publica": 4,
+      "fondo_tradicional": 4,
+      "etf_ucits": 4
+    },
+    "facts": 62,
+    "states": {
+      "known": 45,
+      "conflict": 17
+    },
+    "fields": 43,
+    "fact_products": 16,
+    "ready": 0,
+    "source_ids": 13,
+    "permissions": {
+      "pending": 496
+    },
+    "effective_date_unknown": 53,
+    "prior_observations": 17,
+    "duplicate_fact_ids": 0
+  },
+  "storage_recommendation": "versioned_read_only_catalogue_snapshot_no_mandatory_postgresql",
+  "quota_storage": "durable_atomic_coordination_pending_KV_alone_not_assumed_sufficient",
+  "real_llm_calls": 0,
+  "real_credentials_read": false,
+  "test_only_servers_stopped": [
+    8766,
+    8767
+  ],
+  "normal_server": {
+    "url": "http://127.0.0.1:8765/",
+    "managed_process": "proc_dfeeb47b4133",
+    "ai": "not_configured"
+  },
+  "design_changed": false,
+  "profile_sent_to_api_or_llm": false,
+  "browser_screenshot_note": "Coordinator screenshot capture timed out; DOM/network assertions saved. Agent screenshots remain synthetic-scope evidence.",
+  "pending": [
+    "real_provider_access_authorization_and_smoke",
+    "A_B_C_quality_and_remote_profile_mapping",
+    "multiturn_context",
+    "verified_product_permissions_dates_semantic_mappings_and_ingestion",
+    "durable_budget_store_and_transport_deadline_cancellation",
+    "free_hosting_validation_and_deployment_authorization",
+    "final_design"
+  ]
+}

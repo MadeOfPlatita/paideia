@@ -1,0 +1,123 @@
+{
+  "documento": "Auditoría cruzada de contratos Paideia",
+  "version": "1.0.0",
+  "estado": "revision_documental_estatica_no_integracion",
+  "hallazgos": [
+    {
+      "id": "PAI-CROSS-01",
+      "severidad": "P0",
+      "tema": "consentimiento_y_contexto",
+      "clase": "conflicto_real_de_politica",
+      "referencias": [
+        {"path": "01-pai-tools/contratos.json", "lineas": "69-88,90-130"},
+        {"path": "05-perfil-conversacion/perfil.schema.json", "lineas": "47-77,79-103"},
+        {"path": "08-seguridad-arquitectura/controles.json", "lineas": "208-213"},
+        {"path": "docs/REQUISITOS.md", "lineas": "45,55-57"}
+      ],
+      "defecto": "Pai permite transmitir importes/deudas del perfil con share_profile_with_model=true y admite accepted_chat_processing=false; C09 prohíbe enviar perfil/cifras y el requisito distingue perfil local de datos enviados.",
+      "propuesta": "Mantener perfil 05 local; proyectar solo campos no financieros autorizados, exigir accepted_chat_processing=true antes de toda llamada y consentimiento separado para cada categoría transmitida. Sin consentimiento, omitir profile_context.",
+      "condicion": "No prueba filtración; contratos no implementados. Bloquea cualquier habilitación de envío de perfil hasta resolverlo."
+    },
+    {
+      "id": "PAI-CROSS-02",
+      "severidad": "P0",
+      "tema": "tool_catalog_allowlist",
+      "clase": "desfase_de_fase_mas_mapping_ausente",
+      "referencias": [
+        {"path": "01-pai-tools/contratos.json", "lineas": "15-20,65-68,194-260,285-332"},
+        {"path": "08-seguridad-arquitectura/controles.json", "lineas": "31-98,143-150"}
+      ],
+      "defecto": "Pai declara cinco tools en inglés, mientras seguridad desactiva tools en MVP y solo contempla dos tools de lectura en español con argumentos, límites, familias y resultados distintos.",
+      "propuesta": "Mantener cero dispatch en MVP. Versionar un manifest server-side; tras aprobación permitir solo las dos lecturas de 08, con alias traducidos y validación. Mantener comparación/cálculo como servicios propios, no tools del modelo.",
+      "condicion": "La diferencia por fase es intencional; no hay compatibilidad demostrada si se activa el registro de Pai."
+    },
+    {
+      "id": "PAI-CROSS-03",
+      "severidad": "P1",
+      "tema": "identidades_y_familias",
+      "clase": "mapping_ausente",
+      "referencias": [
+        {"path": "14-ingesta-calidad/adapter.schema.json", "lineas": "18-27,163-225,227-238"},
+        {"path": "07-comparador-reglas/product-record.schema.json", "lineas": "8-16,28-38,119-134"},
+        {"path": "01-pai-tools/contratos.json", "lineas": "23-27,57-63,173-188"},
+        {"path": "08-seguridad-arquitectura/controles.json", "lineas": "60-66,80-94"}
+      ],
+      "defecto": "Adapter usa identidades externas namespaced y familias de entidad; comparador usa product_id string; Pai exige UUIDv4; herramientas de seguridad aceptan otro ID string. No hay mapping para deposit_offer, deuda por evento/serie, share class, listing o entidad jurídica.",
+      "propuesta": "Conservar identificadores externos namespaced; asignar UUID interno estable por entidad/producto/listing y source UUID separado. Mapear familias solo con evidencia; no convertir estadística/deuda observada a producto ni listing a ETF automáticamente."
+    },
+    {
+      "id": "PAI-CROSS-04",
+      "severidad": "P1",
+      "tema": "unidades_escala_porcentajes_y_decimales",
+      "clase": "escala_ambigua_con_riesgo_factor_100",
+      "referencias": [
+        {"path": "14-ingesta-calidad/ESPECIFICACION.md", "lineas": "72-78"},
+        {"path": "01-pai-tools/contratos.json", "lineas": "48-56,285-309"},
+        {"path": "05-perfil-conversacion/perfil.schema.json", "lineas": "176-203"},
+        {"path": "06-escenarios-visuales/escenarios-ejemplo.json", "lineas": "12-13,48-68"}
+      ],
+      "defecto": "Adapter define PERCENT sobre 100 (3.00=3%); los escenarios usan fracciones (0.03=3%); Pai annual_rate_percent no define escala ni división por 100. Perfil usa bandas 0-100. Importes cambian de cadenas decimales a números JSON.",
+      "propuesta": "Definir unidad/escala por campo: PERCENT 3.00=3%; tasa de escenario como annual_rate_ratio=0.03 o percent=3.00 con conversión única; NUMERIC/decimal en DB y cadenas decimales API financiera. No inferir por nombre."
+    },
+    {
+      "id": "PAI-CROSS-05",
+      "severidad": "P1",
+      "tema": "fechas_frescura_y_nulls",
+      "clase": "contradiccion_schema_adapter_y_precision_incompatible",
+      "referencias": [
+        {"path": "14-ingesta-calidad/adapter.schema.json", "lineas": "90-91,132-139,227-270"},
+        {"path": "14-ingesta-calidad/ESPECIFICACION.md", "lineas": "48,55,82-104"},
+        {"path": "07-comparador-reglas/product-record.schema.json", "lineas": "87-102,119-134"},
+        {"path": "07-comparador-reglas/comparison-request.schema.json", "lineas": "11,15,46"},
+        {"path": "01-pai-tools/contratos.json", "lineas": "35-46,159-171,230-260"}
+      ],
+      "defecto": "adapter.fact requiere value string/boolean y no define state, aunque la especificación pide null + motivo y desconocidos explícitos. 07 exige date-time para as_of donde adapter puede tener precisión date; Pai distingue fecha de negocio y timestamp. Pai no refleja versión de política de frescura.",
+      "propuesta": "Hecho canónico con value nullable, state, unit, moneda, observed_at + precision, valid_from/to y retrieved_at UTC. Conservar fecha sin inventar medianoche; frescura por campo/uso y política versionada."
+    },
+    {
+      "id": "PAI-CROSS-06",
+      "severidad": "P1",
+      "tema": "citations_reason_codes_y_evidencia",
+      "clase": "trazabilidad_incompleta_e_inconsistencia_de_namespace",
+      "referencias": [
+        {"path": "14-ingesta-calidad/adapter.schema.json", "lineas": "227-238"},
+        {"path": "07-comparador-reglas/product-record.schema.json", "lineas": "119-134"},
+        {"path": "07-comparador-reglas/comparison-result.schema.json", "lineas": "22-33"},
+        {"path": "07-comparador-reglas/result-reason-codes.json", "lineas": "5-29"},
+        {"path": "07-comparador-reglas/comparador-trazable.md", "lineas": "97,116-127"},
+        {"path": "01-pai-tools/contratos.json", "lineas": "142-171"},
+        {"path": "08-seguridad-arquitectura/controles.json", "lineas": "49-70"}
+      ],
+      "defecto": "Adapter no emite fact_id; public citation de Pai enlaza source/field_keys pero no fact/localizador; tools de seguridad devuelven evidencia mínima. El documento prescribe prefijos CONTROL_ y EDU_, pero los códigos de control no llevan prefijo CONTROL_ aunque su clase sí esté separada.",
+      "propuesta": "Conservar source_id + source_revision/content_hash + fact_id + locator y enlazarlos a campo y razón. Corregir la regla textual o migrar enum y catálogo juntos en versión nueva; no cambiar códigos silenciosamente."
+    },
+    {
+      "id": "PAI-CROSS-07",
+      "severidad": "P1",
+      "tema": "contrato_de_error_http",
+      "clase": "envelopes_y_codigos_sin_mapping",
+      "referencias": [
+        {"path": "08-seguridad-arquitectura/contratos-error.md", "lineas": "5-18,23-48"},
+        {"path": "01-pai-tools/contratos.json", "lineas": "132-141,379-395"}
+      ],
+      "defecto": "Seguridad propone envelope anidado con request_id/retry_after_seconds y códigos CHAT_DISABLED/SESSION_LIMIT/PROVIDER_TIMEOUT, mientras Pai define Error plano sin esos campos y una taxonomía diferente.",
+      "propuesta": "Definir envelope HTTP común versionado para fallos no-2xx y tabla code→status→retry; conservar ConversationTurnResponse para éxito 2xx. No reenviar contenido crudo upstream."
+    },
+    {
+      "id": "PAI-CROSS-08",
+      "severidad": "P1",
+      "tema": "laboratorio_escenarios_y_fixtures",
+      "clase": "motores_distintos_y_falta_de_dto_del_laboratorio",
+      "referencias": [
+        {"path": "01-pai-tools/contratos.json", "lineas": "285-315"},
+        {"path": "06-escenarios-visuales/escenarios-ejemplo.json", "lineas": "5-70,73-125,127-167"},
+        {"path": "06-escenarios-visuales/laboratorio-escenarios.md", "lineas": "5-10,29-45"},
+        {"path": "14-ingesta-calidad/ESPECIFICACION.md", "lineas": "154,170"},
+        {"path": "14-ingesta-calidad/fixtures/casos.json", "lineas": "2-4"}
+      ],
+      "defecto": "La calculadora Pai simple/compuesto no representa el laboratorio con calendario de flujos, bandas, inflación, costes y retiradas; los ejemplos 06 son sintéticos, no productos publicables.",
+      "propuesta": "Mantener CalculateScenario para interés simple/compuesto; si se conecta el laboratorio, versionar otro DTO con scenario_kind, flujos, unidad, método y salida hypothetical=true. Bloquear fixtures por clasificación y mantenerlos fuera del catálogo.",
+      "condicion": "La distinción entre motores y entre escenarios sintéticos y hechos de catálogo es intencional; el fallo solo aparece si se intenta reutilizar el DTO simple o publicar fixtures como productos."
+    }
+  ]
+}

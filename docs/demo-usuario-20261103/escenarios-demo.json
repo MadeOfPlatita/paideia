@@ -1,0 +1,190 @@
+{
+  "schema": "paideia.scenario-comparison",
+  "schema_version": 1,
+  "scenarios": [
+    {
+      "id": "A",
+      "status": "current",
+      "version": 7,
+      "inputs": {
+        "principal": "100",
+        "annual_rate_percent": "2",
+        "years": "10",
+        "monthly_contribution": "50",
+        "inflation_percent": "1",
+        "method": "compound"
+      },
+      "result": {
+        "hypothetical": true,
+        "not_prediction": true,
+        "currency": "EUR",
+        "assumptions": {
+          "principal": "100.00",
+          "annual_rate_percent": "2",
+          "years": 10,
+          "monthly_contribution": "50.00",
+          "method": "compound",
+          "inflation_percent": "1",
+          "annual_rate_convention": "effective_annual_rate",
+          "monthly_contribution_timing": "end_of_month",
+          "monthly_rate_conversion": "effective_monthly_rate",
+          "working_precision": "80_significant_decimal_digits",
+          "rounding": "half_up_to_cents_in_serialized_output; no_cent_rounding_per_month",
+          "taxes_included": false,
+          "fees_included": false
+        },
+        "summary": {
+          "contributions": "6100.00",
+          "final_balance": "6751.74",
+          "interest": "651.74",
+          "inflation_adjusted": "6112.26"
+        },
+        "series": [
+          {
+            "month": 0,
+            "contributions": "100.00",
+            "balance": "100.00",
+            "real_balance": "100.00"
+          },
+          {
+            "month": 12,
+            "contributions": "700.00",
+            "balance": "707.48",
+            "real_balance": "700.48"
+          },
+          {
+            "month": 24,
+            "contributions": "1300.00",
+            "balance": "1327.11",
+            "real_balance": "1300.96"
+          },
+          {
+            "month": 36,
+            "contributions": "1900.00",
+            "balance": "1959.13",
+            "real_balance": "1901.52"
+          },
+          {
+            "month": 48,
+            "contributions": "2500.00",
+            "balance": "2603.80",
+            "real_balance": "2502.20"
+          },
+          {
+            "month": 60,
+            "contributions": "3100.00",
+            "balance": "3261.35",
+            "real_balance": "3103.06"
+          },
+          {
+            "month": 72,
+            "contributions": "3700.00",
+            "balance": "3932.06",
+            "real_balance": "3704.18"
+          },
+          {
+            "month": 84,
+            "contributions": "4300.00",
+            "balance": "4616.18",
+            "real_balance": "4305.60"
+          },
+          {
+            "month": 96,
+            "contributions": "4900.00",
+            "balance": "5313.98",
+            "real_balance": "4907.38"
+          },
+          {
+            "month": 108,
+            "contributions": "5500.00",
+            "balance": "6025.74",
+            "real_balance": "5509.58"
+          },
+          {
+            "month": 120,
+            "contributions": "6100.00",
+            "balance": "6751.74",
+            "real_balance": "6112.26"
+          }
+        ]
+      }
+    },
+    {
+      "id": "B",
+      "status": "current",
+      "version": 7,
+      "inputs": {
+        "principal": "200",
+        "annual_rate_percent": "3",
+        "years": "5",
+        "monthly_contribution": "100",
+        "inflation_percent": "1",
+        "method": "compound"
+      },
+      "result": {
+        "hypothetical": true,
+        "not_prediction": true,
+        "currency": "EUR",
+        "assumptions": {
+          "principal": "200.00",
+          "annual_rate_percent": "3",
+          "years": 5,
+          "monthly_contribution": "100.00",
+          "method": "compound",
+          "inflation_percent": "1",
+          "annual_rate_convention": "effective_annual_rate",
+          "monthly_contribution_timing": "end_of_month",
+          "monthly_rate_conversion": "effective_monthly_rate",
+          "working_precision": "80_significant_decimal_digits",
+          "rounding": "half_up_to_cents_in_serialized_output; no_cent_rounding_per_month",
+          "taxes_included": false,
+          "fees_included": false
+        },
+        "summary": {
+          "contributions": "6200.00",
+          "final_balance": "6689.95",
+          "interest": "489.95",
+          "inflation_adjusted": "6365.26"
+        },
+        "series": [
+          {
+            "month": 0,
+            "contributions": "200.00",
+            "balance": "200.00",
+            "real_balance": "200.00"
+          },
+          {
+            "month": 12,
+            "contributions": "1400.00",
+            "balance": "1422.41",
+            "real_balance": "1408.33"
+          },
+          {
+            "month": 24,
+            "contributions": "2600.00",
+            "balance": "2681.50",
+            "real_balance": "2628.66"
+          },
+          {
+            "month": 36,
+            "contributions": "3800.00",
+            "balance": "3978.35",
+            "real_balance": "3861.35"
+          },
+          {
+            "month": 48,
+            "contributions": "5000.00",
+            "balance": "5314.12",
+            "real_balance": "5106.76"
+          },
+          {
+            "month": 60,
+            "contributions": "6200.00",
+            "balance": "6689.95",
+            "real_balance": "6365.26"
+          }
+        ]
+      }
+    }
+  ]
+}

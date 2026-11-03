@@ -1,0 +1,5 @@
+{
+  "output": "{\"test_only\": true, \"real_network_calls\": 0, \"simulated_emission_states\": [], \"outcomes\": [\"transport_error\"], \"thread_finished\": true, \"passed\": true}",
+  "exit_code": 0,
+  "error": null
+}

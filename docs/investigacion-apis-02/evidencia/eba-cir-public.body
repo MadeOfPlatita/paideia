@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8" />
+<script>var _paq = _paq || [];(function(){var u=(("https:" == document.location.protocol) ? "https://analytics.eba.europa.eu/" : "https://analytics.eba.europa.eu/");_paq.push(["setSiteId", "1"]);_paq.push(["setTrackerUrl", u+"matomo.php"]);_paq.push(["setDoNotTrack", 1]);_paq.push(['requireCookieConsent']);
+_paq.push(['requireConsent']);if (!window.matomo_search_results_active) {_paq.push(["trackPageView"]);}_paq.push(["setIgnoreClasses", ["no-tracking","colorbox"]]);_paq.push(["enableLinkTracking"]);var d=document,g=d.createElement("script"),s=d.getElementsByTagName("script")[0];g.type="text/javascript";g.defer=true;g.async=true;g.src=u+"matomo.js";s.parentNode.insertBefore(g,s);})();</script>
+<link rel="canonical" href="https://www.eba.europa.eu/form/regulatory-notifications" />
+<meta property="og:site_name" content="European Banking Authority" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.eba.europa.eu/form/regulatory-notifications" />
+<meta property="og:title" content="Request information or access to the central hub for Regulatory Notifications (ex eGate) | European Banking Authority" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Request information or access to the central hub for Regulatory Notifications (ex eGate) | European Banking Authority" />
+<script type="application/json">{"utility":"cck","url":"\/cookie-policy-for-eba-official-website"}</script>
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" href="/themes/eba_theme/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <title>Request information or access to the central hub for Regulatory Notifications (ex eGate) | European Banking Authority</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_1S94SnoAq4hkvR2sev9VO9738q3IWabWhqOYUWOsrcY.css?delta=0&amp;language=en&amp;theme=eba_theme&amp;include=eJx1ykEKgDAQQ9ELaXskmdbYCjNWzIB4exXdiZv8RV6W1XOVmITokGTwCkMs2pJoLyScHQ867DE70tQ2i28D9PKLhxEuszJ4K0X_mYGU8v3vOQHL5zYG" />
+<link rel="stylesheet" media="all" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700;800&amp;display=swap" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_t1aiCn0JqYFpLgm0GTnSGoPyCU3qz2YlNhlSMIRAgyo.css?delta=2&amp;language=en&amp;theme=eba_theme&amp;include=eJx1ykEKgDAQQ9ELaXskmdbYCjNWzIB4exXdiZv8RV6W1XOVmITokGTwCkMs2pJoLyScHQ867DE70tQ2i28D9PKLhxEuszJ4K0X_mYGU8v3vOQHL5zYG" />
+
+    
+  </head>
+  <body class="path-webform">
+        <a href="#main-content" class="visually-hidden focusable skip-link">
+      Skip to main content
+    </a>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+
+<div class="page">
+  <header class="site-header" data-js-hook="site-header" role="banner">
+    <div class="site-header__inner-container">
+          <a class="site-logo" href="/" rel="home">
+    <img src="/themes/eba_theme/templates/components/site-logo/images/EBA-logo.svg" alt="European Banking Authority logo" width="312" height="108" />
+  </a>
+
+
+
+
+      <div class="navigation-main" data-js-hook="navigation-main" data-js-navigation-area="true">
+  <button class="navigation-main__toggler" data-js-hook="navigation-main__toggler" aria-label="Toggle main menu" aria-controls="navigation-main__panel" aria-expanded="false">
+    <span class="navigation-main__toggler-label">Menu</span>
+    <span class="navigation-main__toggler-icon"></span>
+  </button>
+  <div id="navigation-main__panel" class="navigation-main__panel" aria-hidden="true">
+    <div class="navigation-main__panel-content menu-mobile" data-js-hook="navigation-main__panel-content">
+      <nav class="menu-secondary" aria-label="Secondary menu" data-js-hook="navigation-main__secondary">
+          
+  <ul class="menu" data-js-hook="menu">
+                  <li class="menu__item ">
+          <a href="/extranet" class="menu__title" data-drupal-link-system-path="node/17507">Extranet</a>
+        </li>
+                        <li class="menu__item ">
+          <a href="/user/login" class="menu__title" data-drupal-link-system-path="user/login">Log in</a>
+        </li>
+            </ul>
+
+
+
+      </nav>
+      <nav class="menu-primary" aria-label="Main menu" data-js-hook="navigation-main__primary">
+        <div data-js-hook="navigation-main__primary-menu">
+              <ul class="menu" data-js-hook="menu">
+                  <li class="menu__item menu__item--has-children" data-js-hook="menu__panel-toggler">
+          <a href="/about-us" class="menu__title" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f" aria-expanded="false" data-drupal-link-system-path="node/16245">About us</a>
+          <div class="menu__item-panel" id="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f" aria-hidden="true">
+            <a class="menu__item-closer--mobile" data-js-hook="menu__panel-closer" href="#" aria-controls="" aria-expanded="false">Back</a>
+
+            <div class="menu__item-intro">
+              <h2 class="menu__item-intro-title">About us</h2>
+                              <div class="menu__item-intro-text">
+                  <p>The EBA is an independent EU Authority. &nbsp;We play a key role in safeguarding the integrity and robustness of the EU banking sector to support financial stability in the EU.</p>
+                </div>
+                            <a href="/about-us" class="btn btn-sm btn-primary">Learn more</a>
+            </div>
+
+            <ul class="menu__submenu">
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <a href="/about-us/mission-values-and-tasks" data-drupal-link-system-path="node/16246">Mission, values and tasks</a>
+                                        </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/about-us/organisation-and-governance" data-drupal-link-system-path="node/16247">Organisation and governance</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/about-us/organisation-and-governance/governance-structure-and-decision-making" data-drupal-link-system-path="node/16248">Governance structure and decision making</a></li>
+                                                      <li><a href="/about-us/organisation-and-governance/eba-within-eu-institutional-framework" data-drupal-link-system-path="node/16408">EBA within the EU institutional framework</a></li>
+                                                      <li><a href="/about-us/organisation-and-governance/internal-organisation" data-drupal-link-system-path="node/2477">Internal organisation</a></li>
+                                                      <li><a href="/about-us/organisation-and-governance/accountability" data-drupal-link-system-path="node/16250">Accountability</a></li>
+                                                  </ul>
+                                                              </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/about-us/legal-and-policy-framework" data-drupal-link-system-path="node/16410">Legal and policy framework</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/about-us/legal-and-policy-framework/eba-regulation-and-institutional-framework" data-drupal-link-system-path="node/2447">EBA regulation and institutional framework</a></li>
+                                                      <li><a href="/about-us/legal-and-policy-framework/compliance-eba-regulatory-products" data-drupal-link-system-path="node/2608">Compliance with EBA regulatory products</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <a href="/about-us/sustainable-eba" data-drupal-link-system-path="node/2297">Sustainable EBA</a>
+                                        </li>
+                                      <li>
+                                          <a href="/about-us/diversity-and-inclusion" data-drupal-link-system-path="node/2257">Diversity and inclusion</a>
+                                        </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/about-us/careers" data-drupal-link-system-path="node/2547">Careers</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/about-us/careers/meet-our-team" data-drupal-link-system-path="node/17537">Meet our team</a></li>
+                                                      <li><a href="/about-us/careers/vacancies" data-drupal-link-system-path="node/19592">Vacancies</a></li>
+                                                  </ul>
+                                                              </li>
+                                      <li>
+                                          <a href="/about-us/budget" data-drupal-link-system-path="node/2472">Budget</a>
+                                        </li>
+                                      <li>
+                                          <a href="/about-us/procurement" data-drupal-link-system-path="node/2546">Procurement</a>
+                                        </li>
+                                    </ul>
+                </li>
+                          </ul>
+
+            <a class="menu__item-closer--desktop" data-js-hook="menu__panel-closer" href="#megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f" aria-expanded="false" role="button" aria-label="Close menu panel">
+              <img src="/themes/eba_theme/templates/components/menu/images/close--black.svg" alt="Close icon">
+            </a>
+          </div>
+        </li>
+                        <li class="menu__item menu__item--has-children" data-js-hook="menu__panel-toggler">
+          <a href="/activities" class="menu__title" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--2" aria-expanded="false" data-drupal-link-system-path="node/16413">Activities</a>
+          <div class="menu__item-panel" id="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--2" aria-hidden="true">
+            <a class="menu__item-closer--mobile" data-js-hook="menu__panel-closer" href="#" aria-controls="" aria-expanded="false">Back</a>
+
+            <div class="menu__item-intro">
+              <h2 class="menu__item-intro-title">Activities</h2>
+                              <div class="menu__item-intro-text">
+                  <p>To contribute to the stability and effectiveness of the European financial system, the EBA develops harmonised rules for financial institutions, promotes convergence of supervisory practices, monitors, and advises on the impact of financial innovation and the transition to sustainable finance.</p>
+                </div>
+                            <a href="/activities" class="btn btn-sm btn-primary" data-drupal-link-system-path="node/16413">Start here</a>
+            </div>
+
+            <ul class="menu__submenu">
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/activities/single-rulebook" data-drupal-link-system-path="node/4">Single Rulebook</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="https://tools.eba.europa.eu/interactive-tools/SingleRulebookDashboard/Regulatory%20produccts%20dashboard.html">Overview of regulatory products </a></li>
+                                                  </ul>
+                                                              </li>
+                                      <li>
+                                          <a href="https://www.eba.europa.eu/regulation-and-policy/simplification-and-efficiency-regulatory-and-supervisory-framework">Simplification and efficiency</a>
+                                        </li>
+                                      <li>
+                                          <a href="/activities/basel-framework-global-regulatory-standards-banks" data-drupal-link-system-path="node/2542">Implementing Basel III in Europe</a>
+                                        </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/activities/supervisory-convergence" data-drupal-link-system-path="node/16415">Supervisory convergence</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/activities/supervisory-convergence/supervisory-convergence" data-drupal-link-system-path="node/2440">Supervisory convergence</a></li>
+                                                      <li><a href="/activities/supervisory-convergence/supervisory-disclosure" data-drupal-link-system-path="node/2545">Supervisory disclosure</a></li>
+                                                      <li><a href="/activities/supervisory-convergence/peer-reviews" data-drupal-link-system-path="node/2520">Peer Reviews</a></li>
+                                                      <li><a href="/activities/supervisory-convergence/mediation" data-drupal-link-system-path="node/16447">Mediation</a></li>
+                                                      <li><a href="/activities/supervisory-convergence/breach-union-law" data-drupal-link-system-path="node/16420">Breach of Union Law</a></li>
+                                                      <li><a href="/activities/supervisory-convergence/colleges" data-drupal-link-system-path="node/2544">Colleges</a></li>
+                                                      <li><a href="/activities/supervisory-convergence/training" data-drupal-link-system-path="node/2557">Training</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <h6 class="menu__submenu-title"><span>Direct supervision and oversight</span></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/activities/direct-supervision-and-oversight/ebas-supervisory-role-under-mica" data-drupal-link-system-path="node/16417">Markets in Crypto-assets</a></li>
+                                                      <li><a href="/activities/direct-supervision-and-oversight/digital-operational-resilience-act" data-drupal-link-system-path="node/16418">Digital operational resilience Act</a></li>
+                                                      <li><a href="/activities/direct-supervision-and-oversight/validation-pro-forma-initial-margin-models" data-drupal-link-system-path="node/19343">Validation of pro forma-initial margin models</a></li>
+                                                  </ul>
+                                                              </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/activities/information-consumers" data-drupal-link-system-path="node/16422">Information for consumers</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/activities/information-consumers/national-competent-authorities-consumer-protection" data-drupal-link-system-path="node/2515">National competent authorities for consumer protection</a></li>
+                                                      <li><a href="/activities/information-consumers/how-complain" data-drupal-link-system-path="node/2458">How to complain</a></li>
+                                                      <li><a href="/activities/information-consumers/personal-finance-eu-level" data-drupal-link-system-path="node/2513">Personal finance at the EU level</a></li>
+                                                      <li><a href="/activities/information-consumers/warnings-against-potentially-harmful-financial-activities" data-drupal-link-system-path="node/2554">Warnings</a></li>
+                                                      <li><a href="/activities/information-consumers/financial-education" data-drupal-link-system-path="node/2347">Financial education</a></li>
+                                                      <li><a href="/activities/information-consumers/national-registers-and-national-authorities-responsible-handling-complaints-related-credit-servicers" data-drupal-link-system-path="node/17432">National registers and national authorities responsible for handling complaints related to credit servicers</a></li>
+                                                      <li><a href="/activities/information-consumers/frauds-and-scams" data-drupal-link-system-path="node/2602">Frauds and scams</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <a href="/activities/eba-research-workshops" data-drupal-link-system-path="node/2449">Research Workshops</a>
+                                        </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/activities/ad-hoc-activities" data-drupal-link-system-path="node/16423">Ad hoc activities</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/activities/ad-hoc-activities/our-response-coronavirus-covid-19" data-drupal-link-system-path="node/2346">Our response to Covid-19</a></li>
+                                                      <li><a href="/activities/ad-hoc-activities/brexit" data-drupal-link-system-path="node/2337">Brexit</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                          </ul>
+
+            <a class="menu__item-closer--desktop" data-js-hook="menu__panel-closer" href="#megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--2" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--2" aria-expanded="false" role="button" aria-label="Close menu panel">
+              <img src="/themes/eba_theme/templates/components/menu/images/close--black.svg" alt="Close icon">
+            </a>
+          </div>
+        </li>
+                        <li class="menu__item menu__item--has-children" data-js-hook="menu__panel-toggler">
+          <a href="/risk-and-data-analysis" class="menu__title" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--3" aria-expanded="false" data-drupal-link-system-path="node/2">Risk and data analysis</a>
+          <div class="menu__item-panel" id="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--3" aria-hidden="true">
+            <a class="menu__item-closer--mobile" data-js-hook="menu__panel-closer" href="#" aria-controls="" aria-expanded="false">Back</a>
+
+            <div class="menu__item-intro">
+              <h2 class="menu__item-intro-title">Risk and data analysis</h2>
+                              <div class="menu__item-intro-text">
+                  <p>To ensure the orderly functioning and stability of the financial system in the European Union, we monitor and analyse risks and vulnerabilities relevant for the regulation of banks and investment firms. We also facilitate information sharing among authorities and institutions through supervisory reporting and data disclosure.</p>
+                </div>
+                            <a href="/risk-and-data-analysis" class="btn btn-sm btn-primary">Learn more</a>
+            </div>
+
+            <ul class="menu__submenu">
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <a href="https://edap-public.eba.europa.eu/ExternalLinks/index?id=Mg%3D%3D&amp;rhversion=20251216204040-2">European Data Access Portal (EDAP)</a>
+                                        </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/risk-and-data-analysis/risk-analysis" data-drupal-link-system-path="node/16424">Risk analysis</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/risk-and-data-analysis/risk-analysis/eu-wide-stress-testing" data-drupal-link-system-path="node/18012">EU-wide stress testing</a></li>
+                                                      <li><a href="/risk-and-data-analysis/risk-analysis/eu-wide-transparency-exercise" data-drupal-link-system-path="node/18852">EU wide transparency exercise</a></li>
+                                                      <li><a href="/risk-and-data-analysis/risk-analysis/risk-monitoring" data-drupal-link-system-path="node/16425">Risk monitoring</a></li>
+                                                      <li><a href="/risk-and-data-analysis/risk-analysis/thematic-analysis" data-drupal-link-system-path="node/16426">Thematic analysis</a></li>
+                                                  </ul>
+                                                              </li>
+                                      <li>
+                                          <a href="/risk-and-data-analysis/remuneration-and-diversity-analysis" data-drupal-link-system-path="node/18092">Remuneration and diversity analysis</a>
+                                        </li>
+                                    </ul>
+                </li>
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/risk-and-data-analysis/pillar-3-data-hub" data-drupal-link-system-path="node/18415">Pillar 3 data hub</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="https://edap-public.eba.europa.eu/Report/index/MTE1?rhversion=20260121164608-2#">Access to P3DH</a></li>
+                                                  </ul>
+                                                              </li>
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/risk-and-data-analysis/reporting" data-drupal-link-system-path="node/18460">Reporting</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/risk-and-data-analysis/reporting/reporting-frameworks" data-drupal-link-system-path="node/2535">Reporting frameworks</a></li>
+                                                      <li><a href="/reporting-time-traveller" data-drupal-link-system-path="reporting-time-traveller">Reporting Time Traveller</a></li>
+                                                      <li><a href="/risk-and-data-analysis/reporting/dpm-data-dictionary" data-drupal-link-system-path="node/2551">DPM data dictionary</a></li>
+                                                      <li><a href="/activities/single-rulebook/regulatory-activities/supervisory-reporting/integrated-and-consistent-reporting-system" data-drupal-link-system-path="node/16259">Integrated reporting</a></li>
+                                                      <li><a href="/activities/single-rulebook/regulatory-activities/supervisory-reporting/joint-bank-reporting-committee-jbrc" data-drupal-link-system-path="node/18225">Joint Bank Reporting Committee (JBRC)</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/risk-and-data-analysis/data" data-drupal-link-system-path="node/16427">Data</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/risk-and-data-analysis/data/registers-and-other-list-institutions" data-drupal-link-system-path="node/16428">Registers and other list of institutions</a></li>
+                                                      <li><a href="/risk-and-data-analysis/data/guides-data" data-drupal-link-system-path="node/2446">Guides on data</a></li>
+                                                      <li><a href="/risk-and-data-analysis/data/aggregate-statistical-data" data-drupal-link-system-path="node/2475">Aggregate statistical  data</a></li>
+                                                      <li><a href="/risk-and-data-analysis/data/secondary-reporting-data-competent-authorities-eba" data-drupal-link-system-path="node/2342">Secondary reporting: data from Competent Authorities to the EBA</a></li>
+                                                      <li><a href="/risk-and-data-analysis/data/data-analytics-tools" data-drupal-link-system-path="node/2316">Data analytics tools</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                          </ul>
+
+            <a class="menu__item-closer--desktop" data-js-hook="menu__panel-closer" href="#megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--3" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--3" aria-expanded="false" role="button" aria-label="Close menu panel">
+              <img src="/themes/eba_theme/templates/components/menu/images/close--black.svg" alt="Close icon">
+            </a>
+          </div>
+        </li>
+                        <li class="menu__item menu__item--has-children" data-js-hook="menu__panel-toggler">
+          <a href="/publications-and-media" class="menu__title" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--4" aria-expanded="false" data-drupal-link-system-path="node/1">Publications and media</a>
+          <div class="menu__item-panel" id="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--4" aria-hidden="true">
+            <a class="menu__item-closer--mobile" data-js-hook="menu__panel-closer" href="#" aria-controls="" aria-expanded="false">Back</a>
+
+            <div class="menu__item-intro">
+              <h2 class="menu__item-intro-title">Publications and media</h2>
+                              <div class="menu__item-intro-text">
+                  <p>Communicating to all our&nbsp;audiences in&nbsp;the most effective way and using the&nbsp;most appropriate channels is crucial for us. Through our publications, announcements, and participation in external events, we are committed to reaching out to all our stakeholders to report about our policies, activities, and initiatives.</p>
+                </div>
+                            <a href="/publications-and-media" class="btn btn-sm btn-primary">Learn more</a>
+            </div>
+
+            <ul class="menu__submenu">
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/publications-and-media/publications" data-drupal-link-system-path="node/16764">Publications</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="/publications?text=&amp;document_type=250&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;250&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}">Guidelines</a></li>
+                                                      <li><a href="/publications-and-media/publications?text=&amp;document_type=248&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;248&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}" data-drupal-link-system-path="node/16764">Regulatory Technical Standards</a></li>
+                                                      <li><a href="/publications-and-media/publications?text=&amp;document_type=247&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;247&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}" data-drupal-link-system-path="node/16764">Implementing Technical Standards</a></li>
+                                                      <li><a href="/publications?text=&amp;document_type=257&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;257&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}">Reports</a></li>
+                                                      <li><a href="/publications-and-media/publications?text=&amp;document_type=244&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;244&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}" data-drupal-link-system-path="node/16764">Consultation papers</a></li>
+                                                      <li><a href="/publications-and-media/publications?text=&amp;document_type=252&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;252&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}" data-drupal-link-system-path="node/16764">Opinions</a></li>
+                                                      <li><a href="/publications-and-media/publications?text=&amp;document_type=245&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;245&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}" data-drupal-link-system-path="node/16764">Decisions</a></li>
+                                                      <li><a href="/publications-and-media/publications?text=&amp;document_type=5294&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;5294&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}" data-drupal-link-system-path="node/16764">Staff papers</a></li>
+                                                      <li><a href="/publications-and-media/publications?text=&amp;document_type=241&amp;media_topics=All" data-drupal-link-query="{&quot;document_type&quot;:&quot;241&quot;,&quot;media_topics&quot;:&quot;All&quot;,&quot;text&quot;:&quot;&quot;}" data-drupal-link-system-path="node/16764">Annual reports</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <a href="/publications-and-media/press-releases" data-drupal-link-system-path="node/6">Press releases</a>
+                                        </li>
+                                      <li>
+                                          <a href="/publications-and-media/speeches" data-drupal-link-system-path="node/9">Speeches</a>
+                                        </li>
+                                      <li>
+                                          <a href="/publications-and-media/interviews" data-drupal-link-system-path="node/8">Interviews</a>
+                                        </li>
+                                      <li>
+                                          <a href="/publications-and-media/events" data-drupal-link-system-path="node/5">Events</a>
+                                        </li>
+                                    </ul>
+                </li>
+                              <li class="menu__submenu-item">
+                  <ul class="menu__submenu-list">
+                                      <li>
+                                          <h6 class="menu__submenu-title"><a href="/publications-and-media/media-centre" data-drupal-link-system-path="node/16443">Media centre</a></h6>
+                                              <ul class="menu__submenu-list menu__submenu-list--under-title">
+                                                      <li><a href="https://www.eba.europa.eu/factsheets?text=&amp;document_type=5606&amp;media_topics=All">Factsheets</a></li>
+                                                      <li><a href="/media-gallery" data-drupal-link-system-path="node/16814">Media gallery</a></li>
+                                                      <li><a href="/publications-and-media/media-centre/media-resources" data-drupal-link-system-path="node/16444">Media resources</a></li>
+                                                  </ul>
+                                                              </li>
+                                    </ul>
+                </li>
+                          </ul>
+
+            <a class="menu__item-closer--desktop" data-js-hook="menu__panel-closer" href="#megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--4" aria-controls="megamenu-panel-bb5dc33e-d089-41f8-8b88-b96dc30c7b2f--4" aria-expanded="false" role="button" aria-label="Close menu panel">
+              <img src="/themes/eba_theme/templates/components/menu/images/close--black.svg" alt="Close icon">
+            </a>
+          </div>
+        </li>
+            </ul>
+
+
+
+        </div>
+        <div class="box-search" role="search" data-js-hook="navigation-main__primary-search">
+          <form action="/search?" method="get" accept-charset="UTF-8" class="input-group">
+            <input title="Enter the terms you wish to search for." placeholder="Search..." type="search" name="query" value="" size="15" maxlength="128" class="form-control" autocomplete="off">
+            <button type="submit" class="btn btn-primary" value="Search" aria-label="Search">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+</svg>
+            </button>
+          </form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </header>
+
+  
+  
+  <main role="main" class="__inner-container">
+    <a id="main-content" tabindex="-1"></a>      <div class="page__highlighted">
+          <div id="block-eba-theme-breadcrumbnavigationblock">
+  
+    
+      
+<nav class="breadcrumb-sw" role="navigation" aria-labelledby="system-breadcrumb"><h2 id="system-breadcrumb" class="visually-hidden">Breadcrumb</h2><ol class="breadcrumb-sw__list" data-js-hook="breadcrumb-sw"><li class="breadcrumb-sw__item" data-js-hook="breadcrumb-sw__item"><a href="/">Home</a></li><li class="breadcrumb-sw__item" data-js-hook="breadcrumb-sw__item"><span>Request information or access to the central hub for Regulatory Notifications (ex eGate)</span></li></ol></nav>
+  </div>
+<div data-drupal-messages-fallback class="hidden"></div>
+
+
+      </div>
+
+          <div class="page__content">
+                <div>
+              
+  <h1 class="page-title">Request information or access to the central hub for Regulatory Notifications (ex eGate)</h1>
+
+
+
+
+            <div id="block-eba-theme-content">
+  
+    
+      <form class="webform-submission-form webform-submission-add-form webform-submission-press-enquiry-form-form webform-submission-press-enquiry-form-add-form js-webform-details-toggle webform-details-toggle" data-drupal-selector="webform-submission-press-enquiry-form-add-form" action="/form/regulatory-notifications" method="post" id="webform-submission-press-enquiry-form-add-form" accept-charset="UTF-8">
+  
+  <div id="edit-processed-text" class="js-form-item form-item js-form-type-processed-text form-type-processed-text js-form-item- form-item- form-no-label">
+        <p>A new Extranet page for <strong>Regulatory Notifications</strong> has been created and will serve as the <strong>central hub for all future submissions</strong>. The Extranet environment provides clear instructions, dedicated submission channels, and access points for each notification type, <strong>replacing the former eGate workflows.</strong></p><p>The <strong>eGate platform has been decommissioned on 31 March 2026.&nbsp;</strong></p><p>This decision follows the significant reduction in notifications processed via eGate in recent years and forms part of the EBA’s broader efforts to <strong>streamline and modernise the submission process for regulatory notifications</strong>.</p><p>Competent authorities can access the page here: <a href="https://ebaonline.sharepoint.com/sites/Extranet_RegulatoryNotifications/SitePages/TrainingHome.aspx?spStartSource=spappbar">EBA Extranet – Regulatory Notifications</a>.</p><p>Should you have any <strong>questions </strong>on the new procedures or require <strong>assistance</strong>, contact us using the provided <strong>webform</strong>.&nbsp;</p><p><strong>New users</strong> that do not yet have access to the EBA Extranet should require access using the same webform.&nbsp;</p>
+        </div>
+
+<div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-name form-item-name">
+      
+
+<label for="edit-name" class="form-label form-required">Name</label>
+
+
+        
+<input  data-drupal-selector="edit-name" type="text" id="edit-name" name="name" value="" size="60" maxlength="255" class="required form-element form-element--type-text form-element--api-textfield form-control" required="required" aria-required="true" />
+
+
+        </div>
+
+<div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-surname form-item-surname">
+      
+
+<label for="edit-surname" class="form-label form-required">Surname</label>
+
+
+        
+<input  data-drupal-selector="edit-surname" type="text" id="edit-surname" name="surname" value="" size="60" maxlength="255" class="required form-element form-element--type-text form-element--api-textfield form-control" required="required" aria-required="true" />
+
+
+        </div>
+
+<div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-job-title form-item-job-title">
+      
+
+<label for="edit-job-title" class="form-label form-required">Job title</label>
+
+
+        
+<input  data-drupal-selector="edit-job-title" type="text" id="edit-job-title" name="job_title" value="" size="60" maxlength="255" class="required form-element form-element--type-text form-element--api-textfield form-control" required="required" aria-required="true" />
+
+
+        </div>
+
+<div class="js-form-item form-item js-form-type-email form-type-email js-form-item-email form-item-email">
+      
+
+<label for="edit-email" class="form-label form-required">Email</label>
+
+
+        
+<input  data-drupal-selector="edit-email" type="email" id="edit-email" name="email" value="" size="60" maxlength="254" class="form-email required form-element form-element--type-email form-element--api-email form-control" required="required" aria-required="true" />
+
+
+        </div>
+
+<div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-authority form-item-authority">
+      
+
+<label for="edit-authority" class="form-label form-required">Authority</label>
+
+
+        
+<input  data-drupal-selector="edit-authority" type="text" id="edit-authority" name="authority" value="" size="60" maxlength="255" class="required form-element form-element--type-text form-element--api-textfield form-control" required="required" aria-required="true" />
+
+
+        </div>
+
+<div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-subject-of-the-request form-item-subject-of-the-request">
+      
+
+<label for="edit-subject-of-the-request" class="form-label form-required">Subject of the request</label>
+
+
+        
+<input  data-drupal-selector="edit-subject-of-the-request" type="text" id="edit-subject-of-the-request" name="subject_of_the_request" value="" size="60" maxlength="255" class="required form-element form-element--type-text form-element--api-textfield form-control" required="required" aria-required="true" />
+
+
+        </div>
+
+<div class="js-form-item form-item js-form-type-textarea form-type-textarea js-form-item-text-of-the-request form-item-text-of-the-request">
+      
+
+<label for="edit-text-of-the-request" class="form-label form-required">Text of the request</label>
+
+
+        <div>
+  <textarea data-drupal-selector="edit-text-of-the-request" id="edit-text-of-the-request" name="text_of_the_request" rows="5" cols="60" class="form-textarea required form-element form-element--type-textarea form-element--api-textarea form-control" required="required" aria-required="true"></textarea>
+</div>
+
+
+        </div>
+
+
+<input  autocomplete="off" data-drupal-selector="form-emnbh64jn-9bojgehjtkesfukezvfctrd5hsj0oi1ee" type="hidden" name="form_build_id" value="form-emnBH64JN-9boJgehjtKESFUKEzVfCTrd5hsj0OI1eE" class="form-control" />
+
+
+<input  data-drupal-selector="edit-webform-submission-press-enquiry-form-add-form" type="hidden" name="form_id" value="webform_submission_press_enquiry_form_add_form" class="form-control" />
+
+
+
+                    <fieldset  data-drupal-selector="edit-captcha" class="captcha captcha-type-challenge--image" data-nosnippet>
+          <legend class="captcha__title js-form-required form-required">
+            CAPTCHA
+          </legend>
+                  <div class="captcha__element">
+            
+<input  data-drupal-selector="edit-captcha-sid" type="hidden" name="captcha_sid" value="4244319" class="form-control" />
+
+
+<input  data-drupal-selector="edit-captcha-token" type="hidden" name="captcha_token" value="9cENlRV-ob67r5vvFGdFhVIwZnRlM1fz8koR73W9N5w" class="form-control" />
+
+<div class="captcha__image-wrapper js-form-wrapper form-wrapper" data-drupal-selector="edit-captcha-image-wrapper" id="edit-captcha-image-wrapper"><img data-drupal-selector="edit-captcha-image" src="/image-captcha-generate/4244319/1793039983" width="150" height="60" alt="Image CAPTCHA" title="Image CAPTCHA" loading="lazy" />
+</div>
+<div class="js-form-item form-item js-form-type-textfield form-type-textfield js-form-item-captcha-response form-item-captcha-response">
+      
+
+<label for="edit-captcha-response" class="form-label form-required">What code is in the image?</label>
+
+
+        
+<input  autocomplete="off" data-drupal-selector="edit-captcha-response" aria-describedby="edit-captcha-response--description" type="text" id="edit-captcha-response" name="captcha_response" value="" size="15" maxlength="128" class="required form-element form-element--type-text form-element--api-textfield form-control" required="required" aria-required="true" />
+
+
+            <div id="edit-captcha-response--description" class="form-text">
+      Enter the characters shown in the image.
+    </div>
+  </div>
+
+
+          </div>
+                      <div class="captcha__description description">This question is for testing whether or not you are a human visitor and to prevent automated spam submissions.</div>
+                              </fieldset>
+            <div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions">
+<button type="submit"  class="webform-button--submit button button--primary js-form-submit form-submit btn btn-primary" data-drupal-selector="edit-submit" type="submit" id="edit-submit" name="op" value="Submit">Submit</button>
+
+
+</div>
+
+
+  
+</form>
+
+  </div>
+
+
+        </div>
+      </div>
+      </main>
+
+  
+    <nav role="navigation" aria-labelledby="block-eba-theme-footer-menu" id="block-eba-theme-footer">
+            
+  <h2 class="visually-hidden" id="block-eba-theme-footer-menu">Footer</h2>
+  
+
+        
+<footer class="site-footer" role="contentinfo">
+  <div class="site-footer__inner-container">
+
+    <section class="row site-footer__top">
+            
+      <div class="col-lg-4">
+        <section class="box-info">
+            <h2 class="h6">EUROPEAN BANKING AUTHORITY</h2>
+        <p>Our mission is to contribute to the stability and effectiveness of the European financial system through simple, consistent, transparent, fair regulation and supervision that benefits all EU citizens.</p>
+        <br>
+        <p><a target="_blank" href="https://europa.eu/"><img alt="UE logo" width="41" height="28" style="margin-inline-end: 10px" src="/themes/eba_theme/templates/components/site-footer/images/eu-flag-logo-A.png">An agency of the EU</a></p>
+        <p><a target="_blank" href="https://agencies-network.europa.eu/"><img alt="EU Agencies Network logo" width="40" height="37" style="margin-inline-end: 10px" src="/themes/eba_theme/templates/components/site-footer/images/eu-agencies-logo-A.png">EU Agencies Network</a></p>
+        <p><a href="/about-us/sustainable-eba"><img alt="EMAS logo" width="80" height="37" style="margin-inline-end: 10px" src="/themes/eba_theme/templates/components/site-footer/images/EMAS-logo.png">Sustainable EBA</a></p>
+      
+</section>
+
+      </div>
+
+                      <div class="col-md-6 col-lg-4">
+                                  <section class="box-info">
+      <h3 class="h6 box-info__title">Contact us</h3>
+                  <ul>
+                                  <li>
+                                        <a href="/contacts" target="" data-drupal-link-system-path="node/2448">Contacts</a>
+                  </li>
+                                  <li>
+                                        <a href="/form/webform-162" target="" data-drupal-link-system-path="webform/webform_162">Ask a general question</a>
+                  </li>
+                                  <li>
+                                        <a href="/form/press-enquiry" target="" data-drupal-link-system-path="webform/press_enquiry">Send a press query</a>
+                  </li>
+                                  <li>
+                                        <a href="/single-rule-book-qa" target="" data-drupal-link-system-path="node/16252">Ask a regulatory question</a>
+                  </li>
+                                  <li>
+                                        <a href="/about-us/organisation-and-governance/accountability/transparency-and-access-documents" target="" data-drupal-link-system-path="node/2308">Request access to documents</a>
+                  </li>
+                                  <li>
+                                        <a href="/activities/information-consumers/how-complain" target="" data-drupal-link-system-path="node/2458">File a complaint</a>
+                  </li>
+                                  <li>
+                                        <a href="https://eba.integrityline.com/frontpage" target="_blank">Whistleblower reports</a>
+                  </li>
+                              </ul>
+            
+</section>
+
+                                  <section class="box-info">
+      <h3 class="h6 box-info__title">Stay up to date with our work</h3>
+                  <ul>
+                                  <li>
+                                        <a href="/subscribe-to-email-alerts" target="" data-drupal-link-system-path="node/16500">Subscribe to our email alerts</a>
+                  </li>
+                                  <li>
+                                        <a href="/news-press/news/rss.xml" target="" data-drupal-link-system-path="news-press/news/rss.xml">News &amp; press RSS feed</a>
+                  </li>
+                              </ul>
+            
+</section>
+
+                  </div>
+                      <div class="col-md-6 col-lg-4">
+                                  <section class="box-info">
+      <h3 class="h6 box-info__title">Follow us on Social media</h3>
+                  <ul>
+                                  <li>
+                                        <a href="https://bsky.app/profile/eba.europa.eu" class="link-icon link-icon--social" target="_blank">Bluesky</a>
+                  </li>
+                                  <li>
+                                        <a href="https://www.linkedin.com/company/european-banking-authority" class="link-icon link-icon--social" target="_blank">LinkedIn</a>
+                  </li>
+                                  <li>
+                                        <a href="https://twitter.com/EBA_News" class="link-icon link-icon--social" target="_blank">X</a>
+                  </li>
+                                  <li>
+                                        <a href="https://www.youtube.com/user/EUbankingauthority" class="link-icon link-icon--social" target="_blank">YouTube</a>
+                  </li>
+                              </ul>
+            
+</section>
+
+                                  <section class="box-info">
+      <h3 class="h6 box-info__title">Find out about us</h3>
+                  <ul>
+                                  <li>
+                                        <a href="/find-out-about-us/eba-glance" target="" data-drupal-link-system-path="node/16452">The EBA at a glance</a>
+                  </li>
+                                  <li>
+                                        <a href="/privacy-notice" target="" data-drupal-link-system-path="node/2359">Privacy policy</a>
+                  </li>
+                                  <li>
+                                        <a href="/find-out-about-us/legal-notice" target="" data-drupal-link-system-path="node/2694">Legal notice</a>
+                  </li>
+                                  <li>
+                                        <a href="/find-out-about-us/cookie-policy-eba-official-website" target="" data-drupal-link-system-path="node/2521">Cookies policy</a>
+                  </li>
+                                  <li>
+                                        <a href="/activities/information-consumers/frauds-and-scams" target="" data-drupal-link-system-path="node/2602">Frauds and scams</a>
+                  </li>
+                              </ul>
+            
+</section>
+
+                                  <section class="box-info">
+      <h3 class="h6 box-info__title">Explore related sites</h3>
+                  <ul>
+                                  <li>
+                                        <a href="https://www.eiopa.europa.eu/index_en" target="_blank">EIOPA</a>
+                  </li>
+                                  <li>
+                                        <a href="https://www.esma.europa.eu/" target="_blank">ESMA</a>
+                  </li>
+                                  <li>
+                                        <a href="https://www.esrb.europa.eu/home/html/index.en.html" target="_blank">ESRB</a>
+                  </li>
+                                  <li>
+                                        <a href="https://www.eba.europa.eu/cebs-archive" target="_blank">CEBS archive</a>
+                  </li>
+                              </ul>
+            
+</section>
+
+                  </div>
+      
+    </section>
+  </div>
+</footer>
+
+  </nav>
+
+
+  
+</div>
+
+  </div>
+
+    
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"webform\/press_enquiry_form","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"matomo":{"disableCookies":false,"trackMailto":true},"ajaxTrustedUrl":{"form_action_p_pvdeGsVG5zNF_XLGPTvYSKCf43t8qZYSwcfZl2uzM":true},"user":{"uid":0,"permissionsHash":"77b1abe247368d13e8861b4e80e60b3d28a771a48fc78903c3da7a4d14a1be37"}}</script>
+<script src="/sites/default/files/js/js_JOfAi27PA5Hn8qY1IXFQ6310DxmHouNRCS7qv2xzT3M.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=eba_theme&amp;include=eJyFjFEOwjAMQy_UtUeqstaUacmCkgDXpwj4QogfW362jJVqU0Npba9h1PbtGAmTxhmCMlhX4oXcEZ6EQkXLy5Ki3rGGKnvpdr0Q509eXMiClTosTXhSk_L2DJ7PR-SOoI09O93wdxQ6Bv-eCdxpfPdPeQCs9li5"></script>
+<script src="https://webtools.europa.eu/load.js" defer></script>
+<script src="/sites/default/files/js/js_1hfIDpyRQLy-rHKM3VHPKAwZuF464OQa2XMPwi8gcQ8.js?scope=footer&amp;delta=2&amp;language=en&amp;theme=eba_theme&amp;include=eJyFjFEOwjAMQy_UtUeqstaUacmCkgDXpwj4QogfW362jJVqU0Npba9h1PbtGAmTxhmCMlhX4oXcEZ6EQkXLy5Ki3rGGKnvpdr0Q509eXMiClTosTXhSk_L2DJ7PR-SOoI09O93wdxQ6Bv-eCdxpfPdPeQCs9li5"></script>
+
+  </body>
+</html>

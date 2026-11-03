@@ -1,0 +1,21 @@
+Requested/Resolved URL: https://console.groq.com/docs/structured-outputs
+
+Models with Strict Mode (strict: true)
+
+The following models support strict: true, which uses constrained decoding to guarantee schema-compliant output:
+
+MODEL ID	MODEL
+
+openai/gpt-oss-20b
+	GPT-OSS 20B
+
+openai/gpt-oss-120b
+	GPT-OSS 120B
+
+qwen/qwen3.8-27b
+	Qwen 3.8 27B
+
+meta-models/muse-spark-open
+	Muse Spark Open
+
+Streaming and tool use are not currently supported with Structured Outputs.

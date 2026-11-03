@@ -1,0 +1,14 @@
+{
+  "ok": false,
+  "checks": [
+    {
+      "name": "formularios y secciones existentes",
+      "pass": true
+    },
+    {
+      "name": "formularios antes del resumen",
+      "pass": false
+    }
+  ],
+  "error": "Error: formularios antes del resumen"
+}

@@ -1,0 +1,838 @@
+Requested URL: https://console.groq.com/docs/structured-outputs
+Resolved URL: https://console.groq.com/docs/structured-outputs
+
+Playground
+API Keys
+Dashboard
+Docs
+Log In
+Search
+K
+Docs
+API Reference
+GETTING STARTED
+Overview
+Quickstart
+Models
+OpenAI Compatibility
+Rate Limits
+Templates
+API Reference
+CORE FEATURES
+Text Generation
+Speech to Text
+Text to Speech
+OCR and Image Recognition
+Reasoning
+Content Moderation
+Structured Outputs
+Prompt Caching
+TOOLS & INTEGRATIONS
+Tool Use
+Integrations Catalog
+Coding with Groq
+GUIDES
+Prompting Guide
+Assistant Message Prefilling
+SERVICE TIERS
+Service Tiers
+Performance Tier
+Flex Processing
+Batch Processing
+ADVANCED
+LoRA Inference
+PRODUCTION READINESS
+Production Checklist
+Optimizing Latency
+Security Onboarding
+Prometheus Metrics
+ACCOUNT AND CONSOLE
+Spend Limits
+Projects
+Model Permissions
+Billing FAQs
+Your Data
+DEVELOPER RESOURCES
+SDK Libraries
+Groq Badge
+Developer Community
+OpenBench
+Error Codes
+Changelog
+LEGAL
+Policies & Notices
+Structured Outputs
+Copy page
+
+Guarantee model responses strictly conform to your JSON schema for reliable, type-safe data structures.
+
+Introduction
+
+Structured Outputs is a feature that ensures your model responses conform to your provided JSON Schema. The feature offers two modes with different guarantees and requirements:
+
+Best-effort Mode
+Strict Mode
+Best-effort Mode (strict: false)
+
+With strict: false (the default behavior), the model attempts to match your schema but without hard constraints:
+
+Valid JSON, but schema adherence not guaranteed - May produce valid JSON that does not match your schema (for example, wrong field types or missing/extra fields)
+Possible errors and malformed output - Can sometimes produce malformed JSON syntax or trigger 400 errors due to schema validation failures
+Fewer requirements - More flexible schema constraints, such as optional fields
+Broader model support - Available on all models that support Structured Outputs
+
+This mode is suitable when you need structured outputs but can handle occasional validation errors with retry logic.
+
+Example usage:
+
+JSON
+{
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "schema_name",
+      "strict": false,  // or omit this field (defaults to false)
+      "schema": { ... }
+    }
+  }
+}
+
+Not sure which mode to use? See Choosing Between Strict and Best-effort Mode for a detailed comparison.
+
+Key benefits of Structured Outputs:
+
+Type-safe responses: Reduce validation and retry logic for malformed outputs
+Programmatic refusal detection: Detect safety-based model refusals programmatically
+Simplified prompting: Less complex prompts needed for consistent formatting
+
+
+
+In addition to supporting Structured Outputs in our API, our SDKs also enable you to easily define your schemas with Pydantic and Zod to ensure further type safety. The examples below show how to extract structured information from unstructured text.
+
+Supported models
+
+Structured Outputs is available in two modes: strict: true (with constrained decoding) and strict: false (default, best-effort validation).
+
+Best-effort Mode
+Strict Mode
+Models with Best-effort Mode (strict: false)
+
+The following models support Structured Outputs with strict: false (default), which attempts schema compliance but may occasionally error:
+
+MODEL ID	MODEL
+
+openai/gpt-oss-20b
+	GPT-OSS 20B
+
+openai/gpt-oss-120b
+	GPT-OSS 120B
+
+openai/gpt-oss-safeguard-20b
+	Safety GPT OSS 20B
+
+qwen/qwen3.8-27b
+	Qwen 3.8 27B
+
+meta-models/muse-spark-open
+	Muse Spark Open
+
+
+
+For all other models, you can use JSON Object Mode to get a valid JSON object, though it may not match your schema.
+
+Streaming and tool use are not currently supported with Structured Outputs.
+
+Getting a structured response from unstructured text
+Python
+1from groq import Groq
+2import json
+3
+4groq = Groq()
+5
+6response = groq.chat.completions.create(
+7    model="openai/gpt-oss-20b",
+8    messages=[
+9        {"role": "system", "content": "Extract product review information from the text."},
+10        {
+11            "role": "user",
+12            "content": "I bought the UltraSound Headphones last week and I'm really impressed! The noise cancellation is amazing and the battery lasts all day. Sound quality is crisp and clear. I'd give it 4.5 out of 5 stars.",
+13        },
+14    ],
+15    response_format={
+16        "type": "json_schema",
+17        "json_schema": {
+18            "name": "product_review",
+19            "strict": True,
+20            "schema": {
+21                "type": "object",
+22                "properties": {
+23                    "product_name": {"type": "string"},
+24                    "rating": {"type": "number"},
+25                    "sentiment": {
+26                        "type": "string",
+27                        "enum": ["positive", "negative", "neutral"]
+28                    },
+29                    "key_features": {
+30                        "type": "array",
+31                        "items": {"type": "string"}
+32                    }
+33                },
+34                "required": ["product_name", "rating", "sentiment", "key_features"],
+35                "additionalProperties": False
+36            }
+37        }
+38    }
+39)
+40
+41result = json.loads(response.choices[0].message.content or "{}")
+42print(json.dumps(result, indent=2))
+Example Output
+Choosing Between Strict and Best-effort Mode
+	STRICT MODE (STRICT: TRUE)	BEST-EFFORT MODE (STRICT: FALSE)
+Schema adherence	Guaranteed - uses constrained decoding	Best-effort - generally compliant
+Error handling	Never produces invalid JSON	May occasionally 400 errors or produce syntactically valid but schema-invalid JSON
+Requirements	All fields must be required
+additionalProperties: false required	More flexible constraints allowed
+Model support	Limited (GPT-OSS 20B, 120B)	All Structured Outputs models
+When to use	Production apps requiring 100% reliability	Development, prototyping, or when using unsupported models
+
+Recommendation: Use Strict Mode (strict: true) when available for production applications. Fall back to Best-effort Mode (strict: false) for broader model support or during development.
+
+Examples
+SQL Query Generation
+Email Classification
+API Response Validation
+SQL Query Generation
+
+You can generate structured SQL queries from natural language descriptions, helping ensure proper syntax and including metadata about the query structure.
+
+
+
+Python
+1from groq import Groq
+2from pydantic import BaseModel
+3import json
+4
+5client = Groq()
+6
+7class ValidationStatus(BaseModel):
+8    is_valid: bool
+9    syntax_errors: list[str]
+10
+11class SQLQueryGeneration(BaseModel):
+12    query: str
+13    query_type: str
+14    tables_used: list[str]
+15    estimated_complexity: str
+16    execution_notes: list[str]
+17    validation_status: ValidationStatus
+18
+19response = client.chat.completions.create(
+20    model="openai/gpt-oss-120b",
+21    messages=[
+22        {
+23            "role": "system",
+24            "content": "You are a SQL expert. Generate structured SQL queries from natural language descriptions with proper syntax validation and metadata.",
+25        },
+26        {"role": "user", "content": "Find all customers who made orders over $500 in the last 30 days, show their name, email, and total order amount"},
+27    ],
+28    response_format={
+29        "type": "json_schema",
+30        "json_schema": {
+31            "name": "sql_query_generation",
+32            "schema": SQLQueryGeneration.model_json_schema()
+33        }
+34    }
+35)
+36
+37sql_query_generation = SQLQueryGeneration.model_validate(json.loads(response.choices[0].message.content))
+38print(json.dumps(sql_query_generation.model_dump(), indent=2))
+Example Output
+Schema Validation Libraries
+
+When working with Structured Outputs, you can use popular schema validation libraries like Zod for TypeScript and Pydantic for Python. These libraries provide type safety, runtime validation, and seamless integration with JSON Schema generation.
+
+Support Ticket Classification
+
+This example demonstrates how to classify customer support tickets using structured schemas with both Zod and Pydantic, ensuring consistent categorization and routing.
+
+Zod (TypeScript)
+Pydantic (Python)
+TypeScript
+1import Groq from "groq-sdk";
+2import { z } from "zod";
+3
+4const groq = new Groq();
+5
+6const supportTicketSchema = z.object({
+7  category: z.enum(["api", "billing", "account", "bug", "feature_request", "integration", "security", "performance"]),
+8  priority: z.enum(["low", "medium", "high", "critical"]),
+9  urgency_score: z.number(),
+10  customer_info: z.object({
+11    name: z.string(),
+12    company: z.string().optional(),
+13    tier: z.enum(["free", "paid", "enterprise", "trial"])
+14  }),
+15  technical_details: z.array(z.object({
+16    component: z.string(),
+17    error_code: z.string().optional(),
+18    description: z.string()
+19  })),
+20  keywords: z.array(z.string()),
+21  requires_escalation: z.boolean(),
+22  estimated_resolution_hours: z.number(),
+23  follow_up_date: z.string().datetime().optional(),
+24  summary: z.string()
+25});
+26
+27type SupportTicket = z.infer<typeof supportTicketSchema>;
+28
+29const response = await groq.chat.completions.create({
+30  model: "openai/gpt-oss-120b",
+31  messages: [
+32    {
+33      role: "system",
+34      content: `You are a customer support ticket classifier for SaaS companies. 
+35                Analyze support tickets and categorize them for efficient routing and resolution.
+36                Output JSON only using the schema provided.`,
+37    },
+38    { 
+39      role: "user", 
+40      content: `Hello! I love your product and have been using it for 6 months. 
+41                I was wondering if you could add a dark mode feature to the dashboard? 
+42                Many of our team members work late hours and would really appreciate this. 
+43                Also, it would be great to have keyboard shortcuts for common actions. 
+44                Not urgent, but would be a nice enhancement! 
+45                Best, Mike from StartupXYZ`
+46    },
+47  ],
+48  response_format: {
+49    type: "json_schema",
+50    json_schema: {
+51      name: "support_ticket_classification",
+52      schema: z.toJSONSchema(supportTicketSchema)
+53    }
+54  }
+55});
+56
+57const rawResult = JSON.parse(response.choices[0].message.content || "{}");
+58const result = supportTicketSchema.parse(rawResult);
+59console.log(result);
+Example Output
+Implementation Guide
+Schema Definition
+
+Design your JSON Schema to constrain model responses. Reference the examples above and see supported schema features for technical limitations.
+
+API Integration
+
+Include the schema in your API request using the response_format parameter. Choose between strict: true for guaranteed schema compliance or strict: false for best-effort validation:
+
+Strict Mode
+Best-effort Mode
+
+Using Strict Mode (strict: true)
+
+Set strict: true for guaranteed schema compliance on supported models:
+
+JSON
+response_format: { type: "json_schema", json_schema: { name: "schema_name", strict: true, schema: … } }
+
+
+
+Complete implementation example:
+
+Python
+1from groq import Groq
+2import json
+3
+4client = Groq()
+5
+6response = client.chat.completions.create(
+7    model="openai/gpt-oss-20b",
+8    messages=[
+9        {"role": "system", "content": "You are a helpful math tutor. Guide the user through the solution step by step."},
+10        {"role": "user", "content": "how can I solve 8x + 7 = -23"}
+11    ],
+12    response_format={
+13        "type": "json_schema",
+14        "json_schema": {
+15            "name": "math_response",
+16            "strict": True,
+17            "schema": {
+18                "type": "object",
+19                "properties": {
+20                    "steps": {
+21                        "type": "array",
+22                        "items": {
+23                            "type": "object",
+24                            "properties": {
+25                                "explanation": {"type": "string"},
+26                                "output": {"type": "string"}
+27                            },
+28                            "required": ["explanation", "output"],
+29                            "additionalProperties": False
+30                        }
+31                    },
+32                    "final_answer": {"type": "string"}
+33                },
+34                "required": ["steps", "final_answer"],
+35                "additionalProperties": False
+36            }
+37        }
+38    }
+39)
+40
+41result = json.loads(response.choices[0].message.content)
+42print(json.dumps(result, indent=2))
+Error Handling
+
+Error handling differs based on which mode you're using:
+
+Strict Mode
+Best-effort Mode
+
+With Strict Mode (strict: true)
+
+Constrained decoding guarantees schema-compliant output, so you won't encounter schema validation errors. The model's output will always match your JSON Schema perfectly.
+
+No error handling needed:
+
+Python
+1# Simple and reliable - no try/catch needed for validation
+2response = client.chat.completions.create(
+3    model="openai/gpt-oss-20b",
+4    messages=[...],
+5    response_format={
+6        "type": "json_schema",
+7        "json_schema": {
+8            "name": "schema_name",
+9            "strict": True,
+10            "schema": {...}
+11        }
+12    }
+13)
+14
+15# Output is guaranteed to match schema
+16data = json.loads(response.choices[0].message.content)
+Best Practices
+
+User input handling: Include explicit instructions for invalid or incompatible inputs. Models attempt schema adherence even with unrelated data, potentially causing hallucinations. Specify fallback responses (empty fields, error messages) for incompatible inputs.
+
+Output quality: Structured outputs are designed to output schema compliance but not semantic accuracy. For persistent errors, refine instructions, add system message examples, or decompose complex tasks. See the prompt engineering guide for optimization techniques.
+
+Migration Guide: Upgrading to Strict Mode
+
+If you're currently using Structured Outputs with strict: false (or without specifying the strict parameter), you can upgrade to strict: true for guaranteed schema compliance. Follow these steps:
+
+Step 1: Verify Model Support
+
+Ensure you're using a model that supports strict: true. See the Supported Models section for more information.
+
+Step 2: Update Your Schema
+
+Make your schema compliant with strict: true requirements:
+
+Mark all fields as required:
+
+JSON
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "age": { "type": "number" }
+  },
+  "required": ["name", "age"]  // ← Ensure all properties are in required array
+}
+
+Add additionalProperties: false to all objects:
+
+JSON
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "email": { "type": "string" }
+  },
+  "required": ["name", "email"],
+  "additionalProperties": false  // ← Add this to all objects
+}
+
+Handle optional fields with union types:
+
+If you need optional fields, use union types with null:
+
+JSON
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "nickname": { 
+      "type": ["string", "null"]  // ← Use union type for optional fields
+    }
+  },
+  "required": ["name", "nickname"],  // ← Field must still be in required array
+  "additionalProperties": false
+}
+Step 3: Update API Calls
+
+Add strict: true to your response_format:
+
+JSON
+{
+  "model": "openai/gpt-oss-20b",
+  "messages": [...],
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "schema_name",
+      "strict": true,  // ← Add this line
+      "schema": {...}
+    }
+  }
+}
+Schema Requirements
+
+Structured Outputs supports a JSON Schema subset with specific constraints for performance and reliability.
+
+Supported Data Types
+Primitives: String, Number, Boolean, Integer
+Complex: Object, Array, Enum
+Composition: anyOf (union types)
+Schema Constraints by Mode
+Best-effort Mode
+Strict Mode
+
+When using strict: false (default), your schema has more flexibility:
+
+Optional fields allowed: Not all properties need to be in required
+additionalProperties: Can be true or omitted (though false is recommended)
+More forgiving validation: Best-effort schema matching, but may occasionally produce errors or invalid JSON
+
+
+
+Example with optional fields:
+
+JSON
+{
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "nickname": { "type": "string" }
+  },
+  "required": ["name"]
+}
+
+Note: While strict: false is more flexible, following the strict: true requirements will improve output quality and reduce validation errors.
+
+
+
+
+Union types: Each schema within anyOf must comply with all subset restrictions:
+
+JSON
+{
+  "type": "object",
+  "properties": {
+    "payment_method": {
+      "anyOf": [
+        {
+          "type": "object",
+          "description": "Credit card payment information",
+          "properties": {
+            "card_number": {
+              "type": "string",
+              "description": "The credit card number"
+            },
+            "expiry_date": {
+              "type": "string",
+              "description": "Card expiration date in MM/YY format"
+            },
+            "cvv": {
+              "type": "string",
+              "description": "Card security code"
+            }
+          },
+          "additionalProperties": false,
+          "required": ["card_number", "expiry_date", "cvv"]
+        },
+        {
+          "type": "object",
+          "description": "Bank transfer payment information",
+          "properties": {
+            "account_number": {
+              "type": "string",
+              "description": "Bank account number"
+            },
+            "routing_number": {
+              "type": "string",
+              "description": "Bank routing number"
+            },
+            "bank_name": {
+              "type": "string",
+              "description": "Name of the bank"
+            }
+          },
+          "additionalProperties": false,
+          "required": ["account_number", "routing_number", "bank_name"]
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": ["payment_method"]
+}
+
+
+
+Reusable subschemas: Define reusable components with $defs and reference them using $ref:
+
+JSON
+{
+  "type": "object",
+  "properties": {
+    "milestones": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/milestone"
+      }
+    },
+    "project_status": {
+      "type": "string",
+      "enum": ["planning", "in_progress", "completed", "on_hold"]
+    }
+  },
+  "$defs": {
+    "milestone": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Milestone name"
+        },
+        "deadline": {
+          "type": "string",
+          "description": "Due date in ISO format"
+        },
+        "completed": {
+          "type": "boolean"
+        }
+      },
+      "required": ["title", "deadline", "completed"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["milestones", "project_status"],
+  "additionalProperties": false
+}
+
+
+
+Root recursion: Use # to reference the root schema:
+
+JSON
+{
+  "name": "organization_chart",
+  "description": "Company organizational structure",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "employee_id": {
+        "type": "string",
+        "description": "Unique employee identifier"
+      },
+      "name": {
+        "type": "string",
+        "description": "Employee full name"
+      },
+      "position": {
+        "type": "string",
+        "description": "Job title or position",
+        "enum": ["CEO", "Manager", "Developer", "Designer", "Analyst", "Intern"]
+      },
+      "direct_reports": {
+        "type": "array",
+        "description": "Employees reporting to this person",
+        "items": {
+          "$ref": "#"
+        }
+      },
+      "contact_info": {
+        "type": "array",
+        "description": "Contact information for the employee",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Type of contact info",
+              "enum": ["email", "phone", "slack"]
+            },
+            "value": {
+              "type": "string",
+              "description": "The contact value"
+            }
+          },
+          "additionalProperties": false,
+          "required": ["type", "value"]
+        }
+      }
+    },
+    "required": [
+      "employee_id",
+      "name",
+      "position",
+      "direct_reports",
+      "contact_info"
+    ],
+    "additionalProperties": false
+  }
+}
+
+
+
+Explicit recursion through definition references:
+
+JSON
+{
+  "type": "object",
+  "properties": {
+    "file_system": {
+      "$ref": "#/$defs/file_node"
+    }
+  },
+  "$defs": {
+    "file_node": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "File or directory name"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["file", "directory"]
+        },
+        "size": {
+          "type": "number",
+          "description": "Size in bytes (0 for directories)"
+        },
+        "children": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/file_node"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": ["name", "type", "size", "children"]
+    }
+  },
+  "additionalProperties": false,
+  "required": ["file_system"]
+}
+JSON Object Mode
+
+JSON Object Mode provides basic JSON output validation without schema enforcement. Unlike Structured Outputs with json_schema mode, it is designed to output valid JSON syntax but not schema compliance. The endpoint will either return valid JSON or throw an error if the model cannot produce valid JSON syntax. Use Structured Outputs when available for your use case.
+
+	STRICT MODE	BEST-EFFORT MODE	JSON OBJECT MODE
+Valid JSON	Always ✓	Usually ✓	Usually ✓
+Schema adherence	Guaranteed ✓	Best-effort	No
+Can error	No	Occasionally	Occasionally
+Requires schema	Yes	Yes	No
+Model support	Multiple models	Multiple models	All models
+Use case	Production apps	Development, broader compatibility	Simple JSON without schema
+
+
+
+Enable JSON Object Mode by setting response_format to { "type": "json_object" }.
+
+
+
+
+Requirements and limitations:
+
+Include explicit JSON instructions in your prompt (system message or user input)
+Outputs are syntactically valid JSON but may not match your intended schema
+Combine with validation libraries and retry logic for schema compliance
+Sentiment Analysis Example
+
+This example shows prompt-guided JSON generation for sentiment analysis, adaptable to classification, extraction, or summarization tasks:
+
+Python
+1from groq import Groq
+2import json
+3
+4client = Groq()
+5
+6def main():
+7    response = client.chat.completions.create(
+8        model="llama-3.3-70b-versatile",
+9        messages=[
+10            {
+11                "role": "system",
+12                "content": """You are a data analysis API that performs sentiment analysis on text.
+13                Respond only with JSON using this format:
+14                {
+15                    "sentiment_analysis": {
+16                    "sentiment": "positive|negative|neutral",
+17                    "confidence_score": 0.95,
+18                    "key_phrases": [
+19                        {
+20                        "phrase": "detected key phrase",
+21                        "sentiment": "positive|negative|neutral"
+22                        }
+23                    ],
+24                    "summary": "One sentence summary of the overall sentiment"
+25                    }
+26                }"""
+27            },
+28            {
+29                "role": "user", 
+30                "content": "Analyze the sentiment of this customer review: 'I absolutely love this product! The quality exceeded my expectations, though shipping took longer than expected.'"
+31            }
+32        ],
+33        response_format={"type": "json_object"}
+34    )
+35
+36    result = json.loads(response.choices[0].message.content)
+37    print(json.dumps(result, indent=2))
+38
+39if __name__ == "__main__":
+40    main()
+
+System prompts structure the output format while maintaining JSON validity. However, keep in mind that the JSON object output may not match your schema.
+
+
+
+Example Output
+
+
+
+Response structure:
+
+sentiment: Classification (positive/negative/neutral)
+confidence_score: Confidence level (0-1 scale)
+key_phrases: Extracted phrases with individual sentiment scores
+summary: Analysis overview and main findings
+Was this page helpful?
+Yes
+No
+Suggest Edits
+On this page
+Introduction
+Supported models
+Examples
+Schema Validation Libraries
+Implementation Guide
+Migration Guide: Upgrading to Strict Mode
+Schema Requirements
+JSON Object Mode

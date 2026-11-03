@@ -1,0 +1,149 @@
+{
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "verification_blockers": [],
+  "suggestions": [],
+  "summary": "Aceptación independiente combinada del alcance C; pruebas suplementarias completan los huecos de navegación y filtro para los cuatro textos inválidos.",
+  "timestamp_utc": "2026-11-03T11:22:38.381207+00:00",
+  "evidence": {
+    "prior_independent_read_only": [
+      "desktop.json",
+      "mobile.json",
+      "probes.json",
+      "REVISION-INDEPENDIENTE.json"
+    ],
+    "new_own_execution": [
+      "probes-supplement.json",
+      "CIERRE-SUPLEMENTO.json"
+    ],
+    "source_baseline": "../SOURCE-HASHES.json",
+    "previous_verdict_preserved": true
+  },
+  "previous_checks": {
+    "desktop_passed": 27,
+    "mobile_passed": 27,
+    "integration_check_names_exact": [
+      "help module loaded",
+      "native search maxLength is 100",
+      "invalid search preserves input and filter without request",
+      "raw 101 characters rejected without fetch: trailing space",
+      "raw 101 characters rejected without fetch: leading space",
+      "raw 101 characters rejected without fetch: spaces only",
+      "invalid search stays visible across navigation",
+      "detail contextual help",
+      "compare help",
+      "help opens",
+      "Escape restores focus",
+      "per-product closed reasons",
+      "diagnosis sends only IDs and criterion",
+      "error visible without silent retry",
+      "pending state",
+      "navigation discards held response without auto-fetch and permits manual retry",
+      "manual retry works after navigation",
+      "stale response discarded",
+      "scenario helps",
+      "shared glossary TAE",
+      "shared glossary TIN",
+      "shared glossary Liquidez",
+      "shared glossary Riesgo",
+      "shared glossary Inflación",
+      "shared glossary Interés compuesto",
+      "mixed family cannot use deposit criterion",
+      "no help nested in labels/buttons"
+    ],
+    "raw_valid_check_names_exact": [
+      "maxlength",
+      "letters",
+      "trailing",
+      "leading",
+      "spaces",
+      "navigation",
+      "valid100",
+      "trim",
+      "clear"
+    ],
+    "keyboard_first_attempt_ok": false,
+    "keyboard_retry_ok": true,
+    "keyboard_qualification": "CDP escritorio: primer intento sin char; reintento rawKeyDown + char + keyUp documentado en dictamen previo, no repetir ni atribuir causa de aplicación.",
+    "desktop_metrics": {
+      "requested": {
+        "width": 1440,
+        "height": 900,
+        "mobile": false,
+        "deviceScaleFactor": 1
+      },
+      "initial": {
+        "client": 1425,
+        "scroll": 1425,
+        "inner": 1440,
+        "dpr": 1,
+        "visual": 1425
+      },
+      "final": {
+        "client": 1440,
+        "scroll": 1440,
+        "inner": 1440,
+        "dpr": 1,
+        "visual": 1440
+      }
+    },
+    "mobile_metrics": {
+      "requested": {
+        "width": 390,
+        "height": 844,
+        "mobile": true,
+        "deviceScaleFactor": 1
+      },
+      "initial": {
+        "client": 390,
+        "scroll": 448,
+        "inner": 448,
+        "dpr": 1,
+        "visual": 390
+      },
+      "final": {
+        "client": 390,
+        "scroll": 390,
+        "inner": 390,
+        "dpr": 1,
+        "visual": 390
+      }
+    }
+  },
+  "supplement": {
+    "case_names": [
+      "letters",
+      "trailing",
+      "leading",
+      "spaces"
+    ],
+    "invalid_stages_passed": 20,
+    "zero_new_requests_invalid": true,
+    "clear_passed": true,
+    "fetch_restored": true,
+    "metrics_start": {
+      "client": 390,
+      "scroll": 390,
+      "inner": 390,
+      "visual": 390,
+      "dpr": 1
+    },
+    "metrics_end": {
+      "client": 390,
+      "scroll": 390,
+      "inner": 390,
+      "visual": 390,
+      "dpr": 1
+    },
+    "source_matches_prior": true
+  },
+  "limitations": [
+    "Alcance de los checks enumerados; no auditoría integral de seguridad, accesibilidad o layout.",
+    "Móvil emulado CDP; no dispositivo físico.",
+    "El estado histórico inicial Home móvil registró client 390, scroll 448, inner 448, visual 390; no se atribuye causa ni se infiere layout completo.",
+    "Las 27 comprobaciones y los probes previos son evidencia independiente leída, no reejecutada en este suplemento.",
+    "El primer intento previo de teclado quedó fallido; se conserva y se distingue del reintento correcto.",
+    "Solo API local normal; no proveedores reales, datos personales ni pagos."
+  ]
+}

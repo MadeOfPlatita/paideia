@@ -1,0 +1,24 @@
+{
+  "source": "deleg_e73bea54",
+  "passed": false,
+  "security_concerns": [],
+  "logic_errors": [
+    {
+      "file": "financial_quality.py",
+      "finding": "Unrelated negative clause suppresses a known absolute risk-free claim",
+      "reproductions": [
+        "No tengo deudas y ahorrar es sin riesgo.",
+        "Ahorrar no requiere esfuerzo y es sin riesgo."
+      ]
+    },
+    {
+      "file": "financial_quality.py",
+      "finding": "Following denial incorrectly flagged",
+      "reproduction": "Ahorrar sin riesgo no es posible."
+    }
+  ],
+  "targeted_tests": 11,
+  "targeted_subtests": 33,
+  "fix_cycle": 2,
+  "real_model_calls": 0
+}

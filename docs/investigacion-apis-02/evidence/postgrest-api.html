@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="readthedocs-addons-api-version" content="1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="API" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://docs.postgrest.org/en/stable/references/api.html" />
+<meta property="og:site_name" content="PostgREST 16" />
+<meta property="og:description" content="PostgREST exposes three database objects of a schema as resources: tables, views and functions. Tables and Views, Functions as RPC, Schemas, Computed Fields, Domain Representations, Pagination and Count, Resource Embedding, Resource Representation, Media Type Handlers, Aggregate Functions, OpenAP..." />
+<meta property="og:image" content="https://docs.postgrest.org/en/stable/_images/logo.png" />
+<meta property="og:image:alt" content="PostgREST 16" />
+<meta name="description" content="PostgREST exposes three database objects of a schema as resources: tables, views and functions. Tables and Views, Functions as RPC, Schemas, Computed Fields, Domain Representations, Pagination and Count, Resource Embedding, Resource Representation, Media Type Handlers, Aggregate Functions, OpenAP..." />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API &mdash; PostgREST 16  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=c2c0849b" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/general.css?v=c0a7eb24" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode_css/dark.css?v=70edf1c7" />
+
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="canonical" href="https://docs.postgrest.org/en/stable/references/api.html" />
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+      <script src="../_static/dark_mode_js/default_light.js?v=c2e647ce"></script>
+      <script src="../_static/dark_mode_js/theme_switcher.js?v=358d3910"></script>
+    <script src="../_static/js/theme.js"></script>
+    <script src="../_static/js/versions.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tables and Views" href="api/tables_views.html" />
+    <link rel="prev" title="Authentication" href="auth.html" /> 
+<script async type="text/javascript" src="/_/static/javascript/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="postgrest" /><meta name="readthedocs-version-slug" content="stable" /><meta name="readthedocs-resolver-filename" content="/references/api.html" /><meta name="readthedocs-http-status" content="200" /></head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PostgREST 16
+          </a>
+              <div class="switch-menus">
+                <div class="version-switch"></div>
+                <div class="language-switch"></div>
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tut0.html">Tutorial 0 - Get it Running</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/tut1.html">Tutorial 1 - The Golden Key</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">References</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="auth.html">Authentication</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/tables_views.html">Tables and Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/functions.html">Functions as RPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/schemas.html">Schemas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/computed_fields.html">Computed Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/domain_representations.html">Domain Representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/pagination_count.html">Pagination and Count</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/resource_embedding.html">Resource Embedding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/resource_representation.html">Resource Representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/media_type_handlers.html">Media Type Handlers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/aggregate_functions.html">Aggregate Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/openapi.html">OpenAPI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/preferences.html">Prefer Header</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/vary_header.html">Vary Header</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/cors.html">CORS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/options.html">OPTIONS method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/url_grammar.html">URL Grammar</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transactions.html">Transactions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="connection_pool.html">Connection Pool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="schema_cache.html">Schema Cache</a></li>
+<li class="toctree-l1"><a class="reference internal" href="errors.html">Errors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="observability.html">Observability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="admin_server.html">Admin Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http_server.html">HTTP Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="listener.html">Listener</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/db_authz.html">Database Authorization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/external_auth.html">External Authentication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/nginx.html">Nginx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/schema_isolation.html">Schema Isolation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how-tos/sql-user-management.html">SQL User Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-tos/sql-user-management-using-postgres-users-and-passwords.html">SQL User Management using postgres’ users and passwords</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-tos/working-with-postgresql-data-types.html">Working with PostgreSQL data types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-tos/create-soap-endpoint.html">Create a SOAP endpoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-tos/debugging-performance-with-pg-stat-statements.html">Debugging Performance with pg_stat_statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-tos/providing-html-content-using-htmx.html">Providing HTML Content Using Htmx</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-tos/providing-images-for-img.html">Providing images for <code class="docutils literal notranslate"><span class="pre">&lt;img&gt;</span></code></a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Integrations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../integrations/nixos.html">NixOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations/pg-safeupdate.html">pg-safeupdate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations/postgis.html">PostGIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations/systemd.html">systemd</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Ecosystem</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html">Community Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html#templates">Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html#example-apps">Example Apps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html#devops">DevOps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html#external-notification">External Notification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html#extensions">Extensions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ecosystem.html#client-side-libraries">Client-Side Libraries</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PostgREST 16</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/references/api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api">
+<span id="id1"></span><h1>API<a class="headerlink" href="#api" title="Link to this heading"></a></h1>
+<p>PostgREST exposes three database objects of a schema as resources: tables, views and functions.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/tables_views.html">Tables and Views</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/functions.html">Functions as RPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/schemas.html">Schemas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/computed_fields.html">Computed Fields</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/domain_representations.html">Domain Representations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/pagination_count.html">Pagination and Count</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/resource_embedding.html">Resource Embedding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/resource_representation.html">Resource Representation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/media_type_handlers.html">Media Type Handlers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/aggregate_functions.html">Aggregate Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/openapi.html">OpenAPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/preferences.html">Prefer Header</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/vary_header.html">Vary Header</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/cors.html">CORS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/options.html">OPTIONS method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/url_grammar.html">URL Grammar</a></li>
+</ul>
+</div>
+<script type="text/javascript">
+  let hash = window.location.hash;
+
+  const redirects = {
+    // Tables and Views
+    '#horizontal-filtering-rows': 'api/tables_views.html#horizontal-filtering',
+    '#operators': 'api/tables_views.html#operators',
+    '#logical-operators': 'api/tables_views.html#logical-operators',
+    '#pattern-matching': 'api/tables_views.html#pattern-matching',
+    '#full-text-search': 'api/tables_views.html#full-text-search',
+    '#vertical-filtering-columns': 'api/tables_views.html#vertical-filtering',
+    '#renaming-columns': 'api/tables_views.html#renaming-columns',
+    '#casting-columns': 'api/tables_views.html#casting-columns',
+    '#json-columns': 'api/tables_views.html#json-columns',
+    '#composite-array-columns': 'api/tables_views.html#composite-array-columns',
+    '#computed-virtual-columns': 'api/computed_fields.html',
+    '#ordering': 'api/tables_views.html#ordering',
+    '#limits-and-pagination': 'api/pagination_count.html',
+    '#exact-count': 'api/pagination_count.html#exact-count',
+    '#planned-count': 'api/pagination_count.html#planned-count',
+    '#estimated-count': 'api/pagination_count.html#estimated-count',
+    '#updates': 'api/tables_views.html#update',
+    '#insertions': 'api/tables_views.html#insert',
+    '#bulk-insert': 'api/tables_views.html#bulk-insert',
+    '#specifying-columns': 'api/tables_views.html#specifying-columns',
+    '#upsert': 'api/tables_views.html#upsert',
+    '#on-conflict': 'api/tables_views.html#on-conflict',
+    '#put': 'api/tables_views.html#put',
+    '#deletions': 'api/tables_views.html#delete',
+    '#limited-updates-deletions': 'api/tables_views.html#limited-update-delete',
+    // Functions
+    '#stored-procedures': 'api/functions.html',
+    '#calling-functions-with-a-single-json-parameter': 'api/functions.html#functions-with-a-single-json-parameter',
+    '#calling-functions-with-a-single-unnamed-parameter': 'api/functions.html#functions-with-a-single-unnamed-parameter',
+    '#calling-functions-with-array-parameters': 'api/functions.html#functions-with-array-parameters',
+    '#calling-variadic-functions': 'api/functions.html#variadic-functions',
+    '#scalar-functions': 'api/functions.html#scalar-functions',
+    '#function-filters': 'api/functions.html#table-valued-functions',
+    '#overloaded-functions': 'api/functions.html#overloaded-functions',
+    // Schemas
+    '#switching-schemas': 'api/schemas.html',
+    // Resource Embedding
+    '#resource-embedding': 'api/resource_embedding.html#resource-embedding',
+    '#many-to-one-relationships': 'api/resource_embedding.html#many-to-one-relationships',
+    '#one-to-many-relationships': 'api/resource_embedding.html#one-to-many-relationships',
+    '#many-to-many-relationships': 'api/resource_embedding.html#many-to-many-relationships',
+    '#one-to-one-relationships': 'api/resource_embedding.html#one-to-one-relationships',
+    '#computed-relationships': 'api/resource_embedding.html#computed-relationships',
+    '#nested-embedding': 'api/resource_embedding.html#nested-embedding',
+    '#embedded-filters': 'api/resource_embedding.html#embedded-filters',
+    '#embedding-with-top-level-filtering': 'api/resource_embedding.html#top-level-filtering',
+    '#embedding-partitioned-tables': 'api/resource_embedding.html#foreign-key-joins-on-partitioned-tables',
+    '#embedding-views': 'api/resource_embedding.html#foreign-key-joins-on-views',
+    '#embedding-chains-of-views': 'api/resource_embedding.html#foreign-key-joins-on-chains-of-views',
+    '#embedding-on-stored-procedures': 'api/resource_embedding.html#foreign-key-joins-on-table-valued-functions',
+    '#embedding-after-insertions-updates-deletions': 'api/resource_embedding.html#foreign-key-joins-on-writes',
+    '#embedding-disambiguation': 'api/resource_embedding.html#foreign-key-joins-on-multiple-foreign-key-relationships',
+    '#target-disambiguation': 'api/resource_embedding.html#foreign-key-joins-on-multiple-foreign-key-relationships',
+    '#hint-disambiguation': 'api/resource_embedding.html#foreign-key-joins-on-multiple-foreign-key-relationships',
+    "#embedding-through-join-tables": "api/resource_embedding.html#many-to-many-relationships",
+    // OpenAPI
+    '#openapi-support': 'api/openapi.html',
+    // Resource Representation
+    '#response-format': 'api/resource_representation.html#response-format',
+    '#singular-or-plural': 'api/resource_representation.html#singular-or-plural',
+    '#response-formats-for-scalar-responses': 'api/functions.html#scalar-functions',
+    // CORS
+    '#cors': 'api/cors.html',
+    // OPTIONS
+    '#options': 'api/options.html',
+    // URL Grammar
+    '#custom-queries': 'api/url_grammar.html#custom-queries',
+    '#unicode-support': 'api/url_grammar.html#unicode-support',
+    '#table-columns-with-spaces': 'api/url_grammar.html#table-columns-with-spaces',
+    '#reserved-characters': 'api/url_grammar.html#reserved-characters',
+    // Transactions
+    '#immutable-and-stable-functions': 'transactions.html#access-mode',
+    '#http-context': 'transactions.html#transaction-scoped-settings',
+    '#accessing-request-headers-cookies-and-jwt-claims': 'transactions.html#request-headers-cookies-and-jwt-claims',
+    '#legacy-guc-variable-names': 'transactions.html#transaction-scoped-settings',
+    '#accessing-request-path-and-method': 'transactions.html#request-path-and-method',
+    '#setting-response-headers': 'transactions.html#response-headers',
+    '#setting-headers-via-pre-request': 'transactions.html#setting-headers-via-pre-request',
+    '#setting-response-status-code': 'transactions.html#response-status-code',
+    '#raise-errors-with-http-status-codes': 'errors.html#raise-errors-with-http-status-codes',
+    // Admin
+    '#execution-plan': 'observability.html#execution-plan',
+    // Deprecated
+    '#bulk-call': '../releases/v11.0.1.html#breaking-changes',
+  };
+
+  let willRedirectTo = redirects[hash];
+
+  if (willRedirectTo) {
+    window.location.href = willRedirectTo;
+  }
+</script></section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="auth.html" class="btn btn-neutral float-left" title="Authentication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/tables_views.html" class="btn btn-neutral float-right" title="Tables and Views" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, The PostgREST contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

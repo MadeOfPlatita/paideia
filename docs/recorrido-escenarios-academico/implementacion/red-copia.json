@@ -1,0 +1,62 @@
+{
+  "ok": false,
+  "checks": [
+    {
+      "name": "formularios y secciones existentes",
+      "pass": true
+    },
+    {
+      "name": "formularios antes del resumen",
+      "pass": true
+    },
+    {
+      "name": "resumen antes de guardar",
+      "pass": true
+    },
+    {
+      "name": "enlace Empezar/ajustar",
+      "pass": true
+    },
+    {
+      "name": "enlace Comparar/entender",
+      "pass": true
+    },
+    {
+      "name": "enlace Guardar",
+      "pass": true
+    },
+    {
+      "name": "botón de ejemplo ficticio",
+      "pass": true
+    },
+    {
+      "name": "ejemplo rellena A",
+      "pass": true
+    },
+    {
+      "name": "ejemplo no calcula ni modifica B",
+      "pass": true
+    },
+    {
+      "name": "pedir confirmación sin modificar",
+      "pass": true
+    },
+    {
+      "name": "confirmación identifica A",
+      "pass": true
+    },
+    {
+      "name": "cancelar disponible",
+      "pass": true
+    },
+    {
+      "name": "cancelar conserva escenarios",
+      "pass": true
+    },
+    {
+      "name": "botón copiar A a B",
+      "pass": false
+    }
+  ],
+  "error": "Error: botón copiar A a B"
+}

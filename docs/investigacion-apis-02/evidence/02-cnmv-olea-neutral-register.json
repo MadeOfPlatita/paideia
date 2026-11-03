@@ -1,0 +1,26 @@
+{
+  "retrieved_utc": "2026-10-26T18:42:12.230124+00:00",
+  "method": "GET",
+  "requested_url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+  "final_url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+  "status": 200,
+  "content_type": "text/html; charset=utf-8",
+  "content_length_header": "222579",
+  "last_modified_header": null,
+  "etag_header": null,
+  "body_bytes": 222579,
+  "evidence_path": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidence\\02-cnmv-olea-neutral-register.raw",
+  "observed": {
+    "html_markers": [
+      "Denominación",
+      "Fecha último folleto",
+      "Fondo de inversión",
+      "ISIN",
+      "Nº Registro oficial",
+      "OLEA NEUTRAL",
+      "isin",
+      "tipo"
+    ],
+    "html_preview": " <!DOCTYPE html> <html lang=\"es\"> <head><link href=\"../../favicon.ico\" rel=\"icon\" type=\"image/x-icon\" /><link href=\"../../icons/bootstrap-icons/bootstrap-icons.min.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/global.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/header.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/menu-sidebar.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/sliders.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/forms.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/forms_MF.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/footer.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/media-queries.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/buscador.css\" rel=\"stylesheet\" type=\"text/css\" /><link href=\"../../css/cookies.css\" rel=\"stylesheet\" type=\"text/css\" /><meta charset=\"UTF-8\" /><meta name=\"keywords\" content=\"cnmv, comision,comision nacional del mercado,capital riesgo,entidades emisoras,hechos relevantes,folletos de emision,iic,inversion colectiva,productos financieros,mercado valores, fondos de inversion,servicios de inversion,inversores,bolsa valores,mercados financieros,agencias valores,isin,ISIN,comunicaciones previas, titulizacion, capital riesgo, opas, ancv, xbrl, cotizadas, renta fija, inversores, bolsa, posiciones cortas, short selling, participaciones preferentes, bonos, obligaciones, pagarés, warrants, titulización, sicav, inversión colectiva, eafis, asesores financieros, ley del mercado de valores,opv, ops, salidas a bolsa, emisiones\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><link rel=\"canonical\" href=\"https://"
+  }
+}

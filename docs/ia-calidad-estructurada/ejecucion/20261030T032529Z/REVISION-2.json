@@ -1,0 +1,17 @@
+{
+  "source": "deleg_df36f2e2",
+  "passed": true,
+  "security_concerns": [],
+  "logic_errors": [],
+  "tested": {
+    "python": 13,
+    "python_subtests": 63,
+    "node": 11
+  },
+  "limitations": [
+    "UI relies on local backend for arithmetic integrity",
+    "test_only marker does not itself prevent injected provider network access",
+    "legacy free-text and real provider unapproved"
+  ],
+  "scope": "current files; offline; no git diff; no external model calls"
+}

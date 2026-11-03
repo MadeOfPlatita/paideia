@@ -1,0 +1,5 @@
+{
+  "output": "warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.\r\n{\"pdf\": \"C:/Users/aleja/Downloads/App Financiera/docs/noche-funcional/20261103T003723/B/informe-sintetico.pdf\", \"pages\": 3, \"sizes\": [[594.9599609375, 841.9199829101562], [594.9599609375, 841.9199829101562], [594.9599609375, 841.9199829101562]], \"final_balance_domain\": \"-218684.00\", \"checks\": {\"last_month_present\": true, \"amount_matches_engine\": true, \"a4\": true}}",
+  "exit_code": 0,
+  "error": null
+}

@@ -1,0 +1,19 @@
+(async () => {
+ const checks=[]; const ok=(v,n)=>{checks.push({name:n,pass:!!v});if(!v)throw Error(n)}; const sleep=ms=>new Promise(r=>setTimeout(r,ms)); const wait=async f=>{for(let i=0;i<200;i++){if(f())return;await sleep(20)}throw Error('timeout')};
+ const edit=(id,v)=>{const e=document.getElementById(id);e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}))}; const host=()=>document.getElementById('scenario-report-host'); const buttons=()=>host().querySelectorAll('button'); const snap=()=>window.getScenarioComparisonSnapshot();
+ try {
+  ok(window.__hermesPrintGuard===true,'feature probe guard enabled');
+  ok(buttons().length===2 && buttons()[1].textContent.includes('Descargar informe (HTML)'),'download control exists');
+  ok(buttons()[1].disabled,'initial download disabled');
+  for(const [id,v] of Object.entries({'scenario-principal':'1000','scenario-rate':'5','scenario-years':'2','scenario-contribution':'20','scenario-inflation':'2','scenario-method':'simple','scenario-principal-b':'500','scenario-rate-b':'4','scenario-years-b':'1','scenario-contribution-b':'0','scenario-inflation-b':'0','scenario-method-b':'compound'})) edit(id,v);
+  document.querySelectorAll('.scenario-form')[0].requestSubmit(); document.querySelectorAll('.scenario-form')[1].requestSubmit(); await wait(()=>snap().scenarios.every(s=>s.status==='current'));
+  ok(!buttons()[1].disabled,'current download enabled'); ok(buttons()[0].disabled,'guard disables print'); ok(host().textContent.includes('La impresión está desactivada en este panel.'),'guard explanation visible');
+  buttons()[1].click(); await sleep(100); ok(/descarga solicitada/i.test(host().textContent),'download requested status'); ok(host().textContent.includes('La impresión está desactivada en este panel.'),'guard explanation persists after request');
+  const create=URL.createObjectURL; URL.createObjectURL=()=>{throw Error('synthetic transient')}; buttons()[1].click(); URL.createObjectURL=create; ok(!buttons()[1].disabled && /Inténtalo de nuevo/.test(host().textContent),'transient failure allows retry');
+  const accessor=window.getScenarioComparisonSnapshot; window.getScenarioComparisonSnapshot=()=>{const s=accessor();s.scenarios[0].inputs.principal='987';return s}; buttons()[1].click(); ok(buttons()[1].disabled,'click rejects mismatch'); window.getScenarioComparisonSnapshot=accessor; window.dispatchEvent(new Event('scenario-comparison-change')); ok(!buttons()[1].disabled,'revalidated current enables retry');
+  edit('scenario-rate','6'); ok(buttons()[1].disabled,'edit disables download');
+  const originalFetch=window.fetch; let release,entered=false; const held=new Promise(r=>release=r); window.fetch=async(...args)=>{const result=await originalFetch(...args);if(String(args[0])==='/api/calculate'){entered=true;await held}return result}; document.querySelectorAll('.scenario-form')[0].requestSubmit(); await wait(()=>entered); ok(snap().scenarios[0].status==='pending' && buttons()[1].disabled,'pending disables download'); release(); await wait(()=>snap().scenarios[0].status==='current'); window.fetch=originalFetch;
+  edit('scenario-rate','7'); window.fetch=async(...args)=>{if(String(args[0])==='/api/calculate')throw Error('synthetic');return originalFetch(...args)}; document.querySelectorAll('.scenario-form')[0].requestSubmit(); await wait(()=>snap().scenarios[0].status==='error'); ok(buttons()[1].disabled,'error disables download'); window.fetch=originalFetch;
+  return {ok:true,checks, note:'Real anchor download requested; host file verification is separate.'};
+ } catch(e) {return {ok:false,error:String(e),checks};}
+})()

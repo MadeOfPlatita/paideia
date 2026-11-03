@@ -1,0 +1,9 @@
+{
+  "label": "synthetic_test_only",
+  "cases": 4,
+  "contract_valid": 3,
+  "relevant_among_valid": 2,
+  "relevance_denominator": 3,
+  "winner": null,
+  "limitation": "Hand-labelled toy fixtures; not a model quality measurement."
+}

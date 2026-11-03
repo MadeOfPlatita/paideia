@@ -1,0 +1,88 @@
+{
+  "request_schema": "pai-context-request/v1",
+  "case_id": "SYN-01-LIQUIDEZ",
+  "variant": "C",
+  "provider_call_status": "not_called",
+  "provider": null,
+  "model": null,
+  "base": {
+    "system": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.",
+    "output_constraints": [
+      "Usa solo el texto de la pregunta, la evidencia sintética fija y el contexto de perfil materializado.",
+      "No busques en internet ni invoques herramientas.",
+      "Conserva exactamente importes, porcentajes, monedas y plazos proporcionados; no los redondees ni los cambies en silencio.",
+      "No conviertas null, desconocido o no declarado en cero, ni un cero declarado en desconocido.",
+      "Identifica conflictos entre datos, supuestos o condiciones cuando afecten a la conclusión."
+    ],
+    "fixed_evidence": {
+      "claim": "El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.",
+      "catalogue": "No se proporciona catálogo ni oferta real."
+    },
+    "question": "Tengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?"
+  },
+  "base_sha256": "bfa88391ec767046805ecb96bbacefeff065484693df14a690f573b7be7e5c56",
+  "profile_context": {
+    "status": "complete_synthetic_profile",
+    "data": {
+      "age_band": "45-54",
+      "currency": "EUR",
+      "education_level": "formacion_profesional",
+      "financial_goal": "preservar liquidez para gastos próximos y comprender alternativas educativas",
+      "investment_horizon_months": 4,
+      "liquid_savings_eur": 12000,
+      "monthly_net_income_eur": 2800,
+      "monthly_expenses_eur": 1800,
+      "monthly_savings_capacity_eur": 1000,
+      "planned_contribution_eur": 0,
+      "upcoming_expenses": [
+        {
+          "label": "reparacion esencial",
+          "amount_eur": 4800,
+          "months_until_due": 4
+        }
+      ],
+      "debts": [],
+      "risk_tolerance": "moderate",
+      "risk_capacity": "low",
+      "emergency_reserve_target_months": 3,
+      "employment_income_stability": "stable",
+      "investment_experience": "none",
+      "knowledge_level": "beginner",
+      "declared_loss_limit_pct": 0
+    },
+    "selected_fields": [
+      "age_band",
+      "currency",
+      "education_level",
+      "financial_goal",
+      "investment_horizon_months",
+      "liquid_savings_eur",
+      "monthly_net_income_eur",
+      "monthly_expenses_eur",
+      "monthly_savings_capacity_eur",
+      "planned_contribution_eur",
+      "upcoming_expenses",
+      "debts",
+      "risk_tolerance",
+      "risk_capacity",
+      "emergency_reserve_target_months",
+      "employment_income_stability",
+      "investment_experience",
+      "knowledge_level",
+      "declared_loss_limit_pct"
+    ],
+    "excluded_fields": []
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía."
+    },
+    {
+      "role": "user",
+      "content": "EVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real.\",\"claim\":\"El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.\"}\n\nPERFIL SINTÉTICO COMPLETO C\n{\"age_band\":\"45-54\",\"currency\":\"EUR\",\"debts\":[],\"declared_loss_limit_pct\":0,\"education_level\":\"formacion_profesional\",\"emergency_reserve_target_months\":3,\"employment_income_stability\":\"stable\",\"financial_goal\":\"preservar liquidez para gastos próximos y comprender alternativas educativas\",\"investment_experience\":\"none\",\"investment_horizon_months\":4,\"knowledge_level\":\"beginner\",\"liquid_savings_eur\":12000,\"monthly_expenses_eur\":1800,\"monthly_net_income_eur\":2800,\"monthly_savings_capacity_eur\":1000,\"planned_contribution_eur\":0,\"risk_capacity\":\"low\",\"risk_tolerance\":\"moderate\",\"upcoming_expenses\":[{\"amount_eur\":4800,\"label\":\"reparacion esencial\",\"months_until_due\":4}]}\n\nPREGUNTA\nTengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?"
+    }
+  ],
+  "rendered_prompt": "SYSTEM\nEres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.\n\nUSER\nEVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real.\",\"claim\":\"El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.\"}\n\nPERFIL SINTÉTICO COMPLETO C\n{\"age_band\":\"45-54\",\"currency\":\"EUR\",\"debts\":[],\"declared_loss_limit_pct\":0,\"education_level\":\"formacion_profesional\",\"emergency_reserve_target_months\":3,\"employment_income_stability\":\"stable\",\"financial_goal\":\"preservar liquidez para gastos próximos y comprender alternativas educativas\",\"investment_experience\":\"none\",\"investment_horizon_months\":4,\"knowledge_level\":\"beginner\",\"liquid_savings_eur\":12000,\"monthly_expenses_eur\":1800,\"monthly_net_income_eur\":2800,\"monthly_savings_capacity_eur\":1000,\"planned_contribution_eur\":0,\"risk_capacity\":\"low\",\"risk_tolerance\":\"moderate\",\"upcoming_expenses\":[{\"amount_eur\":4800,\"label\":\"reparacion esencial\",\"months_until_due\":4}]}\n\nPREGUNTA\nTengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?",
+  "adapter_contract": "Enviar solo messages; provider/model se configuran fuera de este artefacto. No contiene credenciales ni ejecuta red."
+}

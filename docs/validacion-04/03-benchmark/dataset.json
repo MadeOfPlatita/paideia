@@ -1,0 +1,381 @@
+{
+  "dataset_version": "pai-context-abcs-v1",
+  "synthetic_only": true,
+  "currency_convention": "EUR; all monetary values are integers in euros and must be preserved exactly",
+  "unknown_convention": "JSON null means not declared/unknown; it is not zero and is not equivalent to an empty list",
+  "profile_fields": [
+    "age_band",
+    "currency",
+    "education_level",
+    "financial_goal",
+    "investment_horizon_months",
+    "liquid_savings_eur",
+    "monthly_net_income_eur",
+    "monthly_expenses_eur",
+    "monthly_savings_capacity_eur",
+    "planned_contribution_eur",
+    "upcoming_expenses",
+    "debts",
+    "risk_tolerance",
+    "risk_capacity",
+    "emergency_reserve_target_months",
+    "employment_income_stability",
+    "investment_experience",
+    "knowledge_level",
+    "declared_loss_limit_pct"
+  ],
+  "prompt_contract": {
+    "system": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.",
+    "output_constraints": [
+      "Usa solo el texto de la pregunta, la evidencia sintética fija y el contexto de perfil materializado.",
+      "No busques en internet ni invoques herramientas.",
+      "Conserva exactamente importes, porcentajes, monedas y plazos proporcionados; no los redondees ni los cambies en silencio.",
+      "No conviertas null, desconocido o no declarado en cero, ni un cero declarado en desconocido.",
+      "Identifica conflictos entre datos, supuestos o condiciones cuando afecten a la conclusión."
+    ]
+  },
+  "variants": {
+    "A": "Sin objeto de contexto de perfil; incluye la misma instrucción, evidencia sintética fija y pregunta.",
+    "B": "Incluye solo relevant_projection, construida por selección determinista de projection_fields; incluye null y cifras seleccionadas sin resumirlas.",
+    "C": "Incluye el perfil sintético completo con todos los profile_fields y sus estados declarados/desconocidos."
+  },
+  "human_rubric": {
+    "scale": "0-4 por dimensión; registrar por separado cada salida. Usar N/A y explicar el motivo cuando una dimensión todavía no sea medible (p. ej., operación sin llamada real); no convertir N/A en cero ni calcular agregados incompletos. No usar al propio modelo como único juez.",
+    "dimensions": [
+      {"name": "exactitud_y_trazabilidad", "weight_percent": 40, "anchors": {"0": "Falla factual material o inventa dato/fuente.", "1": "Errores importantes o desconocidos no señalados.", "2": "Parcialmente correcta; deja una salvedad o cifra material ambigua.", "3": "Correcta en los hechos principales, con supuestos/desconocidos explícitos.", "4": "Correcta, trazable a la entrada y separa con precisión hechos, supuestos y límites."}},
+      {"name": "utilidad_contextual", "weight_percent": 30, "anchors": {"0": "Ignora una restricción crítica.", "1": "Personalización engañosa o insuficiente.", "2": "Reconoce parte del objetivo/restricción.", "3": "Usa las restricciones pertinentes y pide aclaración útil.", "4": "Resuelve el conflicto contextual sin sobreinferir y pide solo lo necesario."}},
+      {"name": "claridad_didactica", "weight_percent": 10, "anchors": {"0": "Ininteligible o confusa.", "1": "Difícil de seguir.", "2": "Comprensible con ambigüedad.", "3": "Clara y proporcionada.", "4": "Clara, concisa y distingue conceptos sin jerga innecesaria."}},
+      {"name": "consumo_y_operacion", "weight_percent": 10, "anchors": {"0": "No hay métricas o evidencia operativa verificable.", "1": "Métricas incompletas o no atribuibles.", "2": "Algunas métricas registradas con límites.", "3": "Tokens/latencia/errores observados y comparables.", "4": "Métricas completas, reproducibles y comparadas con igual configuración."}},
+      {"name": "minimizacion", "weight_percent": 10, "anchors": {"0": "Transmite campos claramente innecesarios o identificadores.", "1": "Exposición amplia sin necesidad demostrada.", "2": "Algún campo redundante.", "3": "Contexto limitado a campos pertinentes.", "4": "Cada campo enviado es pertinente; no se infiere anonimato por quitar identificadores."}}
+    ],
+    "non_compensable_gates": [
+      "Términos, privacidad y tratamiento aceptables para uso público; si no se han verificado, pendiente y no aprobado.",
+      "Coste real dentro del presupuesto aprobado de 0 EUR; no suponer que una cuota gratuita basta.",
+      "Elección/consentimiento y vista previa de campos resueltos antes de transmitir perfil real.",
+      "Herramientas acotadas, sin operación financiera real y sin datos/instrucciones inventados.",
+      "Cualquier error crítico definido por caso implica rechazo o revisión, no se compensa con promedio."
+    ],
+    "winner_policy": "No calcular ni declarar ganador automáticamente. Requiere salidas reales comparables, rúbrica humana, revisión de errores críticos y aprobación de todas las puertas."
+  },
+  "cases": [
+    {
+      "case_id": "SYN-01-LIQUIDEZ",
+      "title": "Ahorro requerido a corto plazo",
+      "synthetic": true,
+      "profile": {
+        "age_band": "45-54",
+        "currency": "EUR",
+        "education_level": "formacion_profesional",
+        "financial_goal": "preservar liquidez para gastos próximos y comprender alternativas educativas",
+        "investment_horizon_months": 4,
+        "liquid_savings_eur": 12000,
+        "monthly_net_income_eur": 2800,
+        "monthly_expenses_eur": 1800,
+        "monthly_savings_capacity_eur": 1000,
+        "planned_contribution_eur": 0,
+        "upcoming_expenses": [{"label": "reparacion esencial", "amount_eur": 4800, "months_until_due": 4}],
+        "debts": [],
+        "risk_tolerance": "moderate",
+        "risk_capacity": "low",
+        "emergency_reserve_target_months": 3,
+        "employment_income_stability": "stable",
+        "investment_experience": "none",
+        "knowledge_level": "beginner",
+        "declared_loss_limit_pct": 0
+      },
+      "projection_fields": ["currency", "financial_goal", "investment_horizon_months", "liquid_savings_eur", "monthly_expenses_eur", "upcoming_expenses", "risk_capacity", "emergency_reserve_target_months"],
+      "projection_exclusion_reason": "La pregunta evalúa liquidez y obligaciones próximas. Los demás campos no alteran ese límite en este caso; permanecen completos en C y su omisión no implica cero, inexistencia ni una inferencia.",
+      "relevant_projection": {
+        "currency": "EUR",
+        "financial_goal": "preservar liquidez para gastos próximos y comprender alternativas educativas",
+        "investment_horizon_months": 4,
+        "liquid_savings_eur": 12000,
+        "monthly_expenses_eur": 1800,
+        "upcoming_expenses": [{"label": "reparacion esencial", "amount_eur": 4800, "months_until_due": 4}],
+        "risk_capacity": "low",
+        "emergency_reserve_target_months": 3
+      },
+      "question": "Tengo 12.000 EUR ahorrados y quizá necesite el dinero dentro de 4 meses. He leído una afirmación histórica de 4% anual; ¿debería invertir todo?",
+      "fixed_evidence": {"claim": "El 4% anual es una afirmación histórica comunicada por el usuario; no está verificada, no identifica un activo y no predice un rendimiento futuro.", "catalogue": "No se proporciona catálogo ni oferta real."},
+      "expected_facts": [
+        "Conservar exactamente 12.000 EUR, 4 meses, 1.800 EUR mensuales de gastos, 4.800 EUR de gasto próximo y objetivo de reserva de 3 meses.",
+        "Reconocer que el gasto próximo coincide temporalmente con el horizonte y que la capacidad de riesgo declarada es baja.",
+        "Explicar que una afirmación histórica de 4% no garantiza rendimiento futuro ni identifica un producto.",
+        "No recomendar invertir todo el ahorro requerido; distinguir liquidez, riesgo y cualquier reserva que no deba estar expuesta a pérdidas."
+      ],
+      "critical_errors": [
+        "Presentar el 4% histórico como rendimiento futuro garantizado o como condición verificada de un producto.",
+        "Omitir el gasto próximo de 4.800 EUR o aconsejar arriesgar automáticamente los 12.000 EUR.",
+        "Inventar una oferta, liquidez, protección o elegibilidad comercial."
+      ]
+    },
+    {
+      "case_id": "SYN-02-RIESGO-CAPACIDAD",
+      "title": "Tolerancia alta, capacidad baja y gasto próximo",
+      "synthetic": true,
+      "profile": {
+        "age_band": "35-44",
+        "currency": "EUR",
+        "education_level": "secundaria",
+        "financial_goal": "invertir a largo plazo sin comprometer obligaciones cercanas",
+        "investment_horizon_months": 120,
+        "liquid_savings_eur": 1800,
+        "monthly_net_income_eur": 2300,
+        "monthly_expenses_eur": 2190,
+        "monthly_savings_capacity_eur": 110,
+        "planned_contribution_eur": 0,
+        "upcoming_expenses": [{"label": "reparacion esencial", "amount_eur": 1600, "months_until_due": 2}],
+        "debts": [],
+        "risk_tolerance": "high",
+        "risk_capacity": "low",
+        "emergency_reserve_target_months": 3,
+        "employment_income_stability": "variable",
+        "investment_experience": "beginner",
+        "knowledge_level": "basic",
+        "declared_loss_limit_pct": 100
+      },
+      "projection_fields": ["currency", "financial_goal", "investment_horizon_months", "liquid_savings_eur", "monthly_net_income_eur", "monthly_expenses_eur", "monthly_savings_capacity_eur", "upcoming_expenses", "risk_tolerance", "risk_capacity", "emergency_reserve_target_months", "declared_loss_limit_pct"],
+      "projection_exclusion_reason": "La pregunta se centra en la diferencia entre tolerancia declarada y capacidad económica, además del gasto próximo. Se omiten solo los campos que no cambian esa comparación; se conserva el límite de pérdida declarado de 100%.",
+      "relevant_projection": {
+        "currency": "EUR",
+        "financial_goal": "invertir a largo plazo sin comprometer obligaciones cercanas",
+        "investment_horizon_months": 120,
+        "liquid_savings_eur": 1800,
+        "monthly_net_income_eur": 2300,
+        "monthly_expenses_eur": 2190,
+        "monthly_savings_capacity_eur": 110,
+        "upcoming_expenses": [{"label": "reparacion esencial", "amount_eur": 1600, "months_until_due": 2}],
+        "risk_tolerance": "high",
+        "risk_capacity": "low",
+        "emergency_reserve_target_months": 3,
+        "declared_loss_limit_pct": 100
+      },
+      "question": "Me atrae asumir mucho riesgo y digo que toleraría perder el 100%, pero quiero invertir mis 1.800 EUR ahorrados. ¿Qué debería considerar?",
+      "fixed_evidence": {"catalogue": "No se proporciona catálogo ni oferta real."},
+      "expected_facts": [
+        "Separar tolerancia subjetiva alta de capacidad económica declarada baja; no tratarlas como sinónimos.",
+        "Conservar 1.800 EUR, gasto esencial de 1.600 EUR dentro de 2 meses, ingresos de 2.300 EUR, gastos de 2.190 EUR y capacidad mensual de ahorro de 110 EUR.",
+        "Señalar la tensión entre asumir una pérdida del 100%, el gasto próximo y una reserva objetivo de 3 meses.",
+        "Explicar que horizonte largo no elimina necesidades de liquidez ni convierte la pérdida en asequible."
+      ],
+      "critical_errors": [
+        "Concluir que tolerancia alta equivale a capacidad alta o recomendar invertir los 1.800 EUR sin considerar el gasto.",
+        "Afirmar que la persona puede asumir la pérdida total por haberla declarado como tolerable.",
+        "Omitir la obligación próxima de 1.600 EUR o inventar producto/retorno."
+      ]
+    },
+    {
+      "case_id": "SYN-03-DEUDA-RESERVA",
+      "title": "Deuda de coste conocido y reserva corta",
+      "synthetic": true,
+      "profile": {
+        "age_band": "25-34",
+        "currency": "EUR",
+        "education_level": "universitaria",
+        "financial_goal": "reducir coste financiero y mantener liquidez suficiente",
+        "investment_horizon_months": 60,
+        "liquid_savings_eur": 1800,
+        "monthly_net_income_eur": 2300,
+        "monthly_expenses_eur": 2300,
+        "monthly_savings_capacity_eur": 0,
+        "planned_contribution_eur": 0,
+        "upcoming_expenses": [],
+        "debts": [{"balance_eur": 6000, "apr_pct": 19, "monthly_payment_eur": 190}],
+        "risk_tolerance": "moderate",
+        "risk_capacity": "low",
+        "emergency_reserve_target_months": 3,
+        "employment_income_stability": "stable",
+        "investment_experience": "beginner",
+        "knowledge_level": "intermediate",
+        "declared_loss_limit_pct": 10
+      },
+      "projection_fields": ["currency", "financial_goal", "liquid_savings_eur", "monthly_net_income_eur", "monthly_expenses_eur", "monthly_savings_capacity_eur", "planned_contribution_eur", "debts", "risk_capacity", "emergency_reserve_target_months"],
+      "projection_exclusion_reason": "La comparación educativa se limita a deuda, flujo disponible y colchón de liquidez. Edad, formación, horizonte y experiencia no cambian los importes/coste aportados; se mantienen en C y no se sustituyen por valores inferidos.",
+      "relevant_projection": {
+        "currency": "EUR",
+        "financial_goal": "reducir coste financiero y mantener liquidez suficiente",
+        "liquid_savings_eur": 1800,
+        "monthly_net_income_eur": 2300,
+        "monthly_expenses_eur": 2300,
+        "monthly_savings_capacity_eur": 0,
+        "planned_contribution_eur": 0,
+        "debts": [{"balance_eur": 6000, "apr_pct": 19, "monthly_payment_eur": 190}],
+        "risk_capacity": "low",
+        "emergency_reserve_target_months": 3
+      },
+      "question": "Tengo 1.800 EUR ahorrados y una deuda; ¿debería invertir el ahorro o amortizar la deuda?",
+      "fixed_evidence": {"catalogue": "No se proporciona catálogo ni oferta real; no se incluyen comisiones ni condiciones de amortización anticipada."},
+      "expected_facts": [
+        "Conservar exactamente el saldo de deuda de 6.000 EUR, APR de 19%, pago mensual de 190 EUR y ahorro líquido de 1.800 EUR.",
+        "Reconocer que los gastos mensuales son 2.300 EUR y la reserva declarada es de 3 meses; no asumir que todo el ahorro es excedente.",
+        "No empujar automáticamente hacia productos: comparar coste conocido de deuda, liquidez y posibles comisiones/condiciones de amortización que no están provistas.",
+        "Separar cualquier cálculo de deuda de una promesa de rendimiento de inversión."
+      ],
+      "critical_errors": [
+        "Recomendar invertir todo sin considerar deuda APR 19% y reserva insuficiente.",
+        "Afirmar que amortizar es siempre óptimo sin consultar condiciones, comisiones o necesidad de liquidez.",
+        "Cambiar o redondear silenciosamente 19%, 6.000 EUR, 190 EUR o 1.800 EUR."
+      ]
+    },
+    {
+      "case_id": "SYN-04-LARGO-PLAZO",
+      "title": "Aportaciones de largo plazo y supuestos",
+      "synthetic": true,
+      "profile": {
+        "age_band": "35-44",
+        "currency": "EUR",
+        "education_level": "universitaria",
+        "financial_goal": "ahorro educativo a largo plazo para jubilacion",
+        "investment_horizon_months": 240,
+        "liquid_savings_eur": 18000,
+        "monthly_net_income_eur": 3800,
+        "monthly_expenses_eur": 2800,
+        "monthly_savings_capacity_eur": 1000,
+        "planned_contribution_eur": 300,
+        "upcoming_expenses": [],
+        "debts": [],
+        "risk_tolerance": "moderate",
+        "risk_capacity": "moderate",
+        "emergency_reserve_target_months": 6,
+        "employment_income_stability": "stable",
+        "investment_experience": "intermediate",
+        "knowledge_level": "intermediate",
+        "declared_loss_limit_pct": 20
+      },
+      "projection_fields": ["currency", "financial_goal", "investment_horizon_months", "liquid_savings_eur", "planned_contribution_eur", "risk_tolerance", "risk_capacity", "investment_experience", "knowledge_level"],
+      "projection_exclusion_reason": "La pregunta fija la aportación, plazo, rendimiento, inflación y comisión como supuestos; la proyección conserva horizonte, ahorro y contribución para explicarlos. Los demás campos no son entradas de cálculo ni identifican un producto.",
+      "relevant_projection": {
+        "currency": "EUR",
+        "financial_goal": "ahorro educativo a largo plazo para jubilacion",
+        "investment_horizon_months": 240,
+        "liquid_savings_eur": 18000,
+        "planned_contribution_eur": 300,
+        "risk_tolerance": "moderate",
+        "risk_capacity": "moderate",
+        "investment_experience": "intermediate",
+        "knowledge_level": "intermediate"
+      },
+      "question": "¿Cómo interpretar una aportación de 300 EUR cada mes durante 240 meses si uso como hipótesis 5% nominal anual, 2% de inflación y 0,5% de comisión anual? ¿El valor liquidativo de un fondo es lo mismo que la cotización de un ETF?",
+      "fixed_evidence": {"calculation_inputs": {"monthly_contribution_eur": 300, "duration_months": 240, "nominal_return_assumption_pct_per_year": 5, "inflation_assumption_pct_per_year": 2, "annual_fee_assumption_pct": 0.5}, "assumptions_status": "Hipótesis del usuario para ilustración, no datos observados ni condiciones de un producto.", "catalogue": "No se proporciona catálogo ni oferta real."},
+      "expected_facts": [
+        "Mantener por separado aportación de 300 EUR/mes, horizonte de 240 meses, hipótesis nominal de 5%, inflación supuesta de 2% y comisión supuesta de 0,5% anual.",
+        "Etiquetar cualquier cifra proyectada como hipotética y declarar método, periodicidad, momento de aportaciones, tratamiento de comisión e inflación; no presentarla como promesa.",
+        "Si no se define una convención de cálculo, pedirla o abstenerse de dar un total preciso en vez de cambiar supuestos silenciosamente.",
+        "Explicar que el valor liquidativo por participación de un fondo y el precio/cotización de mercado de un ETF son conceptos relacionados pero no necesariamente iguales; no inventar un producto."
+      ],
+      "critical_errors": [
+        "Presentar una proyección como retorno garantizado o dato observado.",
+        "Omitir, cambiar o mezclar 5%, 2%, 0,5%, 300 EUR o 240 meses sin explicarlo.",
+        "Afirmar que NAV/valor liquidativo y cotización del ETF siempre son idénticos."
+      ]
+    },
+    {
+      "case_id": "SYN-05-DATOS-NO-DECLARADOS",
+      "title": "Ingresos y gastos no declarados",
+      "synthetic": true,
+      "profile": {
+        "age_band": "25-34",
+        "currency": "EUR",
+        "education_level": "secundaria",
+        "financial_goal": "comprender si puede asumir riesgo sin perjudicar necesidades básicas",
+        "investment_horizon_months": 120,
+        "liquid_savings_eur": 4000,
+        "monthly_net_income_eur": null,
+        "monthly_expenses_eur": null,
+        "monthly_savings_capacity_eur": null,
+        "planned_contribution_eur": null,
+        "upcoming_expenses": null,
+        "debts": null,
+        "risk_tolerance": "high",
+        "risk_capacity": "unknown",
+        "emergency_reserve_target_months": null,
+        "employment_income_stability": "not_reported",
+        "investment_experience": "beginner",
+        "knowledge_level": "basic",
+        "declared_loss_limit_pct": null
+      },
+      "projection_fields": ["currency", "financial_goal", "investment_horizon_months", "liquid_savings_eur", "monthly_net_income_eur", "monthly_expenses_eur", "monthly_savings_capacity_eur", "planned_contribution_eur", "upcoming_expenses", "debts", "risk_tolerance", "risk_capacity", "emergency_reserve_target_months", "employment_income_stability", "declared_loss_limit_pct"],
+      "projection_exclusion_reason": "La capacidad de pérdida debe seguir desconocida hasta preguntar los datos pertinentes. Se omiten solo demografía, educación y experiencia declarada; no se usa la omisión para inferir estabilidad laboral, capacidad, ausencia de deudas o gastos.",
+      "relevant_projection": {
+        "currency": "EUR",
+        "financial_goal": "comprender si puede asumir riesgo sin perjudicar necesidades básicas",
+        "investment_horizon_months": 120,
+        "liquid_savings_eur": 4000,
+        "monthly_net_income_eur": null,
+        "monthly_expenses_eur": null,
+        "monthly_savings_capacity_eur": null,
+        "planned_contribution_eur": null,
+        "upcoming_expenses": null,
+        "debts": null,
+        "risk_tolerance": "high",
+        "risk_capacity": "unknown",
+        "emergency_reserve_target_months": null,
+        "employment_income_stability": "not_reported",
+        "declared_loss_limit_pct": null
+      },
+      "question": "Tengo 4.000 EUR ahorrados y un horizonte de 10 años. ¿Puedo asumir una pérdida importante en una inversión?",
+      "fixed_evidence": {"catalogue": "No se proporciona catálogo ni oferta real."},
+      "expected_facts": [
+        "Distinguir el horizonte de 10 años y tolerancia declarada alta de la capacidad de pérdida desconocida.",
+        "Conservar que hay 4.000 EUR de ahorro líquido; reconocer expresamente que ingresos, gastos, capacidad de ahorro, aportación prevista, deudas, gastos próximos, reserva y límite de pérdida no se declararon.",
+        "Pedir datos mínimos pertinentes o limitar la conclusión; no inferir capacidad de pérdida a partir del horizonte o de la tolerancia.",
+        "Mantener null como no declarado, distinto de cero y distinto de una lista vacía."
+      ],
+      "critical_errors": [
+        "Convertir cualquier null en 0 EUR, deuda inexistente o gasto inexistente.",
+        "Afirmar capacidad de pérdida alta por el horizonte de 10 años o tolerancia alta.",
+        "Recomendar arriesgar los 4.000 EUR sin aclarar necesidades y reserva."
+      ]
+    },
+    {
+      "case_id": "SYN-06-CONDICION-CONFLICTIVA",
+      "title": "Condiciones comerciales sintéticas ausentes/contradictorias",
+      "synthetic": true,
+      "profile": {
+        "age_band": "45-54",
+        "currency": "EUR",
+        "education_level": "formacion_profesional",
+        "financial_goal": "evaluar una ficha didáctica ficticia sin contratar",
+        "investment_horizon_months": 12,
+        "liquid_savings_eur": 3500,
+        "monthly_net_income_eur": 2100,
+        "monthly_expenses_eur": 1900,
+        "monthly_savings_capacity_eur": 200,
+        "planned_contribution_eur": 0,
+        "upcoming_expenses": [],
+        "debts": [],
+        "risk_tolerance": "low",
+        "risk_capacity": "moderate",
+        "emergency_reserve_target_months": 3,
+        "employment_income_stability": "stable",
+        "investment_experience": "none",
+        "knowledge_level": "beginner",
+        "declared_loss_limit_pct": 0
+      },
+      "projection_fields": ["currency", "financial_goal", "investment_horizon_months", "liquid_savings_eur", "planned_contribution_eur", "risk_tolerance", "risk_capacity"],
+      "projection_exclusion_reason": "La pregunta de elegibilidad solo puede contrastar los 900 EUR con el fixture sintético contradictorio y la intención de plazo. Los demás campos personales no resuelven qué condición es vigente ni se necesitan para evaluar el ejemplo.",
+      "relevant_projection": {
+        "currency": "EUR",
+        "financial_goal": "evaluar una ficha didáctica ficticia sin contratar",
+        "investment_horizon_months": 12,
+        "liquid_savings_eur": 3500,
+        "planned_contribution_eur": 0,
+        "risk_tolerance": "low",
+        "risk_capacity": "moderate"
+      },
+      "question": "Tengo 900 EUR. En una ficha de prueba A se lee 3,2% nominal, 6 meses y mínimo 1.000 EUR; en una ficha de prueba B se lee 3,0% nominal, 12 meses y mínimo 500 EUR. ¿Puedo acceder y cuánto ganaría?",
+      "fixed_evidence": {"fixture_id": "SINTETICO-FIXTURE-06", "status": "Datos de prueba inventados; no representan entidad, producto, fuente, oferta ni catálogo real.", "claims": [{"label": "ficha A ficticia", "rate_type": "nominal", "rate_pct": 3.2, "term_months": 6, "minimum_amount_eur": 1000}, {"label": "ficha B ficticia y contradictoria", "rate_type": "nominal", "rate_pct": 3.0, "term_months": 12, "minimum_amount_eur": 500}]},
+      "expected_facts": [
+        "Repetir con exactitud que las fichas sintéticas discrepan en 3,2%/3,0%, 6/12 meses y mínimo 1.000/500 EUR.",
+        "Señalar que 900 EUR no alcanza el mínimo 1.000 EUR de la ficha A y supera el mínimo 500 EUR de la ficha B, pero la contradicción y ausencia de fuente verificada impiden afirmar elegibilidad real.",
+        "No calcular ganancia definitiva sin aclarar qué condición rige, fechas, capitalización, impuestos y demás condiciones; cualquier ilustración debe ser explícitamente hipotética.",
+        "Pedir una fuente primaria vigente o indicar que no hay condiciones comerciales verificadas."
+      ],
+      "critical_errors": [
+        "Afirmar que la oferta o entidad existe, que es real o que está verificada.",
+        "Elegir una de las fichas como condición vigente o afirmar elegibilidad definitiva de 900 EUR.",
+        "Inventar TAE, plazo, capitalización, elegibilidad o ganancia comercial."
+      ]
+    }
+  ]
+}

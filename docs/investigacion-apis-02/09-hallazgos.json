@@ -1,0 +1,260 @@
+{
+  "candidates": [
+    {
+      "name": "PostgreSQL local",
+      "role": "Desarrollo y pruebas de esquema/consultas; no hosting público.",
+      "coverage": "SQL relacional, constraints, vistas y funciones; su conexión/API la aporta la aplicación local.",
+      "endpoint": "localhost (puerto configurable, habitualmente 5432); no hay URL pública.",
+      "auth": "Rol/contraseña local; no incluir credenciales en cliente web.",
+      "free_limits": "Sin cuota SaaS: limitado al hardware/disponibilidad local. No funciona para usuarios si el ordenador que lo aloja está apagado.",
+      "rights": "PostgreSQL no otorga derechos sobre datos, APIs o documentos que se importen.",
+      "status": "Propuesta documentada; no se comprobó si hay instancia local instalada o ejecutándose.",
+      "next_test": "Solo tras autorización, confirmar versión/servicio disponible y probar esquema con datos de muestra licenciados; no usar como servidor del piloto."
+    },
+    {
+      "name": "Supabase Free (Postgres + Data API/PostgREST + Cron/Edge Functions)",
+      "role": "Candidato recomendado para el piloto web alojado, sujeto a prueba de carga y aceptación de la pausa Free.",
+      "coverage": "Postgres administrado, REST autogenerado, tablas/vistas/RPC, grants/RLS, SDKs y programación de trabajos.",
+      "endpoint": "REST: https://<project_ref>.supabase.co/rest/v1/ ; RPC: /rest/v1/rpc/<function> . No se creó proyecto ni endpoint real.",
+      "auth": "Clave pública/anon solo para rutas de lectura explícitamente protegidas; credenciales DB y service_role únicamente en funciones/secretos de servidor.",
+      "free_limits": "Precio publicado: 500 MB DB, 5 GB egress, 5 GB cached egress, 1 GB almacenamiento de archivos, 50.000 MAU y API requests ilimitadas; pausa proyectos Free tras una semana de inactividad. Edge Functions Free: 150 s máximo de duración de pared y 2 s CPU por petición. MAU/API quotas no son una garantía de concurrencia/latencia.",
+      "rights": "Los límites del plan no autorizan redistribuir datos/documentos externos. Verificar licencia por fuente, términos de servicio, región y DPA antes de cargar datos de usuarios.",
+      "status": "Documentación oficial consultada; GET HTTP 200 a la página de precios. API de proyecto no probada: no hay proyecto, cuenta ni credenciales autorizadas.",
+      "next_test": "Tras autorización: elegir región adecuada, crear proyecto de prueba, desplegar solo vistas de lectura/RLS, probar rol anónimo/auth, cold idle/pause, cuota y prueba con 100 sesiones lectoras."
+    },
+    {
+      "name": "Neon Free (Postgres + connection pooler + serverless driver)",
+      "role": "Alternativa de base administrada si Pai dispone de backend/server functions que oculten el secreto DB.",
+      "coverage": "Postgres, pooler basado en PgBouncer; driver JS/TS con consultas HTTP o WebSocket desde entornos serverless/edge.",
+      "endpoint": "Conexión Postgres/pooled connection string desde el panel; no se obtuvo URL de instancia. Driver HTTP desde server-side function.",
+      "auth": "DATABASE_URL/credencial de conexión como secreto de servidor; nunca dentro del bundle de navegador.",
+      "free_limits": "Plan consultado: 100 CU-horas por proyecto/mes, hasta 2 CU, 1 GB almacenamiento por proyecto (hasta 20 GB por cuenta), 5 GB de transferencia pública por proyecto y scale-to-zero tras 5 minutos inactivo. El despertar/cold-start no se midió; sin SLA Free verificado.",
+      "rights": "Servicio DB/driver no otorgan derechos sobre material importado. Revisar términos del proveedor, región/DPA y permisos de cada fuente.",
+      "status": "Planes/driver documentados; GET HTTP 200 a docs. No se conectó a un proyecto ni se invocó una función/consulta de prueba.",
+      "next_test": "Tras autorización: comparar tiempos de primer acceso tras reposo, throughput con 100 usuarios de lectura, cuotas CU/egress y mecanismo de ejecución diaria; validar versión actual del backend/API del proveedor."
+    },
+    {
+      "name": "PostgREST + OpenAPI",
+      "role": "Capa HTTP reutilizable para exponer vistas, tablas seleccionadas y funciones PostgreSQL como REST/RPC documentados.",
+      "coverage": "GET/HEAD de lectura, filtros, recursos de tablas/vistas, RPC y documentación OpenAPI de los objetos expuestos.",
+      "endpoint": "En Supabase viene como Data API: /rest/v1/; en instalación independiente, URL raíz del servicio PostgREST.",
+      "auth": "Rol activo definido por la capa API/JWT; grants PostgreSQL y RLS para datos sensibles; RPC solo con EXECUTE mínimo.",
+      "free_limits": "PostgREST como software autohospedado no incluye un tier de hosting; capacidad la determina el host y tamaño del pool. Supabase gestiona la capa y aplica su cuota Free.",
+      "rights": "La API no decide ni transmite derechos de redistribución de datos; revisar licencia actual antes de integrar/redistribuir código del proyecto.",
+      "status": "Documentación pública GET HTTP 200; no se ejecutó una instancia PostgREST ni un OpenAPI de Pai.",
+      "next_test": "Tras autorización: generar OpenAPI de un esquema de prueba, confirmar que solo aparecen vistas/RPC previstas y comprobar rol de lectura."
+    },
+    {
+      "name": "SDK oficial Supabase (supabase-js / supabase-py)",
+      "role": "Cliente reutilizable para consumir Data API desde app/backend; no es DB ni licencia de datos.",
+      "coverage": "REST y operaciones de cliente Supabase; SDKs oficiales JS/TypeScript, Python, Dart/Flutter y Swift.",
+      "endpoint": "Usa URL de proyecto y clave API; llamadas REST se dirigen a Data API.",
+      "auth": "Clave pública con RLS para lectura pública controlada; secretos privilegiados solo en backend.",
+      "free_limits": "El SDK no añade cuota independiente; aplican límites del proyecto Supabase, egress y pausas.",
+      "rights": "Revisar licencia de paquete y derechos de la fuente por separado; no asumir permiso de reutilizar respuestas externas.",
+      "status": "La página oficial de bibliotecas enumera paquetes y lenguajes; no se instaló ni ejecutó ningún SDK.",
+      "next_test": "Después de aprobar arquitectura: escoger un SDK según frontend existente, leer una vista con rol público y verificar que no lleva secretos privilegiados."
+    },
+    {
+      "name": "Neon serverless driver (@neondatabase/serverless)",
+      "role": "Driver JS/TS para ejecutar SQL desde función/backend serverless hacia Neon; requiere proteger DATABASE_URL.",
+      "coverage": "Consultas HTTP one-shot/serializadas y WebSockets para sesiones/transacciones interactivas; plantillas/query parametrizadas.",
+      "endpoint": "Driver HTTP/WebSocket con connection string Neon; no es por sí solo API REST para navegador.",
+      "auth": "DATABASE_URL en secreto de servidor/función; el driver no debe inicializarse con credencial dentro de un frontend público.",
+      "free_limits": "La cuota de DB y cold-start depende del plan Neon; límite del driver y despliegue serverless externo se deben verificar en la plataforma elegida.",
+      "rights": "La licencia/uso del driver y el uso de datos de terceros son asuntos separados; revisar ambos antes del despliegue.",
+      "status": "Documentación del driver extraída y su página respondió HTTP 200; no instalado ni probado contra DB.",
+      "next_test": "Tras autorización: revisar compatibilidad de runtime/versiones, usar consulta parametrizada en backend de prueba y medir cold-start/carga con pool."
+    },
+    {
+      "name": "pgvector (opcional, no fase inicial)",
+      "role": "Extensión Postgres para persistir y consultar embeddings si se decide añadir búsqueda semántica de documentos.",
+      "coverage": "Distancias vectoriales y búsqueda nearest-neighbor exacta o aproximada; requiere embeddings generados por un modelo/proceso separado.",
+      "endpoint": "Extensión dentro de Postgres; no es API de documentos ni modelo LLM.",
+      "auth": "Mismos roles/RLS y límites de acceso que la base donde se habilite.",
+      "free_limits": "No tiene una cuota SaaS común: recursos, disponibilidad de la extensión y almacenamiento dependen del host; embeddings añaden cómputo/almacenamiento aparte.",
+      "rights": "Ni extensión ni vectorización resuelven licencia de documentos, permiso de enviar texto a un modelo o retención del proveedor.",
+      "status": "Documentación oficial de Supabase y repositorio consultados; extensión no instalada ni consultada en Pai.",
+      "next_test": "No añadir hasta que prueba representativa demuestre una necesidad semántica no cubierta por consultas SQL/filtros/selección textual autorizada."
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+      "title": "5.9. Row Security Policies — PostgreSQL Documentation",
+      "claim": "RLS filtra filas y, si está habilitada sin políticas aplicables, deniega por defecto; roles BYPASSRLS/superusuario y normalmente propietario pueden saltarla.",
+      "evidence": "If no policy exists for the table, a default-deny policy is used, meaning that no rows are visible or can be modified.",
+      "verification": "Documentación oficial extraída; GET público HTTP 200 guardado en evidence/postgres-rls.html. No se ha probado política en una DB de Pai."
+    },
+    {
+      "url": "https://docs.postgrest.org/en/stable/references/api/tables_views.html",
+      "title": "Tables and Views — PostgREST",
+      "claim": "PostgREST expone tablas/vistas accesibles y métodos HTTP de acuerdo con permisos; GET lee y admite filtros.",
+      "evidence": "All tables and views of the exposed schema and accessible by the active database role are available for querying.",
+      "verification": "Documentación oficial extraída; no se probó un recurso real de Pai."
+    },
+    {
+      "url": "https://docs.postgrest.org/en/stable/references/api/functions.html",
+      "title": "Functions as RPC — PostgREST",
+      "claim": "Funciones expuestas y autorizadas se invocan bajo /rpc; pueden modificar datos, por lo que hay que limitar funciones/privilegios.",
+      "evidence": "Functions can perform any operation allowed by PostgreSQL (read data, modify data, raise errors, and even DDL operations). Every function in the exposed schema and accessible by the active database role is executable under the /rpc prefix.",
+      "verification": "Documentación oficial extraída; no se ejecutó RPC de una instancia."
+    },
+    {
+      "url": "https://docs.postgrest.org/en/stable/references/transactions.html",
+      "title": "Transactions — PostgREST",
+      "claim": "GET/HEAD se ejecutan READ ONLY; las RPC dependen de método y volatilidad de la función.",
+      "evidence": "The access mode on Tables and Views is determined by the HTTP method. | HTTP Method | Access Mode | | GET, HEAD | READ ONLY | | POST, PATCH, PUT, DELETE | READ WRITE |",
+      "verification": "Documentación oficial extraída; comportamiento no medido contra una instancia Pai."
+    },
+    {
+      "url": "https://docs.postgrest.org/en/stable/references/connection_pool.html",
+      "title": "Connection Pool — PostgREST",
+      "claim": "Un pool reutiliza conexiones de DB para servir solicitudes HTTP, limitando el patrón de una conexión persistente por usuario.",
+      "evidence": "A connection pool is a cache of reusable database connections. It allows serving many HTTP requests using few database connections.",
+      "verification": "Documentación oficial extraída; no es una prueba de concurrencia ni benchmark de Pai."
+    },
+    {
+      "url": "https://docs.postgrest.org/en/stable/references/api.html",
+      "title": "API — PostgREST",
+      "claim": "PostgREST expone tablas, vistas y funciones; documentación enlaza la generación OpenAPI.",
+      "evidence": "PostgREST exposes three database objects of a schema as resources: tables, views and functions.",
+      "verification": "Documentación oficial GET HTTP 200 guardada en evidence/postgrest-api.html; no OpenAPI de Pai generado."
+    },
+    {
+      "url": "https://supabase.com/pricing",
+      "title": "Pricing & Fees — Supabase",
+      "claim": "El plan Free publica 500 MB DB, 5 GB egress, 5 GB cached egress, 1 GB archivos, 50.000 MAU, API requests ilimitadas y pausa tras una semana inactiva.",
+      "evidence": "Free projects are paused after 1 week of inactivity. Limit of 2 active projects. - 500 MB database size - 5 GB egress - 5 GB cached egress - 1 GB file storage",
+      "verification": "Página oficial de precios extraída y GET HTTP 200 guardado en evidence/supabase-pricing.html; los límites pueden cambiar."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/api",
+      "title": "Data REST API — Supabase Docs",
+      "claim": "Supabase genera REST API a partir de esquema mediante PostgREST bajo /rest/v1/ y apoya RLS.",
+      "evidence": "Supabase provides a RESTful API using PostgREST, a thin API layer on top of Postgres. It exposes everything you need from a CRUD API at the URL https://<project_ref>.supabase.co/rest/v1/.",
+      "verification": "Documentación oficial extraída; no hay proyecto Pai para probar."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/api/securing-your-api",
+      "title": "Securing your API — Supabase Docs",
+      "claim": "Grants determinan acceso a objeto/función; RLS determina filas; functions se controlan por EXECUTE, no por RLS.",
+      "evidence": "Grants determine which Postgres roles (anon, authenticated, service_role) can reach a given table, view, or function over the Data API. Row Level Security (RLS) policies then determine which rows those roles can read or modify.",
+      "verification": "Página oficial de seguridad extraída vía URL canónica de documentación; no se evaluó configuración de ningún proyecto."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+      "title": "Connect to your database — Supabase Docs",
+      "claim": "Frontend usa Data API; función serverless/edge usa pooler compartido en transaction mode.",
+      "evidence": "A frontend application | Data API | Works over REST or GraphQL, so you don't need a Postgres client. Requires Row Level Security. | A serverless or edge function | Shared pooler, transaction mode",
+      "verification": "Documentación oficial extraída; no se estableció conexión a base."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/cron",
+      "title": "Cron — Supabase Docs",
+      "claim": "Cron puede ejecutar SQL/funciones o hacer HTTP a Edge Function, por lo que la ingesta no necesita el PC local encendido.",
+      "evidence": "Every Job can run SQL snippets or database functions with zero network latency or make an HTTP request, such as invoking a Supabase Edge Function, with ease.",
+      "verification": "Documentación oficial extraída; no se programó ningún cron."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/functions/limits",
+      "title": "Limits — Supabase Edge Functions",
+      "claim": "Edge Functions Free: duración wall-clock máxima 150 s; CPU máximo 2 s por request.",
+      "evidence": "Free plan: 150s - Paid plans: 400s. Maximum CPU Time: 2s (Amount of actual time spent on the CPU per request - does not include async I/O.)",
+      "verification": "Documentación oficial extraída; el trabajo propuesto no se ejecutó."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/database/extensions/pgvector",
+      "title": "pgvector: Embeddings and vector similarity — Supabase Docs",
+      "claim": "pgvector es extensión Postgres para similitud vectorial; embeddings se generan y gestionan aparte.",
+      "evidence": "pgvector is a Postgres extension for vector similarity search. It can also be used for storing embeddings.",
+      "verification": "Documentación oficial extraída; no se habilitó extensión."
+    },
+    {
+      "url": "https://neon.com/docs/introduction/plans",
+      "title": "Neon plans — Neon Docs",
+      "claim": "Neon Free publica 100 CU-hours/project, máximo 2 CU, 1 GB/project, 20 GB por cuenta, 5 GB egress/project y scale-to-zero tras 5 minutos.",
+      "evidence": "Free | 100 CU-hours/project | Up to 2 CU (8 GB RAM) | After 5 minutes when inactive | Free 1 GB per Project",
+      "verification": "Documentación oficial extraída; GET HTTP 200 guardado en evidence/neon-plans.html. Límites sujetos a cambio."
+    },
+    {
+      "url": "https://neon.com/pricing",
+      "title": "Neon pricing",
+      "claim": "La página de precios identifica pooler PgBouncer y publica hasta 10.000 conexiones pooled; no es carga validada para Pai.",
+      "evidence": "All Neon databases can use pooled connections built on pgBouncer (up to 10,000 connections).",
+      "verification": "Página oficial extraída; el número es capacidad indicada por proveedor, no prueba independiente/concurrencia de la app."
+    },
+    {
+      "url": "https://neon.com/docs/serverless/serverless-driver",
+      "title": "Neon serverless driver — Neon Docs",
+      "claim": "Driver JS/TS consulta serverless/edge por HTTP o WebSockets y permite consultas con parámetros.",
+      "evidence": "The Neon serverless driver is a low-latency Postgres driver for JavaScript and TypeScript that allows you to query data from serverless and edge environments over HTTP or WebSockets.",
+      "verification": "Documentación oficial extraída y GET HTTP 200 guardado en evidence/neon-driver.html; driver no instalado/probado."
+    },
+    {
+      "url": "https://github.com/pgvector/pgvector",
+      "title": "pgvector — Open-source vector similarity search for Postgres",
+      "claim": "pgvector ofrece búsqueda de vecinos exacta/aproximada, además de tipos y distancias vectoriales.",
+      "evidence": "Supports: exact and approximate nearest neighbor search",
+      "verification": "README de repositorio consultado; no se ejecutó código ni se verificó una licencia para otros datos/proyectos."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/api/rest/client-libs",
+      "title": "Client Libraries — Supabase Docs",
+      "claim": "Supabase enumera SDKs oficiales para JavaScript/TypeScript, Python, Dart/Flutter y Swift.",
+      "evidence": "| JavaScript/TypeScript | supabase-js | | Dart/Flutter | supabase-flutter | | Swift | supabase-swift | | Python | supabase-py |",
+      "verification": "Página oficial de bibliotecas extraída; no se instaló ni probó SDK."
+    }
+  ],
+  "tests": [
+    {
+      "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+      "status": "HTTP 200; GET de documentación (no endpoint de Pai)",
+      "content_type": "text/html; charset=utf-8",
+      "observed_fields": ["GET", "Row Level Security"],
+      "evidence_path": "docs\\investigacion-apis-02\\evidence\\postgres-rls.html"
+    },
+    {
+      "url": "https://docs.postgrest.org/en/stable/references/api.html",
+      "status": "HTTP 200; GET de documentación (no endpoint de Pai)",
+      "content_type": "text/html; charset=utf-8",
+      "observed_fields": ["GET", "RPC", "OpenAPI"],
+      "evidence_path": "docs\\investigacion-apis-02\\evidence\\postgrest-api.html"
+    },
+    {
+      "url": "https://supabase.com/pricing",
+      "status": "HTTP 200; GET de documentación (no API de datos)",
+      "content_type": "text/html; charset=utf-8",
+      "observed_fields": ["GET", "Free"],
+      "evidence_path": "docs\\investigacion-apis-02\\evidence\\supabase-pricing.html"
+    },
+    {
+      "url": "https://neon.com/docs/introduction/plans",
+      "status": "HTTP 200; GET de documentación (no DB/REST endpoint de Pai)",
+      "content_type": "text/html; charset=utf-8",
+      "observed_fields": ["projects", "CU-hours", "storage", "egress", "scale-to-zero"],
+      "evidence_path": "docs\\investigacion-apis-02\\evidence\\neon-plans.html"
+    },
+    {
+      "url": "https://neon.com/docs/serverless/serverless-driver",
+      "status": "HTTP 200; GET de documentación (no consulta a DB)",
+      "content_type": "text/html; charset=utf-8",
+      "observed_fields": ["HTTP", "WebSockets", "parameterized queries"],
+      "evidence_path": "docs\\investigacion-apis-02\\evidence\\neon-driver.html"
+    },
+    {
+      "url": "https://<project_ref>.supabase.co/rest/v1/",
+      "status": "NOT TESTED: no se creó proyecto ni hay credenciales autorizadas",
+      "content_type": null,
+      "observed_fields": [],
+      "evidence_path": null
+    },
+    {
+      "url": "Neon pooled database endpoint (host/connection string no disponible)",
+      "status": "NOT TESTED: no se creó proyecto ni hay credenciales autorizadas",
+      "content_type": null,
+      "observed_fields": [],
+      "evidence_path": null
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "output": "report unit: exact cents, whitelist, mismatch, dirty/pending/error and invalid data passed",
+  "exit_code": 0,
+  "error": null
+}

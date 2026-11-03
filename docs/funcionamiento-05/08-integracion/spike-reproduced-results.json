@@ -1,0 +1,99 @@
+{
+  "schema_version": "storage-spike-results.v1",
+  "generated_at_utc": "2026-10-28T19:50:33.052365+00:00",
+  "classification": "synthetic_test",
+  "experiment": {
+    "kind": "catalog_read_burst_not_chat",
+    "read_count_per_variant": 100,
+    "concurrent_workers": 100,
+    "synthetic_provider_delay_ms": 3,
+    "network_requests": 0,
+    "database_created": false,
+    "api_called": false,
+    "latency_warning": "Local Python + artificial fake-provider delay only; not network, free-tier, hosting, production, or real-100-user capacity evidence."
+  },
+  "harness_recommended_cli": "python3 spikes/005-api-cache-vs-direct/storage_spike.py --run",
+  "coordinator_invocation": "execute_code: importlib module storage_spike; run_experiment(); no write_results()",
+  "exit_code": 0,
+  "variants": [
+    {
+      "variant": "direct_api_read",
+      "read_count": 100,
+      "concurrent_workers": 100,
+      "provider_requests": 100,
+      "cache_hits": 0,
+      "stale_fallbacks": 0,
+      "successful_results": 100,
+      "rows_returned": 300,
+      "distinct_result_sets": 1,
+      "source_kind": "synthetic_test",
+      "latency_ms_local_orientation_only": {
+        "p50": 3.536,
+        "p95": 3.901,
+        "p99": 4.252,
+        "max": 4.594
+      }
+    },
+    {
+      "variant": "persistent_json_snapshot",
+      "read_count": 100,
+      "concurrent_workers": 100,
+      "provider_requests": 1,
+      "cache_hits": 99,
+      "stale_fallbacks": 0,
+      "successful_results": 100,
+      "rows_returned": 300,
+      "distinct_result_sets": 1,
+      "source_kind": "synthetic_test",
+      "latency_ms_local_orientation_only": {
+        "p50": 3.794,
+        "p95": 5.45,
+        "p99": 5.519,
+        "max": 5.548
+      }
+    }
+  ],
+  "checks": {
+    "restart_process_read_snapshot_without_provider": true,
+    "snapshot_integrity_after_update": true,
+    "atomic_update_replaced_complete_snapshot": true,
+    "failed_replace_kept_last_good_snapshot": true,
+    "expired_stale_fallback_only_by_explicit_policy": true,
+    "provider_failure_observed_without_retry": true
+  },
+  "restart_process": {
+    "integrity_verified": true,
+    "provider_requests": 0,
+    "records": 3,
+    "source_kind": "synthetic_test",
+    "status": "snapshot"
+  },
+  "cache_post_burst": {
+    "provider_requests_including_explicit_refresh_and_injected_failure": 3,
+    "snapshot_integrity_valid": true,
+    "atomic_update_succeeded": true,
+    "failed_replace_preserved_previous_bytes": true,
+    "temporary_files_cleaned": true
+  },
+  "policy_test": {
+    "default_ttl_seconds": null,
+    "default_stale_on_error": false,
+    "explicit_ttl_seconds": 10,
+    "explicit_stale_on_error": true,
+    "provider_requests": 2,
+    "fallback_result_status": "stale_fallback",
+    "stale_flag": true
+  },
+  "failure_test": {
+    "direct_provider_requests": 1,
+    "direct_failure_observed": true
+  },
+  "limitations": [
+    "FakeProvider is synthetic_test and performs no network I/O.",
+    "One Python process and thread pool; no multi-process or hosted-service claim.",
+    "The process-local lock coalesces cold misses only inside this process.",
+    "No PostgreSQL, SQLite, other database, API credentials, or real financial data used.",
+    "No chat, LLM, free-tier, 100-user production, availability, or quota result is measured.",
+    "File fsync plus same-directory os.replace is not a backup or a cross-platform power-loss durability guarantee."
+  ]
+}

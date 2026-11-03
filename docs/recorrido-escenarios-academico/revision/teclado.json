@@ -1,0 +1,17 @@
+{
+  "before": {
+    "focus": "<a href=\"#scenario-report-host\">Guardar</a>",
+    "hash": "#escenarios",
+    "top": 8472.265625
+  },
+  "enter": {
+    "focus": "<a href=\"#scenario-report-host\">Guardar</a>",
+    "hash": "#escenarios",
+    "top": 121.265625
+  },
+  "tab": {
+    "focus": "<input type=\"number\" id=\"scenario-principal\" step=\"0.01\" min=\"0\" required=\"\" inputmode=\"decimal\" autocomplete=\"off\">",
+    "hash": "#escenarios",
+    "top": 7973.265625
+  }
+}

@@ -1,0 +1,699 @@
+[
+  {
+    "test": "scenario_journey_focus_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": false,
+      "checks": [
+        {
+          "name": "foco Empezar/ajustar",
+          "pass": false,
+          "active": "page-title"
+        },
+        {
+          "name": "ruta Empezar/ajustar",
+          "pass": true
+        },
+        {
+          "name": "sin cambios ni solicitudes Empezar/ajustar",
+          "pass": true
+        },
+        {
+          "name": "foco Comparar/entender",
+          "pass": false,
+          "active": "page-title"
+        },
+        {
+          "name": "ruta Comparar/entender",
+          "pass": true
+        },
+        {
+          "name": "sin cambios ni solicitudes Comparar/entender",
+          "pass": true
+        },
+        {
+          "name": "foco Guardar",
+          "pass": false,
+          "active": "page-title"
+        },
+        {
+          "name": "ruta Guardar",
+          "pass": true
+        },
+        {
+          "name": "sin cambios ni solicitudes Guardar",
+          "pass": true
+        }
+      ],
+      "viewport": {
+        "client": 1265,
+        "scroll": 1265,
+        "inner": 1280
+      }
+    },
+    "viewport": {
+      "client": 1265,
+      "scroll": 1265,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "scenario_journey_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": true,
+      "checks": [
+        {
+          "name": "formularios y secciones existentes",
+          "pass": true
+        },
+        {
+          "name": "formularios antes del resumen",
+          "pass": true
+        },
+        {
+          "name": "resumen antes de guardar",
+          "pass": true
+        },
+        {
+          "name": "enlace Empezar/ajustar",
+          "pass": true
+        },
+        {
+          "name": "navegación Empezar/ajustar conserva ruta",
+          "pass": true
+        },
+        {
+          "name": "enlace Comparar/entender",
+          "pass": true
+        },
+        {
+          "name": "navegación Comparar/entender conserva ruta",
+          "pass": true
+        },
+        {
+          "name": "enlace Guardar",
+          "pass": true
+        },
+        {
+          "name": "navegación Guardar conserva ruta",
+          "pass": true
+        },
+        {
+          "name": "botón de ejemplo ficticio",
+          "pass": true
+        },
+        {
+          "name": "ejemplo rellena A",
+          "pass": true
+        },
+        {
+          "name": "ejemplo no calcula ni modifica B",
+          "pass": true
+        },
+        {
+          "name": "pedir confirmación sin modificar",
+          "pass": true
+        },
+        {
+          "name": "confirmación identifica A",
+          "pass": true
+        },
+        {
+          "name": "cancelar disponible",
+          "pass": true
+        },
+        {
+          "name": "cancelar conserva escenarios",
+          "pass": true
+        },
+        {
+          "name": "botón copiar A a B",
+          "pass": true
+        },
+        {
+          "name": "copiar campos actuales",
+          "pass": true
+        },
+        {
+          "name": "copia deja B pendiente de calcular",
+          "pass": true
+        },
+        {
+          "name": "ambos calculados con API local",
+          "pass": true
+        },
+        {
+          "name": "resumen explica diferencias",
+          "pass": true
+        },
+        {
+          "name": "supuestos iguales explícitos",
+          "pass": true
+        },
+        {
+          "name": "edición oculta diferencias",
+          "pass": true
+        },
+        {
+          "name": "decimales equivalentes no cambian supuesto",
+          "pass": true
+        },
+        {
+          "name": "diferencia y aviso de horizonte",
+          "pass": true
+        },
+        {
+          "name": "confirmación de B no cambia datos",
+          "pass": true
+        },
+        {
+          "name": "cancelar copia conserva ambos",
+          "pass": true
+        },
+        {
+          "name": "confirmación revalida A y conserva B",
+          "pass": true
+        },
+        {
+          "name": "B pendiente real",
+          "pass": true
+        },
+        {
+          "name": "copia invalida respuesta pendiente de B",
+          "pass": true
+        },
+        {
+          "name": "A pendiente real",
+          "pass": true
+        },
+        {
+          "name": "copia campos de A pendiente sin modificar A",
+          "pass": true
+        },
+        {
+          "name": "A pendiente se resuelve normalmente",
+          "pass": true
+        }
+      ]
+    },
+    "viewport": {
+      "client": 1265,
+      "scroll": 1265,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "report_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": true,
+      "checks": [
+        {
+          "name": "initial disabled",
+          "pass": true
+        },
+        {
+          "name": "current enabled",
+          "pass": true
+        },
+        {
+          "name": "print action",
+          "pass": true
+        },
+        {
+          "name": "report summary and warning",
+          "pass": true
+        },
+        {
+          "name": "separate series tables",
+          "pass": true
+        },
+        {
+          "name": "no profile marker",
+          "pass": true
+        },
+        {
+          "name": "edit invalidates",
+          "pass": true
+        },
+        {
+          "name": "pending disabled",
+          "pass": true
+        },
+        {
+          "name": "late result discarded",
+          "pass": true
+        },
+        {
+          "name": "recompute enabled",
+          "pass": true
+        },
+        {
+          "name": "error disabled explained",
+          "pass": true
+        },
+        {
+          "name": "fresh report",
+          "pass": true
+        },
+        {
+          "name": "whitelist escapes and excludes profile marker",
+          "pass": true
+        },
+        {
+          "name": "click revalidates mismatched assumptions",
+          "pass": true
+        },
+        {
+          "name": "beforeprint rejects mixed state",
+          "pass": true
+        },
+        {
+          "name": "recapture",
+          "pass": true
+        },
+        {
+          "name": "navigation invalidates",
+          "pass": true
+        },
+        {
+          "name": "route return current",
+          "pass": true
+        }
+      ],
+      "viewport": {
+        "client": 1265,
+        "scroll": 1265
+      },
+      "snapshot": {
+        "schema": "paideia.scenario-comparison",
+        "schema_version": 1,
+        "scenarios": [
+          {
+            "id": "A",
+            "status": "current",
+            "version": 21,
+            "inputs": {
+              "principal": "1000",
+              "annual_rate_percent": "-99",
+              "years": "3",
+              "monthly_contribution": "20",
+              "inflation_percent": "2",
+              "method": "simple"
+            },
+            "result": {
+              "hypothetical": true,
+              "not_prediction": true,
+              "currency": "EUR",
+              "assumptions": {
+                "principal": "1000.00",
+                "annual_rate_percent": "-99",
+                "years": 3,
+                "monthly_contribution": "20.00",
+                "method": "simple",
+                "inflation_percent": "2",
+                "annual_rate_convention": "simple_annual_rate",
+                "monthly_contribution_timing": "end_of_month",
+                "monthly_rate_conversion": "annual_simple_rate_divided_by_12",
+                "working_precision": "80_significant_decimal_digits",
+                "rounding": "half_up_to_cents_in_serialized_output; no_cent_rounding_per_month",
+                "taxes_included": false,
+                "fees_included": false
+              },
+              "summary": {
+                "contributions": "1720.00",
+                "final_balance": "-2289.50",
+                "interest": "-4009.50",
+                "inflation_adjusted": "-2157.45"
+              },
+              "series": [
+                {
+                  "month": 0,
+                  "contributions": "1000.00",
+                  "balance": "1000.00",
+                  "real_balance": "1000.00"
+                },
+                {
+                  "month": 12,
+                  "contributions": "1240.00",
+                  "balance": "141.10",
+                  "real_balance": "138.33"
+                },
+                {
+                  "month": 24,
+                  "contributions": "1480.00",
+                  "balance": "-955.40",
+                  "real_balance": "-918.30"
+                },
+                {
+                  "month": 36,
+                  "contributions": "1720.00",
+                  "balance": "-2289.50",
+                  "real_balance": "-2157.45"
+                }
+              ]
+            }
+          },
+          {
+            "id": "B",
+            "status": "current",
+            "version": 16,
+            "inputs": {
+              "principal": "0",
+              "annual_rate_percent": "0",
+              "years": "1",
+              "monthly_contribution": "0",
+              "inflation_percent": "0",
+              "method": "compound"
+            },
+            "result": {
+              "hypothetical": true,
+              "not_prediction": true,
+              "currency": "EUR",
+              "assumptions": {
+                "principal": "0.00",
+                "annual_rate_percent": "0",
+                "years": 1,
+                "monthly_contribution": "0.00",
+                "method": "compound",
+                "inflation_percent": "0",
+                "annual_rate_convention": "effective_annual_rate",
+                "monthly_contribution_timing": "end_of_month",
+                "monthly_rate_conversion": "effective_monthly_rate",
+                "working_precision": "80_significant_decimal_digits",
+                "rounding": "half_up_to_cents_in_serialized_output; no_cent_rounding_per_month",
+                "taxes_included": false,
+                "fees_included": false
+              },
+              "summary": {
+                "contributions": "0.00",
+                "final_balance": "0.00",
+                "interest": "0.00",
+                "inflation_adjusted": "0.00"
+              },
+              "series": [
+                {
+                  "month": 0,
+                  "contributions": "0.00",
+                  "balance": "0.00",
+                  "real_balance": "0.00"
+                },
+                {
+                  "month": 12,
+                  "contributions": "0.00",
+                  "balance": "0.00",
+                  "real_balance": "0.00"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "viewport": {
+      "client": 1265,
+      "scroll": 1265,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "report_download_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": false,
+      "error": "Error: feature probe guard enabled",
+      "checks": [
+        {
+          "name": "feature probe guard enabled",
+          "pass": false
+        }
+      ]
+    },
+    "viewport": {
+      "client": 1265,
+      "scroll": 1265,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "qa_layout_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": true,
+      "checks": [
+        {
+          "name": "home bounds",
+          "pass": true,
+          "detail": {
+            "client": 1265,
+            "scroll": 1265,
+            "bounds": [
+              {
+                "text": "respuestas.objetivo: {\"estado\":\"declarado\",\"valor\":\"aprender_conceptos\"}",
+                "right": 861.546875
+              },
+              {
+                "text": "detalle_economico.importe_objetivo: {\"estado\":\"declarado\",\"valor\":{\"min_eur\":\"0\",\"max_eur\":\"0.00\",\"moneda\":\"EUR\"}}",
+                "right": 902
+              }
+            ]
+          }
+        },
+        {
+          "name": "temporal notice",
+          "pass": true,
+          "detail": "Selección para comparar · 0 de 4Elige al menos dos candidatos. La selección no cambia sin que pulses aquí. La selección y los filtros son temporales y se pierden al recargar la página.Selecciona 2 para comparar"
+        },
+        {
+          "name": "different horizons",
+          "pass": true,
+          "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAActualizado10 años6100,00 €6715,00 €6079,00 €BActualizado5 años6200,00 €6689,95 €6365,26 €Capital aportado: suma del capital inicial y las aportaciones. Saldo nominal: importe final sin ajustar. Saldo real: saldo ajustado por la inflación supuesta.Qué cambia de A a BCapital inicial: 100,00 € → 200,00 €Tasa anual: 2 % → 3 %Horizonte: 10 años → 5 añosAportación mensual: 50,00 € → 100,00 €Método: Simple → CompuestoLos horizontes son distintos: los saldos corresponden a momentos diferentes."
+        },
+        {
+          "name": "edit retains B and hides stale A",
+          "pass": true,
+          "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAPendiente de calcular5 años———BActualizado5 años6200,00 €6689,95 €6365,26 €Capital aportado: suma del capital inicial y las aportaciones. Saldo nominal: importe final sin ajustar. Saldo real: saldo ajustado por la inflación supuesta."
+        },
+        {
+          "name": "equal horizons no warning",
+          "pass": true,
+          "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAActualizado5 años3100,00 €3257,50 €3099,40 €BActualizado5 años6200,00 €6689,95 €6365,26 €Capital aportado: suma del capital inicial y las aportaciones. Saldo nominal: importe final sin ajustar. Saldo real: saldo ajustado por la inflación supuesta.Qué cambia de A a BCapital inicial: 100,00 € → 200,00 €Tasa anual: 2 % → 3 %Aportación mensual: 50,00 € → 100,00 €Método: Simple → Compuesto"
+        }
+      ]
+    },
+    "viewport": {
+      "client": 1265,
+      "scroll": 1265,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "scenario_journey_focus_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "checks": [
+        {
+          "name": "foco Empezar/ajustar",
+          "pass": false,
+          "active": "page-title"
+        },
+        {
+          "name": "ruta Empezar/ajustar",
+          "pass": true
+        },
+        {
+          "name": "sin cambios ni solicitudes Empezar/ajustar",
+          "pass": true
+        },
+        {
+          "name": "foco Comparar/entender",
+          "pass": false,
+          "active": "page-title"
+        },
+        {
+          "name": "ruta Comparar/entender",
+          "pass": true
+        },
+        {
+          "name": "sin cambios ni solicitudes Comparar/entender",
+          "pass": true
+        },
+        {
+          "name": "foco Guardar",
+          "pass": false,
+          "active": "page-title"
+        },
+        {
+          "name": "ruta Guardar",
+          "pass": true
+        },
+        {
+          "name": "sin cambios ni solicitudes Guardar",
+          "pass": true
+        }
+      ],
+      "viewport": {
+        "client": 390,
+        "scroll": 390,
+        "inner": 390
+      }
+    },
+    "viewport": {
+      "client": 390,
+      "scroll": 390,
+      "inner": 390
+    }
+  },
+  {
+    "test": "scenario_journey_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "checks": [
+        {
+          "name": "formularios y secciones existentes",
+          "pass": true
+        },
+        {
+          "name": "formularios antes del resumen",
+          "pass": true
+        },
+        {
+          "name": "resumen antes de guardar",
+          "pass": true
+        },
+        {
+          "name": "enlace Empezar/ajustar",
+          "pass": true
+        },
+        {
+          "name": "navegación Empezar/ajustar conserva ruta",
+          "pass": true
+        },
+        {
+          "name": "enlace Comparar/entender",
+          "pass": true
+        },
+        {
+          "name": "navegación Comparar/entender conserva ruta",
+          "pass": true
+        },
+        {
+          "name": "enlace Guardar",
+          "pass": true
+        },
+        {
+          "name": "navegación Guardar conserva ruta",
+          "pass": true
+        },
+        {
+          "name": "botón de ejemplo ficticio",
+          "pass": true
+        },
+        {
+          "name": "ejemplo rellena A",
+          "pass": false
+        }
+      ],
+      "error": "Error: ejemplo rellena A"
+    },
+    "viewport": {
+      "client": 390,
+      "scroll": 390,
+      "inner": 390
+    }
+  },
+  {
+    "test": "report_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "error": "Error: initial disabled",
+      "checks": [
+        {
+          "name": "initial disabled",
+          "pass": false
+        }
+      ],
+      "status": "Ambos escenarios están actualizados. El informe se captura al imprimir o descargar."
+    },
+    "viewport": {
+      "client": 390,
+      "scroll": 390,
+      "inner": 390
+    }
+  },
+  {
+    "test": "report_download_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "error": "Error: feature probe guard enabled",
+      "checks": [
+        {
+          "name": "feature probe guard enabled",
+          "pass": false
+        }
+      ]
+    },
+    "viewport": {
+      "client": 390,
+      "scroll": 390,
+      "inner": 390
+    }
+  },
+  {
+    "test": "qa_layout_browser.js",
+    "width": 390,
+    "result": {
+      "ok": true,
+      "checks": [
+        {
+          "name": "home bounds",
+          "pass": true,
+          "detail": {
+            "client": 390,
+            "scroll": 390,
+            "bounds": [
+              {
+                "text": "respuestas.objetivo: {\"estado\":\"declarado\",\"valor\":\"aprender_conceptos\"}",
+                "right": 345
+              },
+              {
+                "text": "detalle_economico.importe_objetivo: {\"estado\":\"declarado\",\"valor\":{\"min_eur\":\"0\",\"max_eur\":\"0.00\",\"moneda\":\"EUR\"}}",
+                "right": 345
+              }
+            ]
+          }
+        },
+        {
+          "name": "temporal notice",
+          "pass": true,
+          "detail": "Selección para comparar · 0 de 4Elige al menos dos candidatos. La selección no cambia sin que pulses aquí. La selección y los filtros son temporales y se pierden al recargar la página.Selecciona 2 para comparar"
+        },
+        {
+          "name": "different horizons",
+          "pass": true,
+          "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAActualizado10 años6100,00 €6715,00 €6079,00 €BActualizado5 años6200,00 €6689,95 €6365,26 €Capital aportado: suma del capital inicial y las aportaciones. Saldo nominal: importe final sin ajustar. Saldo real: saldo ajustado por la inflación supuesta.Qué cambia de A a BCapital inicial: 100,00 € → 200,00 €Tasa anual: 2 % → 3 %Horizonte: 10 años → 5 añosAportación mensual: 50,00 € → 100,00 €Método: Simple → CompuestoLos horizontes son distintos: los saldos corresponden a momentos diferentes."
+        },
+        {
+          "name": "edit retains B and hides stale A",
+          "pass": true,
+          "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAPendiente de calcular5 años———BActualizado5 años6200,00 €6689,95 €6365,26 €Capital aportado: suma del capital inicial y las aportaciones. Saldo nominal: importe final sin ajustar. Saldo real: saldo ajustado por la inflación supuesta."
+        },
+        {
+          "name": "equal horizons no warning",
+          "pass": true,
+          "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAActualizado5 años3100,00 €3257,50 €3099,40 €BActualizado5 años6200,00 €6689,95 €6365,26 €Capital aportado: suma del capital inicial y las aportaciones. Saldo nominal: importe final sin ajustar. Saldo real: saldo ajustado por la inflación supuesta.Qué cambia de A a BCapital inicial: 100,00 € → 200,00 €Tasa anual: 2 % → 3 %Aportación mensual: 50,00 € → 100,00 €Método: Simple → Compuesto"
+        }
+      ]
+    },
+    "viewport": {
+      "client": 390,
+      "scroll": 390,
+      "inner": 390
+    }
+  }
+]

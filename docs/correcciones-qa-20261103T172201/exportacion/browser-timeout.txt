@@ -1,0 +1,1 @@
+La repetición paralela de report_browser.js agotó Runtime.evaluate a los 5 segundos; reintento serial a continuación.

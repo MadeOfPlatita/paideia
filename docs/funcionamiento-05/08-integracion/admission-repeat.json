@@ -1,0 +1,5 @@
+{
+  "output": "{\"runs\": [{\"run\": 1, \"tests\": 18, \"ok\": true}, {\"run\": 2, \"tests\": 18, \"ok\": true}, {\"run\": 3, \"tests\": 18, \"ok\": true}, {\"run\": 4, \"tests\": 18, \"ok\": true}, {\"run\": 5, \"tests\": 18, \"ok\": true}, {\"run\": 6, \"tests\": 18, \"ok\": true}, {\"run\": 7, \"tests\": 18, \"ok\": true}, {\"run\": 8, \"tests\": 18, \"ok\": true}, {\"run\": 9, \"tests\": 18, \"ok\": true}, {\"run\": 10, \"tests\": 18, \"ok\": true}, {\"run\": 11, \"tests\": 18, \"ok\": true}, {\"run\": 12, \"tests\": 18, \"ok\": true}, {\"run\": 13, \"tests\": 18, \"ok\": true}, {\"run\": 14, \"tests\": 18, \"ok\": true}, {\"run\": 15, \"tests\": 18, \"ok\": true}, {\"run\": 16, \"tests\": 18, \"ok\": true}, {\"run\": 17, \"tests\": 18, \"ok\": true}, {\"run\": 18, \"tests\": 18, \"ok\": true}, {\"run\": 19, \"tests\": 18, \"ok\": true}, {\"run\": 20, \"tests\": 18, \"ok\": true}], \"all_ok\": true}",
+  "exit_code": 0,
+  "error": null
+}

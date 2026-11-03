@@ -1,0 +1,11 @@
+test_deadline_while_connecting_prevents_request (test_session_send_boundary.BoundaryTests.test_deadline_while_connecting_prevents_request) ... ok
+test_failure_never_prints_body_or_key (test_session_send_boundary.BoundaryTests.test_failure_never_prints_body_or_key) ... ok
+test_inflight_response_does_not_block_revoke_or_shutdown (test_session_send_boundary.BoundaryTests.test_inflight_response_does_not_block_revoke_or_shutdown) ... ok
+test_last_slot_sends_and_failure_connect_counts (test_session_send_boundary.BoundaryTests.test_last_slot_sends_and_failure_connect_counts) ... ok
+test_legacy_unguarded_transport_api (test_session_send_boundary.BoundaryTests.test_legacy_unguarded_transport_api) ... ok
+test_revoke_while_connecting_prevents_request (test_session_send_boundary.BoundaryTests.test_revoke_while_connecting_prevents_request) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.003s
+
+OK

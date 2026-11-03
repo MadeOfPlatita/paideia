@@ -1,0 +1,221 @@
+{
+  "documento": "Paideia — checklist de lanzamiento y operación",
+  "version": 1,
+  "fecha_referencia": "2026-10-26",
+  "estado_global": "bloqueado",
+  "listo_para_lanzar": false,
+  "regla_lanzamiento": "Todos los criterios obligatorios deben quedar en verificado con evidencia; la aprobación de ambos responsables y la revisión de privacidad/condiciones son requisitos manuales. Un criterio bloqueado impide anunciar producción o capacidad/concurrencia.",
+  "estados_permitidos": ["pendiente", "bloqueado", "verificado", "no_aplica_aprobado"],
+  "decisiones_bloqueantes": [
+    {
+      "id": "G-01",
+      "decision": "Titularidad del repo, propietarios, permisos de publicación y aprobación de ambos responsables.",
+      "estado": "bloqueado",
+      "owner": "equipo",
+      "evidencia_requerida": "Aprobación escrita y roles de cuenta/repositorio confirmados."
+    },
+    {
+      "id": "G-02",
+      "decision": "Elegir y aprobar licencia antes de presentar el proyecto como open source.",
+      "estado": "bloqueado",
+      "owner": "equipo",
+      "evidencia_requerida": "Decisión de licencia por el titular y LICENSE revisada en el repo."
+    },
+    {
+      "id": "G-03",
+      "decision": "Confirmar cuentas, términos, requisitos de tarjeta, cuotas Free y ausencia de facturación accidental.",
+      "estado": "bloqueado",
+      "owner": "equipo",
+      "evidencia_requerida": "Captura/registro de ajustes sin datos sensibles y revisión del panel de billing. No asumir que alta sin tarjeta está disponible."
+    },
+    {
+      "id": "G-04",
+      "decision": "Elegir proveedor/modelo LLM y aprobar tratamiento de datos y condiciones.",
+      "estado": "bloqueado",
+      "owner": "equipo",
+      "evidencia_requerida": "Proveedor y modelo exactos, cuota/coste, privacidad, español, fallback y prueba de staging aprobados."
+    },
+    {
+      "id": "G-05",
+      "decision": "Resolver con el agente de API si se necesita DB cloud, y elegirla solo tras validar límites, cold start/pausa, backup/restore, conexión y costes.",
+      "estado": "bloqueado",
+      "owner": "equipo + agente API",
+      "evidencia_requerida": "Decisión documentada; si no hay opción Free aceptable, usar snapshots estáticos y DB local para desarrollo."
+    },
+    {
+      "id": "G-06",
+      "decision": "Aprobar fuentes, licencias, cobertura, fecha/frescura y reglas de caducidad del catálogo.",
+      "estado": "bloqueado",
+      "owner": "equipo",
+      "evidencia_requerida": "Matriz de fuente por familia con autorización, campos, atribución y vencimiento."
+    },
+    {
+      "id": "G-07",
+      "decision": "Aprobar texto de privacidad, aviso de envío de datos a IA y lenguaje educativo/no asesoramiento.",
+      "estado": "bloqueado",
+      "owner": "equipo + revisor correspondiente",
+      "evidencia_requerida": "Texto aprobado antes de habilitar chat público."
+    }
+  ],
+  "criterios_obligatorios": [
+    {
+      "id": "AC-01",
+      "area": "repositorio",
+      "criterio": "Repo creado por el titular, permisos mínimos, 2FA y protección de main/PR review configurados; sin secretos, dumps, perfiles ni prompts reales en Git.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Ajustes revisados por responsable y escaneo del historial/repo."
+    },
+    {
+      "id": "AC-02",
+      "area": "licencia",
+      "criterio": "Licencia decidida por titular e incluida antes de declarar open source o hacer público el repo.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "LICENSE y decisión aprobada."
+    },
+    {
+      "id": "AC-03",
+      "area": "coste",
+      "criterio": "Hosting, LLM, DB opcional, runners y alertas revisados dentro del presupuesto; ningún plan de pago, dominio comprado ni facturación activada sin aprobación expresa.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Capturas de límites/plan y aprobación de facturación por el titular; ningún dato de tarjeta en artefactos."
+    },
+    {
+      "id": "AC-04",
+      "area": "frontend",
+      "criterio": "SPA desplegada en URL del proveedor sin dominio comprado; preview separado de producción; secretos/DB nunca aparecen en el bundle.",
+      "estado": "pendiente",
+      "evidencia_requerida": "URLs de staging/prod, inspección del bundle y smoke test en móvil/desktop."
+    },
+    {
+      "id": "AC-05",
+      "area": "chat y privacidad",
+      "criterio": "Chat solo tras aprobar proveedor, aviso, origen, método, esquema, tamaño, límites y secreto en backend; si proveedor/cuota falla, chat se desactiva y el resto sigue utilizable.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Pruebas de token/entrada inválidos, fallo/429/timeout/cuota agotada y fallback sin enviar perfil no necesario."
+    },
+    {
+      "id": "AC-06",
+      "area": "datos",
+      "criterio": "Fuentes y permisos por familia aprobados; catálogo incluye fuente, consulta UTC, fecha efectiva y esquema; no se publica lote parcial ni se inventan valores.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Snapshot candidate válido, validación de esquema/licencia y fecha por registro/campo requerido."
+    },
+    {
+      "id": "AC-07",
+      "area": "último bueno",
+      "criterio": "Fallos de ingesta conservan el último snapshot íntegro; versión/hash/commit son identificables y el catálogo expirado se advierte o excluye según reglas aprobadas.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Prueba de lote inválido, diff, conservación del último bueno, restauración de snapshot y fecha visible."
+    },
+    {
+      "id": "AC-08",
+      "area": "cron",
+      "criterio": "Ingesta puede iniciarse manualmente; el cron es best-effort, monitorizado y no se presenta como garantía de actualización diaria/SLA.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Workflow manual probado, ejecución fallida/no ocurrida detectada y procedimiento de reintento idempotente."
+    },
+    {
+      "id": "AC-09",
+      "area": "base de datos",
+      "criterio": "Si se adopta DB cloud: TLS, conexiones solo de servidor, permisos mínimos, roles separados, secretos staging/prod y ningún acceso de navegador; plan/pausa/cold start/retención confirmados.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Config revisada sin mostrar credenciales, tests de permisos, conexión Workers, pausa/reanudación y fallback estático. Si no se adopta DB, registrar no_aplica_aprobado."
+    },
+    {
+      "id": "AC-10",
+      "area": "migraciones",
+      "criterio": "Migraciones append-only, revisadas, idempotencia/orden definidos; probadas local y staging; una sola ejecución de migración por ambiente; despliegue compatible y sin migración automática en arranque.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Versión schema, salida de pruebas de migración y plan correctivo/rollback revisados."
+    },
+    {
+      "id": "AC-11",
+      "area": "roles y secretos",
+      "criterio": "No hay superuser en runtime; permisos mínimos; secretos separados por ambiente, fuera del repo/logs/cliente y rotables.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Revisión de roles/GRANTs y prueba de rotación/revocación sin exponer valores."
+    },
+    {
+      "id": "AC-12",
+      "area": "GitHub Actions",
+      "criterio": "Permiso de token mínimo; forks y PR no confiables no acceden a secretos; job de promoción aislado/aprobado; Actions de terceros fijadas y revisadas.",
+      "estado": "pendiente",
+      "evidencia_requerida": "YAML revisado y pruebas de permisos de workflow/environment."
+    },
+    {
+      "id": "AC-13",
+      "area": "staging/prod",
+      "criterio": "Entornos aislados, datos sintéticos en staging, credenciales separadas y producción solo promueve un commit probado y aprobado.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Pruebas con secretos/base distintos y registro de SHA desplegado."
+    },
+    {
+      "id": "AC-14",
+      "area": "rollback",
+      "criterio": "Rollback Pages probado y Worker/config/DB/catalogue gestionados por separado; rollback de código no se confunde con restore de datos.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Ensayo staging del rollback a commit bueno y recuperación de catálogo/base."
+    },
+    {
+      "id": "AC-15",
+      "area": "backup/recovery",
+      "criterio": "Proveedor elegido documenta copia/retención/export/restore; RPO/RTO acordados; restore probado en staging y almacenamiento de copia separado; no se afirma que Free incluya PITR.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Prueba de restore con tiempos/resultado, responsable y política aprobada."
+    },
+    {
+      "id": "AC-16",
+      "area": "monitorización",
+      "criterio": "Se observan salud/errores/latencia agregados, versión y edad del catálogo/cuotas; no se registran prompts, perfiles, tokens, IP, cookies ni payloads.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Configuración de logs revisada y prueba de errores sintéticos con logs redacted."
+    },
+    {
+      "id": "AC-17",
+      "area": "capacidad",
+      "criterio": "No se anuncia soporte para 100 concurrentes hasta completar prueba autorizada, gradual y con criterios p95/errores aceptados; la carga usa perfiles/prompts sintéticos.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Resultados staging por escalones de concurrencia, latencia p50/p95, errores, cuotas y aprobación del proveedor."
+    },
+    {
+      "id": "AC-18",
+      "area": "fallback",
+      "criterio": "Demo offline/reducida preparada con datos sintéticos y respuestas deterministas; se presenta explícitamente como offline/reducida, sin chat online ni disponibilidad con PC apagado.",
+      "estado": "pendiente",
+      "evidencia_requerida": "Ensayo de demo sin red y texto que distingue demo local de la URL online."
+    },
+    {
+      "id": "AC-19",
+      "area": "publicación",
+      "criterio": "Revisión final de seguridad/privacidad/educación y aprobación por los responsables; el enlace público solo se comparte después de AC-01 a AC-18 verificados o no_aplica_aprobado con justificación.",
+      "estado": "bloqueado",
+      "evidencia_requerida": "Acta/checklist aprobada por ambos responsables, commit y URL accesible."
+    }
+  ],
+  "cli_referencias_no_ejecutadas": [
+    {
+      "proposito": "Exportación lógica SQL de una base elegida para ensayo de recuperación.",
+      "comando": "pg_dump DBNAME > DBNAME.sql",
+      "fuente_ids": [4],
+      "estado": "no_ejecutado"
+    },
+    {
+      "proposito": "Restaurar el dump SQL en una base de prueba vacía ya creada.",
+      "comando": "psql -X DBNAME_RESTORE < DBNAME.sql",
+      "fuente_ids": [4],
+      "estado": "no_ejecutado"
+    }
+  ],
+  "bloqueos_actuales": [
+    "No existe aprobación de cuentas/proveedores, licencia, repo/titularidad ni credenciales.",
+    "Proveedor/modelo LLM y tratamiento de datos no elegidos.",
+    "Proveedor y necesidad de DB cloud pendientes del agente de API; no hay fuentes/licencias de catálogo aprobadas.",
+    "No hay aplicación publicada, staging, test de carga autorizado, política de backup/restore ni SLA/RPO/RTO acordados."
+  ],
+  "demo_offline_reducida": {
+    "estado": "alternativa_explicita_pendiente",
+    "incluye": ["catálogo ficticio/manual etiquetado", "perfil local borrable", "simuladores y glosario locales", "respuestas preescritas sin LLM"],
+    "no_incluye": ["chat online", "actualización automática", "DB cloud", "garantía de disponibilidad online con el PC apagado"],
+    "nota": "No sustituye el requisito de hosting público; es una alternativa de demostración local si se bloquea la integración online."
+  }
+}

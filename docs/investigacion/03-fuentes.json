@@ -1,0 +1,58 @@
+[
+  {
+    "url": "https://www.cnmv.es/portal/inversor/fondos-dfi?lang=es",
+    "title": "CNMV — El documento de datos fundamentales para el inversor (DFI)",
+    "claim": "El DFI contiene identificación del fondo y gestora, perfil de riesgo de 1 a 7 y gastos corrientes TER; la CNMV indica que la categoría 1 no implica ausencia de riesgo.",
+    "evidence": "Muestra denominación del fondo, código ISIN, Nº de registro en CNMV e identificación de la gestora.\nOfrece un dato indicativo del riesgo del fondo en una escala de 1 a 7 niveles.\nPor un lado se incluye el indicador de los gastos corrientes TER (Total expense ratio) como media de los gastos totales que soporta el fondo.",
+    "verification": "Web_extract directo de la página CNMV, consultada el 2026-10-26. Texto primario español contrastado. No se probó un endpoint de consulta masiva de documentos o campos."
+  },
+  {
+    "url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+    "title": "iShares Core MSCI Europe UCITS ETF EUR (Acc) | SMEA",
+    "claim": "La página oficial del producto mostraba un valor liquidativo de 103,45 EUR con fecha efectiva 23 de octubre de 2026; es una publicación fechada en la página, no una API NAV probada.",
+    "evidence": "Valor liquidativo a 23 oct 2026 EUR 103,45",
+    "verification": "Web_extract directo de la página de BlackRock consultada el 2026-10-26. Fragmento visible con fecha del NAV; no se verificó su mecanismo de actualización ni un histórico descargable."
+  },
+  {
+    "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf",
+    "title": "Vanguard FTSE All-World UCITS ETF (USD) Accumulating — factsheet 31 August 2026",
+    "claim": "La ficha identifica la clase USD acumulativa con ISIN IE00BK5BQT80, muestra UCITS y domicilio Irlanda, OCF 0,14%, y lista el ticker VWCE.DE en EUR en Deutsche Börse; la propia ficha limita su uso a inversores profesionales.",
+    "evidence": "Ongoing Charges Figure†          0.14%\nDeutsche Börse\nEUR\nVWCE\nBJVR0R9\nVWCE.DE\nUSD\nAustria, Germany, Switzerland and UK\n6\nTAWNT01U\nUCITS\nIreland\nVanguard Funds plc\nPhysical\nIE00BK5BQT80\nAccumulated",
+    "verification": "Web_extract directo del PDF de Vanguard; la ficha lleva fecha 31-08-2026. El aviso de la ficha dice que va dirigida a inversores profesionales y no debe distribuirse ni servirles de base a minoristas. Datos de ficha, no endpoint probado."
+  },
+  {
+    "url": "https://fund-docs.vanguard.com/ie00bk5bqt80-en.pdf",
+    "title": "UCITS KIID — Vanguard FTSE All-World UCITS ETF, USD Accumulating Shares, IE00BK5BQT80",
+    "claim": "El KIID en inglés consultado identifica la clase de participaciones como USD acumulativa; se mantiene como un KIID y no se equipara automáticamente a un KID PRIIPs español.",
+    "evidence": "(USD) Accumulating Shares\nISIN: IE00BK5BQT80",
+    "verification": "Web_extract directo del PDF alojado por Vanguard. El documento está titulado KIID/Key Investor Information; se consultó como evidencia de identidad de clase, no como dato de mercado."
+  },
+  {
+    "url": "https://www.amundietf.com/pdfDocuments/monthly-factsheet/IE0009DRDY20/ENG/LUX/INSTITUTIONNEL/ETF/20260831",
+    "title": "Amundi Prime Global UCITS ETF Acc — factsheet 31/08/2026",
+    "claim": "La ficha declara SRI 4/7 vinculado al KID, coste de gestión y otros costes operativos de 0,05%, NAV/AUM fechado 31-08-2026 y frecuencia de cálculo NAV diaria; identifica la moneda de referencia de clase USD y el ISIN IE0009DRDY20. Es una ficha mensual para profesionales, no una API probada.",
+    "evidence": "We have classified this product as 4 out of 7, which is a medium risk class.\nManagement fees and other administrative or operating costs * 0.05%\nNAV and AUM as of 31/08/2026\nFrequency of NAV calculation Daily\nShare-class reference currency USD\nISIN code A : IE0009DRDY20\nThis material is solely for the attention of “professional” investors.",
+    "verification": "Web_extract directo del PDF/factsheet oficial de Amundi, fecha de la ficha 31-08-2026. El documento afirma frecuencia de cálculo diaria, pero la extracción disponible es una ficha fechada; no se consultó un endpoint ni se obtuvo serie diaria de NAV."
+  },
+  {
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/VWCE.DE?range=5d&interval=1d",
+    "title": "Yahoo Finance chart endpoint — prueba de VWCE.DE",
+    "claim": "Un GET sin credenciales devolvió metadatos de ETF en EUR para VWCE.DE, una cotización regular de 170,0 EUR y cinco observaciones OHLCV diarias; no aportó ISIN, TER/OCF, KID/SRI ni NAV identificado como tal.",
+    "evidence": "HTTP 200; Content-Type: application/json;charset=utf-8\n\"currency\":\"EUR\",\"symbol\":\"VWCE.DE\",\"exchangeName\":\"GER\",\"fullExchangeName\":\"XETRA\",\"instrumentType\":\"ETF\"\n\"regularMarketPrice\":170.0\n\"timestamp\":[1792479600,1792566000,1792652400,1792738800,1793001600]\n\"close\":[170.36000061035156,171.32000732421875,169.27999877929688,169.3000030517578,170.0]",
+    "verification": "Endpoint probado mediante urllib el 2026-10-26 con una solicitud HTTPS de solo lectura y sin clave. La respuesta tenía application/json y cinco timestamps/cierres; el último cierre del rango fue 170.0 EUR el 26-10-2026. Prueba aislada de un ticker y rango. No se verificaron documentación/contrato, cuotas, licencia, redistribución, cobertura ni capacidad de usuarios concurrentes."
+  },
+  {
+    "url": "https://stooq.com/q/d/l/?s=vwce.de&i=d",
+    "title": "Stooq — endpoint daily CSV, prueba de VWCE.DE",
+    "claim": "La petición al endpoint CSV devolvió una página de verificación de navegador JavaScript, no datos CSV utilizables.",
+    "evidence": "HTTP 200; Content-Type: text/html; bytes: 796\nThis site requires JavaScript to verify your browser.",
+    "verification": "Endpoint probado mediante urllib el 2026-10-26. Se recibió HTML de verificación en vez de CSV; no se hizo un segundo intento y se cambió a Yahoo para la prueba alternativa."
+  },
+  {
+    "url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+    "title": "iShares Core MSCI Europe UCITS ETF EUR (Acc) — Documento de datos fundamentales PRIIPs",
+    "claim": "El KID español, fechado 03-09-2026, identifica la clase EUR Acc con ISIN IE00B4K48X80 como ETF OICVM/UCITS, asigna SRI 4/7 y separa 0,12% de costes de gestión/administrativos anuales y 0,01% estimado de costes de operación; advierte que el precio secundario puede diferir del valor de las acciones.",
+    "evidence": "iShares Core MSCI Europe UCITS ETF EUR (Acc), EUR Accu (la «Clase de Acciones»), ISIN: IE00B4K48X80\nEl Fondo es un OICVM de tipo fondo cotizado, un «ETF OICVM».\nLa moneda base del Fondo es el euro.\nLa fecha de este documento es 03 septiembre 2026.\nHemos clasificado este producto en la clase de riesgo 4 en una escala de 7\n0.12% del valor de su inversión al año.\n0.01% del valor de su inversión al año.\nEl precio de mercado vigente al que se negocian las acciones en el mercado secundario puede diferir del valor de las Acciones.",
+    "verification": "Web_extract directo del KID PRIIPs español de BlackRock, fecha interna 03-09-2026. Se cotejaron ISIN, nombre de clase, OICVM, moneda base, SRI, costes y distinción entre valor de acciones y precio de mercado."
+  }
+]

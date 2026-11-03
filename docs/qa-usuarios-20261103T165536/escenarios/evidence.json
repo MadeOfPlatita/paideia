@@ -1,0 +1,38 @@
+{
+  "fecha_cierre": "2026-11-03T17:01:11+01:00",
+  "url": "http://127.0.0.1:8765/#escenarios",
+  "entorno": "demo local, navegador aislado, IA desconectada, datos ficticios",
+  "hallazgos": [
+    {
+      "id": "ESC-01",
+      "severidad": "media",
+      "titulo": "Comparación de horizontes diferentes sin contexto en la tabla",
+      "pasos": "Calcular A con 10000 EUR, 4%, 5 años, 100 EUR/mes e inflación 2%; B con 10000 EUR, -1%, 10 años, 100 EUR/mes e inflación 2%; ambos compuestos.",
+      "esperado": "Identificar horizontes o advertir su diferencia en la comparación.",
+      "actual": "Las filas están actualizadas y muestran saldos sin horizonte ni advertencia en el resumen; cada horizonte aparece en su resultado detallado.",
+      "captura": "screenshots/comparacion-horizontes.png",
+      "consola": "No capturada"
+    },
+    {
+      "id": "ESC-02",
+      "severidad": "baja",
+      "titulo": "Separación de miles incoherente en diferencia del escenario",
+      "pasos": "Calcular A con 10000 EUR, 4%, 5 años, 100 EUR mensuales e inflación 2%.",
+      "esperado": "Formato monetario coherente con las demás cantidades.",
+      "actual": "Saldo 18.784,43 € y diferencia 2784,43 €.",
+      "captura": null,
+      "consola": "No capturada"
+    }
+  ],
+  "observaciones": {
+    "edicion": "A queda pendiente y su resultado desaparece; B sigue actualizado.",
+    "igualdad": "Con supuestos idénticos ambos muestran 16000 EUR aportados, 18784,43 EUR nominal y 17013,64 EUR real.",
+    "navegacion": "Los resultados iguales permanecen tras ir a Inicio y volver por historial en la misma sesión.",
+    "validaciones": "Vacío, plazo 1.5 y plazo 41 rechazados por validación nativa; cero y tasa -1 aceptados; 1e2 y capital 100000000000000000000 producen avisos visibles de la aplicación. No se verificó rechazo de backend.",
+    "coma": "La escritura de 1,5 dejó value 1.5 válido; no se verificó envío completo.",
+    "movil": "Emulación 375x812: clientWidth 375, scrollWidth 375; Tab desde capital pasa por tasa, horizonte y aportación.",
+    "pendiente_error": "No reproducido; no se interceptó ni falsificó API."
+  },
+  "capturas_bytes": {"comparacion-horizontes.png": 27867, "edicion-pendiente.png": 26716, "movil-formulario.png": 30612},
+  "limitaciones": ["Sin registros de consola retroactivos", "Sin dispositivo físico", "Sin prueba de backend ni red lenta", "Sin prueba de impresión", "Horas por paso no registradas"]
+}

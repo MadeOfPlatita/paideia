@@ -1,0 +1,18 @@
+{
+  "user_report": "El botón se veía, pero no respondía o estaba deshabilitado",
+  "authorization": "Sí, después de resolver el problema de la ventana",
+  "new_block_max_minutes": 60,
+  "new_block_max_attempts": 24,
+  "activation_condition": "UI issue corrected and verified before new window",
+  "activated": true,
+  "new_mission_id": "paideia-ia-20261030T005810Z",
+  "old_mission_closed": true,
+  "old_mission_used": 0,
+  "requirements": [
+    "fresh masked local credential entry",
+    "explicit Free without billing confirmation",
+    "synthetic data only",
+    "no extension or reset of old mission",
+    "no API calls until voluntary entry and confirmation"
+  ]
+}

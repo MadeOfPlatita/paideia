@@ -1,0 +1,14 @@
+{
+  "ok": false,
+  "error": "Error: download control exists",
+  "checks": [
+    {
+      "name": "feature probe guard enabled",
+      "pass": true
+    },
+    {
+      "name": "download control exists",
+      "pass": false
+    }
+  ]
+}

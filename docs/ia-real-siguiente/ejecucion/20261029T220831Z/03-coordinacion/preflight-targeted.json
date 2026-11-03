@@ -1,0 +1,5 @@
+{
+  "output": "READY test_only=True\r\nREADY test_only=True\r\nREADY test_only=True\r\nREADY test_only=True\r\n----------------------------------------------------------------------\r\nRan 13 tests in 0.057s\r\n\r\nOK\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.008s\r\n\r\nOK\r\n{\"synthetic_cases\": 6, \"planned_calls\": 18, \"max_native_bytes\": 2314, \"live_calls\": 0}",
+  "exit_code": 0,
+  "error": null
+}

@@ -1,0 +1,12 @@
+{
+  "phase": "closed_local_scope_approved",
+  "workers": {"delegation": "deleg_cbff4867", "layout": "sa-0-1a56227a", "export": "sa-1-47b164af"},
+  "owned_test_server": {"process": "proc_8e684ec9d8eb", "pid": 29372, "port": 18881, "status": "stopped_no_listener", "preview_test_tab": "closed"},
+  "user_demo": {"port": 8765, "running": true, "ai_connected": false, "preview_state_preservation": "Not claimed: preview.open reused web tab; both scenarios were observed pending before change"},
+  "native_automation": "Real Save As completed by UIA; exact HTML read back and opened; reviewer independently confirmed file hash",
+  "source_diagnosis": {"path": "Hermes apps/desktop/src/app/chat/right-rail/preview-pane.tsx", "lines": [216, 219], "behavior": "sets __hermesPrintGuard and replaces window.print with warning", "hermes_modified": false},
+  "review": {"delegation": "deleg_90c57736", "passed": true, "verdict": "revision/REVISION-INDEPENDIENTE.json", "evidence": "revision/evidence.json", "browser_script_checks": 178, "independent_probes": 5, "node_tests": 41},
+  "acceptance_pending": [],
+  "outside_verified_scope": ["Native print/PDF dialog", "Hermes chat attachment download", "Real AI providers", "Global product/security approval"],
+  "result": "RESULTADOS.md"
+}

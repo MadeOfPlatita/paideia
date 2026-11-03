@@ -1,0 +1,86 @@
+{
+  "engine": "pytest",
+  "collected": [
+    {
+      "id": "53c10580f3a791fecbd0a18b91113fa1b3dcac2bca0604942f959635a95fb4e0",
+      "kind": "unittest"
+    },
+    {
+      "id": "562174283b337a3939950d2be5583f743c7e4e2735f285b2861196bc9111f653",
+      "kind": "unittest"
+    },
+    {
+      "id": "531ba659c58f81b6c4c0d516a42319c5705834706af5f57197ef4f46d07298b1",
+      "kind": "unittest"
+    },
+    {
+      "id": "9986cc0f9dea05e2d825bbba95d500f4b01f9d04ed7c486b5c702ac7c80b9b77",
+      "kind": "unittest"
+    },
+    {
+      "id": "f144c8433c27c8201f745f1c2865ffb72f6e1328fd7aa0072097da8ebd5e0276",
+      "kind": "unittest"
+    },
+    {
+      "id": "c39a3b565c006d301e7c3857f9b4c6e32e388581e346ea84e1b79829a1abb562",
+      "kind": "unittest"
+    }
+  ],
+  "counts": {
+    "unittest": 6,
+    "pytest_other": 0
+  },
+  "gui_exclusions": {
+    "5e3184f7c3ed4eb1d532b98e5bca2e6e6082f0971d48727f2458d9b656ec487c": "constructs a real Tk window",
+    "719084426a1c0599730df06bc2c8a3aab7092a1a397178c8e1020bd8c2577a86": "constructs a real Tk window",
+    "8643e601ade2746d4593ade2ab3ba45c4056838963acbf5203be7072f4f1b118": "constructs a real Tk window",
+    "7ce97fbe264f61419364267db713e7d7340edd0403d8b97e7f449fcb5975c712": "constructs a real Tk window",
+    "15994d2bd8f16e40d58b55c549ac6b30d954a040bf3e42ffd2566e7ac00e1e07": "constructs a real Tk window",
+    "cc622e10402afa441faef0f17810ec3de01b1c14b1a808daedf3aed9484390c8": "constructs a real Tk window"
+  },
+  "deselected": [],
+  "outcomes": {
+    "53c10580f3a791fecbd0a18b91113fa1b3dcac2bca0604942f959635a95fb4e0": "passed",
+    "562174283b337a3939950d2be5583f743c7e4e2735f285b2861196bc9111f653": "passed",
+    "531ba659c58f81b6c4c0d516a42319c5705834706af5f57197ef4f46d07298b1": "passed",
+    "9986cc0f9dea05e2d825bbba95d500f4b01f9d04ed7c486b5c702ac7c80b9b77": "passed",
+    "f144c8433c27c8201f745f1c2865ffb72f6e1328fd7aa0072097da8ebd5e0276": "passed",
+    "c39a3b565c006d301e7c3857f9b4c6e32e388581e346ea84e1b79829a1abb562": "passed"
+  },
+  "phase_outcomes": {
+    "53c10580f3a791fecbd0a18b91113fa1b3dcac2bca0604942f959635a95fb4e0": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "562174283b337a3939950d2be5583f743c7e4e2735f285b2861196bc9111f653": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "531ba659c58f81b6c4c0d516a42319c5705834706af5f57197ef4f46d07298b1": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "9986cc0f9dea05e2d825bbba95d500f4b01f9d04ed7c486b5c702ac7c80b9b77": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "f144c8433c27c8201f745f1c2865ffb72f6e1328fd7aa0072097da8ebd5e0276": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    },
+    "c39a3b565c006d301e7c3857f9b4c6e32e388581e346ea84e1b79829a1abb562": {
+      "setup": "passed",
+      "call": "passed",
+      "teardown": "passed"
+    }
+  },
+  "exit_status": 0,
+  "guard_scope": "in-process only; child processes do not inherit guards; not a sandbox; audit tests and children for offline/headless behavior",
+  "ignored_modules": [],
+  "collection_errors": []
+}

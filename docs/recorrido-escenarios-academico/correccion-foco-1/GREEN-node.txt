@@ -1,0 +1,49 @@
+✔ chat surfaces capabilities from the existing status response (1.5042ms)
+✔ projection preserves v2 answer states and decimal strings and includes only selected fields (1.6704ms)
+✔ history keeps only two previous turns in tab memory and can be cleared (0.4289ms)
+✔ synthetic context and history require independent opt ins (8.1203ms)
+✔ consent gates request and the body contains no profile (2.3798ms)
+✔ queued ticket is never attached to an edited question while request is pending (2.5889ms)
+✔ duplicate submission while busy must not send a second request (1.711ms)
+✔ flags, safe sources and tool events are visible; unsafe links are suppressed (2.2074ms)
+✔ synthetic calculation is opt-in, bound to explicit form inputs and sent once (2.2209ms)
+✔ structured capability is frozen before fetch even when status changes in flight (1.4727ms)
+✔ 202 requires manual resend and 429 is visible without automatic calls (1.6368ms)
+✔ Continue requires a valid explicit answer; zero and deliberate non-disclosure remain valid (1.2824ms)
+✔ Declared debt requires an explicit amount or non-disclosure choice for each visible subquestion (1.1041ms)
+✔ frontend answer paths remain anchored to the existing profile05 schema (1.1175ms)
+✔ blank profile uses the profile05 paths and starts every answer as not asked (0.9742ms)
+✔ declared zero, unknown, omitted and not-asked remain distinct (0.5896ms)
+✔ decimal inputs stay strings and accept the configured inclusive boundary (0.1982ms)
+✔ flow amounts retain the declared monthly periodicity and exact decimal text (0.2457ms)
+✔ debt subanswers retain independent zero, unknown and omitted states (0.2626ms)
+✔ no-debt, no commitment and distinct risk answers use profile05 values (1.0984ms)
+✔ profile and snapshot validators reject malformed, extra and numeric-decimal values (0.3994ms)
+✔ v1 migration preserves exact compatible answers and leaves added fields unanswered (0.824ms)
+✔ v1 migration keeps ambiguous legacy choices instead of guessing a new answer (0.421ms)
+✔ reload after failed deletion keeps the copy but never restores permission (0.6364ms)
+✔ migration from an existing saved v1 snapshot is read-only until explicit save (0.3525ms)
+✔ empty storage and persistence-off do not create a saved profile or consent (0.1538ms)
+✔ saved profile deletion clears the current and every supported legacy format (0.1503ms)
+✔ save reports a written snapshot even when legacy cleanup fails (2.848ms)
+✔ updated snapshot survives cleanup failure, reload and verified retry (0.6459ms)
+✔ save warns when legacy cleanup returns without removing residue (0.2956ms)
+✔ reload reports legacy residue alongside a valid current snapshot (0.2216ms)
+✔ delete does not report complete when a key remains despite a successful removal call (0.1978ms)
+✔ delete does not report complete if post-delete verification is unreadable (0.1472ms)
+✔ simulation describes reference without claiming synthetic fixtures are real products (1.4925ms)
+✔ structured fixture exposes server-owned editorial without using free answer (0.6693ms)
+✔ structured mode never falls back to an unstructured answer (0.2335ms)
+✔ structured response refuses external provenance or malformed editorial data (0.1284ms)
+✔ real local calculation schema matches scenario; tampered assumptions and extras fail (856.3119ms)
+✔ closed editorial catalogue rejects unknown, changed and duplicated claims (0.1743ms)
+✔ structured mode refuses legacy answer and arbitrary calculation without submitted scenario (0.1728ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 974.8658
+report unit: exact cents, whitelist, mismatch, dirty/pending/error and invalid data passed

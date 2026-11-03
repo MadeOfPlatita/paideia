@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://developers.cloudflare.com/kv/concepts/how-kv-works",
+      "title": "How KV works",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "KV achieves high performance by being eventually-consistent.",
+          "added": "2026-10-28"
+        }
+      ]
+    }
+  ]
+}

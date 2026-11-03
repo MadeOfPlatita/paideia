@@ -1,0 +1,11 @@
+SOURCE: https://render.com/docs/configure-environment-variables
+RESOLVED URL: https://render.com/docs/configure-environment-variables
+TITLE: Environment Variables and Secrets
+RETRIEVED: 2026-10-28 via web_extract
+SCOPE: Verbatim excerpts from retrieved official documentation.
+
+You can (and should!) use environment variables to configure your Render services:
+
+Environment variables enable you to customize a service's runtime behavior for different environments (such as development, staging, and production). They also protect you from committing secret credentials (such as API keys or database connection strings) to your application source.
+
+Save, rebuild, and deploy: Render triggers a new build for your service and deploys it with the new environment variables. Save and deploy: Render redeploys your service's existing build with the new environment variables. Save only: Render saves the new environment variables without triggering a deploy. Your service will not use the new variables until its next deploy.

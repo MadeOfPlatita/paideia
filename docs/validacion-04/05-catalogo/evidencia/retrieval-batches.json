@@ -1,0 +1,61 @@
+{
+  "captured_on": "2026-10-27",
+  "retrieval_mode": "web_search only; no direct GET/web_extract in this validation round",
+  "batches": [
+    {
+      "batch_id": "PUB-01",
+      "queries": [
+        {"query": "site:openbank.es \"cuenta de ahorro\" Openbank cuenta remunerada", "result_count": 5, "source_ids": [3, 23], "use": "Openbank Cuenta Remunerada identity proposal; Open Young held for later; snippets only"},
+        {"query": "site:pibank.es depósito a plazo fijo Pibank", "result_count": 5, "source_ids": [6, 7, 20], "use": "Pibank 12-month deposit identity proposal; source 20 is used only for the deposit snippet"},
+        {"query": "site:cetelem.es depósito a plazo Cetelem ahorro", "result_count": 5, "source_ids": [], "use": "No deposit product page surfaced; results were unrelated; no absence claim"},
+        {"query": "site:azvalor.com \"Azvalor Internacional\" ISIN fondo FI", "result_count": 5, "source_ids": [12], "use": "Azvalor Internacional identity proposal; official search snippet only"},
+        {"query": "site:cobasam.com \"Cobas Selección\" ISIN fondo FI", "result_count": 5, "source_ids": [13, 14], "use": "Excluded; duplicate candidate lookup later exceeded the one-query-per-candidate budget"},
+        {"query": "site:helpmycash.com OR site:bankinter.com depósito plazo fijo España Bankinter producto 2026", "result_count": 5, "source_ids": [], "use": "Only generic/historical Bankinter pages; no product admitted"}
+      ]
+    },
+    {
+      "batch_id": "PUB-02",
+      "queries": [
+        {"query": "site:bff.com/es depósito Facto plazo fijo España", "result_count": 0, "source_ids": [], "use": "Official product page not found"},
+        {"query": "site:pibank.es \"Cuenta Remunerada Pibank\"", "result_count": 5, "source_ids": [4], "use": "Pibank account identity proposal; dedicated query used for candidate"},
+        {"query": "site:cobasam.com/productos/inversion-libre/cobas_seleccion \"Clase B\" ISIN", "result_count": 1, "source_ids": [13], "use": "Second lookup for the same excluded candidate; no further query; candidate not counted"}
+      ]
+    },
+    {
+      "batch_id": "PUB-03",
+      "queries": [
+        {"query": "site:facto.es \"Depósito Facto\" 12 meses España", "result_count": 0, "source_ids": [], "use": "Official product page not found"},
+        {"query": "site:bff.com/es \"Depósito Facto\" España", "result_count": 1, "source_ids": [], "use": "Official company page only, not a product page"},
+        {"query": "\"Depósito Facto\" BFF Bank oficial España 2026", "result_count": 5, "source_ids": [], "use": "Results were secondary media/affiliate pages; no product admitted"}
+      ]
+    },
+    {
+      "batch_id": "PUB-04",
+      "queries": [
+        {"query": "site:selfbank.es depósito a plazo fijo Self Bank 12 meses 2026 oficial", "result_count": 0, "source_ids": [], "use": "No official product page surfaced"},
+        {"query": "site:ebnbanco.com depósito plazo fijo EBN Banco oficial", "result_count": 5, "source_ids": [22], "use": "EBN Depósito Sinycon Plus identity proposal; official snippet only"},
+        {"query": "site:deutsche-bank.es depósito a plazo fijo español oficial 2026", "result_count": 5, "source_ids": [8], "use": "Depósito Más DB retained for later expansion, not in initial 20"}
+      ]
+    },
+    {
+      "batch_id": "PUB-05",
+      "queries": [
+        {"query": "site:bestinver.es/fondos-de-inversion/bestinver-internacional \"Código ISIN\"", "result_count": 1, "source_ids": [19], "use": "Bestinver Internacional identity proposal; official snippet only"}
+      ]
+    }
+  ],
+  "selected_candidate_lookup_budget": {
+    "maximum_additional_queries_per_candidate": 1,
+    "selected_candidates_using_one_search_snippet": ["ACC-03", "ACC-04", "DEP-03", "DEP-04", "FND-03", "FND-04"],
+    "selected_candidates_using_zero_additional_public_queries": 14,
+    "direct_page_requests_in_this_round": 0,
+    "pdf_downloads_in_this_round": 0,
+    "mass_history_downloads_in_this_round": 0
+  },
+  "exceptions_and_exclusions": [
+    "Cobas Selección FI was searched twice; it was excluded from the 20 and no further query was made.",
+    "BFF/Facto received two failed official-domain searches plus one broad discovery search that returned secondary pages only; it was excluded and no product terms were copied.",
+    "Pibank account evidence used only the dedicated account query (PUB-02); the incidental account mention from the deposit query (PUB-01) was not used in the selected account record.",
+    "Trade Republic remains outside the 20 because the existing official page capture exposed only a headline and did not resolve whether it is a deposit account/product for this catalogue."
+  ]
+}

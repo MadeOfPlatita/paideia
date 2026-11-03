@@ -1,0 +1,78 @@
+(async () => {
+  const checks = [];
+  const check = (condition, name) => { checks.push({name, pass: !!condition}); if (!condition) throw new Error(name); };
+  try {
+    const forms = [...document.querySelectorAll('.scenario-form')];
+    const summary = document.getElementById('scenario-comparison-summary');
+    const report = document.getElementById('scenario-report-host');
+    check(forms.length === 2 && summary && report, 'formularios y secciones existentes');
+    check(!!(forms[1].compareDocumentPosition(summary) & Node.DOCUMENT_POSITION_FOLLOWING), 'formularios antes del resumen');
+    check(!!(summary.compareDocumentPosition(report) & Node.DOCUMENT_POSITION_FOLLOWING), 'resumen antes de guardar');
+    const links = [...document.querySelectorAll('a')];
+    for (const text of ['Empezar/ajustar', 'Comparar/entender', 'Guardar']) {
+      const link = links.find(item => item.textContent.trim() === text);
+      check(!!link && link.getAttribute('href').startsWith('#') && !!document.getElementById(link.getAttribute('href').slice(1)), `enlace ${text}`);
+      const hash = location.hash; link.click();
+      check(location.hash === hash && !!document.querySelector('.scenario-form'), `navegación ${text} conserva ruta`);
+    }
+    const example = [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Cargar ejemplo ficticio en A');
+    check(!!example, 'botón de ejemplo ficticio');
+    let calls = 0; const original = window.fetch; window.fetch = (...args) => { calls++; return original(...args); };
+    const beforeB = JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[1]);
+    example.click();
+    const values = ['principal','rate','years','contribution','inflation','method'].map(id => document.getElementById('scenario-'+id).value);
+    check(JSON.stringify(values) === JSON.stringify(['1000','2','5','50','2','compound']), 'ejemplo rellena A');
+    check(calls === 0 && JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[1]) === beforeB, 'ejemplo no calcula ni modifica B');
+    document.getElementById('scenario-principal').value = '300'; document.getElementById('scenario-principal').dispatchEvent(new Event('input', {bubbles:true}));
+    const before = JSON.stringify(window.getScenarioComparisonSnapshot()); example.click();
+    check(JSON.stringify(window.getScenarioComparisonSnapshot()) === before, 'pedir confirmación sin modificar');
+    check(document.body.innerText.includes('sustituir el escenario A'), 'confirmación identifica A');
+    const cancel = [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Cancelar');
+    check(!!cancel, 'cancelar disponible'); cancel.click();
+    check(JSON.stringify(window.getScenarioComparisonSnapshot()) === before, 'cancelar conserva escenarios');
+    window.fetch = original;
+    const copy = [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Copiar A a B para probar un cambio');
+    check(!!copy, 'botón copiar A a B');
+    copy.click();
+    check(document.getElementById('scenario-principal-b').value === '300', 'copiar campos actuales');
+    check(window.getScenarioComparisonSnapshot().scenarios[1].status === 'dirty', 'copia deja B pendiente de calcular');
+    forms[0].requestSubmit(); forms[1].requestSubmit();
+    for (let i=0; i<150 && !window.getScenarioComparisonSnapshot().scenarios.every(s=>s.status==='current'); i++) await new Promise(resolve=>setTimeout(resolve,20));
+    check(window.getScenarioComparisonSnapshot().scenarios.every(s=>s.status==='current'), 'ambos calculados con API local');
+    check(summary.innerText.includes('Qué cambia de A a B'), 'resumen explica diferencias');
+    check(summary.innerText.includes('supuestos son iguales'), 'supuestos iguales explícitos');
+    const edit = (id, value) => { const e = document.getElementById(id); e.value=value; e.dispatchEvent(new Event('input',{bubbles:true})); };
+    edit('scenario-rate-b','2.0');
+    check(!summary.innerText.includes('Qué cambia de A a B'), 'edición oculta diferencias');
+    forms[1].requestSubmit(); for (let i=0;i<150 && window.getScenarioComparisonSnapshot().scenarios[1].status!=='current';i++) await new Promise(r=>setTimeout(r,20));
+    check(summary.innerText.includes('supuestos son iguales'), 'decimales equivalentes no cambian supuesto');
+    edit('scenario-years-b','3'); forms[1].requestSubmit(); for (let i=0;i<150 && window.getScenarioComparisonSnapshot().scenarios[1].status!=='current';i++) await new Promise(r=>setTimeout(r,20));
+    check(summary.innerText.includes('Horizonte:') && summary.innerText.includes('horizontes son distintos'), 'diferencia y aviso de horizonte');
+    const beforeCopy = JSON.stringify(window.getScenarioComparisonSnapshot()); copy.click();
+    check(document.body.innerText.includes('sustituir el escenario B') && JSON.stringify(window.getScenarioComparisonSnapshot())===beforeCopy, 'confirmación de B no cambia datos');
+    [...forms[1].querySelectorAll('button')].find(b=>b.textContent==='Cancelar').click();
+    check(JSON.stringify(window.getScenarioComparisonSnapshot())===beforeCopy, 'cancelar copia conserva ambos');
+    copy.click(); edit('scenario-principal','');
+    const beforeInvalid = JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[1]);
+    [...forms[1].querySelectorAll('button')].find(b=>b.textContent==='Confirmar sustitución').click();
+    check(!!document.getElementById('scenario-form-error').textContent && JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[1])===beforeInvalid, 'confirmación revalida A y conserva B');
+    edit('scenario-principal','300');
+    const realFetch=window.fetch; let release, intercepted=false; const held=new Promise(r=>release=r);
+    window.fetch=async (...args)=>{const response=await realFetch(...args); if(String(args[0])==='/api/calculate'&&!intercepted){intercepted=true;await held;} return response;};
+    forms[1].requestSubmit(); for(let i=0;i<150&&!intercepted;i++) await new Promise(r=>setTimeout(r,20));
+    check(intercepted && window.getScenarioComparisonSnapshot().scenarios[1].status==='pending', 'B pendiente real');
+    copy.click(); [...forms[1].querySelectorAll('button')].find(b=>b.textContent==='Confirmar sustitución').click();
+    const afterCopy=JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[1]); release(); await new Promise(r=>setTimeout(r,150)); window.fetch=realFetch;
+    check(JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[1])===afterCopy && JSON.parse(afterCopy).status==='dirty', 'copia invalida respuesta pendiente de B');
+    let releaseA, enteredA=false; const heldA=new Promise(r=>releaseA=r);
+    window.fetch=async (...args)=>{const response=await realFetch(...args); if(String(args[0])==='/api/calculate'&&!enteredA){enteredA=true;await heldA;} return response;};
+    forms[0].requestSubmit(); for(let i=0;i<150&&!enteredA;i++) await new Promise(r=>setTimeout(r,20));
+    const pendingA=JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[0]);
+    check(enteredA && JSON.parse(pendingA).status==='pending', 'A pendiente real');
+    copy.click(); [...forms[1].querySelectorAll('button')].find(b=>b.textContent==='Confirmar sustitución').click();
+    check(JSON.stringify(window.getScenarioComparisonSnapshot().scenarios[0])===pendingA && document.getElementById('scenario-principal-b').value==='300', 'copia campos de A pendiente sin modificar A');
+    releaseA(); await new Promise(r=>setTimeout(r,150)); window.fetch=realFetch;
+    check(window.getScenarioComparisonSnapshot().scenarios[0].status==='current', 'A pendiente se resuelve normalmente');
+    return {ok:true, checks};
+  } catch(error) { return {ok:false, checks, error:String(error)}; }
+})()

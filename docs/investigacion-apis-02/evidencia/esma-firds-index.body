@@ -1,0 +1,22 @@
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":0,
+    "params":{
+      "q":"*",
+      "indent":"true",
+      "start":"0",
+      "rows":"1",
+      "wt":"json"}},
+  "response":{"numFound":19110,"start":0,"numFoundExact":true,"docs":[
+      {
+        "_root_":"2360",
+        "id":"2360",
+        "published_instrument_file_id":"2360",
+        "file_name":"FULINS_C_20171118_01of01.zip",
+        "file_type":"FULINS",
+        "publication_date":"2017-11-18T00:00:00Z",
+        "download_link":"https://firds.esma.europa.eu/firds/FULINS_C_20171118_01of01.zip",
+        "_version_":1880073835691114496,
+        "timestamp":"2026-10-26T01:28:50.041Z"}]
+  }}

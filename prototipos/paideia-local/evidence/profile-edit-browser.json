@@ -1,0 +1,8 @@
+{
+  "before": "TU MAPA · EDITABLE\n\nTu mapa para explorar\n\nUna conversación breve, una pregunta cada vez. Todo es opcional; no calcula tu capacidad de inversión ni tu idoneidad.\n\nTu mapa para explorar\n\nEditable y descriptivo; no es un test de idoneidad ni una recomendación.\n\nIngresos netos mensuales\nNo lo sé\nEditar\nGastos mensuales\nOmitido\nEditar\nConocimiento previo\nEstoy empezando\nEditar\nQué quieres explorar\nCrear un colchón\nEditar\nHorizonte que tienes en mente\nMenos de un año\nEditar\nCómo te sientes ante los cambios\nPrefiero evitar altibajos\nEditar\nEste mapa está solo en memoria hasta que elijas guardarlo en Privacidad. No solicita nombre, DNI, IBAN ni tarjeta.\nSeguir explorando\nResponder de nuevo\n\nPara elegir qué conservar y ver los campos de una posible vista previa local, visita Privacidad.",
+  "after": {
+    "text": "TU MAPA · EDITABLE\n\nTu mapa para explorar\n\nUna conversación breve, una pregunta cada vez. Todo es opcional; no calcula tu capacidad de inversión ni tu idoneidad.\n\nTu mapa para explorar\n\nEditable y descriptivo; no es un test de idoneidad ni una recomendación.\n\nIngresos netos mensuales\nNo lo sé\nEditar\nGastos mensuales\nOmitido\nEditar\nConocimiento previo\nConozco algunos términos\nEditar\nQué quieres explorar\nCrear un colchón\nEditar\nHorizonte que tienes en mente\nMenos de un año\nEditar\nCómo te sientes ante los cambios\nPrefiero evitar altibajos\nEditar\nEste mapa está solo en memoria hasta que elijas guardarlo en Privacidad. No solicita nombre, DNI, IBAN ni tarjeta.\nSeguir explorando\nResponder de nuevo\n\nPara elegir qué conservar y ver los campos de una posible vista previa local, visita Privacidad.",
+    "storage": []
+  },
+  "passed": true
+}

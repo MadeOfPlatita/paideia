@@ -1,0 +1,6 @@
+test_valid_fake_chat_result_is_projected_to_closed_selection (test_structured_provider_adapter.AdapterTests.test_valid_fake_chat_result_is_projected_to_closed_selection) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.006s
+
+OK

@@ -1,0 +1,2826 @@
+[
+  {
+    "url": "https://api.gleif.org/docs",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://api.gleif.org/docs",
+          "title": "GLEIF API",
+          "claim": "API v1 ofrece Level 1 y acceso a registros Level 2 relacionados, además de búsqueda por campos/nombre.",
+          "evidence": "The GLEIF API gives developers access to full LEI Data search engine functionality, including filters, full-text and single-field searches of Level 1 (LEI Record) Data, retrieval of LEI Records (including links to their Level 2 data, where available), based on a search of their associated Level 2 (relationship) data, and \"fuzzy\" matching of important data fields such as names and addresses.",
+          "verification": "Documentación primaria extraída; una consulta GET real devolvió un registro JSON LEI."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://api.twelvedata.com/etfs?apikey=demo",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://api.twelvedata.com/etfs?apikey=demo",
+          "title": "Twelve Data ETFs demo response",
+          "claim": "Demo devolvió una ficha UCITS CSPX en Euronext/XAMS con ISIN bloqueado por add-on.",
+          "evidence": "\"symbol\":\"CSPX\",\"name\":\"iShares Core S\\u0026P 500 UCITS ETF USD (Acc)\",\"currency\":\"EUR\",\"exchange\":\"Euronext\",\"mic_code\":\"XAMS\",\"country\":\"Netherlands\",\"figi_code\":\"BBG006BGKYW6\",\"cfi_code\":\"CECGLU\",\"isin\":\"request_access_via_add_ons\",\"cusip\":\"request_access_via_add_ons\"",
+          "verification": "endpoint-tested, HTTP 200; response original preserved in evidencia/twelvedata-etfs-demo.body; catalog only, not price coverage."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://apydata.com/en/blog/apydata-que-es-que-comparamos-y-como-usarlo",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://apydata.com/en/blog/apydata-que-es-que-comparamos-y-como-usarlo",
+          "title": "APYData product comparison",
+          "claim": "APYData se describe como comparador; afirma actualizar APY/TAE desde fuentes oficiales y APIs de plataformas.",
+          "evidence": "Yes. The rates (APY/TAE) are automatically updated daily from official sources and the platforms' APIs.",
+          "verification": "documented; artículo del comparador extraído el 2026-10-26; no documentación de feed para terceros encontrada en páginas revisadas"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://bankflip.io",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://bankflip.io",
+          "title": "Bankflip / Permisso",
+          "claim": "La plataforma promociona acceso permissioned a datos de consumidores para underwriting, onboarding y verificación, no catálogo de ofertas.",
+          "evidence": "Easily gather & process consumer data to supercharge and automate underwriting, onboarding and verification flows",
+          "verification": "Homepage oficial extraída; endpoint/auth/precio no probados."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://boe.es/datosabiertos/faq/boe.php",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://boe.es/datosabiertos/faq/boe.php",
+          "title": "BOE FAQ reutilización",
+          "claim": "El sumario BOE ofrece API REST con los enlaces de los documentos publicados.",
+          "evidence": "API REST ... mediante el acceso al sumario correspondiente a la fecha seleccionada; incluye direcciones URL para PDF, XML y HTML.",
+          "verification": "GET del endpoint diario 20261001 probado y respuesta JSON inspeccionada."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://cdrcompare.au/developers",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://cdrcompare.au/developers",
+          "title": "CDR Compare Developers & API terms",
+          "claim": "CDR Compare publica un agregador read-only australiano sin auth/rate limit y concede uso gratuito con atribución.",
+          "evidence": "Public read-only API, Markdown content negotiation and agent discovery files. No key, no auth, no rate limit, no consumer data.\nFree for any use, including commercially.\nAttribute figures to the provider that published them and cite the CDR Compare page URL as where you read them, including the provider's last-updated date.\nOne product's full reference data. The data holder's own BankingProductDetail payload — rates, fees, features, eligibility, constraints — unmodified, with the upstream source URL alongside it.",
+          "verification": "documented; página de desarrolladores del agregador extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://cdrcompare.au/terms",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://cdrcompare.au/terms",
+          "title": "CDR Compare Terms",
+          "claim": "CDR Compare advierte que su referencia puede quedar incompleta o desactualizada y pide confirmación con la entidad.",
+          "evidence": "CDR Compare shows product reference data published by data holders under Australia’s Consumer Data Right. Data may be incomplete or out of date — always confirm details with the provider. This is not financial advice.",
+          "verification": "documented; página de términos extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://consumerdatastandardsaustralia.github.io/standards/#get-products",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://consumerdatastandardsaustralia.github.io/standards/#get-products",
+          "title": "CDR Data Standards – Australian Banking APIs",
+          "claim": "El estándar CDR australiano se despliega por sectores y comienza por banca, energía y telecomunicaciones.",
+          "evidence": "The Consumer Data Right (CDR) is intended to be applied sector by sector across the whole economy, beginning in the banking, energy and telecommunications sectors.",
+          "verification": "documented; estándar oficial australiano extraído el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.bis.org/help/legal",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.bis.org/help/legal",
+          "title": "BIS Data Portal — terms of permitted use",
+          "claim": "El portal publica un bloque de términos de uso permitido para estadísticas BIS; el detalle de permiso de republicación debe resolverse ahí.",
+          "evidence": "## Terms of permitted use of BIS statistics",
+          "verification": "Página legal BIS extraída; el texto específico de permiso no quedó completo en la extracción usada, por lo que no se afirma licencia abierta."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.bis.org/topics/CBPOL",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.bis.org/topics/CBPOL",
+          "title": "BIS Central bank policy rates",
+          "claim": "El indicador de tipo de política puede representar tipos target, repo, descuento o tipo de mercado más citado según país/periodo.",
+          "evidence": "Depending on the country, the policy rate may correspond to the target, repo or discounting rate.",
+          "verification": "Página de topic BIS extraída; conservar metadatos y breaks, no equiparar automáticamente toda la serie al tipo oficial del BCE."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.bis.org/topics/CBPOL/BIS,WS_CBPOL,1.0/M.XM",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.bis.org/topics/CBPOL/BIS,WS_CBPOL,1.0/M.XM",
+          "title": "BIS policy rate — euro area monthly series",
+          "claim": "BIS ofrece serie mensual de tipo de política monetaria para el área euro, porcentaje anual, 1999-01 a 2026-09.",
+          "evidence": "Series key M.XM Data flow ID BIS,WS_CBPOL,1.0 # Central bank policy rates, Euro area M.XM Per cent per year Time span 1999-01 - 2026-09 Frequency Monthly",
+          "verification": "Página de serie BIS extraída el 2026-10-26; no se descargaron observaciones. Validar instrumento subyacente/metodología antes de interpretarlo como tipo BCE específico."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.bis.org/topics/CPMI_CT/BIS,WS_XRU,1.0/M.ES.EUR.A",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.bis.org/topics/CPMI_CT/BIS,WS_XRU,1.0/M.ES.EUR.A",
+          "title": "BIS XRU — Spain EUR/USD monthly series",
+          "claim": "BIS publica una serie mensual de tipo de cambio USD frente al euro para España, observada de 1957-01 a 2026-09 en el portal consultado.",
+          "evidence": "Series key M.ES.EUR.A Data flow ID BIS,WS_XRU,1.0 # Exchange rates against USD, Spain, EUR/USD M.ES.EUR.A Euro Time span 1957-01 - 2026-09 Frequency Monthly",
+          "verification": "Página de serie BIS extraída el 2026-10-26; metadatos y cobertura verificados, no se pidió aún el valor SDMX por API."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.bis.org/topics/XRU",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.bis.org/topics/XRU",
+          "title": "BIS Bilateral exchange rates",
+          "claim": "El dataset recoge tipos nominales USD frente a monedas locales, con frecuencias diaria, mensual, trimestral y anual según cobertura.",
+          "evidence": "The bilateral exchange rate data set contains long time series on US dollar nominal exchange rates.",
+          "verification": "Página de topic BIS extraída; fuente histórica y reciente combina varias autoridades, consultar documentación metodológica."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.ecb.europa.eu/data/datasets/csec/data-information?destination=/data/datasets/csec/data-information",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://data.ecb.europa.eu/data/datasets/csec/data-information?destination=/data/datasets/csec/data-information",
+          "title": "ECB: CSEC Securities Issues Statistics",
+          "claim": "CSEC es un conjunto de series agregadas compiladas a partir de microdatos por valor; la frecuencia es mensual, publicación t+10 días laborables y revisiones hasta 36 meses.",
+          "evidence": "CSEC series are compiled using security-by-security micro data from the Centralised Securities Databases (CSDB); Frequency of data collection Monthly; first publication at t+10 working days.",
+          "verification": "Ficha oficial extraída; el GET del catálogo CSV/ZIP agotó 40 segundos sin respuesta HTTP."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.europa.eu/data/datasets/fgfgfgfg?locale=en",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.europa.eu/data/datasets/fgfgfgfg?locale=en",
+          "title": "data.europa.eu — MiFID/UCITS/AIFMD entities",
+          "claim": "La ficha de catálogo no ofrece distribuciones descargables (0); remite al registro ESMA.",
+          "evidence": "Distributions 0 No Distributions Available",
+          "verification": "Página de catálogo oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.europa.eu/data/datasets/financial-instruments-reference-data-system?locale=en",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.europa.eu/data/datasets/financial-instruments-reference-data-system?locale=en",
+          "title": "data.europa.eu — Financial Instruments Reference Data System",
+          "claim": "Entrada de catálogo describe datos de referencia de instrumentos recogidos por ESMA.",
+          "evidence": "Database of instruments reference data collected by ESMA under MAR Art.4 and MiFIR Art.27",
+          "verification": "Metadatos de la ficha europea extraídos; no se toma como descarga ni como permiso de reuso."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://data.europa.eu/en/about/sparql",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://data.europa.eu/en/about/sparql",
+          "title": "About SPARQL — data.europa.eu",
+          "claim": "El portal ofrece endpoint programático para consultar metadatos RDF y catálogos/datasets bajo DCAT-AP.",
+          "evidence": "For programmatic use, a machine-readable endpoint is available at the following URL: https://data.europa.eu/data/sparql?locale=en",
+          "verification": "Documentación oficial extraída; no se envió query SPARQL en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://datos.gob.es/apidata/catalog/dataset/http%3A%2F%2Fdatos.gob.es%2Fcatalogo%2Fea0042970-instituciones-de-inversion-colectiva-iic-registradas-en-la-cnmv?_format=json",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://datos.gob.es/apidata/catalog/dataset/http%3A%2F%2Fdatos.gob.es%2Fcatalogo%2Fea0042970-instituciones-de-inversion-colectiva-iic-registradas-en-la-cnmv?_format=json",
+          "title": "GET test — datos.gob.es lookup por URI",
+          "claim": "La comprobación diagnóstica por URI respondió HTTP 400.",
+          "evidence": "HTTP Error 400: Bad Request",
+          "verification": "Salida de urllib del GET 2026-10-26; el cuerpo no se guardó. Un fallo de forma de consulta no es evidencia de inexistencia del dataset."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://datos.gob.es/apidata/catalog/dataset/title/Instituciones%20de%20Inversi%C3%B3n%20Colectiva%20(IIC)%20registradas%20en%20la%20CNMV?_format=json",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://datos.gob.es/apidata/catalog/dataset/title/Instituciones%20de%20Inversi%C3%B3n%20Colectiva%20(IIC)%20registradas%20en%20la%20CNMV?_format=json",
+          "title": "GET test — datos.gob.es IIC title search",
+          "claim": "La búsqueda de catálogo respondió 200 pero no encontró elementos en la página devuelta.",
+          "evidence": "\"items\": [], \"itemsPerPage\": 10, \"page\": 0, \"startIndex\": 1",
+          "verification": "GET 2026-10-26, HTTP 200 application/json; respuesta raw guardada en evidence/01-datosgob-iic-api.raw. No prueba ausencia del dataset."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://datos.gob.es/ca/blog/api-en-las-administraciones-publicas-cuales-hay-y-como-utilizarlas",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://datos.gob.es/ca/blog/api-en-las-administraciones-publicas-cuales-hay-y-como-utilizarlas",
+          "title": "APIs en las Administraciones Públicas — CKAN/MITECO",
+          "claim": "La guía identifica el portal de datos MITECO como CKAN y muestra su Action API package_search; el catálogo de ejemplo es ambiental, no financiero.",
+          "evidence": "BASE = \"https://catalogo.datosabiertos.miteco.gob.es/catalogo\"",
+          "verification": "Artículo de datos.gob.es actualizado en 2026-06; patrón de endpoint documentado, no probado por GET en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://datos.gob.es/es/apidata",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://datos.gob.es/es/apidata",
+          "title": "API - Datos.gob.es",
+          "claim": "La API sirve la base semántica del catálogo y ofrece búsquedas por dataset, publisher, tema, formato, keyword y fecha de modificación; ofrece salidas JSON/XML/RDF/TTL/CSV.",
+          "evidence": "Actualmente proporciona acceso al Catálogo de datos y a las URIs correspondientes a la taxonomía de sectores primarios y a la identificación de cobertura geográfica.",
+          "verification": "Documentación oficial extraída; rutas documentadas, no prueba de que las distribuciones del catálogo entreguen datos reutilizables."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://datos.gob.es/es/catalogo/ea0042970-consulta-de-codigos-isin-de-valores-en-la-cnmv",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://datos.gob.es/es/catalogo/ea0042970-consulta-de-codigos-isin-de-valores-en-la-cnmv",
+          "title": "Consulta de códigos ISIN de valores en la CNMV — datos.gob.es",
+          "claim": "La ANCV identifica instrumentos con ISIN y la distribución catalogada es XHTML.",
+          "evidence": "La CNMV, en su papel de Agencia Nacional de Codificación de Valores Mobiliarios, se encarga de identificar las emisiones e instrumentos financieros españoles con un código internacional (ISIN - International Securities Identification Numbering).",
+          "verification": "Ficha de catálogo oficial; el servicio por ISIN no se ejecutó en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://datos.gob.es/es/catalogo/ea0042970-instituciones-de-inversion-colectiva-iic-registradas-en-la-cnmv",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://datos.gob.es/es/catalogo/ea0042970-instituciones-de-inversion-colectiva-iic-registradas-en-la-cnmv",
+          "title": "Instituciones de Inversión Colectiva registradas en CNMV — datos.gob.es",
+          "claim": "El registro incluye fondos/sociedades, depositarias, gestoras y entidades delegadas; la distribución indicada es XHTML a CNMV y la frecuencia figura como continua.",
+          "evidence": "Consulta a los datos registrados en la CNMV de las entidades de IIC (Instituciones de Inversión Colectiva) que comprende a Fondos y Sociedades, Depositarias, Gestoras y entidades en las que se delega la función de gestión.",
+          "verification": "Ficha oficial de catálogo extraída; distribución y metadatos inspeccionados. El intervalo publicado va de 1985-11-26 a la misma fecha y no se trata como timestamp operativo."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://datos.gob.es/es/catalogo/ea0042970-series-estadisticas-de-la-cnmv",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://datos.gob.es/es/catalogo/ea0042970-series-estadisticas-de-la-cnmv",
+          "title": "Series estadísticas de la CNMV — datos.gob.es",
+          "claim": "El catálogo de CNMV describe más de 6.000 series de emisores/cotizadas, IIC y ESI y descarga Excel.",
+          "evidence": "Presenta más de 6.000 series estadísticas, perfectamente estructuradas sobre Emisoras y Sociedades Cotizadas, Instituciones de Inversión Colectiva y Empresas de Servicios de Inversión",
+          "verification": "Ficha oficial extraída; no se descargó la distribución Excel."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://depositscout.com/developers/getting-started-with-the-depositscout-api",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://depositscout.com/developers/getting-started-with-the-depositscout-api",
+          "title": "Getting Started with DepositScout API",
+          "claim": "Documenta endpoints UK de AER, historial, proveedores y switch offers; requiere Bearer key.",
+          "evidence": "Live Savings Rates — `GET /v1/rates` — current AERs across Easy Access, Fixed Rate, Notice, Cash ISA and Regular Saver accounts, normalised for software.\nProvider Directory — `GET /v1/providers` — bank and building society metadata, including FSCS coverage and eligibility signals.\nAfter you have a key, a minimal live-rates call looks like this.\nAuthorization: Bearer $DS_API_KEY",
+          "verification": "documented; guía del proveedor extraída el 2026-10-26; GET sin key separado recibió 401"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://developer.caixabank.es",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://developer.caixabank.es",
+          "title": "CaixaBank developer portal — retrieval blocked",
+          "claim": "No se pudo inspeccionar el contenido; no se infiere indisponibilidad de API.",
+          "evidence": "Blocked: URL targets a private or internal network address",
+          "verification": "unverified; error del extractor, no respuesta del banco"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+    "observations": [
+      {
+        "topic": 5,
+        "report": "05-bancos-fichas-importables.md",
+        "source": {
+          "url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+          "title": "Información precontractual global - Renault Bank",
+          "claim": "Documento oficial para Cuenta Contigo y Depósito Tú+; soporta elegibilidad, promoción TAE/TIN fechada, cancelación del depósito y FGDR.",
+          "evidence": "Promoción aplicable exclusivamente a nuevos clientes que contraten la Cuenta Contigo entre el 21/10/2026 y el 18/11/2026, ambos inclusive. Para los clientes que contraten la Cuenta Contigo durante dicho periodo promocional, la TAE será del 2,61% TAE, calculada considerando los siguientes tipos de interés nominal anual: Hasta el 31/03/2027: TIN anual del 3,00%. No es posible la cancelación anticipada, en ningún caso, de las imposiciones a plazo fijo. La ENTIDAD está adherida al Fondo de Garantía de Depósitos y Resolución francés (Fonds de Garantie des Dépôts et de Résolution) que ofrece una protección de hasta 100.000 euros por titular y entidad de crédito (la misma cantidad garantizada por los fondos de garantía de depósitos en toda la Unión Europea, incluida España).",
+          "verification": "GET anónimo probado el 2026-10-26: HTTP 200, application/pdf, 159434 bytes; descarga guardada y convertida a texto UTF-8 para inspección."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://docs.db.nomics.world/legal-terms",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://docs.db.nomics.world/legal-terms",
+          "title": "DBnomics Legal Terms",
+          "claim": "Los agregados DBnomics se distribuyen bajo ODbL, mientras que datos upstream conservan sus propias licencias y términos.",
+          "evidence": "Data distributed by DBnomics is subject to the same license and terms of use as its original source provider.",
+          "verification": "Términos oficiales extraídos; no asumir ODbL como permiso para redistribuir el upstream."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://docs.db.nomics.world/web-api",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://docs.db.nomics.world/web-api",
+          "title": "DBnomics Web API documentation",
+          "claim": "La API permite consultas focalizadas por provider/dataset/serie y ofrece datos en JSON.",
+          "evidence": "The Web API of DBnomics is hosted here: https://api.db.nomics.world/v22/.",
+          "verification": "Documentación oficial extraída; ninguna serie DBnomics fue solicitada en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://docs.postgrest.org/en/stable/references/api.html",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://docs.postgrest.org/en/stable/references/api.html",
+          "title": "API — PostgREST",
+          "claim": "PostgREST expone tablas, vistas y funciones; documentación enlaza la generación OpenAPI.",
+          "evidence": "PostgREST exposes three database objects of a schema as resources: tables, views and functions.",
+          "verification": "Documentación oficial GET HTTP 200 guardada en evidence/postgrest-api.html; no OpenAPI de Pai generado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://docs.postgrest.org/en/stable/references/api/functions.html",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://docs.postgrest.org/en/stable/references/api/functions.html",
+          "title": "Functions as RPC — PostgREST",
+          "claim": "Funciones expuestas y autorizadas se invocan bajo /rpc; pueden modificar datos, por lo que hay que limitar funciones/privilegios.",
+          "evidence": "Functions can perform any operation allowed by PostgreSQL (read data, modify data, raise errors, and even DDL operations). Every function in the exposed schema and accessible by the active database role is executable under the /rpc prefix.",
+          "verification": "Documentación oficial extraída; no se ejecutó RPC de una instancia."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://docs.postgrest.org/en/stable/references/api/tables_views.html",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://docs.postgrest.org/en/stable/references/api/tables_views.html",
+          "title": "Tables and Views — PostgREST",
+          "claim": "PostgREST expone tablas/vistas accesibles y métodos HTTP de acuerdo con permisos; GET lee y admite filtros.",
+          "evidence": "All tables and views of the exposed schema and accessible by the active database role are available for querying.",
+          "verification": "Documentación oficial extraída; no se probó un recurso real de Pai."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://docs.postgrest.org/en/stable/references/connection_pool.html",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://docs.postgrest.org/en/stable/references/connection_pool.html",
+          "title": "Connection Pool — PostgREST",
+          "claim": "Un pool reutiliza conexiones de DB para servir solicitudes HTTP, limitando el patrón de una conexión persistente por usuario.",
+          "evidence": "A connection pool is a cache of reusable database connections. It allows serving many HTTP requests using few database connections.",
+          "verification": "Documentación oficial extraída; no es una prueba de concurrencia ni benchmark de Pai."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://docs.postgrest.org/en/stable/references/transactions.html",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://docs.postgrest.org/en/stable/references/transactions.html",
+          "title": "Transactions — PostgREST",
+          "claim": "GET/HEAD se ejecutan READ ONLY; las RPC dependen de método y volatilidad de la función.",
+          "evidence": "The access mode on Tables and Views is determined by the HTTP method. | HTTP Method | Access Mode | | GET, HEAD | READ ONLY | | POST, PATCH, PUT, DELETE | READ WRITE |",
+          "verification": "Documentación oficial extraída; comportamiento no medido contra una instancia Pai."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eba.europa.eu/activities/single-rulebook/regulatory-activities/depositor-protection/deposit-guarantee-schemes-data",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://eba.europa.eu/activities/single-rulebook/regulatory-activities/depositor-protection/deposit-guarantee-schemes-data",
+          "title": "EBA Deposit Guarantee Schemes data",
+          "claim": "Los datos DGS son de corte anual al 31 de diciembre y no incorporan cambios posteriores.",
+          "evidence": "The data published by the EBA is point-in-time data as of 31 December, and, therefore, does not reflect any subsequent changes to the amount of covered deposits or available financial means in individual DGSs.",
+          "verification": "Página primaria extraída; no se bajó una tabla/archivo."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eba.europa.eu/risk-analysis-and-data/credit-institutions-register",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://eba.europa.eu/risk-analysis-and-data/credit-institutions-register",
+          "title": "EBA Credit institutions register",
+          "claim": "El vínculo a un DGS no prueba que todos los tipos o importes de depósitos sean elegibles; los registros nacionales pueden ser más detallados/actualizados.",
+          "evidence": "The fact that a credit institution is covered by a particular deposit guarantee scheme does not necessarily imply that all types or amounts of deposits are eligible for compensation under the scheme.",
+          "verification": "Página primaria extraída; la aplicación EBA consultada directamente devolvió solo un shell HTML, no filas del registro."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/api/eod/AAPL.US?api_token=demo&fmt=json&from=2026-10-15&to=2026-10-16",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/api/eod/AAPL.US?api_token=demo&fmt=json&from=2026-10-15&to=2026-10-16",
+          "title": "EODHD AAPL.US public demo EOD response",
+          "claim": "Demo devolvió EOD OHLC, adjusted_close y volume en dos días para AAPL.US.",
+          "evidence": "[{\"date\":\"2026-10-15\",\"open\":346.95,\"high\":347.85,\"low\":341.6,\"close\":342,\"adjusted_close\":342,\"volume\":39767256},{\"date\":\"2026-10-16\",\"open\":346.085,\"high\":347.82,\"low\":340.46,\"close\":343.46,\"adjusted_close\":343.46,\"volume\":59946368}]",
+          "verification": "endpoint-tested, HTTP 200; muestra sólo US; respuesta original en evidencia/eodhd-aapl-eod-demo.body."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/api/v1.1/fundamentals/AAPL.US?filter=General::Code,General::Name,General::Exchange,General::Currency,General::Type&api_token=demo&fmt=json",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/api/v1.1/fundamentals/AAPL.US?filter=General::Code,General::Name,General::Exchange,General::Currency,General::Type&api_token=demo&fmt=json",
+          "title": "EODHD AAPL.US public demo fundamentals response",
+          "claim": "El filtro General devuelve Code, Name, Exchange, Currency y Type para AAPL.US.",
+          "evidence": "{\"General::Code\":\"AAPL\",\"General::Name\":\"Apple Inc.\",\"General::Exchange\":\"NASDAQ\",\"General::Currency\":\"NA\",\"General::Type\":\"Common Stock\"}",
+          "verification": "endpoint-tested, HTTP 200; muestra sólo stock US; respuesta original en evidencia/eodhd-aapl-fundamental-demo.body."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/commercial-pricing",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/commercial-pricing",
+          "title": "Historical Prices and Fundamental Financial Data API - EODHD Commercial Pricing",
+          "claim": "Publica $399/mes internal-only y $2.499/mes Enterprise scale/delivery; internal-use no autoriza usuarios externos.",
+          "evidence": "Commercial Internal use Single-company use $399.00/mo. | $2499.00/mo.",
+          "verification": "Tabla oficial extraída; concesión de display público debe quedar en acuerdo firmado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/financial-apis/api-for-historical-data-and-volumes",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/financial-apis/api-for-historical-data-and-volumes",
+          "title": "End-of-Day Historical Stock Market Data API - EODHD",
+          "claim": "Campos OHLC no ajustados y adjusted_close ajustado por splits/dividendos; normalmente actualiza 2–3h tras cierre.",
+          "evidence": "| adjusted_close | number | Closing price adjusted for both splits and dividends |",
+          "verification": "Documentación oficial extraída; request real sólo para AAPL.US demo."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/financial-apis/api-limits",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/financial-apis/api-limits",
+          "title": "API Limits: Daily Calls, Rate Limits and Costs - EODHD",
+          "claim": "Free 20 calls/día no sirve para refrescar un catálogo completo.",
+          "evidence": "Free plan — 20 API calls per day. Enough to try the endpoints out, not to run an application.",
+          "verification": "Documentación oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/financial-apis/commercial-vs-personal-license-use",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/financial-apis/commercial-vs-personal-license-use",
+          "title": "Commercial vs Personal license use - EODHD",
+          "claim": "Los packages de precios normales son de uso personal; uso comercial se trata aparte.",
+          "evidence": "The packages on the pricing page are intended for personal use only as commercial use requires a more thorough approach to licensing and data use.",
+          "verification": "Página oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/financial-apis/exchanges-api-list-of-tickers-and-trading-hours",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/financial-apis/exchanges-api-list-of-tickers-and-trading-hours",
+          "title": "Exchanges API: Supported Exchanges & Ticker Lists - EODHD",
+          "claim": "Lista de exchanges incluye mercado virtual EUFUND y ticker suffixes propios; catálogo de instrumentos es por exchange.",
+          "evidence": "| EUFUND | Europe Fund Virtual Exchange | European mutual funds, quoted in EUR |",
+          "verification": "Documentación oficial extraída; el UCITS exacto requiere comprobar símbolo con clave autorizada."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/financial-apis/stock-etfs-fundamental-data-feeds",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/financial-apis/stock-etfs-fundamental-data-feeds",
+          "title": "Fundamental Data: Stocks, ETFs, Mutual Funds, Indices - EODHD",
+          "claim": "Fundamentals API cubre acciones y ETFs de EEUU/UK/EU/Asia; el plan gratuito de endpoint EOD no implica acceso a fundamentals.",
+          "evidence": "Fundamental data API for stocks, ETFs, mutual funds, and indices from major US, UK, EU, and Asian exchanges.",
+          "verification": "Documentación oficial extraída; test demo sólo filtrado General de AAPL."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/financial-apis/terms-conditions",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/financial-apis/terms-conditions",
+          "title": "Terms and Conditions - EODHD",
+          "claim": "Algunas cotizaciones CFD/ETF/fondos son indicativas y no adecuadas como precio de trading.",
+          "evidence": "All CFDs (stocks, indices, mutual funds, ETFs), cryptocurrencies, and Forex are not provided by exchanges but rather by market makers, and so prices may not be accurate and may differ from the actual market price, meaning prices are indicative and not appropriate for trading purposes.",
+          "verification": "Términos oficiales extraídos; no tomar EODHD como precio ejecutable."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://eodhd.com/pricing",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://eodhd.com/pricing",
+          "title": "Free and paid plans for Historical Prices and Fundamental Financial Data API",
+          "claim": "EOD/ETF global, un año free frente a 30+ años paid y plan Fundamentals separado.",
+          "evidence": "| [End-of-Day prices](https://eodhd.com/lp/historical-eod-api) Stocks _Global_ ETF _Global_ Forex _Global_ Crypto _Global_ Indices _Global_ | 1 yr | 30+ yrs | 30+ yrs | – Not included | 30+ yrs |",
+          "verification": "Tabla de pricing oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://esma.europa.eu/sites/default/files/2023-12/ESMA65-8-5240_FIRDS_Transparency_Download_Instructions.pdf",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://esma.europa.eu/sites/default/files/2023-12/ESMA65-8-5240_FIRDS_Transparency_Download_Instructions.pdf",
+          "title": "ESMA: descargas FITRS transparency results",
+          "claim": "El PDF consultado trata de archivos completos/delta de resultados de transparencia, no de precio EOD ni de un archivo de referencia validado en esta ronda.",
+          "evidence": "FIRDS Transparency System — Instructions on download and use of full and delta transparency results files.",
+          "verification": "Documento oficial extraído; la consulta Solr de referencia intentada en paralelo devolvió 400."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+          "title": "Xtrackers S&P 500 Equal Weight UCITS ETF 2D — official product page",
+          "claim": "La página pública de DWS identifica IE000CXLGK86, publica NAV/fecha y all-in-fee TER, y enlaza una lista completa de securities.",
+          "evidence": "NAV (23.10.2026): 104.46 USD All-in-fee (TER): 0.15%\nDownload full securities list",
+          "verification": "web_extract de la página oficial de producto el 2026-10-26. La URL de exportación enlazada se descargó por separado y se analizó como XLSX [14]."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://etf.dws.com/etfdata/export/LUX/ENG/excel/product/constituent/IE000CXLGK86/",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://etf.dws.com/etfdata/export/LUX/ENG/excel/product/constituent/IE000CXLGK86/",
+          "title": "DWS Xtrackers full securities list — XLSX export",
+          "claim": "El workbook descargado incluye cabecera con Name, ISIN, Country, Currency, Exchange, Type of Security, Rating, Primary Listing, Industry Classification y Weighting.",
+          "evidence": "Header cells parsed: Name | ISIN | Country | Currency | Exchange | Type of Security | Rating | Primary Listing | Industry Classification | Weighting.\nThis document is for information purposes only and does not constitute an offer, recommendation, or solicitation to enter into any transaction.",
+          "verification": "GET HTTPS sin auth el 2026-10-26; HTTP 200, 40.541 bytes. Respuesta guardada como evidence/downloads/xtrackers-ie000cxlgk86-constituents.xlsx; ZIP comprobado y hoja de holdings inspeccionada. El Content-Type fue application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://finect.com/fondos-inversion/LU2123307360-Visionfund__emerging_mkts_eq_ieur_h",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://finect.com/fondos-inversion/LU2123307360-Visionfund__emerging_mkts_eq_ieur_h",
+          "title": "Visionfund - Emerging Markets Equity I-EUR H — Finect",
+          "claim": "Una ficha pública muestra comisiones y fechas/enlaces de documentación del fondo.",
+          "evidence": "0,000% Comisión de custodia n/a Gastos corrientes 0,940% Comisión de reembolso 0,000% Comisión de suscripción 0,000% Factsheet 27/02/2026",
+          "verification": "Página de producto Finect extraída; ejemplo de datos visibles, no feed/API ni licencia."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://finnhub.io/docs/api",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://finnhub.io/docs/api",
+          "title": "API Documentation - Finnhub",
+          "claim": "ISIN disponible sólo para acciones de UE y algunos mercados asiáticos; requiere entitlement.",
+          "evidence": "ISIN. This field is only available for EU stocks and selected Asian markets. Entitlement from Finnhub is required to access this field.",
+          "verification": "Documentación oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://finnhub.io/pricing-etf-indices",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://finnhub.io/pricing-etf-indices",
+          "title": "Pricing for ETFs, Indices, ETFs holdings, and Indices constituents - Finnhub",
+          "claim": "ETFs standard son US; cobertura global sólo para advanced/enterprise.",
+          "evidence": "* Global coverage for ETF and Mutual funds data is available for advanced users and enterprise clients. Contact us at support@finnhub.io to learn more.",
+          "verification": "Página oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://finnhub.io/pricing-startups-and-enterprise",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://finnhub.io/pricing-startups-and-enterprise",
+          "title": "Pricing for startups and enterprise - Finnhub",
+          "claim": "Enterprise ofrece uso comercial y derecho de redistribución a precio flexible.",
+          "evidence": "|License |Commercial use. Redistribution right. |",
+          "verification": "Página oficial extraída; precio flexible/no publicado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://finnhub.io/pricing-stock-api-market-data",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://finnhub.io/pricing-stock-api-market-data",
+          "title": "Pricing for stock API market data, forex and crypto - Finnhub",
+          "claim": "Self-service stock tiers personal use; pricing de Basic/Standard/Professional.",
+          "evidence": "|  | Basic | Standard | Professional |; | Pricing | $49.99/month | $129.99/month | $199.99/month |",
+          "verification": "Página de pricing oficial extraída; no hay request con token."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://finnhub.io/terms-of-service",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://finnhub.io/terms-of-service",
+          "title": "Terms of Service - Finnhub",
+          "claim": "Planes personales no permiten compartir ni redistribuir datos/derivados sin aprobación escrita.",
+          "evidence": "You hereby agree to not redistribute or share access to data or derived results from the data obtained from Finnhub with anyone or any 3rd party without written approval from Finnhub.",
+          "verification": "Términos oficiales extraídos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf",
+          "title": "Vanguard FTSE All-World UCITS ETF USD Acc — factsheet 31 August 2026",
+          "claim": "La ficha identifica la clase IE00BK5BQT80 USD acumulativa, OCF 0,14%, UCITS domiciliado en Irlanda y varios tickers/listings. La ficha indica uso profesional, no minorista.",
+          "evidence": "Ongoing Charges Figure†          0.14%\nIE00BK5BQT80\nAccumulated\nUCITS\nIreland\nThis document is directed at professional investors and should not be distributed to, or relied upon by retail investors.",
+          "verification": "web_extract directo del PDF oficial de Vanguard, fecha 31-08-2026. Datos de ficha; no se probó endpoint de holdings o NAV diario."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983",
+          "title": "Demo real de ETF; no prueba de fondos tradicionales",
+          "claim": "Demo real de ETF; no prueba de fondos tradicionales",
+          "evidence": {
+            "text": "iShares Core MSCI World UCITS ETF",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/08.txt"
+        }
+      },
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983",
+          "title": "Public FundFacts API demo payload — iShares Core MSCI World UCITS ETF",
+          "claim": "Demo pública devuelve JSON de una clase de ETF con datos de costes y timestamps.",
+          "evidence": "\"isin\":\"IE00B4L5Y983\",\"name\":\"iShares Core MSCI World UCITS ETF\",\"demo\":true,\"cached\":true,\"generatedAt\":\"2026-10-26T14:01:30.983+00:00\",\"expiresAt\":\"2026-10-27T14:01:30.983Z\",\"data\":{\"costs\":{\"exit\":\"0.00%\",\"entry\":\"0.00%\",\"riy1y\":\"0.20%\",\"riyRhp\":\"0.20%\",\"ongoing\":\"0.20%\",\"totalCost1y\":\"20 USD\",\"transaction\":\"0.00%\",\"totalCostRhp\":\"180 USD\"",
+          "verification": "GET público solo lectura ejecutado y guardado sin transformación; HTTP 200 application/json; prueba limitada a un ISIN y al endpoint demo."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://fundfactsapi.com/docs",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://fundfactsapi.com/docs",
+          "title": "API documentation — FundFacts API",
+          "claim": "La API documenta ficha JSON por ISIN con costes, SRRI, holdings, exposiciones, rentabilidad, métricas y frescura de 24 horas.",
+          "evidence": "The response is one JSON document: identity and key facts, TER, the SRRI risk indicator, a rule-based profile (category, risk band, concentration, region and sector tilt), top holdings, sector / country / asset-allocation breakdowns, calendar and annualised returns, a monthly performance series, volatility, Sharpe ratio and max drawdown — read from the documents the fund house publishes and refreshed every 24 hours.",
+          "verification": "Documentación oficial extraída; schema descrito, sin probar endpoints protegidos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://fundfactsapi.com/docs/requests",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://fundfactsapi.com/docs/requests",
+          "title": "Cuotas documentadas distintas de pricing",
+          "claim": "Cuotas documentadas distintas de pricing",
+          "evidence": {
+            "text": "| Free | $0 | 15 | 10 | 1 | 429 until the reset |",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/fundfacts-recheck-1.txt"
+        }
+      },
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://fundfactsapi.com/docs/requests",
+          "title": "Requests & rate limits — FundFacts API",
+          "claim": "Cuotas se cuentan por ISIN, con 15 free/mes, 500 Starter y 9.000 Pro según la documentación; aplica 429 al llegar al límite Free/Starter.",
+          "evidence": "Each plan comes with a number of requests per calendar month (UTC). One request is counted per ISIN that receives an answer — found or not found — on GET /funds/{isin}, POST /funds, POST /portfolio and GET /overlap, whether the payload is served from the 24-hour store or loaded fresh.",
+          "verification": "Documentación oficial de cuotas extraída; cifras contrastadas con tabla de planes en misma página."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://fundfactsapi.com/pricing",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://fundfactsapi.com/pricing",
+          "title": "Cuotas de pricing y limitación a uso personal en Free",
+          "claim": "Cuotas de pricing y limitación a uso personal en Free",
+          "evidence": {
+            "text": "Personal, non-commercial use",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/06.txt"
+        }
+      },
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://fundfactsapi.com/pricing",
+          "title": "Pricing — FundFacts API",
+          "claim": "Pro se anuncia a 49 USD/mes con 9.000 consultas y uso comercial; Free se describe como personal no comercial.",
+          "evidence": "Everything in Starter, plus 9,000 requests per month Portfolio look-through and holdings overlap (50 ISINs per call) Document extraction: any KID or factsheet to JSON White-label factsheets: your logo, no FundFacts branding Commercial use across your products",
+          "verification": "Página oficial de precios extraída; plan comercial publicado, excepción académica no identificada."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://fundfactsapi.com/terms",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://fundfactsapi.com/terms",
+          "title": "Términos generales, no permiso específico de aula confirmado",
+          "claim": "Términos generales, no permiso específico de aula confirmado",
+          "evidence": {
+            "text": "You may use the data inside your own applications, analyses and reports, including commercial ones.",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/07.txt"
+        }
+      },
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://fundfactsapi.com/terms",
+          "title": "Terms of Service — FundFacts API",
+          "claim": "Términos permiten aplicaciones/informes propios, incluso comerciales, pero prohíben redistribuir dataset bruto como feed competidor y compartir claves entre organizaciones.",
+          "evidence": "You may use the data inside your own applications, analyses and reports, including commercial ones. You may not resell or redistribute the raw dataset as a competing data feed, share API keys between organisations, or attempt to circumvent quotas.",
+          "verification": "Términos oficiales extraídos; interpretar junto a los niveles de plan y confirmar el caso de uso educativo."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://gatewaybank.com.au/important-information/consumer-data-right-cdr",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://gatewaybank.com.au/important-information/consumer-data-right-cdr",
+          "title": "Gateway Bank Consumer Data Right",
+          "claim": "Gateway publica referencia comercial de productos, incluyendo ahorro y depósitos a plazo, mediante APIs públicas sin autenticación.",
+          "evidence": "Product reference data for all our products. This includes product-related information such as interest rates, fees and features.\nGateway Bank’s Product Application Programming Interface (APIs) enables approved third parties to retrieve product-based information. The APIs are designed to support Australian Consumer Data Standards and cover the following products: Transaction Accounts, Savings Accounts, Term Deposits, Mortgage Loans, Consumer Loans.\nThese are public APIs and do not require any authentication.",
+          "verification": "documented; página oficial del banco extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/European-Securities-Markets-Authority/esma_data_py",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://github.com/European-Securities-Markets-Authority/esma_data_py",
+          "title": "esma_data_py — European Securities and Markets Authority",
+          "claim": "Repositorio oficial aporta utilidades para buscar/descargar ciertos datos ESMA; README cita conjuntos MiFID/FIRDS/SSR.",
+          "evidence": "The esma_data_py package provides a robust toolkit designed to streamline the process of searching and downloading data from the ESMA (European Securities and Markets Authority) register.",
+          "verification": "README del repositorio oficial extraído; no se clonó/instaló/ejecutó el repositorio."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/pgvector/pgvector",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://github.com/pgvector/pgvector",
+          "title": "pgvector — Open-source vector similarity search for Postgres",
+          "claim": "pgvector ofrece búsqueda de vecinos exacta/aproximada, además de tipos y distancias vectoriales.",
+          "evidence": "Supports: exact and approximate nearest neighbor search",
+          "verification": "README de repositorio consultado; no se ejecutó código ni se verificó una licencia para otros datos/proyectos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://gleif.org/en/meta/lei-data-terms-of-use",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://gleif.org/en/meta/lei-data-terms-of-use",
+          "title": "GLEIF LEI Data Terms of Use",
+          "claim": "El Access Service ofrece los datos de referencia LEI bajo CC0 1.0 y sin coste.",
+          "evidence": "The data available through the Access Service are provided under the CC0 licence.",
+          "verification": "Condiciones primarias extraídas; cita literal adjunta al ledger."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://help.awin.com/developers/docs/product-feed-list-download",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://help.awin.com/developers/docs/product-feed-list-download",
+          "title": "Product Feed List Download — Awin",
+          "claim": "Feed list programable limitada a los feeds visibles al partner por adhesión o permiso previo.",
+          "evidence": "This feature allows Partners to download a CSV list of the feeds they can see from either Advertisers they are joined to or Advertisers that allow Partners to promote their products before joining:",
+          "verification": "Docs oficiales Awin extraídos; ejemplo de esquema y autorización, sin credenciales privadas."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://ishares.com/uk/individual/en/products/328657/fund/1506575576011.ajax?dataType=fund&fileName=ISPE_holdings&fileType=csv",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://ishares.com/uk/individual/en/products/328657/fund/1506575576011.ajax?dataType=fund&fileName=ISPE_holdings&fileType=csv",
+          "title": "iShares S&P 500 Equal Weight UCITS ETF — product/holdings download reference",
+          "claim": "La página de producto de iShares presenta un enlace de descarga para el último CSV de holdings; esto es una descarga pública de archivo, no documentación de API.",
+          "evidence": "Download latest fund holdings CSV data",
+          "verification": "web_extract de la página oficial iShares el 2026-10-26; la extracción muestra el enlace y el enlace al KIID/KID. El fichero CSV se probó en la URL directa [12]."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://marketstack.com/documentation_v2",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://marketstack.com/documentation_v2",
+          "title": "Marketstack API V2 documentation overview",
+          "claim": "El overview anuncia EOD/intraday/history ajustado, ETF, fundamentals y 72+ exchanges.",
+          "evidence": "The Marketstack API provides real-time, intraday, and historical stock market data through a RESTful JSON interface — covering 125,000+ tickers across 72+ global exchanges , plus indices, bonds, ETFs, commodities, and company fundamentals.",
+          "verification": "Overview oficial extraído; alcance del ETF/fundamental de cada endpoint no probado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://marketstack.com/pricing",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://marketstack.com/pricing",
+          "title": "Market Data Subscription Plans - marketstack",
+          "claim": "Free 100 llamadas/mes EOD no comercial; Basic $9,99/mes incluye commercial use y datos ETF holdings.",
+          "evidence": "+ 100 Requests / mo; + No Support; + End-of-Day Data; + 1 Year History; + Splits & Dividends",
+          "verification": "Pricing oficial extraído; la tabla indica 100 aunque una parte de FAQ difiere."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://myinvestor.es/cuentas-tarjetas/cuentas",
+    "observations": [
+      {
+        "topic": 5,
+        "report": "05-bancos-fichas-importables.md",
+        "source": {
+          "url": "https://myinvestor.es/cuentas-tarjetas/cuentas",
+          "title": "Cuenta corriente remunerada - MyInvestor",
+          "claim": "Página oficial con tarifa de campaña, cap, frecuencia, liquidez y FGD; también contiene secciones de FAQ con otras condiciones que requieren resolver por bases legales.",
+          "evidence": "Hazte cliente y remunera tu dinero al 2,5 % TAE durante los 6 primeros meses. Sin comisiones, sin nómina y sin requisitos. Para un saldo máximo de 70.000 €. Los intereses se abonan cada mes, coincidiendo con el día en el que abriste tu cuenta. MyInvestor Banco S.A. está adherido al Fondo de Garantía de Depósitos en España de Entidades de Crédito. El fondo garantiza los depósitos de dinero hasta 100.000 euros por titular y por entidad. Durante los primeros 12 meses desde la apertura: 1,25 % TAE (1,243 % TIN anual). Durante los primeros 6 meses desde la fecha de apertura: 2,50 % TAE (2,472 % TIN). A partir del séptimo mes: 0,30 % TAE (0,300 % TIN).",
+          "verification": "GET anónimo probado el 2026-10-26: HTTP 200, text/html; charset=utf-8, 903286 bytes. Texto visible guardado; además se comprobó en el HTML el enlace a BBLL_cuenta_remunerada_post-sep26.pdf, sin descargar ese PDF en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://neon.com/docs/introduction/plans",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://neon.com/docs/introduction/plans",
+          "title": "Neon plans — Neon Docs",
+          "claim": "Neon Free publica 100 CU-hours/project, máximo 2 CU, 1 GB/project, 20 GB por cuenta, 5 GB egress/project y scale-to-zero tras 5 minutos.",
+          "evidence": "Free | 100 CU-hours/project | Up to 2 CU (8 GB RAM) | After 5 minutes when inactive | Free 1 GB per Project",
+          "verification": "Documentación oficial extraída; GET HTTP 200 guardado en evidence/neon-plans.html. Límites sujetos a cambio."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://neon.com/docs/serverless/serverless-driver",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://neon.com/docs/serverless/serverless-driver",
+          "title": "Neon serverless driver — Neon Docs",
+          "claim": "Driver JS/TS consulta serverless/edge por HTTP o WebSockets y permite consultas con parámetros.",
+          "evidence": "The Neon serverless driver is a low-latency Postgres driver for JavaScript and TypeScript that allows you to query data from serverless and edge environments over HTTP or WebSockets.",
+          "verification": "Documentación oficial extraída y GET HTTP 200 guardado en evidence/neon-driver.html; driver no instalado/probado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://neon.com/pricing",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://neon.com/pricing",
+          "title": "Neon pricing",
+          "claim": "La página de precios identifica pooler PgBouncer y publica hasta 10.000 conexiones pooled; no es carga validada para Pai.",
+          "evidence": "All Neon databases can use pooled connections built on pgBouncer (up to 10,000 connections).",
+          "verification": "Página oficial extraída; el número es capacidad indicada por proveedor, no prueba independiente/concurrencia de la app."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1077805443/Products+v3.1.2",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1077805443/Products+v3.1.2",
+          "title": "Products v3.1.2 – Open Banking",
+          "claim": "AIS Products se liga a cuentas autorizadas y el detalle completo del modelo solo cubre PCA/BCA.",
+          "evidence": "This endpoint will retrieve the products resources for all authorised accounts linked to a specific account-request. Detailed product information is only available for BCA and PCA products.\n| 1 | products | GET | GET /accounts/{AccountId}/product | Conditional | accounts | Authorization Code | No | | | OBReadProduct2 |\n| 2 | products | GET | GET /products | Optional | accounts | Authorization Code | No | Pagination | | OBReadProduct2 |",
+          "verification": "documented; página oficial extraída el 2026-10-26; sin endpoint real probado"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1103233939/PCA+API+Specification_v2.3.0",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/1103233939/PCA+API+Specification_v2.3.0",
+          "title": "PCA API Specification v2.3.0 – Open Banking",
+          "claim": "El estándar PCA describe grupos de producto, crédito, descubierto, elegibilidad, beneficios y cargos.",
+          "evidence": "- 2.3 Core Product\n  - 2.4 Credit Interest\n  - 2.5 Overdraft/Borrowing\n  - 2.6 Eligibility\n  - 2.7 Features & Benefits\n  - 2.8 Other Fees & Charges",
+          "verification": "documented; especificación oficial extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/127009221/Read+Write+Data+API+Specification+-+v2.0.0",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://openbanking.atlassian.net/wiki/spaces/DZ/pages/127009221/Read+Write+Data+API+Specification+-+v2.0.0",
+          "title": "Read/Write Data API Specification v2.0.0 – Open Banking",
+          "claim": "La extensión AIS para otras cuentas de pago es GBP e incluye cuentas flexibles de ahorro y de depósito.",
+          "evidence": "Version 2.0.0 extends the Account and Transaction API to cover other PSD2 in-scope payment accounts (limited to GBP accounts) in addition to personal and business current accounts covered by v1.\n- Payments enabled flexible savings accounts\n- Payments enabled deposit accounts",
+          "verification": "documented; especificación oficial extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://openbanking.org.uk/open-data-apis",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://openbanking.org.uk/open-data-apis",
+          "title": "Open Data API Specs – Open Banking",
+          "claim": "Los endpoints Open Data los implementa cada proveedor; enrolarse como API user es opcional para soporte.",
+          "evidence": "Open Banking do not provide direct access to live API end points. Rather, these are implemented and supported by each API provider. The API Dashboard lists all available API end points, and show which API version is supported by each provider. Enrolment is optional for API users but is required if you wish to receive support from Open Banking. API Providers must enrol.",
+          "verification": "documented; página oficial extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://openfigi.com/api/documentation",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://openfigi.com/api/documentation",
+          "title": "OpenFIGI API Documentation",
+          "claim": "La API mapea identificadores de terceros a FIGI; el GET de valores del enum permite comprobar tipos como ID_ISIN sin invocar mapping.",
+          "evidence": "The OpenFIGI API allows mapping from third-party identifiers to FIGIs.",
+          "verification": "Documentación primaria extraída; endpoint enum GET observado en pruebas. La correspondencia ISIN concreta no se probó porque la documentación define mapping como POST."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://openfigi.com/docs/faqs",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://openfigi.com/docs/faqs",
+          "title": "OpenFIGI FAQ",
+          "claim": "No ofrece bulk flat files en la web; exporta hasta 5.000 resultados CSV y la FAQ concede reutilización libre a la simbología FIGI.",
+          "evidence": "Bulk flat files are not available on the site. However, the OpenFIGI Search page supports exporting up to 5000 results to a .CSV formatted Excel file. The FIGI symbology, under the auspice of the Object Management Group, is provided free of charge to all, and for the public trust and benefit. There is no cost recovery, licensing or re-use restrictions or hidden fees for access, use, or redistribution of the FIGI symbology.",
+          "verification": "Página primaria extraída; cita literal adjunta al ledger."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://public.cdr-api.gatewaybank.com.au/cds-au/v1/banking/products",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://public.cdr-api.gatewaybank.com.au/cds-au/v1/banking/products",
+          "title": "Gateway Bank Product Reference Data API GET",
+          "claim": "El listado oficial devuelve productos de Gateway con productId, fechas, categoría, nombre y URLs comerciales.",
+          "evidence": "\"productId\":\"27\",\"effectiveFrom\":\"2019-01-22T13:30:00.0000000Z\",\"lastUpdated\":\"2026-10-21T02:00:29.2280569Z\",\"productCategory\":\"TERM_DEPOSITS\",\"name\":\"Package TD 6 Months\",\"description\":\"Package TD 6 Months\",\"brand\":\"Gateway Bank\"",
+          "verification": "endpoint-tested; GET con x-v: 5 devolvió 200 application/json el 2026-10-26; list endpoint solamente"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://raisin.com/become-a-partner",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://raisin.com/become-a-partner",
+          "title": "Become a Partner – Raisin",
+          "claim": "Raisin anuncia API/integración gratuita para partners y plataformas dedicadas en España y otros mercados europeos.",
+          "evidence": "Take advantage of the full range of Raisin’s integration solutions, providing full process automation and API for free.\nWe are available in over 30 markets across Europe and operate country-dedicated platforms in Germany, France, Spain, Austria, Netherlands, Ireland and the UK.",
+          "verification": "documented; página corporativa oficial extraída el 2026-10-26; no endpoint abierto probado"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://raisin.com/corporate/press/Deposit-Solutions-And-Raisin-Merge",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://raisin.com/corporate/press/Deposit-Solutions-And-Raisin-Merge",
+          "title": "Deposit Solutions and Raisin merge – Raisin",
+          "claim": "Deposit Solutions se fusionó con Raisin DS y WeltSparen/Savedo/ZINSPILOT son marcas B2C de Raisin DS.",
+          "evidence": "Deposit Solutions is the leading B2B Open Banking platform in the savings deposit space.\nRaisin DS operates its own B2C platforms across Europe under the Raisin, WeltSparen, Savedo, and ZINSPILOT brands, and in the U.S. under the brand SaveBetter.",
+          "verification": "documented; comunicado corporativo oficial extraído el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://raw.githubusercontent.com/European-Securities-Markets-Authority/esma_data_py/master/LICENSE.md",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://raw.githubusercontent.com/European-Securities-Markets-Authority/esma_data_py/master/LICENSE.md",
+          "title": "LICENSE.md — esma_data_py",
+          "claim": "La licencia raíz del código del paquete es EUPL-1.2; no define por sí sola derechos de los datos descargados.",
+          "evidence": "EUROPEAN UNION PUBLIC LICENCE v. 1.2 EUPL © the European Union 2007, 2016",
+          "verification": "Archivo raíz LICENSE.md recuperado directamente por GET público (HTTP 200, text/plain); licencia del código verificada."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/publication/details?core=esma_registers_firds",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/publication/details?core=esma_registers_firds",
+          "title": "ESMA — Financial Instruments Reference Data System",
+          "claim": "ESMA recibe datos remitidos por centros y autoridades y publica cambios; el portal advierte que no garantiza que el contenido esté completo, exacto o actualizado.",
+          "evidence": "ESMA is not able to provide any representation or warranty that the available content is complete, accurate or up to date.",
+          "verification": "Disclaimer oficial del registro extraído."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/publication/details?core=esma_registers_upreg&docId=ae47135",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/publication/details?core=esma_registers_upreg&docId=ae47135",
+          "title": "ESMA — MiFID/UCITS/AIFMD entities register detail",
+          "claim": "ESMA describe M2M para organizaciones grandes y avisa que parte de los datos nacionales aún puede no estar cargada.",
+          "evidence": "The portal offers machine-to-machine services to large-scale organisations, exposing a set of web services for retrieval of data maintained in ESMA register's repositories.",
+          "verification": "Ficha oficial extraída; comprobar cobertura España con CNMV."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/publication/helpApp",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/publication/helpApp",
+          "title": "ESMA Registers - Application to Application Help File",
+          "claim": "ESMA Registers expone servicios máquina-a-máquina para consultar datos mantenidos en registros; consultas Solr predefinidas.",
+          "evidence": "ESMA Registers system offers machine-to-machine (A2A) services, exposing a set of services for retrieval of data maintained in ESMA Registers to external systems/clients.",
+          "verification": "Ayuda oficial extraída; no se ejecutó una consulta de registro."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/publication/helpPage",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/publication/helpPage",
+          "title": "ESMA Registers — Publication Interface Help",
+          "claim": "La interfaz permite exportar resultados y describe dimensiones/categorías del detalle de entidades.",
+          "evidence": "An exported file with metadata includes the current timestamp, the name of the register, the disclaimer, the column headings and the search results.",
+          "verification": "Ayuda oficial extraída; exportación y campos concretos aún deben probarse."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds_files",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds_files",
+          "title": "ESMA FIRDS Reference Files — búsqueda",
+          "claim": "Buscador de ficheros Full File, Delta File y Cancellations con filtros de fecha/tipo.",
+          "evidence": "Select - Full File Delta File Cancellations Full File",
+          "verification": "Página de búsqueda oficial extraída; ficheros no descargados."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_upreg",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_upreg",
+          "title": "ESMA Registers — MiFID/UCITS/AIFMD entities",
+          "claim": "Ruta del registro europeo de entidades reguladas.",
+          "evidence": "MiFID/UCITS/AIFMD/EUSEF/EUVECA/ECSPR entities",
+          "verification": "Ruta oficial del registro; no se descargó CSV en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/solr/esma_registers_firds/select?q=Id%3A%22ES0000012S22%22&wt=json&rows=3",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/solr/esma_registers_firds/select?q=Id%3A%22ES0000012S22%22&wt=json&rows=3",
+          "title": "ESMA FIRDS Solr — consulta de prueba",
+          "claim": "La consulta concreta por un ISIN español no devolvió datos, por tanto no se validó esquema ni cobertura.",
+          "evidence": "HTTP 400 Bad Request; no se observaron campos de instrumento.",
+          "verification": "GET ejecutado; resultado registrado en evidence/initial_get_results.json."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://registers.esma.europa.eu/solr/esma_registers_firds_files/select?q=%2A&wt=json&indent=true&start=0&rows=3&sort=publication_date+desc",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://registers.esma.europa.eu/solr/esma_registers_firds_files/select?q=%2A&wt=json&indent=true&start=0&rows=3&sort=publication_date+desc",
+          "title": "ESMA FIRDS files Solr index — prueba metadata ordenada por publication_date",
+          "claim": "El índice de ficheros publica tipo, nombre, fecha, enlace y checksum; la muestra incluyó DLTINS de 2026-10-26.",
+          "evidence": "\"file_name\":\"DLTINS_20261026_01of01.zip\", \"file_type\":\"DLTINS\", \"publication_date\":\"2026-10-26T00:00:00Z\", \"download_link\":\"https://firds.esma.europa.eu/firds/DLTINS_20261026_01of01.zip\"",
+          "verification": "Endpoint-tested: GET 200 application/json, respuesta 1.583 bytes para rows=3; solo metadata, sin descargar el fichero."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL,/.M.N.CPI.._T.N.GY+_Z?startPeriod=2024-01&dimensionAtObservation=AllDimensions&format=csvfilewithlabels",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.TPS,DSD_PRICES@DF_PRICES_ALL,/.M.N.CPI.._T.N.GY+_Z?startPeriod=2024-01&dimensionAtObservation=AllDimensions&format=csvfilewithlabels",
+          "title": "GET test — OECD monthly CPI dataset",
+          "claim": "La respuesta CSV incluye datos España mensuales por CPI national, unidad e indicador, con periodos hasta 2025-12 en la extracción.",
+          "evidence": "ESP,Spain,M,Monthly,N,National,CPI,Consumer price index,PA,Percent per annum,_T,Total,N,Neither seasonally adjusted nor calendar adjusted,GY,Growth rate, over 1 year,2025-12,,2.924468",
+          "verification": "GET 2026-10-26 HTTP 200; 793575 bytes raw guardados en evidence/03-oecd-cpi-spain.raw; se filtró REF_AREA=ESP localmente, sin otra petición."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://site.financialmodelingprep.com/developer/docs/pricing",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://site.financialmodelingprep.com/developer/docs/pricing",
+          "title": "Pricing Plans - FMP",
+          "claim": "Free/Starter/Premium/Ultimate ofrecen distintos alcance y Ultimate Global; display necesita contrato específico.",
+          "evidence": "Displaying or redistributing data sourced from FMP requires a specific Data Display and Licensing Agreement with FMP.",
+          "verification": "Pricing oficial extraído; license fee para este caso desconocida."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://site.financialmodelingprep.com/developer/docs/stable/historical-price-eod-full",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://site.financialmodelingprep.com/developer/docs/stable/historical-price-eod-full",
+          "title": "Stock Price and Volume Data API - FMP",
+          "claim": "Close está ajustado por split; adjClose por split y dividendo.",
+          "evidence": "Yes, the 'close' price is adjusted only for stock splits and 'adjClose' is adjusted for stock splits and dividends.",
+          "verification": "Documentación oficial extraída; no se probó con ticker europeo."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://site.financialmodelingprep.com/developer/docs/stable/search-isin",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://site.financialmodelingprep.com/developer/docs/stable/search-isin",
+          "title": "Search Isin API - FMP",
+          "claim": "ISIN lookup devuelve nombre/ticker/ISIN/market cap según documentación.",
+          "evidence": "The API provides details such as the company name, stock symbol, ISIN, and market capitalization for financial securities.",
+          "verification": "Documentación oficial extraída; entitlement/cobertura de ISIN europea no probada."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://site.financialmodelingprep.com/terms-of-service",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://site.financialmodelingprep.com/terms-of-service",
+          "title": "Terms of Service - FMP API",
+          "claim": "Términos estándar prohíben acceso o display de datos a terceros sin permiso; termina y borra caché al cancelar.",
+          "evidence": "The Customer may not share FMP Services or Data, resell, permit other users access to our Services through the Customer’s account, integrate the Data or Services into any tools or applications accessible by any third parties, or use the Services to host, share, display, or provide content for others.",
+          "verification": "Términos oficiales extraídos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://stats.bis.org/api-doc/v2/",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://stats.bis.org/api-doc/v2/",
+          "title": "BIS Stats API v2",
+          "claim": "Servicio BIS SDMX REST 2.1 para acceso programático a datos y metadatos estadísticos públicos.",
+          "evidence": "This service offers programmatic access to the BIS statistical data and metadata released to the public.",
+          "verification": "OpenAPI oficial extraído; no se hizo consulta de datos en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://success.awin.com/s/article/How-can-I-access-a-Product-Feed",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://success.awin.com/s/article/How-can-I-access-a-Product-Feed",
+          "title": "How to access a product data feed — Awin",
+          "claim": "Awin permite descargar CSV o configurar Create-a-Feed para datos de anunciantes.",
+          "evidence": "You can access feeds in two ways: by downloading a CSV list, or by using Create-a-Feed to customize your selection.",
+          "verification": "Ayuda oficial de Awin extraída; requiere acceso de partner, no se accedió a cuenta/feed."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/docs/guides/api",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/docs/guides/api",
+          "title": "Data REST API — Supabase Docs",
+          "claim": "Supabase genera REST API a partir de esquema mediante PostgREST bajo /rest/v1/ y apoya RLS.",
+          "evidence": "Supabase provides a RESTful API using PostgREST, a thin API layer on top of Postgres. It exposes everything you need from a CRUD API at the URL https://<project_ref>.supabase.co/rest/v1/.",
+          "verification": "Documentación oficial extraída; no hay proyecto Pai para probar."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/docs/guides/api/rest/client-libs",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/docs/guides/api/rest/client-libs",
+          "title": "Client Libraries — Supabase Docs",
+          "claim": "Supabase enumera SDKs oficiales para JavaScript/TypeScript, Python, Dart/Flutter y Swift.",
+          "evidence": "| JavaScript/TypeScript | supabase-js | | Dart/Flutter | supabase-flutter | | Swift | supabase-swift | | Python | supabase-py |",
+          "verification": "Página oficial de bibliotecas extraída; no se instaló ni probó SDK."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/docs/guides/api/securing-your-api",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/docs/guides/api/securing-your-api",
+          "title": "Securing your API — Supabase Docs",
+          "claim": "Grants determinan acceso a objeto/función; RLS determina filas; functions se controlan por EXECUTE, no por RLS.",
+          "evidence": "Grants determine which Postgres roles (anon, authenticated, service_role) can reach a given table, view, or function over the Data API. Row Level Security (RLS) policies then determine which rows those roles can read or modify.",
+          "verification": "Página oficial de seguridad extraída vía URL canónica de documentación; no se evaluó configuración de ningún proyecto."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/docs/guides/cron",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/docs/guides/cron",
+          "title": "Cron — Supabase Docs",
+          "claim": "Cron puede ejecutar SQL/funciones o hacer HTTP a Edge Function, por lo que la ingesta no necesita el PC local encendido.",
+          "evidence": "Every Job can run SQL snippets or database functions with zero network latency or make an HTTP request, such as invoking a Supabase Edge Function, with ease.",
+          "verification": "Documentación oficial extraída; no se programó ningún cron."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/docs/guides/database/connecting-to-postgres",
+          "title": "Connect to your database — Supabase Docs",
+          "claim": "Frontend usa Data API; función serverless/edge usa pooler compartido en transaction mode.",
+          "evidence": "A frontend application | Data API | Works over REST or GraphQL, so you don't need a Postgres client. Requires Row Level Security. | A serverless or edge function | Shared pooler, transaction mode",
+          "verification": "Documentación oficial extraída; no se estableció conexión a base."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/docs/guides/database/extensions/pgvector",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/docs/guides/database/extensions/pgvector",
+          "title": "pgvector: Embeddings and vector similarity — Supabase Docs",
+          "claim": "pgvector es extensión Postgres para similitud vectorial; embeddings se generan y gestionan aparte.",
+          "evidence": "pgvector is a Postgres extension for vector similarity search. It can also be used for storing embeddings.",
+          "verification": "Documentación oficial extraída; no se habilitó extensión."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/docs/guides/functions/limits",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/docs/guides/functions/limits",
+          "title": "Limits — Supabase Edge Functions",
+          "claim": "Edge Functions Free: duración wall-clock máxima 150 s; CPU máximo 2 s por request.",
+          "evidence": "Free plan: 150s - Paid plans: 400s. Maximum CPU Time: 2s (Amount of actual time spent on the CPU per request - does not include async I/O.)",
+          "verification": "Documentación oficial extraída; el trabajo propuesto no se ejecutó."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://supabase.com/pricing",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://supabase.com/pricing",
+          "title": "Pricing & Fees — Supabase",
+          "claim": "El plan Free publica 500 MB DB, 5 GB egress, 5 GB cached egress, 1 GB archivos, 50.000 MAU, API requests ilimitadas y pausa tras una semana inactiva.",
+          "evidence": "Free projects are paused after 1 week of inactivity. Limit of 2 active projects. - 500 MB database size - 5 GB egress - 5 GB cached egress - 1 GB file storage",
+          "verification": "Página oficial de precios extraída y GET HTTP 200 guardado en evidence/supabase-pricing.html; los límites pueden cambiar."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://support.twelvedata.com/en/articles/12656239-european-equities-market-data",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://support.twelvedata.com/en/articles/12656239-european-equities-market-data",
+          "title": "European equities market data - Twelve Data Support",
+          "claim": "Los datos de Cboe Europe requieren add-on/revisión; demora según licencia.",
+          "evidence": "Access to Cboe Europe is granted via the Data add-ons page inside the Dashboard.",
+          "verification": "Página oficial extraída; no se activó add-on ni se hizo request de precio."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://support.twelvedata.com/en/articles/5332349-commercial-and-personal-usage",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://support.twelvedata.com/en/articles/5332349-commercial-and-personal-usage",
+          "title": "Commercial and personal usage - Twelve Data Support",
+          "claim": "Permiso de uso externo depende de tier; EU fuera de US requiere aprobación y redistribución contrato separado.",
+          "evidence": "Price data for regions outside the United States requires additional approval for commercial use. Any redistribution of data requires a separate agreement with Twelve Data.",
+          "verification": "Página oficial extraída; licencia no cotizada para Paideia."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://support.twelvedata.com/en/articles/5335783-trial",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://support.twelvedata.com/en/articles/5335783-trial",
+          "title": "Trial - Twelve Data Support",
+          "claim": "Venture business empieza en $149/mes y anuncia display externo/datos EU sujeto a permisos.",
+          "evidence": "# Venture Plan\n- Various credit options from **610 API credits + 500 WebSocket API credits** starting at **$149/month.**",
+          "verification": "Página oficial extraída; no es cotización de licencia de mercado EU."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://tesoro.es/deuda-publica/los-valores-del-tesoro/bonos-y-obligaciones-del-estado",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://tesoro.es/deuda-publica/los-valores-del-tesoro/bonos-y-obligaciones-del-estado",
+          "title": "Tesoro: bonos y obligaciones",
+          "claim": "Tesoro describe el pago anual del cupón de bonos y obligaciones; esa regla general no basta para un calendario contractual por ISIN.",
+          "evidence": "El cupón que devenga se paga cada año y representa el tipo de interés nominal del Bono o la Obligación.",
+          "verification": "Página oficial extraída; no suministra calendario individual completo."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://tesoro.es/en/deuda-publica/noticias/treasury-announces-bonos-and-obligaciones-will-be-issued-october-1st-2026",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://tesoro.es/en/deuda-publica/noticias/treasury-announces-bonos-and-obligaciones-will-be-issued-october-1st-2026",
+          "title": "Tesoro: anuncio de emisión, 1 octubre 2026",
+          "claim": "El aviso contiene ISIN, cupón, vencimiento, interés corrido, cupón corto e indexación.",
+          "evidence": "| ISIN | Reference | Coupon | Maturity | Accrued Interest | Short coupon amount | Indexation Coefficient |",
+          "verification": "Página oficial extraída; campos observados en anuncio de muestra."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://tesoro.es/en/deuda-publica/valores-del-tesoro/valores-en-circulacion",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://tesoro.es/en/deuda-publica/valores-del-tesoro/valores-en-circulacion",
+          "title": "Tesoro: valores en circulación",
+          "claim": "La página muestra identificadores, vencimiento, saldos nominales, coeficiente de indexación y valor facial.",
+          "evidence": "| ISIN code | Maturity date | Outstanding amount (*) | Indexation coefficient | Face value |; datos as at 2026-10-20.",
+          "verification": "GET 200 HTML; web extraction confirmó campos y fecha efectiva 2026-10-20."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://tink.com/products/account-aggregation",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://tink.com/products/account-aggregation",
+          "title": "Tink Account Aggregation",
+          "claim": "Tink describe acceso a las finanzas/cuentas de los clientes mediante agregación europea, no un catálogo de ofertas.",
+          "evidence": "Get the full picture of your customers’ finances. Access high-quality connections to financial data across Europe – that is the core of our technology.\nWe aggregate data from over 3,400 financial institutions across Europe, covering at least 95% of the population in our live markets.",
+          "verification": "documented; página de producto oficial extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://traderepublic.com/es-es/interes",
+    "observations": [
+      {
+        "topic": 5,
+        "report": "05-bancos-fichas-importables.md",
+        "source": {
+          "url": "https://traderepublic.com/es-es/interes",
+          "title": "Interés sobre efectivo - Trade Republic",
+          "claim": "El título del HTML oficial anuncia una TAE para efectivo; el cuerpo recuperado en esta prueba no aporta campos suficientes para un importador de ficha contractual.",
+          "evidence": "Trade Republic: 3,04 % TAE sobre tu efectivo",
+          "verification": "GET anónimo probado el 2026-10-26: HTTP 200, text/html; charset=utf-8, 58315 bytes. La extracción del HTML visible devolvió 25 líneas de título/navegación/pie; no se observó el cuerpo de condiciones de la oferta."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://twelvedata.com/docs/llms/asset-catalogs/etf-list.md",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://twelvedata.com/docs/llms/asset-catalogs/etf-list.md",
+          "title": "ETFs - Twelve Data",
+          "claim": "ETF directory se actualiza a diario; ISIN requiere add-on.",
+          "evidence": "The ETFs endpoint provides a daily updated list of all available Exchange-Traded Funds. ISIN access is activating in the Data add-ons section",
+          "verification": "Documentación oficial extraída; demo directory respondió."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://twelvedata.com/docs/llms/market-data/time-series.md",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://twelvedata.com/docs/llms/market-data/time-series.md",
+          "title": "Time series (High demand) - Twelve Data",
+          "claim": "La serie ofrece OHLC y volumen cuando aplica, con metadatos del instrumento y de mercado.",
+          "evidence": "The time series endpoint provides detailed historical data for a specified financial instrument.",
+          "verification": "Endpoint documentado; no prueba ejecutada para precios europeos."
+        }
+      },
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://twelvedata.com/docs/llms/market-data/time-series.md",
+          "title": "Time series (High demand) - Twelve Data",
+          "claim": "Campos temporales OHLC y volumen cuando corresponda.",
+          "evidence": "The time series consists of chronological entries with Open, High, Low, and Close prices, and for applicable instruments, it also includes trading volume.",
+          "verification": "Documentación oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://twelvedata.com/pricing",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://twelvedata.com/pricing",
+          "title": "Individual Pricing - Twelve Data",
+          "claim": "Límites y precios de los tiers Individual; Basic no equivale a feed europeo ni a redistribución.",
+          "evidence": "API credits; 8 (800 a day); 55+; 610+; 2,584+",
+          "verification": "Documentación oficial extraída; pricing dinámico, distinguir mensual y anual."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.alphavantage.co/documentation",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://www.alphavantage.co/documentation",
+          "title": "API Documentation - Alpha Vantage",
+          "claim": "La daily full history requiere premium; daily adjusted aparece como función premium.",
+          "evidence": "The \"full\" outputsize is available to premium keys.",
+          "verification": "Documentación oficial extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.alphavantage.co/premium",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://www.alphavantage.co/premium",
+          "title": "Premium API Key - Alpha Vantage",
+          "claim": "Premium mínimo publicado $49,99/mes por 75 requests/min; es el pricing personal, no precio comercial.",
+          "evidence": "75 requests/min + premium support: $49.99/month",
+          "verification": "HTML oficial fetched directamente (HTTP 200); pricing comercial no publicado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo",
+          "title": "Alpha Vantage IBM daily public demo response",
+          "claim": "Demo devuelve Meta Data y Time Series Daily OHLCV; última fecha observada 2026-10-23.",
+          "evidence": "\"1. Information\": \"Daily Prices (open, high, low, close) and Volumes\",\n        \"2. Symbol\": \"IBM\",\n        \"3. Last Refreshed\": \"2026-10-23\"",
+          "verification": "endpoint-tested, HTTP 200; muestra sólo IBM/US; respuesta original en evidencia/alphavantage-ibm-daily-demo.body."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.alphavantage.co/support/",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://www.alphavantage.co/support/",
+          "title": "Customer Support - Alpha Vantage",
+          "claim": "Free 25 llamadas/día; ilimitado sólo para proyectos open-source/educativos verificados.",
+          "evidence": "We are pleased to provide free stock API service covering the majority of our datasets for 25 API requests per day and unlimited API requests for verified open-source or educational projects.",
+          "verification": "Support oficial extraído."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.alphavantage.co/terms_of_service/",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://www.alphavantage.co/terms_of_service/",
+          "title": "Terms of Service - Alpha Vantage",
+          "claim": "Permitir a otros usuarios acceder a información es comercial; EULA personal no habilita sitio público.",
+          "evidence": "iii. You plan to use or provide information accessed through the Alpha Vantage Platform as part of any type of commercial activity that allows individuals or entities other than User to access information directly or indirectly even if the scope of such activity falls outside of the securities industry.",
+          "verification": "Terms of service oficiales extraídos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.amundietf.com/pdfDocuments/monthly-factsheet/IE0009DRDY20/ENG/LUX/INSTITUTIONNEL/ETF/20260831",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://www.amundietf.com/pdfDocuments/monthly-factsheet/IE0009DRDY20/ENG/LUX/INSTITUTIONNEL/ETF/20260831",
+          "title": "Amundi Prime Global UCITS ETF Acc — factsheet 31 August 2026",
+          "claim": "La ficha oficial identifica IE0009DRDY20, Acc, USD, UCITS, réplica física, SRI 4/7, NAV/AUM a 31-08-2026, coste de 0,05% bajo la etiqueta de gastos de gestión/administrativos/operativos y frecuencia de cálculo NAV diaria; el PDF es solo para profesionales.",
+          "evidence": "VL A : 45.84 USD\nAssets Under Management (AUM) 5,585.26 ( million USD )\nManagement fees and other administrative or operating costs * 0.05%\nNAV and AUM as of 31/08/2026\nISIN code A : IE0009DRDY20\nType of shares Accumulation\nUCITS compliant UCITS\nShare-class reference currency USD\nFrequency of NAV calculation Daily\nThis material is solely for the attention of “professional” investors.",
+          "verification": "web_extract de PDF oficial; fecha interna de ficha 31-08-2026. La ficha no es una serie NAV ni un endpoint JSON/CSV probado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.bestinver.es/WS/Api/Profitability/DownloadExcelLiquidity?productId=2",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://www.bestinver.es/WS/Api/Profitability/DownloadExcelLiquidity?productId=2",
+          "title": "Descarga real de NAV de Bestinver Bolsa",
+          "claim": "Descarga real de NAV de Bestinver Bolsa",
+          "evidence": {
+            "text": "Valor liquidativo (€)",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/12.txt"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.bestinver.es/fondos-de-inversion/bestinver-bolsa",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://www.bestinver.es/fondos-de-inversion/bestinver-bolsa",
+          "title": "Página del producto con ISIN, NAV, costes parciales y mínimos",
+          "claim": "Página del producto con ISIN, NAV, costes parciales y mínimos",
+          "evidence": {
+            "text": "Código ISIN: ES0147622031",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/10-bestinver-webextract.txt"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+          "title": "iShares Core MSCI Europe EUR Acc — Spanish PRIIPs KID",
+          "claim": "El KID en español identifica IE00B4K48X80, con fecha 03-09-2026, SRI 4/7, 0,12% de gastos recurrentes y 0,01% de costes de operación estimados.",
+          "evidence": "iShares Core MSCI Europe UCITS ETF EUR (Acc), EUR Accu, ISIN: IE00B4K48X80\nLa fecha de este documento es 03 septiembre 2026.\nHemos clasificado este producto en la clase de riesgo 4 en una escala de 7\n0.12% del valor de su inversión al año.\n0.01% del valor de su inversión al año.",
+          "verification": "PDF PRIIPs español oficial de BlackRock; descargado/extractado y revisado en la investigación previa de este proyecto y vuelto a extraer en esta ronda. Documento por clase, no feed de datos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.boe.es/informacion/aviso_legal/index.php",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.boe.es/informacion/aviso_legal/index.php",
+          "title": "BOE: condiciones de reutilización",
+          "claim": "La licencia general autoriza reutilización comercial/no comercial y combinación con atribución y no desnaturalización, sujeta a excepciones por documento.",
+          "evidence": "Permite reutilización para fines comerciales y no comerciales; debe citarse la fuente y no desnaturalizar el sentido.",
+          "verification": "Aviso legal completo consultado; se revisó el apartado de condiciones y se anotó la excepción de documentos con condiciones especiales."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.bolsasymercados.es/en/bme-exchange/prices-and-markets/market-data-services/end-of-day-and-historical-services.html",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.bolsasymercados.es/en/bme-exchange/prices-and-markets/market-data-services/end-of-day-and-historical-services.html",
+          "title": "BME: servicios EOD e históricos",
+          "claim": "BME comercializa ficheros EOD/históricos; el boletín público de deuda solo expone resúmenes diarios/mensuales y remite el contenido adicional a contacto.",
+          "evidence": "BME offers End-of-Day and Historical Information ... files ... all financial instruments; Only the daily and monthly summary ... are published on the web.",
+          "verification": "Documentación oficial extraída; GET crudo desde este entorno no pasó validación TLS."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.cdrcompare.au/api/v1/brands",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://www.cdrcompare.au/api/v1/brands",
+          "title": "CDR Compare brands API GET",
+          "claim": "El endpoint público de marcas identifica Gateway Bank y su Product Reference Data upstream.",
+          "evidence": "\"slug\": \"gateway-bank\",\n        \"name\": \"Gateway Bank\",\n        \"industries\": [\n          \"banking\"\n        ],\n        \"industryLabels\": [\n          \"Bank\"\n        ],\n        \"abn\": \"47087650093\",\n        \"productReferenceDataUri\": \"https://public.cdr-api.gatewaybank.com.au/cds-au/v1/banking/products\"",
+          "verification": "endpoint-tested; GET público devolvió 200 application/json el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.cdrcompare.au/api/v1/brands/gateway-bank/products/27",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://www.cdrcompare.au/api/v1/brands/gateway-bank/products/27",
+          "title": "CDR Compare Gateway Bank product detail API GET",
+          "claim": "Un term deposit real devuelve tasa/tipo/plazo, tiers, fees, eligibility, constraints y URLs oficiales.",
+          "evidence": "\"productCategory\": \"TERM_DEPOSITS\",\n    \"name\": \"Package TD 6 Months\",\n    \"brand\": \"Gateway Bank\",\n    \"constraints\": [{\"constraintType\": \"MAX_BALANCE\",\"additionalValue\": \"1000000.00\"}, {\"constraintType\": \"MIN_BALANCE\",\"additionalValue\": \"1000.00\"}],\n    \"eligibility\": [{\"eligibilityType\": \"BUSINESS\"}, {\"eligibilityType\": \"PENSION_RECIPIENT\"}],\n    \"depositRates\": [{\"depositRateType\": \"INTRODUCTORY\",\"rate\": \"0.0555\",\"calculationFrequency\": \"P1D\",\"applicationType\": \"MATURITY\",\"additionalValue\": \"P6M\"}]",
+          "verification": "endpoint-tested; GET público devolvió 200 application/json el 2026-10-26; campo de tasa no contrastado con ficha bancaria"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.cnmv.es/portal/Utilidades/NotaLegal.aspx",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://www.cnmv.es/portal/Utilidades/NotaLegal.aspx",
+          "title": "CNMV — Nota legal",
+          "claim": "La información de la web es informativa; la inscripción en el registro solo reconoce que se aportó la información requerida, sin garantía general de veracidad para datos aportados por terceros.",
+          "evidence": "La información que se difunde por este medio se hace únicamente a título informativo. La incorporación de esta información a los registros oficiales de la CNMV sólo implica el reconocimiento de que contiene toda la información requerida por las normas que fijen su contenido.",
+          "verification": "Nota legal primaria extraída; no contiene licencia explícita de reutilización en el fragmento consultado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.cnmv.es/portal/Utilidades/NotaLegal?lang=es",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://www.cnmv.es/portal/Utilidades/NotaLegal?lang=es",
+          "title": "CNMV — Nota legal",
+          "claim": "La CNMV no concede en general una licencia abierta; uso no privado está sujeto a condiciones de reproducción fiel y otras condiciones.",
+          "evidence": "La distribución o reproducción de la información que se difunde en el sitio Web de la Comisión Nacional del Mercado de Valores debe ser realizada fielmente, sin manipular ni alterar los contenidos.",
+          "verification": "Nota legal oficial extraída; aplicar la cláusula concreta al uso previsto y revisar antes de republicación."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+          "title": "Ficha registral real de OLEA NEUTRAL, sin NAV",
+          "claim": "Ficha registral real de OLEA NEUTRAL, sin NAV",
+          "evidence": {
+            "text": "OLEA NEUTRAL, FI Fecha de los datos Fondo de inversión armonizado",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/09.txt"
+        }
+      },
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+          "title": "CNMV — OLEA NEUTRAL, FI — Datos generales",
+          "claim": "La ficha de fondo contiene ISIN, registro, fechas documentales, gestora y depositaria.",
+          "evidence": "Fondo de inversión armonizado Nº Registro oficial Fecha registro oficial ISIN Fecha último folleto Folleto DFI (*) Fecha último reglamento Reglamento de gestión 4231 14/05/2010 ES0118537002 01/10/2026 08/06/2026",
+          "verification": "GET directo HTTP 200 text/html el 2026-10-26; respuesta original íntegra guardada en evidence/02-cnmv-olea-neutral-register.raw."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.cnmv.es/portal/consultas/mostrarlistados.aspx?id=26&lang=es",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://www.cnmv.es/portal/consultas/mostrarlistados.aspx?id=26&lang=es",
+          "title": "CNMV — Listado completo de UCITS",
+          "claim": "El listado usa número y fecha de registro oficial y enlaces de detalle; la prueba recibió una sola página HTML.",
+          "evidence": "Listado completo de UCITS. Número y fecha de registro oficial: 107 - 04/08/1997.",
+          "verification": "GET público real 200, HTML 268.783 bytes; 10 etiquetas de registro observadas en una página que indicaba 124 páginas."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.ecb.europa.eu/stats/financial_corporations/list_of_financial_institutions/html/index.en.html",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://www.ecb.europa.eu/stats/financial_corporations/list_of_financial_institutions/html/index.en.html",
+          "title": "ECB Lists of financial institutions",
+          "claim": "La lista MFI se actualiza diariamente y está disponible como CSV delimitado por tabuladores; el enlace directo legacy no resolvió en la prueba.",
+          "evidence": "The ECB releases updated information on the list of MFIs on a daily basis. Downloads are available as tab-delimited CSV files.",
+          "verification": "Página primaria extraída; URL de descarga no confirmada. Un alias del Data Portal redirigió a non-bank financial corporations."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.esma.europa.eu/document/firds-instructions-access-and-download-full-and-delta-reference-data-files",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://www.esma.europa.eu/document/firds-instructions-access-and-download-full-and-delta-reference-data-files",
+          "title": "ESMA FIRDS — instrucciones de acceso/descarga",
+          "claim": "Documento técnico oficial que define cómo obtener ficheros de referencia.",
+          "evidence": "FIRDS - Instructions on access and download of full and delta reference data files",
+          "verification": "Página oficial de referencia extraída; documento PDF relacionado consultado por separado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.esma.europa.eu/publications-and-data/databases-and-registers",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://www.esma.europa.eu/publications-and-data/databases-and-registers",
+          "title": "Databases and Registers — ESMA",
+          "claim": "ESMA lista registros/datos basados en notificaciones NCA/supervisión y enlaza su portal A2A y paquete de código.",
+          "evidence": "This section provides references to the registers and financial market data that ESMA compiled on the basis of notifications and data provided by the relevant national competent authorities (NCAs) and information collected through ESMA’s supervisory activities.",
+          "verification": "Página oficial ESMA extraída; alcance es registral/regulatorio, no condiciones retail; licencia de datos por registro pendiente."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.esma.europa.eu/sites/default/files/library/esma65-8-5014_firds_-_instructions_for_download_of_full_and_delta_reference_files.pdf",
+    "observations": [
+      {
+        "topic": 6,
+        "report": "06-identificadores-registros.md",
+        "source": {
+          "url": "https://www.esma.europa.eu/sites/default/files/library/esma65-8-5014_firds_-_instructions_for_download_of_full_and_delta_reference_files.pdf",
+          "title": "ESMA FIRDS Reference Data System — download instructions, rev. 3",
+          "claim": "FIRDS publica full/delta/invalid/cancelled; el full describe referencia activa antes del cut-off para instrumentos admitidos o negociados en venues MiFIR.",
+          "evidence": "The full file contains the full reference data received by ESMA before the applicable cut-off time, for all instruments that are still active and that have been admitted to trading on RM, including where a request for admission to trading has been made, or that are traded on a MTF, OTF, or SI.",
+          "verification": "Documento primario descargado/extractado; el índice Solr GET se probó sin descargar ficheros ZIP."
+        }
+      },
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://www.esma.europa.eu/sites/default/files/library/esma65-8-5014_firds_-_instructions_for_download_of_full_and_delta_reference_files.pdf",
+          "title": "ESMA FIRDS Reference Data System — download instructions",
+          "claim": "Los ficheros FIRDS son machine-readable; Full semanal y Delta/Cancellations diarios; los registros se identifican por pares ISIN/MIC.",
+          "evidence": "The files published by ESMA on its website are generated: a. on a weekly basis for the Full File – on Sunday morning by 09:00 CET b. on a daily basis for the Delta File – every morning by 09:00 CET c. on a daily basis for the Cancellations File – every morning by 09:00 CET",
+          "verification": "PDF oficial ESMA de 2022-02-09 rev.3 extraído y líneas de esquema consultadas. `LastUpd`/`IncnsstncyInd` están indicados para full file de NCAs; verificar el fichero público actual."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.financeads.com/tools/",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://www.financeads.com/tools/",
+          "title": "Tools — FinanceAds",
+          "claim": "FinanceAds declara comparadores white-label, feeds/API e información actualizada de productos/tipos de interés; categorías financieras publicadas.",
+          "evidence": "We offer a wide range of comparison tools and various API interfaces including product data feeds.",
+          "verification": "Página oficial extraída; no se probó endpoint, precio, feed español ni licencia de datos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.helpmycash.com/cuentas/cuentas-remuneradas/",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://www.helpmycash.com/cuentas/cuentas-remuneradas/",
+          "title": "Mejores cuentas remuneradas — HelpMyCash",
+          "claim": "Ejemplo de ficha con tasa, plazo, elegibilidad y requisito de activación.",
+          "evidence": "Una de las mejores cuentas remuneradas de octubre de 2026 es la de Openbank! Ofrece un 3,25% TAE durante 12 meses, sin límite de saldo remunerado, sin comisiones y sin domiciliar la nómina. ¡Solo tienes que ser nuevo cliente y activar Bizum!",
+          "verification": "Página oficial extraída; ejemplo puntual del comparador, no permiso para copia ni feed."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.ishares.com/uk/individual/en/products/328657/ishares-s-p-500-equal-weight-ucits-etf/latest-holdings.csv",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://www.ishares.com/uk/individual/en/products/328657/ishares-s-p-500-equal-weight-ucits-etf/latest-holdings.csv",
+          "title": "iShares S&P 500 Equal Weight UCITS ETF — public holdings CSV",
+          "claim": "GET sin credenciales devolvió CSV de holdings con 12 columnas, sin ISIN de cada security en la cabecera, y fecha efectiva 23-Oct-2026.",
+          "evidence": "Fund Holdings as of,\"23/Oct/2026\"\nTicker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Shares,Price,Location,Exchange,Market Currency",
+          "verification": "Endpoint descargado por GET HTTPS de solo lectura el 2026-10-26; HTTP 200, content-type text/plain; charset=utf-8, 80.271 bytes. Original guardado en evidence/downloads/ishares-s-p-500-equal-weight-holdings.csv; cabecera parseada del archivo bruto."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.kelisto.es/partners-kelisto",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://www.kelisto.es/partners-kelisto",
+          "title": "Kelisto — Nuestros partners",
+          "claim": "Kelisto monetiza derivaciones/contrataciones; página muestra categorías/partners y fecha de actualización de la lista.",
+          "evidence": "Cada vez que un usuario contrata un seguro, cambia su tarifa de Internet, abre una cuenta bancaria o contrata cualquier otro producto o servicio a través de Kelisto, le cobramos una comisión al proveedor que lo ofrece.",
+          "verification": "Página oficial Kelisto extraída; la propia lista financiera marca actualización a 1 de julio de 2025; no API/feed documentado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.oecd.org/en/data/insights/data-explainers/2024/09/api.html",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://www.oecd.org/en/data/insights/data-explainers/2024/09/api.html",
+          "title": "OECD data via API",
+          "claim": "OECD proporciona API SDMX sin cargo, sujeta a términos OECD, con formatos JSON/CSV y estructura definida por dataflow y dimensiones.",
+          "evidence": "These APIs are free of charge and are offered subject to your acceptance of OECD Terms and Conditions.",
+          "verification": "Documentación OECD oficial extraída y contrastada con un GET de datos CSV."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.oecd.org/en/data/insights/data-explainers/2024/11/Api-best-practices-and-recommendations.html",
+    "observations": [
+      {
+        "topic": 8,
+        "report": "08-catalogos-datos-abiertos.md",
+        "source": {
+          "url": "https://www.oecd.org/en/data/insights/data-explainers/2024/11/Api-best-practices-and-recommendations.html",
+          "title": "OECD API best practices",
+          "claim": "El servicio limita descargas a 60 por hora y rechaza tráfico desde VPN/anónimo.",
+          "evidence": "API access is currently restricted to a maximum of 60 data downloads per hour.",
+          "verification": "Página oficial de mejores prácticas extraída."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf",
+    "observations": [
+      {
+        "topic": 5,
+        "report": "05-bancos-fichas-importables.md",
+        "source": {
+          "url": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf",
+          "title": "Ficha del Depósito Open 6 meses - Openbank",
+          "claim": "Objetivo de siguiente prueba; este artefacto no respalda valores de oferta en la presente ronda.",
+          "evidence": "No se descargó ni inspeccionó este PDF durante la presente ronda. El URL figura en el registro de fuentes de la investigación local previa.",
+          "verification": "No verificado de nuevo aquí. Ejecutar una descarga y comprobar la fecha efectiva antes de extraer cualquier condición."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.openbank.es/en/savings-accounts",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://www.openbank.es/en/savings-accounts",
+          "title": "Openbank Savings Accounts",
+          "claim": "Página pública del banco muestra NIR y datos/condiciones de cuentas de ahorro; ejemplifica catálogo HTML primario, no API.",
+          "evidence": "The return on each savings account is indicated by the NIR (Nominal Interest Rate), which tells you how much interest you will earn.\n**3.25%1 APR** and 3.20% NIR with no maximum balance limit",
+          "verification": "documented; página oficial extraída el 2026-10-26; no feed REST/CSV confirmado en esa página"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+    "observations": [
+      {
+        "topic": 9,
+        "report": "09-postgresql-ingesta-consulta.md",
+        "source": {
+          "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+          "title": "5.9. Row Security Policies — PostgreSQL Documentation",
+          "claim": "RLS filtra filas y, si está habilitada sin políticas aplicables, deniega por defecto; roles BYPASSRLS/superusuario y normalmente propietario pueden saltarla.",
+          "evidence": "If no policy exists for the table, a default-deny policy is used, meaning that no rows are visible or can be modified.",
+          "verification": "Documentación oficial extraída; GET público HTTP 200 guardado en evidence/postgres-rls.html. No se ha probado política en una DB de Pai."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.raisin.com/en/corporate/become-a-distribution-partner/",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://www.raisin.com/en/corporate/become-a-distribution-partner/",
+          "title": "Become a Distribution Partner – Raisin",
+          "claim": "Raisin ofrece integración white-label vía API/front-end co-branded y modelos de comisión dentro de una relación de distribución.",
+          "evidence": "Choose the integration model that suits your business – from full white-label solutions via API to fast, low-effort setups using Raisin’s co-branded front end.\nAt the same time, you unlock new and recurring revenue streams through transparent commission models – without fixed costs or heavy upfront investments.\nRaisin’s B2B platform supports partners across the European Union and the United Kingdom.",
+          "verification": "documented; página corporativa oficial extraída el 2026-10-26; términos/cuotas concretos no publicados en la página"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.raisin.com/en/corporate/become-an-affiliate-partner/",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://www.raisin.com/en/corporate/become-an-affiliate-partner/",
+          "title": "Affiliate Program – Raisin",
+          "claim": "La página presenta una vía de afiliación por contacto, separada de la API de distribución B2B.",
+          "evidence": "If you are interested or have any further questions, please do not hesitate to contact us.",
+          "verification": "documented; página corporativa oficial extraída el 2026-10-26; no feed de datos documentado"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.rankia.com/rankia/politica-de-afiliados",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://www.rankia.com/rankia/politica-de-afiliados",
+          "title": "Política de afiliados — Rankia",
+          "claim": "Rankia declara ingresos por comisiones de enlaces y que no todos los productos comentados tienen acuerdo comercial.",
+          "evidence": "Rankia puede ganar una comisión cuando contratas un producto a través de un enlace en nuestra web. Esta comisión proviene del presupuesto de marketing de las entidades que hemos seleccionado para colaborar y no afecta al coste para tí del producto o servicio.",
+          "verification": "Política oficial Rankia extraída; prueba de modelo comercial, no acceso a feed."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.rankia.com/rankia/publicidad",
+    "observations": [
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://www.rankia.com/rankia/publicidad",
+          "title": "Política de publicidad — Rankia",
+          "claim": "Rankia presenta publicidad y patrocinios como soporte de su contenido gratuito.",
+          "evidence": "Para conseguir que todos los contenidos de esta web sean gratuitos necesitamos contar con la publicidad y patrocinios que aparecen en nuestras páginas.",
+          "verification": "Página oficial Rankia extraída; condiciones de feed/licencia no publicadas en esta página."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.six-group.com/dam/download/financial-information/reference-pricing-data/fixed-income-data/six-fixed-income-data.pdf",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.six-group.com/dam/download/financial-information/reference-pricing-data/fixed-income-data/six-fixed-income-data.pdf",
+          "title": "SIX: datos de renta fija",
+          "claim": "El producto de renta fija cubre el ciclo de emisión a vencimiento/redención y ofrece precios evaluados diarios o intradía.",
+          "evidence": "The dataset spans the full bond lifecycle – from new issuance terms to maturity and redemption – providing decision-ready information across major fixed income asset classes.",
+          "verification": "Folleto oficial extraído; precios y cobertura descritos por el proveedor, sin sample ISIN probado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.six-group.com/en/products-services/financial-information/delivery-methods/api.html",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.six-group.com/en/products-services/financial-information/delivery-methods/api.html",
+          "title": "SIX: APIs financieras",
+          "claim": "SIX ofrece sus API de datos financieros; no se encontró plan gratuito ni licencia abierta en la documentación consultada.",
+          "evidence": "SIX API streamlines your data integration.",
+          "verification": "Página oficial extraída; no se autenticó ni consumió un endpoint de cliente."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.ssga.com/library-content/products/fund-data/etfs/emea/holdings-daily-emea-en-stq-fp.xlsx",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://www.ssga.com/library-content/products/fund-data/etfs/emea/holdings-daily-emea-en-stq-fp.xlsx",
+          "title": "SPDR MSCI Europe Industrials UCITS ETF — daily holdings XLSX",
+          "claim": "El XLSX identifica el fondo IE00BKWQ0J47, ticker STQ FP y Holdings As Of 23-Oct-2026; la cabecera incluye ISIN, SEDOL, nombre, divisa, número de participaciones, peso, país, precio y sector/industria.",
+          "evidence": "State Street® SPDR® MSCI Europe Industrials UCITS ETF\nISIN: IE00BKWQ0J47\nTicker Symbol: STQ FP\nHoldings As Of: 23-Oct-2026\nISIN | SEDOL | Security Name | Currency | Number of Shares | Percent of Fund | Trade Country Name | Local Price | Sector Classification | Industry Classification | Base Market Value",
+          "verification": "GET HTTPS sin auth el 2026-10-26; HTTP 200, content-type application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, 17.661 bytes. Archivo guardado y worksheet inspeccionada."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+          "title": "SPDR MSCI Europe Industrials UCITS ETF — product page (Sweden locale)",
+          "claim": "Página oficial de STQ con ISIN IE00BKWQ0J47, NAV oficial fechado, TER y quick links a KID en inglés y sueco.",
+          "evidence": "ISIN | IE00BKWQ0J47\nNAV EUR (Official NAV) €411,94 as of 23 Oct 2026\nTER 0,18%\nKID (SV)pdf\nKID (EN)pdf",
+          "verification": "web_extract directo de la página de State Street con locale Sweden el 2026-10-26. La muestra no muestra vínculo español; esto no se interpreta como inexistencia de un KID español en otra localización."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.tesoro.es/deuda-publica/estad%C3%ADsticas-mensuales",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.tesoro.es/deuda-publica/estad%C3%ADsticas-mensuales",
+          "title": "Tesoro: estadísticas mensuales",
+          "claim": "La página enlaza XLSX mensuales: nominal en circulación, resultados de subastas y perfil de vencimientos agregados.",
+          "evidence": "- Deuda del Estado: Nominal en circulación [PDF](/documents/d/tesoro/01-pdf) [XLSX](/documents/d/tesoro/01-xlsx); - Subastas de Deuda del Estado (2026-2025): Nominal emitido y rendimientos [XLSX](/documents/d/tesoro/11-xlsx).",
+          "verification": "Página oficial extraída; el XLSX 01 se descargó y se inspeccionó por dentro."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.tesoro.es/deuda-publica/subastas/resultado-ultimas-subastas/obligaciones-del-estado",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.tesoro.es/deuda-publica/subastas/resultado-ultimas-subastas/obligaciones-del-estado",
+          "title": "Tesoro: últimas subastas de obligaciones",
+          "claim": "Resultados recientes incluyen precio ex-cupón, tipo medio y marginal, importes y ratio de cobertura.",
+          "evidence": "Precio medio ex-cupón; Precio medio de compra; Tipo de interés medio; Nominal solicitado/adjudicado.",
+          "verification": "GET 200 HTML, 305 205 bytes; campos visibles en tabla de obligaciones."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.tesoro.es/documents/d/tesoro/01-xlsx",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.tesoro.es/documents/d/tesoro/01-xlsx",
+          "title": "Tesoro: XLSX nominal en circulación",
+          "claim": "El XLSX 01 contiene categorías agregadas por fecha/plazo, no un registro individual por ISIN.",
+          "evidence": "DEUDA DEL ESTADO EN CIRCULACIÓN *; columnas de Letras, Bonos y Obligaciones agrupadas por vencimiento.",
+          "verification": "GET 200, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, 17 869 bytes; ZIP/XLSX inspeccionado."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.tesoro.es/en/deuda-publica/subastas/resultados-subastas-anteriores",
+    "observations": [
+      {
+        "topic": 7,
+        "report": "07-deuda-instrumentos.md",
+        "source": {
+          "url": "https://www.tesoro.es/en/deuda-publica/subastas/resultados-subastas-anteriores",
+          "title": "Tesoro: resultados históricos de subastas",
+          "claim": "La página histórica enlaza entradas de resultado con entryId y tipo de subasta.",
+          "evidence": "Result of the 10-year Government Bond; entryId=238736; type=OBLIGACIONES.",
+          "verification": "Página oficial extraída; enlace no se probó con GET individual en esta ronda."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.tiingo.com/documentation/appendix/symbology",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://www.tiingo.com/documentation/appendix/symbology",
+          "title": "Symbology API Documentation - Tiingo",
+          "claim": "La API EOD documenta precios de ETFs/fondos/acciones EEUU y acciones de China, no precios europeos.",
+          "evidence": "Right now the Tiingo API supports Equity, Mutual Fund, and ETF prices for US markets and Equity Prices for Chinese markets.",
+          "verification": "Documentación oficial extraída; alternativa descartada para precios UCITS europeos."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.tiingo.com/pricing",
+    "observations": [
+      {
+        "topic": 1,
+        "report": "01-mercado.md",
+        "source": {
+          "url": "https://www.tiingo.com/pricing",
+          "title": "Pricing Plans & Account Comparison - Tiingo",
+          "claim": "Planes actuales etiquetan la licencia como internal use only.",
+          "evidence": "License; Internal Use Only",
+          "verification": "Pricing oficial extraído."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
+    "observations": [
+      {
+        "topic": 3,
+        "report": "03-etf-emisores.md",
+        "source": {
+          "url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
+          "title": "VanEck Semiconductor UCITS ETF — official product page",
+          "claim": "Página de producto con ISIN IE00BMC38736, NAV fechado, TER y enlace KIID; no se extrajo un fichero completo de holdings.",
+          "evidence": "VanEck Semiconductor UCITS ETF\nISIN: IE00BMC38736\nNAV $97.02 as of 23 Oct 2026\nTotal Expense Ratio 0.35%",
+          "verification": "web_extract directo de la página oficial UK el 2026-10-26. Campos visibles a nivel de página; no se probó endpoint de descarga."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://www.vdos.com/es/datos.html",
+    "observations": [
+      {
+        "topic": 2,
+        "report": "02-fondos-tradicionales.md",
+        "source": {
+          "url": "https://www.vdos.com/es/datos.html",
+          "title": "Cobertura declarada de VDOS, no endpoint gratuito",
+          "claim": "Cobertura declarada de VDOS, no endpoint gratuito",
+          "evidence": {
+            "text": "95 % fondos de inversión internacionales registrados en España",
+            "added": "2026-10-27"
+          },
+          "verification": "parent_retrieved_and_inspected_not_publication_approval",
+          "evidence_path": "evidencia-coordinador/11.txt"
+        }
+      },
+      {
+        "topic": 10,
+        "report": "10-agregadores-alternativas.md",
+        "source": {
+          "url": "https://www.vdos.com/es/datos.html",
+          "title": "VDOS: Datos",
+          "claim": "VDOS publica cobertura de fondos/planes y datos de NAV, series, rentabilidad, documentación legal, MiFID y ASG; informa recepción diaria de gestoras/registros.",
+          "evidence": "La base de datos de VDOS está fundamentada en la información diaria que nos propocionan directamente las entidades gestoras, tanto nacionales como internacionales, registros oficiales tales como la Comisión Nacional del Mercado de Valores (CNMV) y la Dirección General de Seguros.",
+          "verification": "Página oficial VDOS extraída; claim de cobertura documentado, sin endpoint/precio/licencia públicos verificados."
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://yieldmeister.com/about",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://yieldmeister.com/about",
+          "title": "YieldMeister methodology",
+          "claim": "El proveedor declara capturar tasas desde fuentes primarias y guardar snapshots timestamped.",
+          "evidence": "A daily job fetches rates from primary sources (provider pages and official data, e.g. the ECB Data Portal). Each value is timestamped and stored as a snapshot, so history is preserved.",
+          "verification": "documented; metodología del proveedor, no auditoría independiente"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://yieldmeister.com/api-terms",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://yieldmeister.com/api-terms",
+          "title": "YieldMeister API Terms",
+          "claim": "El API permite uso limitado dentro de la propia aplicación sujeto al plan; exige atribución visible y no garantiza exactitud/actualidad.",
+          "evidence": "Subject to these terms and your plan, we grant you a limited, revocable, non-exclusive, non-transferable right to retrieve the rate data via the API and use it within your own applications, products and analyses.\nWhere you display the data to end users, a visible attribution to YieldMeister (and a link to the provider where practical) is required.\nThe API and data are provided **as is** and **as available**, without warranty of any kind, including accuracy, completeness, timeliness, or fitness for a particular purpose.\nYou may not resell, sublicense or redistribute the dataset as a standalone product or as a substitute for the API.\nBulk redistribution requires a separate written licence.",
+          "verification": "documented; términos específicos del API extraídos el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://yieldmeister.com/api/v1/rates",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://yieldmeister.com/api/v1/rates",
+          "title": "YieldMeister Rates API GET response",
+          "claim": "Una fila de la respuesta pública tiene mercado y campos comerciales estructurados para un depósito de Openbank.",
+          "evidence": "\"provider_name\":\"Openbank\",\"product\":\"Depósito Plazo Fijo 12m\",\"product_id\":\"openbank-welcome\",\"kind\":\"term_deposit\",\"market\":\"ES\",\"currency\":\"EUR\",\"term_months\":12,\"rate\":3.25,\"source\":\"scrape:fetch\",\"captured_at\":\"2026-10-09 06:01:21\",\"last_checked\":\"2026-10-26 06:01:06\",\"stale\":false,\"is_promo\":false,\"source_url\":\"https://www.openbank.es/deposito-a-plazo-fijo\"",
+          "verification": "endpoint-tested; GET anónimo devolvió 200 application/json el 2026-10-26; solo prueba esta respuesta, no exactitud ni cobertura completa"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://yieldmeister.com/developers",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://yieldmeister.com/developers",
+          "title": "YieldMeister Rates API – Developers",
+          "claim": "API REST JSON con listado actual, filtros, un producto, histórico y mercados.",
+          "evidence": "GET /api/v1/rates                      # all current rates\nGET /api/v1/rates?market=NL&kind=savings  # filtered\nGET /api/v1/rates/:productId           # one product + metadata\nGET /api/v1/rates/:productId/history   # full rate history\nGET /api/v1/markets                    # available markets",
+          "verification": "documented; documentación oficial del proveedor extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://yieldmeister.com/pricing",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://yieldmeister.com/pricing",
+          "title": "YieldMeister API pricing",
+          "claim": "Plan Free de 1.000 llamadas al mes sin tarjeta; tiers pagados para más llamadas e historial.",
+          "evidence": "€0 forever\n1,000 API calls / month\nAll current rates, every market\nNo card required",
+          "verification": "documented; tabla oficial de precios extraída el 2026-10-26"
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://yieldmeister.com/terms",
+    "observations": [
+      {
+        "topic": 4,
+        "report": "04-cuentas-depositos-apis.md",
+        "source": {
+          "url": "https://yieldmeister.com/terms",
+          "title": "YieldMeister Terms of Service",
+          "claim": "El dataset compilado es propiedad del operador y no se permite redistribuirlo como dataset standalone sin licencia escrita.",
+          "evidence": "The website, its code, design, and the compiled rate dataset (the selection, structure and history we create) are owned by Dutchcode B.V. and protected by intellectual-property law.\nYou may not resell or redistribute the dataset as a standalone product without a written licence.",
+          "verification": "documented; términos del operador, actualizados el 2026-06-16 según página"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,205 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "initial disabled",
+      "pass": true
+    },
+    {
+      "name": "current enabled",
+      "pass": true
+    },
+    {
+      "name": "print action",
+      "pass": true
+    },
+    {
+      "name": "report summary and warning",
+      "pass": true
+    },
+    {
+      "name": "separate series tables",
+      "pass": true
+    },
+    {
+      "name": "no profile marker",
+      "pass": true
+    },
+    {
+      "name": "edit invalidates",
+      "pass": true
+    },
+    {
+      "name": "pending disabled",
+      "pass": true
+    },
+    {
+      "name": "late result discarded",
+      "pass": true
+    },
+    {
+      "name": "recompute enabled",
+      "pass": true
+    },
+    {
+      "name": "error disabled explained",
+      "pass": true
+    },
+    {
+      "name": "fresh report",
+      "pass": true
+    },
+    {
+      "name": "whitelist escapes and excludes profile marker",
+      "pass": true
+    },
+    {
+      "name": "click revalidates mismatched assumptions",
+      "pass": true
+    },
+    {
+      "name": "beforeprint rejects mixed state",
+      "pass": true
+    },
+    {
+      "name": "recapture",
+      "pass": true
+    },
+    {
+      "name": "navigation invalidates",
+      "pass": true
+    },
+    {
+      "name": "route return current",
+      "pass": true
+    }
+  ],
+  "viewport": {
+    "client": 1265,
+    "scroll": 1265
+  },
+  "snapshot": {
+    "schema": "paideia.scenario-comparison",
+    "schema_version": 1,
+    "scenarios": [
+      {
+        "id": "A",
+        "status": "current",
+        "version": 15,
+        "inputs": {
+          "principal": "1000",
+          "annual_rate_percent": "-99",
+          "years": "3",
+          "monthly_contribution": "20",
+          "inflation_percent": "2",
+          "method": "simple"
+        },
+        "result": {
+          "hypothetical": true,
+          "not_prediction": true,
+          "currency": "EUR",
+          "assumptions": {
+            "principal": "1000.00",
+            "annual_rate_percent": "-99",
+            "years": 3,
+            "monthly_contribution": "20.00",
+            "method": "simple",
+            "inflation_percent": "2",
+            "annual_rate_convention": "simple_annual_rate",
+            "monthly_contribution_timing": "end_of_month",
+            "monthly_rate_conversion": "annual_simple_rate_divided_by_12",
+            "working_precision": "80_significant_decimal_digits",
+            "rounding": "half_up_to_cents_in_serialized_output; no_cent_rounding_per_month",
+            "taxes_included": false,
+            "fees_included": false
+          },
+          "summary": {
+            "contributions": "1720.00",
+            "final_balance": "-2289.50",
+            "interest": "-4009.50",
+            "inflation_adjusted": "-2157.45"
+          },
+          "series": [
+            {
+              "month": 0,
+              "contributions": "1000.00",
+              "balance": "1000.00",
+              "real_balance": "1000.00"
+            },
+            {
+              "month": 12,
+              "contributions": "1240.00",
+              "balance": "141.10",
+              "real_balance": "138.33"
+            },
+            {
+              "month": 24,
+              "contributions": "1480.00",
+              "balance": "-955.40",
+              "real_balance": "-918.30"
+            },
+            {
+              "month": 36,
+              "contributions": "1720.00",
+              "balance": "-2289.50",
+              "real_balance": "-2157.45"
+            }
+          ]
+        }
+      },
+      {
+        "id": "B",
+        "status": "current",
+        "version": 7,
+        "inputs": {
+          "principal": "0",
+          "annual_rate_percent": "0",
+          "years": "1",
+          "monthly_contribution": "0",
+          "inflation_percent": "0",
+          "method": "compound"
+        },
+        "result": {
+          "hypothetical": true,
+          "not_prediction": true,
+          "currency": "EUR",
+          "assumptions": {
+            "principal": "0.00",
+            "annual_rate_percent": "0",
+            "years": 1,
+            "monthly_contribution": "0.00",
+            "method": "compound",
+            "inflation_percent": "0",
+            "annual_rate_convention": "effective_annual_rate",
+            "monthly_contribution_timing": "end_of_month",
+            "monthly_rate_conversion": "effective_monthly_rate",
+            "working_precision": "80_significant_decimal_digits",
+            "rounding": "half_up_to_cents_in_serialized_output; no_cent_rounding_per_month",
+            "taxes_included": false,
+            "fees_included": false
+          },
+          "summary": {
+            "contributions": "0.00",
+            "final_balance": "0.00",
+            "interest": "0.00",
+            "inflation_adjusted": "0.00"
+          },
+          "series": [
+            {
+              "month": 0,
+              "contributions": "0.00",
+              "balance": "0.00",
+              "real_balance": "0.00"
+            },
+            {
+              "month": 12,
+              "contributions": "0.00",
+              "balance": "0.00",
+              "real_balance": "0.00"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

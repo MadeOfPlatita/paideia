@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://www.tesoro.es/deuda-publica/estad%C3%ADsticas-mensuales",
+      "title": "Tesoro: estadísticas mensuales",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "- Deuda del Estado: Nominal en circulación [PDF](/documents/d/tesoro/01-pdf) [XLSX](/documents/d/tesoro/01-xlsx)",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "- Subastas de Deuda del Estado (2026-2025): Nominal emitido y rendimientos [PDF](/documents/d/tesoro/11-pdf) [XLSX](/documents/d/tesoro/11-xlsx)",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://www.tesoro.es/documents/d/tesoro/01-xlsx",
+      "title": "Tesoro: XLSX nominal en circulación",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "DEUDA DEL ESTADO EN CIRCULACIÓN *",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://tesoro.es/en/deuda-publica/valores-del-tesoro/valores-en-circulacion",
+      "title": "Tesoro: valores en circulación",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "| ISIN code | Maturity date | Outstanding amount (*) | Indexation coefficient | Face value |",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "(*) Data as at 10/20/2026. The outstanding amount for each reference is updated on its corresponding settlement date. In Inflation-linked bonds, the outstanding amount will also be updated on the last day of the month with the corresponding indexation coefficient (Face value if coefficient <1).",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://tesoro.es/deuda-publica/los-valores-del-tesoro/bonos-y-obligaciones-del-estado",
+      "title": "Tesoro: bonos y obligaciones",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "El cupón que devenga se paga cada año y representa el tipo de interés \"nominal\" del Bono o la Obligación.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://tesoro.es/en/deuda-publica/noticias/treasury-announces-bonos-and-obligaciones-will-be-issued-october-1st-2026",
+      "title": "Tesoro: anuncio de emisión, 1 octubre 2026",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "| **ISIN** | **Reference** | **Coupon** | **Maturity** | **Accrued** **Interest** | **Short coupon amount** | **Indexation** **Coefficient** |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://www.tesoro.es/deuda-publica/subastas/resultado-ultimas-subastas/obligaciones-del-estado",
+      "title": "Tesoro: últimas subastas de obligaciones",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "| Precio medio ex-cupón | 93,731 | 78,445 | 94,345 | 46,526 |",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| Tipo de interés medio | 4,176 | 4,562 | 4,286 | 4,024 |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://www.tesoro.es/en/deuda-publica/subastas/resultados-subastas-anteriores",
+      "title": "Tesoro: resultados históricos de subastas",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "- [ Result of the 10-year Government Bond ](https://www.tesoro.es/en/deuda-publica/subastas/resultados-subastas-anteriores?p_p_id=es_tesoro_subastas_web_TesoroSubastasWebPortlet_INSTANCE_lgqt&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&_es_tesoro_subastas_web_TesoroSubastasWebPortlet_INSTANCE_lgqt_entryId=238736&_es_tesoro_subastas_web_TesoroSubastasWebPortlet_INSTANCE_lgqt_type=OBLIGACIONES)",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://boe.es/datosabiertos/api/api.php",
+      "title": "BOE API de datos abiertos",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 9,
+      "url": "https://boe.es/datosabiertos/faq/boe.php",
+      "title": "BOE FAQ reutilización",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "La Agencia Estatal BOE ha puesto a disposición de los reutilizadores una API REST que permite la descarga, uso y reutilización de las disposiciones y actos publicados en el BOE, mediante el acceso al sumario correspondiente a la fecha seleccionada.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "url": "https://www.boe.es/informacion/aviso_legal/index.php",
+      "title": "BOE: condiciones de reutilización",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Las presentes condiciones permiten la reutilización de los documentos sometidos a ellas para fines comerciales y no comerciales, siempre que dicho uso no constituya una actividad administrativa pública y que se realice una utilización diligente de los contenidos, sin incurrir en actividades que puedan ser consideradas ilícitas, contrarias a las presentes condiciones o a los usos generalmente aceptados.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Debe citarse la fuente de los documentos objeto de la reutilización, incluyendo en todo caso un enlace a la sede electrónica de la Agencia Estatal Boletín Oficial del Estado.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "url": "https://www.bolsasymercados.es/en/bme-exchange/prices-and-markets/market-data-services/end-of-day-and-historical-services.html",
+      "title": "BME: servicios EOD e históricos",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "BME offers End-of-Day and Historical Information. This is done through files that include all the financial instruments admitted for trading in the different BME trading centers.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Only the daily and monthly summary of the public and private fixed settlement bulletin are published on the web. If you wish to access additional content, please contact us.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://web.apiportal.six-group.com/portal/bfi/data-dictionary",
+      "title": "SIX API: diccionario de datos",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 13,
+      "url": "https://web.apiportal.six-group.com/portal/bfi/catalog/instrumentBase",
+      "title": "SIX API: Instrument Base",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 14,
+      "url": "https://www.six-group.com/en/products-services/financial-information/delivery-methods/api.html",
+      "title": "SIX: APIs financieras",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "With a consistent framework and a simple data model that leverages modern technologies to enhance your data understanding, SIX API streamlines your data integration.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://www.six-group.com/dam/download/financial-information/reference-pricing-data/fixed-income-data/six-fixed-income-data.pdf",
+      "title": "SIX: datos de renta fija",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The dataset spans the full bond lifecycle – from new issuance terms to maturity and redemption – providing decision-ready information across major fixed income asset classes.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "url": "https://www.six-group.com/en/market-data/bonds/closing-prices.html",
+      "title": "SIX: precios de cierre de bonos",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 17,
+      "url": "https://data.ecb.europa.eu/data/datasets/csec/data-information?destination=/data/datasets/csec/data-information",
+      "title": "ECB: CSEC Securities Issues Statistics",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "CSEC series are compiled using security-by-security micro data from the Centralised Securities Databases (CSDB).",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "CSEC data are available from reference period December 2020 onwards.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Frequency of data collection Monthly",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Regular revisions are expected for data of the previous reference month (t-1) due to the provisional nature of these data when they are published for the first time at t+10 working days timeliness.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "url": "https://esma.europa.eu/sites/default/files/2023-12/ESMA65-8-5240_FIRDS_Transparency_Download_Instructions.pdf",
+      "title": "ESMA: descargas FITRS transparency results",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "FIRDS Transparency System Instructions on download and use of full and delta transparency results files",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "url": "https://esma.europa.eu/sites/default/files/2025-11/ESMA65-8-1776_FIRDS_Transparency_Reporting_Instructions_v2.4.pdf",
+      "title": "ESMA: instrucciones FIRDS 2025",
+      "accessed": "2026-10-26"
+    }
+  ]
+}

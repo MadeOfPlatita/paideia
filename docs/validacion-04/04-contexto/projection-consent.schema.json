@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Autorización explícita de proyección de perfil",
+  "description": "Entrada cerrada al proyector. Debe aceptar procesamiento de chat y enumerar los campos autorizados para el propósito actual.",
+  "type": "object",
+  "properties": {
+    "notice_version": {"type": "string", "minLength": 1, "maxLength": 64},
+    "accepted_chat_processing": {"type": "boolean"},
+    "purpose": {"type": "string", "enum": ["learn_basics", "debt_education", "risk_education", "liquidity_planning", "product_comparison"]},
+    "approved_fields": {
+      "type": "array",
+      "maxItems": 13,
+      "uniqueItems": true,
+      "items": {"type": "string", "enum": ["objective", "horizon", "liquidity_need", "learning_level", "learning_topics", "target_amount_eur", "monthly_income_eur", "monthly_expenses_eur", "debt", "liquid_reserve_eur", "upcoming_commitments", "risk_tolerance", "loss_capacity"]}
+    }
+  },
+  "required": ["notice_version", "accepted_chat_processing", "purpose", "approved_fields"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"accepted_chat_processing": {"const": true}}, "required": ["accepted_chat_processing"]},
+      "then": {"properties": {"approved_fields": {"minItems": 1}}}
+    },
+    {
+      "if": {"properties": {"accepted_chat_processing": {"const": false}}, "required": ["accepted_chat_processing"]},
+      "then": {"properties": {"approved_fields": {"maxItems": 0}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "learn_basics"}}, "required": ["purpose"]},
+      "then": {"properties": {"approved_fields": {"items": {"enum": ["objective", "learning_level", "learning_topics"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "debt_education"}}, "required": ["purpose"]},
+      "then": {"properties": {"approved_fields": {"items": {"enum": ["debt", "objective", "monthly_income_eur", "monthly_expenses_eur", "liquid_reserve_eur", "upcoming_commitments"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "risk_education"}}, "required": ["purpose"]},
+      "then": {"properties": {"approved_fields": {"items": {"enum": ["objective", "horizon", "risk_tolerance", "loss_capacity", "upcoming_commitments"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "liquidity_planning"}}, "required": ["purpose"]},
+      "then": {"properties": {"approved_fields": {"items": {"enum": ["objective", "horizon", "target_amount_eur", "monthly_expenses_eur", "liquidity_need", "liquid_reserve_eur", "upcoming_commitments"]}}}}
+    },
+    {
+      "if": {"properties": {"purpose": {"const": "product_comparison"}}, "required": ["purpose"]},
+      "then": {"properties": {"approved_fields": {"items": {"enum": ["objective", "horizon", "liquidity_need", "risk_tolerance", "loss_capacity", "target_amount_eur", "liquid_reserve_eur"]}}}}
+    }
+  ]
+}

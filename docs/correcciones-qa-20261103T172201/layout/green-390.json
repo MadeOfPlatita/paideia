@@ -1,0 +1,43 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "home bounds",
+      "pass": true,
+      "detail": {
+        "client": 390,
+        "scroll": 390,
+        "bounds": [
+          {
+            "text": "respuestas.objetivo: {\"estado\":\"declarado\",\"valor\":\"aprender_conceptos\"}",
+            "right": 345
+          },
+          {
+            "text": "detalle_economico.importe_objetivo: {\"estado\":\"declarado\",\"valor\":{\"min_eur\":\"0\",\"max_eur\":\"0.00\",\"moneda\":\"EUR\"}}",
+            "right": 345
+          }
+        ]
+      }
+    },
+    {
+      "name": "temporal notice",
+      "pass": true,
+      "detail": "Selección para comparar · 0 de 4Elige al menos dos candidatos. La selección no cambia sin que pulses aquí. La selección y los filtros son temporales y se pierden al recargar la página.Selecciona 2 para comparar"
+    },
+    {
+      "name": "different horizons",
+      "pass": true,
+      "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAActualizado10 años6100,00 €6751,74 €6112,26 €BActualizado5 años6200,00 €6689,95 €6365,26 €Los horizontes son distintos: los saldos corresponden a momentos diferentes."
+    },
+    {
+      "name": "edit retains B and hides stale A",
+      "pass": true,
+      "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAPendiente de calcular5 años———BActualizado5 años6200,00 €6689,95 €6365,26 €"
+    },
+    {
+      "name": "equal horizons no warning",
+      "pass": true,
+      "detail": "Comparación de escenariosEscenarioEstadoHorizonteAportadoSaldo nominalSaldo realAActualizado5 años3100,00 €3261,35 €3103,06 €BActualizado5 años6200,00 €6689,95 €6365,26 €"
+    }
+  ]
+}

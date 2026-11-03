@@ -1,0 +1,11 @@
+{
+  "python_tests": 182,
+  "python_ok": true,
+  "node_tests": 20,
+  "http_passed": 19,
+  "http_total": 19,
+  "external_calls_in_this_verification": 0,
+  "normal_server": "proc_7665a0f18374",
+  "session_window_process": "proc_e8c2431e5524",
+  "session_waiting_for_user_authorization": true
+}

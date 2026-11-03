@@ -1,0 +1,163 @@
+{
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://console.groq.com/docs/models",
+      "requested_url": "https://console.groq.com/docs/models",
+      "resolved_url": "https://console.groq.com/docs/models",
+      "title": "Supported Models - GroqDocs",
+      "claim": "Groq marks openai/gpt-oss-20b and openai/gpt-oss-120b as production models, lists their context/output maxima, and warns Preview models may be discontinued at short notice.",
+      "evidence": [
+        "Note: Production models are intended for use in your production environments. They meet or exceed our high standards for speed, quality, and reliability.",
+        "GPT OSS 20B openai/gpt-oss-20b 1000 $0.075 input $0.30 output 250K TPM 1K RPM 131,072 65,536 -",
+        "GPT OSS 120B openai/gpt-oss-120b 500 $0.15 input $0.60 output 250K TPM 1K RPM 131,072 65,536 -",
+        "Preview models are intended for evaluation purposes only and should not be used in production environments as they may be discontinued at short notice."
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/01-models-browser.txt",
+      "supporting_paths": [],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    },
+    {
+      "id": 2,
+      "url": "https://console.groq.com/docs/tool-use/overview",
+      "requested_url": "https://console.groq.com/docs/tool-use/overview",
+      "resolved_url": "https://console.groq.com/docs/tool-use/overview",
+      "title": "Tool Use Overview - GroqDocs",
+      "claim": "Groq lists both GPT-OSS models as supporting local/remote function tools and JSON Mode, but not parallel tool use; built-in tools are also listed as supported.",
+      "evidence": [
+        "MODEL ID LOCAL & REMOTE TOOL USE SUPPORT? PARALLEL TOOL USE SUPPORT? JSON MODE SUPPORT? BUILT-IN TOOLS SUPPORT? openai/gpt-oss-20b Yes ✅ No ❌ Yes ✅ Yes ✅ openai/gpt-oss-120b Yes ✅ No ❌ Yes ✅ Yes ✅"
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/02-tool-use-browser.txt",
+      "supporting_paths": [],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    },
+    {
+      "id": 3,
+      "url": "https://console.groq.com/docs/structured-outputs",
+      "requested_url": "https://console.groq.com/docs/structured-outputs",
+      "resolved_url": "https://console.groq.com/docs/structured-outputs",
+      "title": "Structured Outputs - GroqDocs",
+      "claim": "The strict JSON Schema model list includes GPT-OSS 20B and 120B; the same documentation states tool use and streaming are not currently supported with Structured Outputs.",
+      "evidence": [
+        "The following models support strict: true, which uses constrained decoding to guarantee schema-compliant output: MODEL ID MODEL openai/gpt-oss-20b GPT-OSS 20B openai/gpt-oss-120b GPT-OSS 120B",
+        "Streaming and tool use are not currently supported with Structured Outputs."
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/03-structured-output-strict-verified.txt",
+      "supporting_paths": [
+        "evidencia/03-structured-outputs-browser.txt"
+      ],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    },
+    {
+      "id": 4,
+      "url": "https://console.groq.com/docs/rate-limits",
+      "requested_url": "https://console.groq.com/docs/rate-limits",
+      "resolved_url": "https://console.groq.com/docs/rate-limits",
+      "title": "Rate Limits - GroqDocs",
+      "claim": "The Free Plan Limits tab lists RPM/RPD/TPM/TPD for both GPT-OSS models; limits are organization-level and exact current limits are account-specific. The page also has a Developer tab and explanatory copy referring to Developer limits.",
+      "evidence": [
+        "Free Plan Limits tab class (selected marker):",
+        "openai/gpt-oss-20b 30 1K 8K 200K",
+        "openai/gpt-oss-120b 30 1K 8K 200K",
+        "Developer Plan Limits tab class (selected marker):",
+        "openai/gpt-oss-20b 1K 500K 250K",
+        "RPM: Requests per minute RPD: Requests per day TPM: Tokens per minute TPD: Tokens per day",
+        "In addition to the combined TPM limit, some organizations are also subject to separate per-minute limits on input tokens (ITPM) and output tokens (OTPM).",
+        "The following is a high level summary and there may be exceptions to these limits. You can view the current, exact rate limits for your organization on the limits page in your account settings.",
+        "Rate limits apply at the organization level, not individual users. You can hit any limit type depending on which threshold you reach first."
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/04-rate-limits-browser.txt",
+      "supporting_paths": [
+        "evidencia/04-rate-limits-tabs.txt"
+      ],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    },
+    {
+      "id": 5,
+      "url": "https://console.groq.com/docs/legal/services-agreement",
+      "requested_url": "https://console.groq.com/docs/legal/services-agreement",
+      "resolved_url": "https://console.groq.com/docs/legal/services-agreement",
+      "title": "Groq Services Agreement - GroqDocs",
+      "claim": "The Services Agreement permits API integration into a Customer Application and delivery to End Users, while also saying the services are not for consumer use; it states no training without explicit permission/instruction, bars use for financial/professional advice, identifies the EEA contracting party, and incorporates a separate AUP.",
+      "evidence": [
+        "including the right to use Groq’s APIs to integrate the Cloud Services and AI Model Services into your Customer Application and to make the Cloud Services and AI Model Services available to End Users through your Customer Applications.",
+        "Cloud Services and the AI Model Services under this Agreement are not for consumer use.",
+        "Groq is not permitted to use Inputs or Outputs for training or fine-tuning any AI Model Services or other models, unless explicitly granted permission or instructed by Customer.",
+        "The AI Model Services should not be used for medical, legal, financial, or other professional advice.",
+        "Groq UK Limited 3 Hammersmith Grove, London W6 0ND, UK Europe, Middle East, or Africa, excluding the Kingdom of Saudi Arabia Laws of England and Wales Courts in London, England",
+        "Last Modified: June 22, 2026",
+        "\"AUP\" or “Acceptable Use & Responsible AI Policy” means the then current acceptable use and responsible AI policy for use of the Cloud Services and AI Model Services published at https://console.groq.com/docs/legal/ai-policy.",
+        "You must be 18 years of age or older to access or use the Cloud Services. By using the Cloud Services, you represent that you are age 18 or older."
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/05-services-agreement-browser.txt",
+      "supporting_paths": [],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    },
+    {
+      "id": 6,
+      "url": "https://console.groq.com/docs/your-data",
+      "requested_url": "https://console.groq.com/docs/your-data",
+      "resolved_url": "https://console.groq.com/docs/your-data",
+      "title": "Your Data in GroqCloud - GroqDocs",
+      "claim": "Groq says inference customer data is not retained by default, identifies limited retention for reliability/abuse, offers ZDR, retains usage metadata, and locates retained customer data in the U.S.",
+      "evidence": [
+        "By default, Groq does not retain customer data for inference requests.",
+        "Usage Metadata (always retained) We collect usage metadata for all users to measure service activity and system performance. This metadata does not contain customer inputs or outputs.",
+        "These logs are retained for up to 30 days, unless legally required to retain longer. You may opt out of this storage in Data Controls settings",
+        "We may temporarily log inputs and outputs only when: Troubleshooting errors that degrade platform reliability, or Investigating suspected abuse (e.g. rate-limit circumvention).",
+        "All customers may enable Zero Data Retention (ZDR) in Data Controls settings.",
+        "All customer data is retained in Google Cloud Platform (GCP) buckets located in the United States."
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/06-your-data-browser.txt",
+      "supporting_paths": [],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    },
+    {
+      "id": 7,
+      "url": "https://console.groq.com/docs/legal/customer-data-processing-addendum",
+      "requested_url": "https://console.groq.com/docs/legal/customer-data-processing-addendum",
+      "resolved_url": "https://console.groq.com/docs/legal/customer-data-processing-addendum",
+      "title": "Data Processing Addendum for GroqCloud Services - GroqDocs",
+      "claim": "The DPA allows processing in the United States and other processing countries and incorporates EU Standard Contractual Clauses where legally required.",
+      "evidence": [
+        "Groq may transfer and Process Personal Data to and in the United States and other countries where Groq or its Subprocessors maintain Processing operations.",
+        "To the extent legally required, by entering into the Agreement, Customer and Groq are deemed to have signed the EU SCCs, which form part of this DPA"
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/07-dpa-browser.txt",
+      "supporting_paths": [],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    },
+    {
+      "id": 8,
+      "url": "https://console.groq.com/docs/billing-faqs",
+      "requested_url": "https://console.groq.com/docs/billing-faqs",
+      "resolved_url": "https://console.groq.com/docs/billing-faqs",
+      "title": "Billing FAQs - GroqDocs",
+      "claim": "Groq states a payment method is needed to upgrade from Free to Developer, describes usage-based billing thresholds and automatic payment withdrawal, and describes the Free tier after downgrade.",
+      "evidence": [
+        "To upgrade from the Free tier to the Developer tier, you'll need to provide a valid payment method (credit card, US bank account, or SEPA debit account).",
+        "When you upgrade, there's no immediate charge - you'll be billed for tokens at month-end or when you reach progressive billing thresholds",
+        "Payment is withdrawn automatically from your connected payment method each time an invoice is issued."
+      ],
+      "verification": "Documental; página oficial pública capturada mediante extracción y navegador sin iniciar sesión. URL solicitada y resuelta coinciden. Citas literales cotejadas contra el archivo guardado. No es prueba de cuenta, cuota real ni llamada API autenticada.",
+      "saved_path": "evidencia/08-billing-faqs-browser.txt",
+      "supporting_paths": [],
+      "accessed": "2026-10-27",
+      "status": "documented"
+    }
+  ]
+}

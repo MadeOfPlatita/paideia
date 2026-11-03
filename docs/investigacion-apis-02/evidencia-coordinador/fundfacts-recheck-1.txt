@@ -1,0 +1,42 @@
+[Docs](/docs)/ Requests & rate limits
+
+# Requests & rate limits
+
+The monthly request allowance, burst limits, overage, the quota headers and 429 handling.
+
+## How requests are counted
+
+Each plan comes with a number of requests per calendar month (UTC). One request is counted per ISIN that receives an answer — found or not found — on `GET /funds/{isin}`, `POST /funds`, `POST /portfolio` and `GET /overlap`, whether the payload is served from the 24-hour store or loaded fresh. `/search`, `/me` and the demo endpoint are free. Invalid ISINs, `pending` entries, and 401 / 429 responses never cost anything. Requests are counted per account, across all keys.
+
+## Plans
+
+| Plan | Price | Requests / month | Burst / minute | Batch size | Beyond the allowance |
+|---|---|---|---|---|---|
+| Free | $0 | 15 | 10 | 1 | 429 until the reset |
+| Starter | $9.99 / month | 500 | 30 | 10 | 429 until the reset |
+| Pro | $49 / month | 9,000 | 120 | 50 | $0.015 per request, capped at $98.00 |
+| Scale | $249 / month | 60,000 | 600 | 200 | $0.01 per request, capped at $498.00 |
+| Enterprise | $0.01 / request | Unlimited (metered) | 1200 | 1,000 | $0.01 per request |
+
+Overage lets Pro and Scale keep running after their monthly requests are used up: each extra request is billed on the next invoice ($0.015 on Pro, $0.01 on Scale), up to twice the plan price per month (ask us to raise the cap). Free and Starter stop at their allowance and answer 429 until the reset. [Pricing](/pricing) has the full comparison.
+
+## Headers and the quota object
+
+| Header | Meaning |
+|---|---|
+| `X-RateLimit-Limit` | Requests per month (absent on metered plans). |
+| `X-RateLimit-Remaining` | Requests left this month after this call; 0 while running on overage. |
+| `X-RateLimit-Reset` | Unix time (seconds) of the next monthly reset. |
+| `X-Burst-Limit` | Requests allowed per minute across all endpoints. |
+| `X-Burst-Remaining` | Requests left in the current minute. |
+| `Retry-After` | 429 only: seconds to wait (60 for a burst; until the reset when the monthly requests are used up). |
+
+Every successful response also carries a `quota` object: `{ limit, remaining, used, overageUsed, resetAt, burst: { limit, remaining } }`.
+
+## Handling 429
+
+A `429 rate_limited` response carries `reason`: `burst` (slow down; retry after 60 seconds), `quota_exhausted` (Free and Starter: wait for the reset or upgrade) or `overage_cap` (paid plans: upgrade or contact us). Batch calls are refused as a whole when the remaining headroom is smaller than the number of ISINs sent, so nothing is half-charged.
+
+```
+429 Too Many Requests — json{  "error": {    "code": "rate_limited",    "message": "Monthly requests exhausted for the Free plan (15 lookups / month). Upgrade at /dashboard/billing or wait for the reset on 2026-10-01.",    "plan": "free",    "reason": "quota_exhausted",    "limit": 15,    "retryAfter": 1834000,    "resetAt": "2026-10-01T00:00:00.000Z"  }}
+```

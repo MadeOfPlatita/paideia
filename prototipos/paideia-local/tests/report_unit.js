@@ -1,0 +1,27 @@
+const assert = require('node:assert/strict');
+const report = require('../static/comparison_report.js');
+assert.equal(report.subtractMoney('100000000000000000000.01','-0.01'),'100000000000000000000.02');
+assert.equal(report.subtractMoney('-0.01','0.01'),'-0.02');
+assert.equal(report.subtractMoney('-0.00','0.00'),'0.00');
+const {spawnSync} = require('node:child_process');
+const inputs = [{principal:'1000',annual_rate_percent:'-99',years:'3',monthly_contribution:'20',inflation_percent:'2',method:'simple'}, {principal:'0',annual_rate_percent:'0',years:'1',monthly_contribution:'0',inflation_percent:'0',method:'compound'}];
+const python = spawnSync('python',['-c', 'import json,sys,domain; x=json.load(sys.stdin); print(json.dumps([domain.calculate_scenario({**i,"years":int(i["years"])}) for i in x]))'],{input:JSON.stringify(inputs),encoding:'utf8'});
+assert.equal(python.status,0,python.stderr);
+const results=JSON.parse(python.stdout);
+const base={schema:'paideia.scenario-comparison',schema_version:1,scenarios:inputs.map((inputs,i)=>({id:['A','B'][i],status:'current',version:1,inputs,result:results[i],profile:'SECRET_PROFILE_MARKER'}))};
+const captured=report.capture(base), html=report.render(captured,'2026-11-03T00:00:00.000Z');
+assert.match(html,/Diferencia B − A/); assert.match(html,/no predicción/); assert.match(html,/impuestos y costes/); assert.doesNotMatch(html,/SECRET_PROFILE_MARKER/); assert.match(html,/Escenario A · evolución anual/); assert.match(html,/Escenario B · evolución anual/);
+const documentHtml=report.renderDocument(captured,'2026-11-03T00:00:00.000Z');
+assert.match(documentHtml,/<!doctype html>/i); assert.match(documentHtml,/<style>/); assert.match(documentHtml,/Diferencia B − A/); assert.match(documentHtml,/Escenario B · evolución anual/); assert.doesNotMatch(documentHtml,/SECRET_PROFILE_MARKER/);
+assert.equal(captured[0].summary.final_balance,results[0].summary.final_balance);
+base.scenarios[0].result=JSON.parse(JSON.stringify(base.scenarios[0].result)); base.scenarios[0].result.summary.final_balance='999.00'; assert.notEqual(captured[0].summary.final_balance,'999.00');
+function rejected(mutator) { const copy=JSON.parse(JSON.stringify({schema:'paideia.scenario-comparison',schema_version:1,scenarios:inputs.map((inputs,i)=>({id:['A','B'][i],status:'current',version:1,inputs,result:results[i]}))})); mutator(copy); assert.throws(()=>report.capture(copy)); }
+for (const state of ['dirty','pending','error']) rejected(s=>s.scenarios[1].status=state);
+rejected(s=>s.scenarios[0].inputs.annual_rate_percent='8');
+rejected(s=>s.scenarios[0].result.assumptions.taxes_included=true);
+rejected(s=>s.scenarios[0].result.series[0].balance='<img src=x>');
+rejected(s=>s.scenarios[1].result.summary.interest='1e3');
+rejected(s=>s.scenarios[0].result.summary.final_balance='1.00');
+rejected(s=>{s.scenarios[0].inputs.annual_rate_percent='1001';s.scenarios[0].result.assumptions.annual_rate_percent='1001'});
+rejected(s=>{s.scenarios[0].inputs.principal='-1';s.scenarios[0].result.assumptions.principal='-1.00'});
+console.log('report unit: exact cents, whitelist, mismatch, dirty/pending/error and invalid data passed');

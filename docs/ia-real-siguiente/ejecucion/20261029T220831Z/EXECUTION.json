@@ -1,0 +1,28 @@
+{
+  "mission_id": "paideia-ia-20261029T220831Z",
+  "state": "closed_deadline_no_calls",
+  "start_utc": "2026-10-29T22:08:31.985015+00:00",
+  "deadline_utc": "2026-10-29T23:08:31.985015+00:00",
+  "execution_authorized_by_user": true,
+  "cron_created": false,
+  "standing_goal_runtime_reminders_observed": true,
+  "max_external_model_attempts": 24,
+  "external_model_attempts_so_far": 0,
+  "credential_entry_completed": false,
+  "free_confirmation_completed": false,
+  "workers": "deleg_91ce62f5",
+  "readiness": {
+    "targeted_offline_preflight": "passed",
+    "joint_offline_verification": "233 Python,24 Node,19 HTTP; independent post-fix review passed",
+    "native_benchmark_requests_validated": 18,
+    "native_maximum_request_bytes": 2314,
+    "reasoning_options_observed_in_existing_working_tree": "low/include_reasoning:false; confirmed in public Groq docs, not changed by coordinator",
+    "initial_ports_8765_8768": "both_closed"
+  },
+  "pending": [
+    "new_deadline_and_shared_budget_ledger_review",
+    "context_history_off_default_contracts",
+    "joint_offline_verification_before_secure_window",
+    "user_key_entry_and_Free_confirmation_before_any_live_model_call"
+  ]
+}

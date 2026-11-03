@@ -1,0 +1,39 @@
+{
+  "ledger_path": "evidencia/sources-ledger.json",
+  "evidence_excerpt_files": [
+    "evidencia/source-excerpts.txt",
+    "evidencia/source-22.txt",
+    "evidencia/source-23.txt",
+    "evidencia/source-24.txt",
+    "evidencia/source-25.txt",
+    "evidencia/source-26.txt"
+  ],
+  "sources": [
+    {"id": 1, "url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf", "retrieved_on": "2026-10-26", "method": "Prior round: anonymous GET 200, official PDF extracted; no new download", "use": ["ACC-01", "DEP-01"]},
+    {"id": 2, "url": "https://myinvestor.es/cuentas-tarjetas/cuentas", "retrieved_on": "2026-10-26", "method": "Prior round: anonymous GET 200, official HTML extracted", "use": ["ACC-02"]},
+    {"id": 3, "url": "https://www.openbank.es/cuenta-remunerada", "retrieved_on": "2026-10-27", "method": "Search-result snippet from official page; no direct GET", "use": ["ACC-03"]},
+    {"id": 4, "url": "https://www.pibank.es/cuenta-remunerada", "retrieved_on": "2026-10-27", "method": "Search-result snippet from official product page; no direct GET", "use": ["ACC-04"]},
+    {"id": 5, "url": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf", "retrieved_on": "2026-10-26", "method": "Prior first-round official PDF extraction; this validation did not download it", "use": ["DEP-02", "Openbank/YieldMeister conflict"]},
+    {"id": 6, "url": "https://www.pibank.es/deposito-bancario-plazo-fijo", "retrieved_on": "2026-10-27", "method": "Official product URL surfaced as a link from an official Pibank search result; no direct GET", "use": ["DEP-03"]},
+    {"id": 7, "url": "https://img.pibank.es/pdfs/deposito/deposito_ip.pdf", "retrieved_on": "2026-10-27", "method": "Search-result snippet of official precontractual PDF; no PDF download", "use": ["DEP-03"]},
+    {"id": 8, "url": "https://www.deutsche-bank.es/es/particulares/ahorro-inversion/productos/depositos/deposito-mas.html", "retrieved_on": "2026-10-27", "method": "Official search-result snippet only; candidate reserved for later expansion", "use": ["backlog: Deutsche Bank Depósito Más DB"]},
+    {"id": 9, "url": "https://www.tesoro.es/en/deuda-publica/valores-del-tesoro/valores-en-circulacion", "retrieved_on": "2026-10-26", "method": "Prior round: official GET 200; individual Letras rows read from saved HTML snapshot", "use": ["DEBT-01", "DEBT-02", "DEBT-03", "DEBT-04"]},
+    {"id": 10, "url": "https://www.bestinver.es/fondos-de-inversion/bestinver-bolsa", "retrieved_on": "2026-10-26", "method": "Prior round: official product page extracted; NAV workbook was tested previously but no history copied here", "use": ["FND-01"]},
+    {"id": 11, "url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447", "retrieved_on": "2026-10-26", "method": "Prior round: official CNMV GET 200, registry record extracted", "use": ["FND-02"]},
+    {"id": 12, "url": "https://www.azvalor.com/fondos-de-inversion/azvalor-internacional", "retrieved_on": "2026-10-27", "method": "Official search-result snippet only; no direct GET", "use": ["FND-03"]},
+    {"id": 13, "url": "https://www.cobasam.com/productos/inversion-libre/cobas_seleccion", "retrieved_on": "2026-10-27", "method": "Official search-result snippets; second query exceeded budget; excluded from selection", "use": ["audit: exclusion only"]},
+    {"id": 14, "url": "https://www.cobasam.com/wp-content/uploads/2026/01/Comentario-Segundo-Semestre-2025.pdf", "retrieved_on": "2026-10-27", "method": "Search-result snippet of official PDF; no PDF download; excluded from selection", "use": ["audit: exclusion only"]},
+    {"id": 15, "url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf", "retrieved_on": "2026-10-26", "method": "Prior round: Spanish KID extracted and identity checked; no new download", "use": ["ETF-01"]},
+    {"id": 16, "url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d", "retrieved_on": "2026-10-26", "method": "Prior round: official product page extracted; holdings file tested previously, not copied here", "use": ["ETF-02"]},
+    {"id": 17, "url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp", "retrieved_on": "2026-10-26", "method": "Prior round: official product page extracted; holdings file tested previously, not copied here", "use": ["ETF-03"]},
+    {"id": 18, "url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true", "retrieved_on": "2026-10-26", "method": "Prior round: official UK product page extracted", "use": ["ETF-04"]},
+    {"id": 19, "url": "https://www.bestinver.es/fondos-de-inversion/bestinver-internacional", "retrieved_on": "2026-10-27", "method": "Official search-result snippet only; no direct GET", "use": ["FND-04"]},
+    {"id": 20, "url": "https://www.pibank.es", "retrieved_on": "2026-10-27", "method": "Official homepage search-result snippet; used for deposit product link/summary only", "use": ["DEP-03"]},
+    {"id": 21, "url": "https://yieldmeister.com/api/v1/rates", "retrieved_on": "2026-10-26", "method": "Prior round: public GET JSON inspected; row preserved locally", "use": ["DEP-02 conflict record"]},
+    {"id": 22, "url": "https://www.ebnbanco.com/ahorro/deposito-sinycon-plus", "retrieved_on": "2026-10-27", "method": "Official search-result snippet only; no direct GET", "use": ["DEP-04"]},
+    {"id": 23, "url": "https://www.openbank.es/cuentas-de-ahorro", "retrieved_on": "2026-10-27", "method": "Official search-result snippet only; child account held for later, not in the 20", "use": ["backlog: Open Young; adult eligibility mismatch"]},
+    {"id": 24, "url": "https://traderepublic.com/es-es/interes", "retrieved_on": "2026-10-26", "method": "Prior round: anonymous GET 200; HTML extract contained only headline", "use": ["pending candidate outside the 20"]},
+    {"id": 25, "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf", "retrieved_on": "2026-10-26", "method": "Prior round: official professional factsheet extracted; no new download", "use": ["backlog: KID/retail suitability and Spain availability pending"]},
+    {"id": 26, "url": "https://www.cnmv.es/portal/consultas/mostrarlistados?id=26&lang=es&page=1", "retrieved_on": "2026-10-26", "method": "Prior round: official CNMV HTML list of UCITS, GET 200; held only as discovery source", "use": ["future expansion of funds/ETF classes; not product identity"]}
+  ]
+}

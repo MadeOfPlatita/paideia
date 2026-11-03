@@ -1,0 +1,154 @@
+{
+  "candidates": [
+    {
+      "name": "VDOS Data",
+      "role": "Proveedor B2B de datos de inversión con relevancia para catálogo español; acceso comercial por explorar.",
+      "coverage": "La página oficial declara más de 60.000 productos, más de 350 gestoras, fondos nacionales e internacionales, planes de pensiones, IIC extranjeras y SICAV; identifica datos de producto, NAV, series históricas, rentabilidad, documentación legal, MiFID y ASG. No confirma ETF ni productos de depósito/cuenta.",
+      "endpoint": "No se encontró endpoint/API pública en la documentación consultada; la página describe una infraestructura de datos comercial. Precio y formato de feed desconocidos.",
+      "auth": "No documentada públicamente.",
+      "free_limits": "No hay cuota gratuita ni acceso académico publicado; precio desconocido, no se verificó pago obligatorio.",
+      "rights": "No se hallaron términos públicos de licencia, cacheo, exportación, visualización educativa ni redistribución. Debe confirmarse si hay derechos de terceros/gestoras.",
+      "status": "documented: cobertura y características descritas por VDOS; sin prueba de endpoint.",
+      "next_test": "Solicitar en el futuro esquema de API/feed y muestra autorizada para fondos registrados/distribuidos en España; campos por ISIN/clase, costes, documentos, fechas, tasa de actualización, precio y permiso expreso de mantener snapshots en PostgreSQL y mostrarlos a 100 alumnos sin monetización.",
+      "source_urls": ["https://www.vdos.com/es/datos.html"]
+    },
+    {
+      "name": "Finect",
+      "role": "Candidato a permiso/export de editor/comparador; no es una API pública verificada.",
+      "coverage": "La ficha pública observada de un fondo muestra comisiones de custodia/reembolso/suscripción, gastos corrientes, fecha y enlaces a factsheet, prospectus, KID/KIID, más rentabilidad y riesgo.",
+      "endpoint": "Ficha web renderizada; no se documentó REST, CSV exportable ni API de catálogo.",
+      "auth": "La página consultada es pública; credenciales de datos no documentadas.",
+      "free_limits": "Lectura web pública; precio de feed/licencia y acceso académico desconocidos.",
+      "rights": "La disponibilidad pública de la página y documentos enlazados no concede derechos para extraer, guardar o redistribuir los datos/PDF.",
+      "status": "documented: ejemplo de ficha pública; no se probó endpoint de integración.",
+      "next_test": "Pedir un feed permitido por clase/ISIN, disponibilidad de export CSV/API, derechos sobre datos de gestoras/terceros, fecha efectiva, límites de cacheo, atribución y acceso educativo a 100 personas.",
+      "source_urls": ["https://finect.com/fondos-inversion/LU2123307360-Visionfund__emerging_mkts_eq_ieur_h"]
+    },
+    {
+      "name": "FundFacts API",
+      "role": "API estructurada de fichas por ISIN para fondos y ETF; mejor candidato técnico probado de esta tanda, sujeto a derechos/coste.",
+      "coverage": "La documentación describe fondos UCITS, ETFs, monetarios y fondos abiertos: identidad, costes/KID, SRRI, holdings, exposición, rentabilidades, métricas y dataAsOf. No cubre ofertas bancarias/deuda pública.",
+      "endpoint": "Documentado GET /api/v1/funds/{isin}, POST /funds, GET /search, POST /portfolio, GET /overlap; demo pública por ISIN probada. Un solo ETF UCITS verificado en la prueba.",
+      "auth": "Bearer API key para endpoints normales; el endpoint demo probado no pidió credencial. No reutilizar/compartir la clave entre organizaciones.",
+      "free_limits": "Free: 15 lookups/mes, 10/minuto, 1 ISIN por batch; 0 USD y sin tarjeta, pero uso personal/no comercial. Starter: 9,99 USD/mes, 500 requests, para evaluar/uso personal. Pro: 49 USD/mes, 9.000 requests/mes y comercial. Scale: 249 USD/mes, 60.000 requests y bulk export. Precio y límites publicados en documentación/precios; no se halló excepción académica.",
+      "rights": "Términos permiten usar los datos en aplicaciones, análisis e informes propios, incluso comerciales; prohíben revender/redistribuir el dataset bruto como feed competidor y compartir claves entre organizaciones. El plan gratuito se anuncia como personal/no comercial; confirmar autorización concreta para web universitaria y 100 usuarios antes de usarlo.",
+      "status": "endpoint-tested: demo respondió HTTP 200 application/json con un ISIN real; no se probaron autenticación, límites, API pagada, estabilidad ni cobertura total.",
+      "next_test": "Solicitar excepción/licencia académica de 1 semana para 100 usuarios, límites de consultas por snapshot compartido, derechos de caché/display de campos, cobertura de fondos españoles por clase, campos de costes/PRIIPs con fuente/fecha, y tratamiento de datos derivados. No consumir demo endpoint en producción sin términos.",
+      "source_urls": ["https://fundfactsapi.com/docs", "https://fundfactsapi.com/docs/requests", "https://fundfactsapi.com/pricing", "https://fundfactsapi.com/terms", "https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983"]
+    },
+    {
+      "name": "FinanceAds",
+      "role": "Marketplace/afiliación financiera con widgets white-label y feeds/API de datos de productos; candidato a ofertas de cuentas/tasas.",
+      "coverage": "La página lista Current Accounts & Prepaid Cards, Credit Cards, Investments e Insurance; declara datos de producto y tipos de interés con actualización automática. No confirma depósitos a plazo, préstamos ni cobertura concreta de España.",
+      "endpoint": "La página comercial menciona API interfaces/product data feeds, iframe y PHP include, pero no expone un endpoint/schema abierto.",
+      "auth": "Registro de afiliado anunciado; no se documenta el acceso técnico al feed ni su autenticación.",
+      "free_limits": "La página enlaza registro gratuito de afiliados, pero no publica precio/cuota del feed, widget o licencia; precio desconocido y no se verificó pago obligatorio.",
+      "rights": "Orientación declarada a afiliación/monetización. No se confirma uso de catálogo sin tracking, cacheo en Postgres, exhibición académica ni redistribución.",
+      "status": "documented: existencia de feeds, widgets y categorías en página oficial; sin prueba de feed/API.",
+      "next_test": "Pedir catálogo de ofertas financieras españolas, muestras de TAE/condiciones/valid_from-valid_to y fuente/timestamp, cobertura no afiliada, feed exportable/API, acceso educativo cero euros, obligaciones de enlaces/trackeo y autorización de snapshots/visualización para 100 alumnos.",
+      "source_urls": ["https://www.financeads.com/tools/"]
+    },
+    {
+      "name": "Awin Product Feeds",
+      "role": "Marketplace de feeds de anunciantes; posible vía de descubrimiento de ofertas, no una API de condiciones financieras demostrada.",
+      "coverage": "Documenta lista CSV de feeds accesibles a publisher, idioma/región, estado joined, última importación y URL. Ejemplo de campos es genérico de retail; no se verificó feed de entidad financiera española con TAE/plazo/condiciones.",
+      "endpoint": "CSV/URL de feed y descarga automatizable con clave de product feeds; los docs apuntan a login/Create-a-Feed.",
+      "auth": "Cuenta de partner/publisher, acceso de anunciante/afiliación o permiso para promocionar; clave de feed diferente de Publisher API key.",
+      "free_limits": "No se publica coste/cuota del acceso en los documentos revisados; desconocidos. Un login o feed accesible no equivale a licencia de redistribución.",
+      "rights": "Permiso limitado a feeds que el publisher puede ver; condiciones de cacheo/uso no afiliado/uso escolar se deben confirmar con Awin y cada anunciante.",
+      "status": "documented: mecanismo y autorización descritos por Awin; no se accedió a cuenta/feed privado.",
+      "next_test": "Preguntar si existen programas/feed de bancos españoles y revisar su ejemplo CSV sin secretos; validar campos bancarios, cadencia, autorización para almacenarlos en PostgreSQL y mostrarlos sin click-through/afiliación.",
+      "source_urls": ["https://success.awin.com/s/article/How-can-I-access-a-Product-Feed", "https://help.awin.com/developers/docs/product-feed-list-download"]
+    },
+    {
+      "name": "Kelisto",
+      "role": "Posible export/colaboración con comparador editorial y proveedores afiliados; no API/feed pública verificada.",
+      "coverage": "Categorías visibles incluyen cuentas bancarias, hipotecas, préstamos, seguros y otros; la página explica que monetiza derivaciones o contratos de proveedores/partners.",
+      "endpoint": "Comparadores y páginas web; no se encontró API/export de datos documentado.",
+      "auth": "Acceso público al contenido; integración/datos no documentados.",
+      "free_limits": "Precio/licencia académica desconocidos. Página de partners consultada indica que la lista incluida estaba actualizada a 1 de julio de 2025.",
+      "rights": "No se encontró permiso para copiar rankings, mantener snapshots o redistribuir condiciones; la cobertura de partners puede ser selectiva.",
+      "status": "documented: modelo de partners y comparadores, no endpoint.",
+      "next_test": "Solicitar export/API con ofertas financieras completas, campos y vigencia, participación de no-partners, neutralidad del ranking, licencia académica, fecha de actualización y permiso de cacheo/visualización.",
+      "source_urls": ["https://www.kelisto.es/partners-kelisto"]
+    },
+    {
+      "name": "Rankia",
+      "role": "Posible acuerdo comercial o de export para comparadores de fondos, ETF, cuentas y otros productos.",
+      "coverage": "Página de política enlaza comparadores de fondos, ETF, brokers y cuentas; Rankia dice que obtiene comisiones por productos contratados por enlaces y aclara que no todos los productos analizados tienen acuerdo comercial.",
+      "endpoint": "Páginas/comparadores web; no se documentó API, feed o export autorizado.",
+      "auth": "Contenido público; para una integración no hay flujo publicado.",
+      "free_limits": "Precio/licencia de export o uso académico desconocidos.",
+      "rights": "El contenido público no autoriza scraping, copia, alojamiento o redistribución. Los acuerdos pueden limitar la cobertura a productos afiliados.",
+      "status": "documented: páginas oficiales de política de afiliación/publicidad; sin endpoint probado.",
+      "next_test": "Pedir CSV/API académico y listado no sesgado de productos con fuente, campo, fecha efectiva, atribución y permiso de cacheo/uso durante una semana para 100 usuarios.",
+      "source_urls": ["https://www.rankia.com/rankia/politica-de-afiliados", "https://www.rankia.com/rankia/publicidad"]
+    },
+    {
+      "name": "HelpMyCash",
+      "role": "Candidato a export/convenio educativo para condiciones de cuentas y depósitos; no API pública identificada.",
+      "coverage": "Fichas de cuentas observadas dan TAE/TIN, plazo promocional, tope de saldo, elegibilidad de nuevo cliente, requisitos (p. ej. Bizum/nómina), comisiones, bonificaciones y fondo de garantía.",
+      "endpoint": "Páginas web de comparador/ranking; no se documentó REST, descarga o export de catálogo.",
+      "auth": "Consulta web pública; acceso a feed no documentado.",
+      "free_limits": "Precio/licencia académica desconocidos.",
+      "rights": "Sin licencia de copia/cacheo/redistribución localizada; una oferta visible no confiere permiso de extracción. Confirmar además fecha de validez y fuentes primarias por condición.",
+      "status": "documented: ejemplo de ficha/oferta pública; no API testada.",
+      "next_test": "Pedir export autorizado de cuentas/depósitos con condiciones y timestamps, listas de ofertas no patrocinadas, exactitud de fechas, enlaces a documentos del banco y uso en Postgres/visualización aula sin afiliación.",
+      "source_urls": ["https://www.helpmycash.com/cuentas/cuentas-remuneradas/"]
+    },
+    {
+      "name": "ESMA Registers",
+      "role": "Dataset registral europeo y cliente de descarga; complemento de identidad/documentos, no feed de condiciones retail.",
+      "coverage": "Documentación oficial describe búsquedas A2A/M2M de datos de registros; la autoridad lista registros, datos de instrumentos y documentos regulatorios. El paquete cubre ciertos conjuntos MiFID/FIRDS/SSR, no una ficha comercial unificada de productos bancarios.",
+      "endpoint": "ESMA documenta servicios Solr predefinidos que devuelven datos de registros en JSON/XML; no se probó endpoint concreto para esta tarea. Repositorio ofrece código Python de búsqueda/descarga.",
+      "auth": "Las consultas predefinidas descritas son públicas; autenticación/cuotas para una carga concreta no se verificaron.",
+      "free_limits": "Acceso/limitaciones de los registros no documentados en esta prueba; no se halló tarifa. Precio no verificado.",
+      "rights": "Licencia raíz del cliente `esma_data_py` comprobada como EUPL-1.2; esa licencia no establece por sí sola los derechos de reutilización de los datos registrados/documentos. Confirmar por dataset y tercero aportante.",
+      "status": "documented: A2A, repositorio y LICENSE inspeccionados; endpoint no probado; derechos de dataset pendientes.",
+      "next_test": "Elegir consulta específica de fondos/UCITS o prospectos; probar respuesta y campos de registro; leer términos de reutilización del conjunto y documentos; decidir si cubre identidad/registro y enlaces, no tipos/comisiones comerciales.",
+      "source_urls": ["https://registers.esma.europa.eu/publication/helpApp", "https://www.esma.europa.eu/publications-and-data/databases-and-registers", "https://github.com/European-Securities-Markets-Authority/esma_data_py", "https://raw.githubusercontent.com/European-Securities-Markets-Authority/esma_data_py/master/LICENSE.md"]
+    },
+    {
+      "name": "Bankflip / Permisso",
+      "role": "No apto para el catálogo de comparación; plataforma de datos personales autorizados del usuario.",
+      "coverage": "La web enumera datos fiscales/ingresos, empleo, CIRBE/deuda y cuentas oficiales; son datos de la situación del usuario, no condiciones contractuales de productos ofrecidos en el mercado.",
+      "endpoint": "La web menciona acceso vía API/dashboard/CRM, pero no se probó API ni se accedió a una sesión.",
+      "auth": "Datos permissioned/customer-authorized; flujo, scopes y precio no investigados.",
+      "free_limits": "Desconocidos; no se documentó tier gratuito/académico.",
+      "rights": "Requiere permiso del cliente y supone datos personales; no aporta autorización para copiar datos de producto.",
+      "status": "unsuitable para catálogo; homepage documenta el enfoque de datos de usuario.",
+      "next_test": "Ninguna prueba para el catálogo. Reconsiderar solo si se aprueba un módulo separado de datos personales y su evaluación de privacidad/consentimiento.",
+      "source_urls": ["https://bankflip.io"]
+    }
+  ],
+  "sources": [
+    {"url":"https://www.vdos.com/es/datos.html","title":"VDOS: Datos","claim":"VDOS publica cobertura de fondos/planes y datos de NAV, series, rentabilidad, documentación legal, MiFID y ASG; informa recepción diaria de gestoras/registros.","evidence":"La base de datos de VDOS está fundamentada en la información diaria que nos propocionan directamente las entidades gestoras, tanto nacionales como internacionales, registros oficiales tales como la Comisión Nacional del Mercado de Valores (CNMV) y la Dirección General de Seguros.","verification":"Página oficial VDOS extraída; claim de cobertura documentado, sin endpoint/precio/licencia públicos verificados."},
+    {"url":"https://finect.com/fondos-inversion/LU2123307360-Visionfund__emerging_mkts_eq_ieur_h","title":"Visionfund - Emerging Markets Equity I-EUR H — Finect","claim":"Una ficha pública muestra comisiones y fechas/enlaces de documentación del fondo.","evidence":"0,000% Comisión de custodia n/a Gastos corrientes 0,940% Comisión de reembolso 0,000% Comisión de suscripción 0,000% Factsheet 27/02/2026","verification":"Página de producto Finect extraída; ejemplo de datos visibles, no feed/API ni licencia."},
+    {"url":"https://fundfactsapi.com/docs","title":"API documentation — FundFacts API","claim":"La API documenta ficha JSON por ISIN con costes, SRRI, holdings, exposiciones, rentabilidad, métricas y frescura de 24 horas.","evidence":"The response is one JSON document: identity and key facts, TER, the SRRI risk indicator, a rule-based profile (category, risk band, concentration, region and sector tilt), top holdings, sector / country / asset-allocation breakdowns, calendar and annualised returns, a monthly performance series, volatility, Sharpe ratio and max drawdown — read from the documents the fund house publishes and refreshed every 24 hours.","verification":"Documentación oficial extraída; schema descrito, sin probar endpoints protegidos."},
+    {"url":"https://fundfactsapi.com/docs/requests","title":"Requests & rate limits — FundFacts API","claim":"Cuotas se cuentan por ISIN, con 15 free/mes, 500 Starter y 9.000 Pro según la documentación; aplica 429 al llegar al límite Free/Starter.","evidence":"Each plan comes with a number of requests per calendar month (UTC). One request is counted per ISIN that receives an answer — found or not found — on GET /funds/{isin}, POST /funds, POST /portfolio and GET /overlap, whether the payload is served from the 24-hour store or loaded fresh.","verification":"Documentación oficial de cuotas extraída; cifras contrastadas con tabla de planes en misma página."},
+    {"url":"https://fundfactsapi.com/pricing","title":"Pricing — FundFacts API","claim":"Pro se anuncia a 49 USD/mes con 9.000 consultas y uso comercial; Free se describe como personal no comercial.","evidence":"Everything in Starter, plus 9,000 requests per month Portfolio look-through and holdings overlap (50 ISINs per call) Document extraction: any KID or factsheet to JSON White-label factsheets: your logo, no FundFacts branding Commercial use across your products","verification":"Página oficial de precios extraída; plan comercial publicado, excepción académica no identificada."},
+    {"url":"https://fundfactsapi.com/terms","title":"Terms of Service — FundFacts API","claim":"Términos permiten aplicaciones/informes propios, incluso comerciales, pero prohíben redistribuir dataset bruto como feed competidor y compartir claves entre organizaciones.","evidence":"You may use the data inside your own applications, analyses and reports, including commercial ones. You may not resell or redistribute the raw dataset as a competing data feed, share API keys between organisations, or attempt to circumvent quotas.","verification":"Términos oficiales extraídos; interpretar junto a los niveles de plan y confirmar el caso de uso educativo."},
+    {"url":"https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983","title":"Public FundFacts API demo payload — iShares Core MSCI World UCITS ETF","claim":"Demo pública devuelve JSON de una clase de ETF con datos de costes y timestamps.","evidence":"\"isin\":\"IE00B4L5Y983\",\"name\":\"iShares Core MSCI World UCITS ETF\",\"demo\":true,\"cached\":true,\"generatedAt\":\"2026-10-26T14:01:30.983+00:00\",\"expiresAt\":\"2026-10-27T14:01:30.983Z\",\"data\":{\"costs\":{\"exit\":\"0.00%\",\"entry\":\"0.00%\",\"riy1y\":\"0.20%\",\"riyRhp\":\"0.20%\",\"ongoing\":\"0.20%\",\"totalCost1y\":\"20 USD\",\"transaction\":\"0.00%\",\"totalCostRhp\":\"180 USD\"","verification":"GET público solo lectura ejecutado y guardado sin transformación; HTTP 200 application/json; prueba limitada a un ISIN y al endpoint demo."},
+    {"url":"https://www.financeads.com/tools/","title":"Tools — FinanceAds","claim":"FinanceAds declara comparadores white-label, feeds/API e información actualizada de productos/tipos de interés; categorías financieras publicadas.","evidence":"We offer a wide range of comparison tools and various API interfaces including product data feeds.","verification":"Página oficial extraída; no se probó endpoint, precio, feed español ni licencia de datos."},
+    {"url":"https://success.awin.com/s/article/How-can-I-access-a-Product-Feed","title":"How to access a product data feed — Awin","claim":"Awin permite descargar CSV o configurar Create-a-Feed para datos de anunciantes.","evidence":"You can access feeds in two ways: by downloading a CSV list, or by using Create-a-Feed to customize your selection.","verification":"Ayuda oficial de Awin extraída; requiere acceso de partner, no se accedió a cuenta/feed."},
+    {"url":"https://help.awin.com/developers/docs/product-feed-list-download","title":"Product Feed List Download — Awin","claim":"Feed list programable limitada a los feeds visibles al partner por adhesión o permiso previo.","evidence":"This feature allows Partners to download a CSV list of the feeds they can see from either Advertisers they are joined to or Advertisers that allow Partners to promote their products before joining:","verification":"Docs oficiales Awin extraídos; ejemplo de esquema y autorización, sin credenciales privadas."},
+    {"url":"https://www.kelisto.es/partners-kelisto","title":"Kelisto — Nuestros partners","claim":"Kelisto monetiza derivaciones/contrataciones; página muestra categorías/partners y fecha de actualización de la lista.","evidence":"Cada vez que un usuario contrata un seguro, cambia su tarifa de Internet, abre una cuenta bancaria o contrata cualquier otro producto o servicio a través de Kelisto, le cobramos una comisión al proveedor que lo ofrece.","verification":"Página oficial Kelisto extraída; la propia lista financiera marca actualización a 1 de julio de 2025; no API/feed documentado."},
+    {"url":"https://www.rankia.com/rankia/politica-de-afiliados","title":"Política de afiliados — Rankia","claim":"Rankia declara ingresos por comisiones de enlaces y que no todos los productos comentados tienen acuerdo comercial.","evidence":"Rankia puede ganar una comisión cuando contratas un producto a través de un enlace en nuestra web. Esta comisión proviene del presupuesto de marketing de las entidades que hemos seleccionado para colaborar y no afecta al coste para tí del producto o servicio.","verification":"Política oficial Rankia extraída; prueba de modelo comercial, no acceso a feed."},
+    {"url":"https://www.rankia.com/rankia/publicidad","title":"Política de publicidad — Rankia","claim":"Rankia presenta publicidad y patrocinios como soporte de su contenido gratuito.","evidence":"Para conseguir que todos los contenidos de esta web sean gratuitos necesitamos contar con la publicidad y patrocinios que aparecen en nuestras páginas.","verification":"Página oficial Rankia extraída; condiciones de feed/licencia no publicadas en esta página."},
+    {"url":"https://www.helpmycash.com/cuentas/cuentas-remuneradas/","title":"Mejores cuentas remuneradas — HelpMyCash","claim":"Ejemplo de ficha con tasa, plazo, elegibilidad y requisito de activación.","evidence":"Una de las mejores cuentas remuneradas de octubre de 2026 es la de Openbank! Ofrece un 3,25% TAE durante 12 meses, sin límite de saldo remunerado, sin comisiones y sin domiciliar la nómina. ¡Solo tienes que ser nuevo cliente y activar Bizum!","verification":"Página oficial extraída; ejemplo puntual del comparador, no permiso para copia ni feed."},
+    {"url":"https://bankflip.io","title":"Bankflip / Permisso","claim":"La plataforma promociona acceso permissioned a datos de consumidores para underwriting, onboarding y verificación, no catálogo de ofertas.","evidence":"Easily gather & process consumer data to supercharge and automate underwriting, onboarding and verification flows","verification":"Homepage oficial extraída; endpoint/auth/precio no probados."},
+    {"url":"https://registers.esma.europa.eu/publication/helpApp","title":"ESMA Registers - Application to Application Help File","claim":"ESMA Registers expone servicios máquina-a-máquina para consultar datos mantenidos en registros; consultas Solr predefinidas.","evidence":"ESMA Registers system offers machine-to-machine (A2A) services, exposing a set of services for retrieval of data maintained in ESMA Registers to external systems/clients.","verification":"Ayuda oficial extraída; no se ejecutó una consulta de registro."},
+    {"url":"https://www.esma.europa.eu/publications-and-data/databases-and-registers","title":"Databases and Registers — ESMA","claim":"ESMA lista registros/datos basados en notificaciones NCA/supervisión y enlaza su portal A2A y paquete de código.","evidence":"This section provides references to the registers and financial market data that ESMA compiled on the basis of notifications and data provided by the relevant national competent authorities (NCAs) and information collected through ESMA’s supervisory activities.","verification":"Página oficial ESMA extraída; alcance es registral/regulatorio, no condiciones retail; licencia de datos por registro pendiente."},
+    {"url":"https://github.com/European-Securities-Markets-Authority/esma_data_py","title":"esma_data_py — European Securities and Markets Authority","claim":"Repositorio oficial aporta utilidades para buscar/descargar ciertos datos ESMA; README cita conjuntos MiFID/FIRDS/SSR.","evidence":"The esma_data_py package provides a robust toolkit designed to streamline the process of searching and downloading data from the ESMA (European Securities and Markets Authority) register.","verification":"README del repositorio oficial extraído; no se clonó/instaló/ejecutó el repositorio."},
+    {"url":"https://raw.githubusercontent.com/European-Securities-Markets-Authority/esma_data_py/master/LICENSE.md","title":"LICENSE.md — esma_data_py","claim":"La licencia raíz del código del paquete es EUPL-1.2; no define por sí sola derechos de los datos descargados.","evidence":"EUROPEAN UNION PUBLIC LICENCE v. 1.2 EUPL © the European Union 2007, 2016","verification":"Archivo raíz LICENSE.md recuperado directamente por GET público (HTTP 200, text/plain); licencia del código verificada."}
+  ],
+  "tests": [
+    {
+      "url": "https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983",
+      "status": "HTTP 200",
+      "content_type": "application/json",
+      "observed_fields": ["isin", "name", "generatedAt", "expiresAt", "data.costs.entry", "data.costs.exit", "data.costs.ongoing", "data.headlineMetrics.ter", "data.riskRating", "data.keyFacts", "data.topHoldings", "data.region", "data.sector", "data.calendarReturns", "data.dataAsOf", "data.performanceAsOf"],
+      "evidence_path": "evidencia/fundfacts-demo-IE00B4L5Y983.json"
+    }
+  ]
+}

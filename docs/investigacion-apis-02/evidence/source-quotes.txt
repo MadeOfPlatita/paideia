@@ -1,0 +1,45 @@
+[11]
+Download latest fund holdings CSV data
+
+[12]
+Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Shares,Price,Location,Exchange,Market Currency
+
+[13]
+NAV (23.10.2026): 104.46 USD All-in-fee (TER): 0.15%
+Download full securities list
+
+[14]
+This document is for information purposes only and does not constitute an offer, recommendation, or solicitation to enter into any transaction.
+Name | ISIN | Country | Currency | Exchange | Type of Security | Rating | Primary Listing | Industry Classification | Weighting
+
+[16]
+State Street® SPDR® MSCI Europe Industrials UCITS ETF
+Holdings As Of: 23-Oct-2026
+ISIN | SEDOL | Security Name | Currency | Number of Shares | Percent of Fund | Trade Country Name | Local Price | Sector Classification | Industry Classification | Base Market Value
+
+[17]
+Frequency of NAV calculation Daily
+Management fees and other administrative or operating costs * 0.05%
+NAV and AUM as of 31/08/2026
+This material is solely for the attention of “professional” investors.
+
+[18]
+This document is directed at professional investors and should not be distributed to, or relied upon by retail investors.
+Ongoing Charges Figure† 0.14%
+ISIN IE00BK5BQT80 USD Accumulating
+
+[19]
+La fecha de este documento es 03 septiembre 2026.
+Hemos clasificado este producto en la clase de riesgo 4 en una escala de 7
+0.12% del valor de su inversión al año.
+0.01% del valor de su inversión al año.
+
+[20]
+Total Expense Ratio 0.35%
+ISIN: IE00BMC38736
+NAV $97.02 as of 23 Oct 2026
+
+[21]
+NAV EUR (Official NAV) €411,94 as of 23 Oct 2026
+TER 0,18%
+KID (SV)pdf; KID (EN)pdf

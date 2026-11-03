@@ -1,0 +1,79 @@
+{
+  "url": "http://127.0.0.1:8765/#escenarios",
+  "inputs": {
+    "A": [
+      "100",
+      "2",
+      "10",
+      "50",
+      "compound",
+      "1"
+    ],
+    "B": [
+      "200",
+      "3",
+      "5",
+      "100",
+      "compound",
+      "1"
+    ]
+  },
+  "print_events": [
+    {
+      "event": "beforeprint",
+      "time": 1793721516162,
+      "match": false,
+      "body": "Saltar al contenido\nPaideia\nCuaderno de ruta\n\nPrototipo local · IA no conectada\n\nRevisar estado\nBorrar mi perfil local\n\nPROYECTO EDUCATIVO\nProductos de investigación con condiciones pendientes. Los escenarios y el ensayo son simulados; no se mueve dinero.\n\n00\nInicio\n01\nTu mapa\n02\nBiblioteca\n03\nComparar\n04\nEscenarios\n05\nEnsayo ficticio\n06\nGlosario\n07\nPrivacidad\n\nESCENARIOS · SUPUESTOS EDITABLES\n\nPrueba otros supuestos\n\nLos números describen una hipótesis tuya. El cálculo no usa tasas de producto "
+    },
+    {
+      "event": "preparedDOM",
+      "html": "Informe de comparación de escenariosGenerado: 2026-11-03T15:58:36.162Z (UTC)Hipótesis, no predicción. Importes brutos; impuestos y costes de producto excluidos. No es asesoramiento financiero.Aportaciones al final de cada mes. Inflación anual efectiva convertida a mensual efectiva. Cálculo con 80 dígitos significativos; redondeo half-up a céntimos solo al publicar, no cada mes.Escenario A · supuestosSupuestoValorCapital inicial100,00 €Tasa anual supuesta2 %Horizonte10 añosAportación mensual50,00 €Inflación anual supuesta1 %MétodoCompuesto: tasa anual efectiva convertida a mensual efectivaEscenario B · supuestosSupuestoValorCapital inicial200,00 €Tasa anual supuesta3 %Horizonte5 añosAportación mensual100,00 €Inflación anual supuesta1 %MétodoCompuesto: tasa anual efectiva convertida a mensual efectivaResumen y diferencias B − ALas diferencias restan las cifras publicadas en céntimos; si los horizontes difieren, comparan los finales de cada escenario, no un mismo instante.ConceptoABDiferencia B − ASaldo nominal6.751,74 €6.689,95 €−61,79 €Saldo real6.112,26 €6.365,26 €253,00 €Aportaciones totales6.100,00 €6.200,00 €100,00 €Interés651,74 €489,95 €−161,79 €Escenario A · evolución anualMesAportacionesSaldo nominalSaldo real0100,00 €100,00 €100,00 €12700,00 €707,48 €700,48 €241.300,00 €1.327,11 €1.300,96 €361.900,00 €1.959,13 €1.901,52 €482.500,00 €2.603,80 €2.502,20 €603.100,00 €3.261,35 €3.103,06 €723.700,00 €3.932,06 €3.704,18 €844.300,00 €4.616,18 €4.305,60 €964.900,00 €5.313,98 €4.907,38 €1085.500,00 €6.025,74 €5.509,58 €1206.100,00 €6.751,74 €6.112,26 €Escenario B · evolución anualMesAportacionesSaldo nominalSaldo real0200,00 €200,00 €200,00 €121.400,00 €1.422,41 €1.408,33 €242.600,00 €2.681,50 €2.628,66 €363.800,00 €3.978,35 €3.861,35 €485.000,00 €5.314,12 €5.106,76 €606.200,00 €6.689,95 €6.365,26 €",
+      "display": "none"
+    }
+  ],
+  "after_click": {
+    "status": "Informe de comparación\n\nAmbos escenarios están actualizados. El informe se captura al imprimir.\n\nImprimir / guardar como PDF",
+    "matchPrint": false,
+    "prepared": true
+  },
+  "edited": {
+    "status": "Informe de comparación\n\nEscenario A tiene cambios sin calcular. Ambos deben estar actualizados.\n\nImprimir / guardar como PDF",
+    "disabled": true,
+    "prepared": "",
+    "events": [
+      "beforeprint",
+      "preparedDOM"
+    ]
+  },
+  "recalculated": {
+    "status": "Informe de comparación\n\nAmbos escenarios están actualizados. El informe se captura al imprimir.\n\nImprimir / guardar como PDF",
+    "disabled": false,
+    "events": [
+      "beforeprint",
+      "preparedDOM"
+    ]
+  },
+  "console_note": "Runtime.enable y Log.enable activados; interfaz no expone buffer de eventos histórico de consola mediante cdp; no se afirma ausencia de errores.",
+  "classification": {
+    "print_dialog_and_saved_file": "inconclusive",
+    "prepared_dom_and_beforeprint": "confirmed",
+    "dirty_block_and_recalculate": "confirmed",
+    "no_useful_status_after_unresolved_print_attempt": "confirmed",
+    "cause_of_user_host_failure": "inconclusive"
+  },
+  "retry_after_recalculate": {
+    "events": [
+      "beforeprint",
+      "preparedDOM"
+    ],
+    "status": "Informe de comparación\n\nAmbos escenarios están actualizados. El informe se captura al imprimir.\n\nImprimir / guardar como PDF",
+    "prepared": true,
+    "matchPrint": false
+  },
+  "screenshots": [
+    "screenshots\\01-tras-pulsar.png",
+    "screenshots\\02-editado-bloqueado.png",
+    "screenshots\\03-recalculado.png",
+    "screenshots\\04-reintento.png"
+  ]
+}

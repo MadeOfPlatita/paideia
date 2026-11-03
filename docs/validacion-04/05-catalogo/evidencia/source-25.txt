@@ -1,0 +1,5 @@
+[SOURCE 25] https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf
+método: ronda 2, factsheet oficial Vanguard extraída (26-10-2026); no se descargó de nuevo
+IE00BK5BQT80
+ISIN IE00BK5BQT80 USD Accumulating
+This document is directed at professional investors and should not be distributed to, or relied upon by retail investors.

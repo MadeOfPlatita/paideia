@@ -1,0 +1,385 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://inference-docs.cerebras.ai/support/rate-limits",
+      "title": "Cerebras — rate limits and free trial",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Rate limits apply at the organization level, not the user level, and vary based on the model.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "New accounts receive **$5 in free credits** after adding a verified payment method. These credits expire 30 days after they're granted and can be used across all public models.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| `gpt-oss-120b` | 5 | 30K | 90K | 1M | 1M |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://inference-docs.cerebras.ai/models/openai-oss",
+      "title": "Cerebras — OpenAI GPT OSS model card",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Model ID: `gpt-oss-120b`. Pricing: $0.35 per million input tokens, $0.75 per million output tokens. Context window: 65k tokens (free tier), 131k tokens (paid). Max output: 32k tokens (free tier), 40k tokens (paid). Speed: ~3000 tokens/sec. Capabilities: Reasoning, Streaming, Structured Outputs, Tool Calling, Prompt Caching. Free tier rate limits: 30 requests/min, 60k input tokens/min, 1M tokens/day.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://docs.sambanova.ai/docs/en/models/rate-limits",
+      "title": "SambaNova — model rate limits",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "| **OpenAI** | `gpt-oss-120b` | 20 | 20 | 200000 |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://docs.sambanova.ai/docs/en/models/sambacloud-models",
+      "title": "SambaNova — SambaCloud models",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "| **OpenAI** | `gpt-oss-120b` | 128k tokens | Text | [Model card](https://huggingface.co/openai/gpt-oss-120b) |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://docs.sambanova.ai/docs/en/release-notes/sambacloud",
+      "title": "SambaNova — SambaCloud release notes/data use",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Privacy-first architecture: SambaNova never stores your data.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://docs.sambanova.ai/docs/en/features/responses.md",
+      "title": "SambaNova — Responses API",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "**Client-executed tools only**: When a tool is needed, the model returns a `function_call` item. Your application executes the function and returns the result in a follow-up request.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "**Structured output**: The `text.format` field supports `json_schema` and `json_object` format types.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://docs.mistral.ai/admin/user-management-finops/tier",
+      "title": "Mistral — usage and limits",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The free API tier is intended for **evaluation and prototyping only**. You have access to the free tier with limited rate limits. To increase your limits, you must upgrade to a **Scale** plan.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Visit [Admin›Limits ↗](https://admin.mistral.ai/plateforme/limits) to see the current rate limits and usage tier for your Workspace.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "- **Requests per second (RPS)**: the maximum number of concurrent API requests. - **Tokens per minute**: throughput limit for token processing (input and output tokens combined). - **Tokens per month**: overall consumption cap.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "url": "https://docs.mistral.ai/resources/known-limitations",
+      "title": "Mistral — known limitations",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The Mistral API is served from EU data centers by default.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| Mistral Small 4 | 256k tokens |",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "JSON mode does not guarantee adherence to a specific schema. Use function calling for structured outputs.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "url": "https://docs.mistral.ai/studio/conversations/function-calling",
+      "title": "Mistral — function calling",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "we need to outline the function specifications with a JSON schema.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "url": "https://docs.mistral.ai/admin/monitor-comply/privacy-data-controls",
+      "title": "Mistral — privacy and data controls",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "**API**: data sent through the API isn't used for model training.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "When zero data retention is enabled, troubleshooting and analytics data are not stored.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "url": "https://legal.mistral.ai/terms/commercial-terms-of-service",
+      "title": "Mistral — commercial terms",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Customer is solely responsible for all use of the Outputs and evaluating the Output for improper bias, accuracy, responsiveness, and appropriateness for Customer’s use case.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://legal.mistral.ai/terms/data-processing-addendum",
+      "title": "Mistral — data processing addendum",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "## 8. Transfers of Personal Data to a Restricted Country",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "url": "https://docs.cohere.com/docs/rate-limits",
+      "title": "Cohere — API keys and rate limits",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Trial keys (and prod keys on newer Chat model variants) are limited to 1,000 API calls a month.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "| Command A Reasoning | 20 req / min | Contact [sales@cohere.com](mailto:sales@cohere.com) |",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "url": "https://docs.cohere.com/v1/docs/command-a-reasoning",
+      "title": "Cohere — Command A Reasoning",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "**Context Window:** 256,000 tokens",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Command A Reasoning is Cohere’s first reasoning model to date, excelling at real world enterprise tasks including tool use, retrieval augmented generation (RAG), agents, and multilingual use cases.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://docs.cohere.com/v1/docs/structured-outputs",
+      "title": "Cohere — structured outputs",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Structured Outputs is a feature that forces the LLM’s response to strictly follow a schema specified by the user.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "url": "https://docs.cohere.com/docs/going-live",
+      "title": "Cohere — going live",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Upon registration, every Cohere user receives a free, rate-limited trial key to use with our endpoints.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "However, if you indicate your usage involves a sensitive use case, your production key may be rate limited the same as a trial key until our safety team reaches out and manually approves your use case.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "url": "https://build.nvidia.com/overview",
+      "title": "NVIDIA — NIM prototype endpoints",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "All models on [build.nvidia.com](https://build.nvidia.com/) are free to prototype with.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "The free tier runs on rate limits - up to 40 requests per minute (RPM) for most models, with no per-token billing.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "url": "https://docs.api.nvidia.com/nim/docs/api-quickstart",
+      "title": "NVIDIA — API Catalog quickstart",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "If you do not already have an NVIDIA Account you will be prompted to set a Password.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "url": "https://docs.api.nvidia.com/nim/reference/nvidia-llama-3_3-nemotron-super-49b-v1_5",
+      "title": "NVIDIA — Llama 3.3 Nemotron Super 49B v1.5 model card",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Llama-3.3-Nemotron-Super-49B-v1.5 is a significantly upgraded version of Llama-3.3-Nemotron-Super-49B-v1 and is a large language model (LLM) which is a derivative of Meta Llama-3.3-70B-Instruct (AKA the reference model). It is a reasoning model that is post trained for reasoning, human chat preferences, and agentic tasks, such as RAG and tool calling. The model supports a context length of 128K tokens.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "url": "https://developer.nvidia.com/legal/terms",
+      "title": "NVIDIA — Terms of Use",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "The TOU can be accepted only by an adult of legal age of majority in the country in which the Technology is used.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "to use the NVIDIA Content and access the NVIDIA Services for your use only.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "url": "https://www.nvidia.com/en-us/about-nvidia/privacy-policy",
+      "title": "NVIDIA — privacy policy",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "NVIDIA is located in California, and in most cases we need to securely transfer and store your information in the United States.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "url": "https://docs.mistral.ai/getting-started/models/weights",
+      "title": "Mistral — model weights and licenses",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Mistral 7B, Mixtral 8x7B, Mixtral 8x22B, Codestral Mamba, Mathstral, Mistral Nemo, Pixtral 12B, Mistral Small, Magistral Small and Devstral Small are under Apache 2 License, which permits their use without any constraints.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "These models are not tuned for safety as we want to empower users to test and refine moderation based on their use cases.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "url": "https://docs.mistral.ai/vibe/code/cli/offline-models",
+      "title": "Mistral — offline model hardware guidance",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "**RTX 4090** or any **24 GB VRAM** GPU for 4-bit precision with a 32k context length.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "**CPU offload** also works on any machine with enough RAM, but it is significantly slower.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "url": "https://docs.ollama.com/faq",
+      "title": "Ollama — FAQ/local data handling",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Ollama runs locally. We don’t see your prompts or data when you run locally.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "By default, Ollama uses a context window size of 4096 tokens.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "url": "https://docs.cohere.com/docs/structured-outputs",
+      "title": "Cohere — structured outputs V2/strict_tools",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Structured Outputs with Tools are only supported in Chat API V2 via the `strict_tools` parameter. This parameter is not supported in Chat API V1.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "url": "https://docs.mistral.ai/models/mistral-small-4-0-26-03",
+      "title": "Mistral — Small 4 model card",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Our powerful hybrid model unifying instruct, reasoning, and coding capabilities in a single model. 119B parameters with 6.5B active.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "GA Apache 2.0 v26.03",
+          "added": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

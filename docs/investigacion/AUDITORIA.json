@@ -1,0 +1,72 @@
+{
+  "reports": [
+    {
+      "topic": 1,
+      "report": "01-cuentas-depositos.md",
+      "records": 28,
+      "report_bytes": 15265
+    },
+    {
+      "topic": 2,
+      "report": "02-deuda-publica.md",
+      "records": 29,
+      "report_bytes": 20612
+    },
+    {
+      "topic": 3,
+      "report": "03-fondos-etf.md",
+      "records": 8,
+      "report_bytes": 10213
+    },
+    {
+      "topic": 4,
+      "report": "04-llm-gratuita.md",
+      "records": 36,
+      "report_bytes": 17595
+    },
+    {
+      "topic": 5,
+      "report": "05-alojamiento-arquitectura.md",
+      "records": 28,
+      "report_bytes": 17735
+    },
+    {
+      "topic": 6,
+      "report": "06-mcp-financiero.md",
+      "records": 44,
+      "report_bytes": 17700
+    },
+    {
+      "topic": 7,
+      "report": "07-repos-similares.md",
+      "records": 43,
+      "report_bytes": 17332
+    },
+    {
+      "topic": 8,
+      "report": "08-ux-recursos.md",
+      "records": 25,
+      "report_bytes": 19361
+    },
+    {
+      "topic": 9,
+      "report": "09-rigor-financiero.md",
+      "records": 23,
+      "report_bytes": 32328
+    },
+    {
+      "topic": 10,
+      "report": "10-seguridad-calidad.md",
+      "records": 26,
+      "report_bytes": 24046
+    }
+  ],
+  "source_records": 290,
+  "unique_source_urls": 284,
+  "direct_http_checks": 19,
+  "shortlisted_repositories": 8,
+  "app_built": false,
+  "llm_tested": false,
+  "load_test_executed": false,
+  "deployed": false
+}

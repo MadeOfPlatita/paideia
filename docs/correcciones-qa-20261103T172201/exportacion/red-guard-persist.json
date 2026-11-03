@@ -1,0 +1,38 @@
+{
+  "ok": false,
+  "error": "Error: guard explanation persists after request",
+  "checks": [
+    {
+      "name": "feature probe guard enabled",
+      "pass": true
+    },
+    {
+      "name": "download control exists",
+      "pass": true
+    },
+    {
+      "name": "initial download disabled",
+      "pass": true
+    },
+    {
+      "name": "current download enabled",
+      "pass": true
+    },
+    {
+      "name": "guard disables print",
+      "pass": true
+    },
+    {
+      "name": "guard explanation visible",
+      "pass": true
+    },
+    {
+      "name": "download requested status",
+      "pass": true
+    },
+    {
+      "name": "guard explanation persists after request",
+      "pass": false
+    }
+  ]
+}

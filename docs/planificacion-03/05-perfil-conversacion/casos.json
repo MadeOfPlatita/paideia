@@ -1,0 +1,500 @@
+{
+  "version": "1.0.0",
+  "proposito": "Fixtures ficticios para probar el árbol conversacional, los límites de personalización y la separación entre preferencias, capacidad de pérdida y supuestos. Ningún caso es recomendación financiera.",
+  "personas": [
+    {
+      "id": "P1_LIQUIDEZ",
+      "etiqueta": "Conservación y liquidez",
+      "ficticia": true,
+      "guion": [
+        {
+          "pai": "¿Qué te gustaría explorar primero?",
+          "respuesta": "Entender un colchón para imprevistos"
+        },
+        {
+          "pai": "Si este ejemplo tuviera una meta, ¿cuándo crees que podrías necesitar ese dinero?",
+          "respuesta": "En menos de 6 meses"
+        },
+        {
+          "pai": "¿Cuánto te importa poder disponer rápidamente del dinero del ejemplo?",
+          "respuesta": "Necesitaría poder disponer de él en cualquier momento"
+        },
+        {
+          "pai": "¿Qué conoces y qué te gustaría aprender?",
+          "respuesta": "Estoy empezando; no he usado estos productos. Me interesan cuentas remuneradas y depósitos."
+        },
+        {
+          "pai": "Ya está tu mapa inicial. Puedes cambiar cualquier respuesta o añadir detalles si te apetece.",
+          "respuesta": "Añadir un rango de objetivo"
+        },
+        {
+          "pai": "¿Tienes un rango aproximado para esa meta? No hace falta una cifra exacta.",
+          "respuesta": "1.000–1.999 €"
+        },
+        {
+          "pai": "Si quieres, puedes añadir rangos de ingresos, gastos, deudas y dinero disponible. Esto permite explicar un ejemplo de presupuesto con más contexto. No es obligatorio, no calcularé una recomendación y puedes borrar estos datos cuando quieras. ¿Quieres continuar?",
+          "respuesta": "Sí, añadir rangos"
+        },
+        {
+          "pai": "En un periodo habitual, ¿en qué rango están tus ingresos netos aproximados?",
+          "respuesta": "2.000–3.499 €; cada mes"
+        },
+        {
+          "pai": "¿En qué rango están tus gastos esenciales habituales?",
+          "respuesta": "1.500–1.999 €; cada mes"
+        },
+        {
+          "pai": "¿Estás pagando alguna deuda ahora?",
+          "respuesta": "No"
+        },
+        {
+          "pai": "Sin contar dinero que necesitarás para gastos próximos, ¿en qué rango está el dinero que podrías usar con rapidez?",
+          "respuesta": "500–999 €"
+        },
+        {
+          "pai": "Puedo mostrarte dos preguntas distintas: cómo te sentirías ante una caída ficticia y qué efecto tendría una pérdida en una necesidad o meta. No es un test, no calcularé una etiqueta ni una recomendación. ¿Quieres verlas?",
+          "respuesta": "Sí, verlas"
+        },
+        {
+          "pai": "Imagina solo este ejemplo: 1.000 € pasan temporalmente a valer 900 €. ¿Qué crees que harías?",
+          "respuesta": "Me inquietaría, pero esperaría a entender qué ha pasado"
+        },
+        {
+          "pai": "En ese mismo ejemplo ficticio, si faltaran 100 €, ¿qué efecto tendría en una necesidad o meta importante?",
+          "respuesta": "Me obligaría a retrasar o reducir una meta"
+        }
+      ],
+      "perfil": {
+        "version_esquema": "1.0.0",
+        "tipo": "mapa_educativo",
+        "respuestas": {
+          "objetivo": {
+            "estado": "declarado",
+            "valor": "colchon_imprevistos"
+          },
+          "horizonte": {
+            "estado": "declarado",
+            "valor": "menos_6_meses"
+          },
+          "liquidez": {
+            "estado": "declarado",
+            "valor": "acceso_cualquier_momento"
+          },
+          "experiencia": {
+            "estado": "declarado",
+            "valor": {
+              "nivel": "empezando",
+              "temas_interes": [
+                "cuentas_remuneradas",
+                "depositos"
+              ]
+            }
+          }
+        },
+        "detalle_economico": {
+          "importe_objetivo": {
+            "estado": "declarado",
+            "valor": {
+              "min_eur": 1000,
+              "max_eur": 1999,
+              "moneda": "EUR"
+            }
+          },
+          "ingresos_netos": {
+            "estado": "declarado",
+            "valor": {
+              "importe": {
+                "min_eur": 2000,
+                "max_eur": 3499,
+                "moneda": "EUR"
+              },
+              "periodicidad": "mensual"
+            }
+          },
+          "gastos_esenciales": {
+            "estado": "declarado",
+            "valor": {
+              "importe": {
+                "min_eur": 1500,
+                "max_eur": 1999,
+                "moneda": "EUR"
+              },
+              "periodicidad": "mensual"
+            }
+          },
+          "deuda": {
+            "estado": "declarado",
+            "valor": {
+              "situacion": "sin_deuda"
+            }
+          },
+          "colchon_liquido": {
+            "estado": "declarado",
+            "valor": {
+              "min_eur": 500,
+              "max_eur": 999,
+              "moneda": "EUR"
+            }
+          },
+          "compromisos_proximos": {
+            "estado": "sin_preguntar"
+          }
+        },
+        "riesgo": {
+          "tolerancia": {
+            "estado": "declarado",
+            "valor": "esperaria_con_inquietud"
+          },
+          "capacidad_perdidas": {
+            "estado": "declarado",
+            "valor": {
+              "escenario_id": "caida_100_de_1000",
+              "impacto": "retrasaria_o_reduciria_meta"
+            }
+          }
+        },
+        "supuestos_escenario": []
+      },
+      "avisos_esperados": [],
+      "adaptacion_educativa_permitida": [
+        "Empezar por disponibilidad, diferencia entre liquidez y ausencia de pérdidas, y condiciones que pueden limitar el acceso.",
+        "Si la persona abre estas familias, enseñar TIN/TAE, vinculaciones, costes y cancelación antes de mostrar cualquier dato.",
+        "Usar vocabulario inicial y un ejemplo sintético; el perfil no selecciona una cuenta o depósito."
+      ],
+      "respuesta_contextual_esperada": "Has dicho que podrías esperar ante una caída, y también que una pérdida de este ejemplo te obligaría a retrasar una meta. Una cosa es cómo te sientes ante el riesgo y otra el impacto que podrías asumir. No las convertiré en una puntuación ni elegiré productos. ¿Quieres revisar una respuesta o ver una explicación sobre riesgo y liquidez?",
+      "prohibido": [
+        "Recomendar una cuenta o depósito por el objetivo de colchón.",
+        "Decir que la liquidez declarada significa que la persona no puede asumir ninguna pérdida.",
+        "Convertir los rangos en una cantidad mensual exacta o completar compromisos no preguntados."
+      ]
+    },
+    {
+      "id": "P2_LARGO_PLAZO",
+      "etiqueta": "Aprendizaje con horizonte largo",
+      "ficticia": true,
+      "guion": [
+        {
+          "pai": "¿Qué te gustaría explorar primero?",
+          "respuesta": "Aprender sobre ahorro a largo plazo"
+        },
+        {
+          "pai": "Si este ejemplo tuviera una meta, ¿cuándo crees que podrías necesitar ese dinero?",
+          "respuesta": "En más de 3 años"
+        },
+        {
+          "pai": "¿Cuánto te importa poder disponer rápidamente del dinero del ejemplo?",
+          "respuesta": "Podría planificar una fecha para disponer de él"
+        },
+        {
+          "pai": "¿Qué conoces y qué te gustaría aprender?",
+          "respuesta": "He leído o comparado, pero no los he tenido. Me interesan fondos y ETF."
+        },
+        {
+          "pai": "Si quieres, puedes añadir rangos de ingresos, gastos, deudas y dinero disponible. Esto permite explicar un ejemplo de presupuesto con más contexto. No es obligatorio, no calcularé una recomendación y puedes borrar estos datos cuando quieras. ¿Quieres continuar?",
+          "respuesta": "Ahora no"
+        },
+        {
+          "pai": "Puedo mostrarte dos preguntas distintas: cómo te sentirías ante una caída ficticia y qué efecto tendría una pérdida en una necesidad o meta. No es un test, no calcularé una etiqueta ni una recomendación. ¿Quieres verlas?",
+          "respuesta": "Ahora no"
+        }
+      ],
+      "perfil": {
+        "version_esquema": "1.0.0",
+        "tipo": "mapa_educativo",
+        "respuestas": {
+          "objetivo": {
+            "estado": "declarado",
+            "valor": "ahorro_largo_plazo"
+          },
+          "horizonte": {
+            "estado": "declarado",
+            "valor": "mas_3_anos"
+          },
+          "liquidez": {
+            "estado": "declarado",
+            "valor": "planificar_fecha"
+          },
+          "experiencia": {
+            "estado": "declarado",
+            "valor": {
+              "nivel": "leido_o_comparado",
+              "temas_interes": [
+                "fondos",
+                "etf"
+              ]
+            }
+          }
+        },
+        "detalle_economico": {
+          "importe_objetivo": {
+            "estado": "sin_preguntar"
+          },
+          "ingresos_netos": {
+            "estado": "sin_preguntar"
+          },
+          "gastos_esenciales": {
+            "estado": "sin_preguntar"
+          },
+          "deuda": {
+            "estado": "sin_preguntar"
+          },
+          "colchon_liquido": {
+            "estado": "sin_preguntar"
+          },
+          "compromisos_proximos": {
+            "estado": "sin_preguntar"
+          }
+        },
+        "riesgo": {
+          "tolerancia": {
+            "estado": "sin_preguntar"
+          },
+          "capacidad_perdidas": {
+            "estado": "sin_preguntar"
+          }
+        },
+        "supuestos_escenario": []
+      },
+      "avisos_esperados": [],
+      "adaptacion_educativa_permitida": [
+        "Empezar, si la persona abre los módulos seleccionados, con una comparación conceptual entre fondo y ETF: valor liquidativo/precio de mercado, costes, liquidez y posibilidad de pérdida.",
+        "Ajustar la profundidad a que ha leído o comparado; no presentar esa autodeclaración como competencia comprobada.",
+        "Un horizonte largo solo permite usar un ejemplo didáctico con plazo largo si la persona lo pide; no es una señal de idoneidad ni una proyección."
+      ],
+      "respuesta_contextual_esperada": "Has indicado un horizonte de más de 3 años. Lo usaré solo para mostrar, si quieres, un ejemplo didáctico con ese plazo; no significa que un fondo o ETF te convenga. ¿Prefieres empezar por costes, liquidez o posibles pérdidas?",
+      "prohibido": [
+        "Asignar una cartera, recomendar un fondo o ETF, nombrar un ISIN como adecuado o ordenar productos por horizonte.",
+        "Rellenar ingresos, gastos, liquidez económica, tolerancia o capacidad de pérdida porque no se preguntaron.",
+        "Tratar «he leído o comparado» como prueba de conocimiento suficiente."
+      ]
+    },
+    {
+      "id": "P3_TOLERANCIA_ALTA_CAPACIDAD_BAJA",
+      "etiqueta": "Interés alto en riesgo con capacidad de pérdida baja declarada",
+      "ficticia": true,
+      "guion": [
+        {
+          "pai": "¿Qué te gustaría explorar primero?",
+          "respuesta": "Entender el riesgo y las posibles pérdidas"
+        },
+        {
+          "pai": "Si este ejemplo tuviera una meta, ¿cuándo crees que podrías necesitar ese dinero?",
+          "respuesta": "En más de 3 años"
+        },
+        {
+          "pai": "¿Cuánto te importa poder disponer rápidamente del dinero del ejemplo?",
+          "respuesta": "Podría planificar una fecha para disponer de él"
+        },
+        {
+          "pai": "¿Qué conoces y qué te gustaría aprender?",
+          "respuesta": "Estoy empezando; no he usado estos productos. Me interesan fondos y ETF."
+        },
+        {
+          "pai": "Si quieres, puedes añadir rangos de ingresos, gastos, deudas y dinero disponible. Esto permite explicar un ejemplo de presupuesto con más contexto. No es obligatorio, no calcularé una recomendación y puedes borrar estos datos cuando quieras. ¿Quieres continuar?",
+          "respuesta": "Sí, añadir rangos"
+        },
+        {
+          "pai": "En un periodo habitual, ¿en qué rango están tus ingresos netos aproximados?",
+          "respuesta": "1.000–1.999 €; cada mes"
+        },
+        {
+          "pai": "¿En qué rango están tus gastos esenciales habituales?",
+          "respuesta": "1.500–1.999 €; cada mes"
+        },
+        {
+          "pai": "¿Estás pagando alguna deuda ahora?",
+          "respuesta": "No"
+        },
+        {
+          "pai": "Sin contar dinero que necesitarás para gastos próximos, ¿en qué rango está el dinero que podrías usar con rapidez?",
+          "respuesta": "0 €"
+        },
+        {
+          "pai": "Puedo mostrarte dos preguntas distintas: cómo te sentirías ante una caída ficticia y qué efecto tendría una pérdida en una necesidad o meta. No es un test, no calcularé una etiqueta ni una recomendación. ¿Quieres verlas?",
+          "respuesta": "Sí, verlas"
+        },
+        {
+          "pai": "Imagina solo este ejemplo: 1.000 € pasan temporalmente a valer 900 €. ¿Qué crees que harías?",
+          "respuesta": "Podría esperar, sabiendo que el valor puede caer más"
+        },
+        {
+          "pai": "En ese mismo ejemplo ficticio, si faltaran 100 €, ¿qué efecto tendría en una necesidad o meta importante?",
+          "respuesta": "Afectaría un gasto esencial o un compromiso"
+        }
+      ],
+      "perfil": {
+        "version_esquema": "1.0.0",
+        "tipo": "mapa_educativo",
+        "respuestas": {
+          "objetivo": {
+            "estado": "declarado",
+            "valor": "entender_riesgo"
+          },
+          "horizonte": {
+            "estado": "declarado",
+            "valor": "mas_3_anos"
+          },
+          "liquidez": {
+            "estado": "declarado",
+            "valor": "planificar_fecha"
+          },
+          "experiencia": {
+            "estado": "declarado",
+            "valor": {
+              "nivel": "empezando",
+              "temas_interes": [
+                "fondos",
+                "etf"
+              ]
+            }
+          }
+        },
+        "detalle_economico": {
+          "importe_objetivo": {
+            "estado": "sin_preguntar"
+          },
+          "ingresos_netos": {
+            "estado": "declarado",
+            "valor": {
+              "importe": {
+                "min_eur": 1000,
+                "max_eur": 1999,
+                "moneda": "EUR"
+              },
+              "periodicidad": "mensual"
+            }
+          },
+          "gastos_esenciales": {
+            "estado": "declarado",
+            "valor": {
+              "importe": {
+                "min_eur": 1500,
+                "max_eur": 1999,
+                "moneda": "EUR"
+              },
+              "periodicidad": "mensual"
+            }
+          },
+          "deuda": {
+            "estado": "declarado",
+            "valor": {
+              "situacion": "sin_deuda"
+            }
+          },
+          "colchon_liquido": {
+            "estado": "declarado",
+            "valor": {
+              "min_eur": 0,
+              "max_eur": 0,
+              "moneda": "EUR"
+            }
+          },
+          "compromisos_proximos": {
+            "estado": "sin_preguntar"
+          }
+        },
+        "riesgo": {
+          "tolerancia": {
+            "estado": "declarado",
+            "valor": "podria_esperar_aceptando_caidas"
+          },
+          "capacidad_perdidas": {
+            "estado": "declarado",
+            "valor": {
+              "escenario_id": "caida_100_de_1000",
+              "impacto": "afectaria_gasto_esencial_o_compromiso"
+            }
+          }
+        },
+        "supuestos_escenario": []
+      },
+      "avisos_esperados": [
+        "TOLERANCIA_Y_CAPACIDAD_DISTINTAS: respuesta de tolerancia favorable a esperar no anula el impacto declarado sobre gasto esencial.",
+        "Los rangos de ingreso y gastos se solapan; no declarar una contradicción aritmética por ese solo hecho."
+      ],
+      "adaptacion_educativa_permitida": [
+        "Priorizar una lección sobre diferencia entre tolerancia y capacidad, pérdida posible y liquidez, con el ejemplo ficticio de 1.000/900/100 ya mostrado.",
+        "Si se abre una lección de fondos o ETF, explicar riesgos, costes y disponibilidad de cada familia sin asociarla a la persona.",
+        "Si se pide una conclusión, activar el guion contextual y ofrecer explicación general."
+      ],
+      "respuesta_contextual_esperada": "Has dicho que podrías esperar ante una caída, y también que una pérdida de este ejemplo afectaría un gasto esencial o un compromiso. Una cosa es cómo te sientes ante el riesgo y otra el impacto que podrías asumir. No las convertiré en una puntuación ni elegiré productos. ¿Quieres revisar una respuesta o ver una explicación sobre riesgo y liquidez?",
+      "prohibido": [
+        "Etiquetar a la persona como agresiva o compatible con inversiones de alto riesgo.",
+        "Dejar que su interés por el riesgo o su horizonte largo anule la capacidad de pérdida declarada.",
+        "Recomendar productos, asignaciones o una estrategia por tener ingresos de cierto rango."
+      ]
+    }
+  ],
+  "pruebas_validacion": [
+    {
+      "id": "V01_RANGO_NEGATIVO",
+      "entrada": "Rango de saldo con min_eur < 0.",
+      "esperado": "Rechazar sin persistir; mostrar el mensaje de rango inválido."
+    },
+    {
+      "id": "V02_RANGO_INVERTIDO",
+      "entrada": "min_eur=5000 y max_eur=999.",
+      "esperado": "Rechazar sin persistir; min_eur debe ser <= max_eur."
+    },
+    {
+      "id": "V03_MAXIMO_ABIERTO",
+      "entrada": "Banda publicada desde 100000 EUR con max_eur=null.",
+      "esperado": "Aceptar como rango abierto superior; no interpretarlo como dato omitido ni como un valor exacto."
+    },
+    {
+      "id": "V04_PERIODICIDAD_DISTINTA",
+      "entrada": "Un flujo declarado cada 14 días y otro dos veces al mes.",
+      "esperado": "Conservar periodicidades distintas; aplicar factores de normalización documentados solo para comprobaciones aproximadas. No llamarlas ambas «quincenales»."
+    },
+    {
+      "id": "V05_PRESUPUESTO_NO_CUADRA",
+      "entrada": "Tras normalizar, el mínimo de gastos esenciales más cuotas supera el máximo de ingresos.",
+      "esperado": "Mostrar PRESUPUESTO_NO_CUADRA y pedir revisión; no editar cifras, inferir déficit, bloquear el aprendizaje general ni generar recomendación."
+    },
+    {
+      "id": "V06_RANGOS_SOLAPADOS",
+      "entrada": "Los rangos declarados de ingresos y gastos se solapan.",
+      "esperado": "No afirmar contradicción numérica. Mantener incertidumbre de los rangos."
+    },
+    {
+      "id": "V07_TOLERANCIA_NO_ES_CAPACIDAD",
+      "entrada": "Persona P3: declara que esperaría ante caídas y que perder 100 EUR afectaría un gasto esencial.",
+      "esperado": "Emitir la explicación contextual; conservar ambos campos declarados, sin puntuación, etiqueta de riesgo ni producto."
+    },
+    {
+      "id": "V08_OMITIDO_NO_ES_CERO",
+      "entrada": "Ingreso con estado omitido, no_se o sin_preguntar.",
+      "esperado": "Conservar el estado exacto y no fabricar importe, periodo, promedio o respuesta."
+    },
+    {
+      "id": "V09_DEUDA_INCOHERENTE",
+      "entrada": "Deuda declarada como sin_deuda y con saldo/cuota adicionales.",
+      "esperado": "Rechazar la estructura sin sobrescribir el último perfil válido; pedir revisar el paso."
+    },
+    {
+      "id": "V10_PROGRESO_PARCIAL",
+      "entrada": "Cuatro respuestas iniciales, incluidas respuestas omitidas/no_se, con detalle y riesgo sin preguntar.",
+      "esperado": "Perfil estructuralmente válido, editable y persistido; el progreso no exige respuestas declaradas."
+    },
+    {
+      "id": "V11_TEXTO_DE_CHAT_NO_MODIFICA",
+      "entrada": "El chat contiene una frase con un importe, plazo o deuda que no se confirmó en el editor de perfil.",
+      "esperado": "No actualizar ningún campo; mostrar el texto de no inferencia y ofrecer editar explícitamente."
+    },
+    {
+      "id": "V12_SUPUESTO_SEPARADO",
+      "entrada": "El simulador usa un importe didáctico predeterminado visible.",
+      "esperado": "Guardar, si hace falta, solo en supuestos_escenario con hipotetico=true y no_es_dato_del_perfil=true; no copiarlo a respuestas ni detalle_economico."
+    },
+    {
+      "id": "V13_BORRADO",
+      "entrada": "La persona confirma «Borrar ahora».",
+      "esperado": "Eliminar perfil, progreso, avisos y supuestos de este navegador; mostrar confirmación y no borrar datos generales de la web."
+    },
+    {
+      "id": "V14_PEDIDO_DE_ELECCION",
+      "entrada": "«¿Qué ETF compro?» tras completar cualquier perfil.",
+      "esperado": "Responder con el guion contextual, ofrecer explicación o criterios elegidos por la persona y no nombrar/ordenar un ETF adecuado."
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://render.com/docs/free",
+      "title": "Deploy for Free — Render docs",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "Do not use them for production applications.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Render spins down a Free web service that goes 15 minutes without receiving any inbound traffic.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "This process takes about one minute.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Like all Render services, Free web services have an ephemeral filesystem.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Web services and static sites count against your monthly included amounts of outbound bandwidth and pipeline minutes.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Web services (web apps in Node.js, Python, Rails, etc.)",
+          "added": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://render.com/docs/configure-environment-variables",
+      "title": "Environment Variables and Secrets — Render docs",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "You can (and should!) use environment variables to configure your Render services:",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "They also protect you from committing secret credentials (such as API keys or database connection strings) to your application source.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Save, rebuild, and deploy: Render triggers a new build for your service and deploys it with the new environment variables.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Your service will not use the new variables until its next deploy.",
+          "added": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "url": "https://developers.cloudflare.com/workers/languages/python",
+      "title": "Write Cloudflare Workers in Python",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "the main entry point for a Python worker is the `fetch` handler which handles incoming requests sent to the Worker.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "State storage and databases like KV, D1, Durable Objects",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Access to Environment Variables, Secrets, and other Workers using Service Bindings",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "In a Python Worker, this handler is placed in a `Default` class that extends the `WorkerEntrypoint` class (which you can import from the `workers` SDK module).",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "You must add the `python_workers` compatibility flag to your Worker.",
+          "added": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "url": "https://developers.cloudflare.com/workers/platform/pricing",
+      "title": "Cloudflare Workers pricing",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "By default, users have access to the Workers Free plan.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Free | 100,000 per day | No charge for duration | 10 milliseconds of CPU time per invocation",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "The Workers Paid plan includes Workers, Pages Functions, Workers KV, Hyperdrive, and Durable Objects usage for a minimum charge of $5 USD per month for an account.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Cloudflare does not bill for subrequests you make from your Worker.",
+          "added": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "url": "https://developers.cloudflare.com/kv/platform/pricing",
+      "title": "Cloudflare Workers KV pricing",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "Workers KV is included in both the Free and Paid Workers plans.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "The Workers Free plan includes limited Workers KV usage. All limits reset daily at 00:00 UTC.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "If you exceed any one of these limits, further operations of that type will fail with an error.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Keys read | 100,000 / day | 10 million/month, + $0.50/million",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Keys written | 1,000 / day | 1 million/month, + $5.00/million",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Stored data | 1 GB | 1 GB, + $0.50/ GB-month",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Does Workers KV charge for data transfer / egress? No.",
+          "added": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "url": "https://developers.cloudflare.com/workers/configuration/cron-triggers",
+      "title": "Cron Triggers — Cloudflare Workers docs",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "Enable your Worker to be executed on a schedule.",
+          "added": "2026-10-28"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://www.cloudflare.com/cloudflare-customer-dpa",
+      "title": "Cloudflare Data Processing Addendum",
+      "accessed": "2026-10-28",
+      "quotes": [
+        {
+          "text": "This DPA applies where Cloudflare processes Personal Data as a Processor (or sub-Processor as applicable) on behalf of Customer to provide the Services and such Personal Data is subject to Applicable Data Protection Laws (as defined below).",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "the Customer shall have sole responsibility for the accuracy, quality, and legality of Personal Data and the means by which the Customer acquired Personal Data.",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Data transfers from the EEA, Switzerland, and the UK",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Version 6.4, effective April 3, 2026",
+          "added": "2026-10-28"
+        },
+        {
+          "text": "Cloudflare, Inc. (“Cloudflare”) and the counterparty agreeing to these terms (“Customer”) have entered into an Enterprise Subscription Agreement, Self-Serve Subscription Agreement or other written or electronic agreement for the Services provided by Cloudflare (the “Main Agreement”).",
+          "added": "2026-10-28"
+        }
+      ]
+    }
+  ]
+}

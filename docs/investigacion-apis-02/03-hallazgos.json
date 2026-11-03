@@ -1,0 +1,229 @@
+{
+  "candidates": [
+    {
+      "name": "iShares / BlackRock",
+      "role": "Descarga de holdings, páginas de producto y KID PRIIPs por clase.",
+      "coverage": "CSV probado para un fondo: ticker, nombre, sector, asset class, market value, weight, notional value, shares, price, location, exchange y market currency. La cabecera no contiene ISIN de las posiciones. La ruta se basa en el productId interno 328657; el vínculo de producto ofrece variantes de share class y KID.",
+      "endpoint": "https://www.ishares.com/uk/individual/en/products/328657/ishares-s-p-500-equal-weight-ucits-etf/latest-holdings.csv",
+      "auth": "Ninguna en la descarga GET probada; no se usaron cuenta, clave ni token.",
+      "free_limits": "La solicitud de lectura fue pública y no cobró; cuota, rate limit, SLA y uso programático recurrente no están publicados/verificados.",
+      "rights": "No se confirmó licencia para almacenar, transformar o redistribuir el CSV. Acceso público no equivale a autorización de republicación.",
+      "status": "Endpoint de fichero probado: HTTP 200, CSV 80.271 bytes, fecha efectiva 23/Oct/2026. Es descarga pública del emisor, no una API oficial documentada.",
+      "next_test": "Crear mapa verificado ISIN de share class ↔ productId y comprobar productos/idiomas adicionales; resolver ISIN de cada security mediante una fuente autorizada; revisar términos, límites y KID español vigente por ISIN.",
+      "source_urls": [
+        "https://ishares.com/uk/individual/en/products/328657/fund/1506575576011.ajax?dataType=fund&fileName=ISPE_holdings&fileType=csv",
+        "https://www.ishares.com/uk/individual/en/products/328657/ishares-s-p-500-equal-weight-ucits-etf/latest-holdings.csv",
+        "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf"
+      ]
+    },
+    {
+      "name": "Vanguard",
+      "role": "Alta y verificación documental de share class; candidato pendiente para holdings completos.",
+      "coverage": "Factsheet PDF para IE00BK5BQT80 (USD Acc): clase, OCF 0,14%, UCITS/domicilio, tickers/bolsas y holdings resumidos. La ficha no es un feed estructurado de holdings completos ni de NAV diario.",
+      "endpoint": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf",
+      "auth": "El PDF fue accesible sin login en la lectura; no hay una API de datos autenticada probada.",
+      "free_limits": "Descarga del documento pública en esta consulta; cuotas de feed no aplican/no se encontraron. No se probaron endpoints de datos diarios.",
+      "rights": "No se confirmó derecho de redistribución; además la ficha consultada dice que se dirige a inversores profesionales y que no debe distribuirse ni ser utilizada por minoristas.",
+      "status": "Documentado (PDF oficial); no se probó descarga de holdings/serie NAV estructurada.",
+      "next_test": "Encontrar por producto el KID PRIIPs español minorista y un archivo/listado público con cartera completa; verificar metadatos, as-of, derechos de uso y diferencias de ticker por listing.",
+      "source_urls": [
+        "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf"
+      ]
+    },
+    {
+      "name": "Amundi ETF",
+      "role": "Ficha mensual, métricas de producto y posible fuente documental de NAV/costes/holdings.",
+      "coverage": "La ficha de IE0009DRDY20 incluye NAV/AUM con fecha, ISIN, acumulación, moneda de clase, UCITS, replicación física, SRI, coste con etiqueta propia y frecuencia declarada de cálculo NAV diaria. Es un PDF mensual; no se obtuvo una serie diaria ni un XLSX/CSV estructurado en esta ronda.",
+      "endpoint": "https://www.amundietf.com/pdfDocuments/monthly-factsheet/IE0009DRDY20/ENG/LUX/INSTITUTIONNEL/ETF/20260831",
+      "auth": "El PDF fue recuperable públicamente por URL; no se usó login ni API key.",
+      "free_limits": "Cuotas/API no encontradas. Disponibilidad pública del PDF comprobada por extracción, no por ensayo de descarga binaria.",
+      "rights": "No se confirmó licencia de redistribución. La ficha consultada se limita expresamente a inversores profesionales; el KID es la referencia para el conjunto completo de costes.",
+      "status": "Documentado: ficha oficial con datos al 31/08/2026. No endpoint de datos diarios probado.",
+      "next_test": "Resolver KID PRIIPs español actual por ISIN; encontrar si existe descarga autorizada de composición completa e histórico NAV; preservar nomenclatura de costes y fechas, y revisar licencias.",
+      "source_urls": [
+        "https://www.amundietf.com/pdfDocuments/monthly-factsheet/IE0009DRDY20/ENG/LUX/INSTITUTIONNEL/ETF/20260831"
+      ]
+    },
+    {
+      "name": "Xtrackers / DWS",
+      "role": "Importador de composición y referencia de atributos de producto.",
+      "coverage": "La página de IE000CXLGK86 publica ISIN, NAV/fechas y all-in-fee (TER), y enlaza lista completa. XLSX probado con Name, ISIN, Country, Currency, Exchange, Type of Security, Rating, Primary Listing, Industry Classification y Weighting.",
+      "endpoint": "https://etf.dws.com/etfdata/export/LUX/ENG/excel/product/constituent/IE000CXLGK86/",
+      "auth": "Ninguna en la descarga GET probada; la página del producto enlaza el fichero.",
+      "free_limits": "La descarga funcionó sin pago en una petición; cuota, rate limit, SLA y términos de uso programático no se verificaron.",
+      "rights": "Redistribución no confirmada. El libro incluye descargo de que DWS no garantiza exactitud, integridad o puntualidad; no equivale a una licencia ni a un feed garantizado.",
+      "status": "Endpoint de exportación probado: HTTP 200, 40.541 bytes, workbook ZIP/XLSX válido. Content-Type recibido: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml. Descarga pública del emisor, no API documentada.",
+      "next_test": "Comprobar KID español por share class, estabilidad de exportación/locale, cuotas y derechos; probar otro ISIN y validar pesos, cabecera y fecha efectiva frente a la página.",
+      "source_urls": [
+        "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+        "https://etf.dws.com/etfdata/export/LUX/ENG/excel/product/constituent/IE000CXLGK86/"
+      ]
+    },
+    {
+      "name": "SPDR / State Street",
+      "role": "Importador de holdings diarios y metadatos de share class/NAV/TER.",
+      "coverage": "XLSX de STQ probado: ISIN y ticker de clase, fecha de composición, ISIN/SEDOL por posición, security name, currency, number of shares, percent of fund, país, local price, sector/industria y base market value. La página de producto muestra NAV oficial fechado, TER y enlaces a KID inglés y sueco para la localización consultada.",
+      "endpoint": "https://www.ssga.com/library-content/products/fund-data/etfs/emea/holdings-daily-emea-en-stq-fp.xlsx",
+      "auth": "Ninguna en la descarga GET probada; el fichero es público.",
+      "free_limits": "No se mostró coste en el GET; cuota, rate limit, SLA y términos de redistribución no verificados.",
+      "rights": "No se confirmó licencia de almacenar o redistribuir holdings/precios. Los enlaces KID observados en página localizada para Suecia eran EN y SV; la existencia de un KID español queda pendiente, no descartada.",
+      "status": "Endpoint de fichero probado: HTTP 200, XLSX 17.661 bytes, Holdings As Of 23-Oct-2026. Descarga pública del emisor, no API documentada.",
+      "next_test": "Localizar página española del mismo producto y KID en español; probar fichero de otro fondo y establecer patrón ISIN↔ticker/locale; comprobar términos, límites y fecha de publicación diaria.",
+      "source_urls": [
+        "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+        "https://www.ssga.com/library-content/products/fund-data/etfs/emea/holdings-daily-emea-en-stq-fp.xlsx"
+      ]
+    },
+    {
+      "name": "VanEck",
+      "role": "Candidato adicional para catálogo y documentos, no prioritario como feed hasta probar holdings.",
+      "coverage": "Página del VanEck Semiconductor UCITS ETF con ISIN IE00BMC38736, NAV/fecha, total expense ratio y enlace KIID; la extracción no expuso cartera completa ni archivo tabular.",
+      "endpoint": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
+      "auth": "Página pública accesible sin login en esta consulta; no se probó descarga de documento o API.",
+      "free_limits": "No se encontró cuota pública de API; no endpoint estructurado probado.",
+      "rights": "No se confirmó licencia de reutilización. El KIID enlazado desde la página era una ruta genérica en inglés; el KID PRIIPs español queda por comprobar.",
+      "status": "Documentado a nivel de página de producto; candidato no validado como importador de holdings.",
+      "next_test": "Encontrar descarga de holdings autorizada y KID español exacto por ISIN; verificar el contenido, fechas, acceso, licencia y límites antes de incluir en el cron.",
+      "source_urls": [
+        "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://ishares.com/uk/individual/en/products/328657/fund/1506575576011.ajax?dataType=fund&fileName=ISPE_holdings&fileType=csv",
+      "title": "iShares S&P 500 Equal Weight UCITS ETF — product/holdings download reference",
+      "claim": "La página de producto de iShares presenta un enlace de descarga para el último CSV de holdings; esto es una descarga pública de archivo, no documentación de API.",
+      "evidence": "Download latest fund holdings CSV data",
+      "verification": "web_extract de la página oficial iShares el 2026-10-26; la extracción muestra el enlace y el enlace al KIID/KID. El fichero CSV se probó en la URL directa [12]."
+    },
+    {
+      "url": "https://www.ishares.com/uk/individual/en/products/328657/ishares-s-p-500-equal-weight-ucits-etf/latest-holdings.csv",
+      "title": "iShares S&P 500 Equal Weight UCITS ETF — public holdings CSV",
+      "claim": "GET sin credenciales devolvió CSV de holdings con 12 columnas, sin ISIN de cada security en la cabecera, y fecha efectiva 23-Oct-2026.",
+      "evidence": "Fund Holdings as of,\"23/Oct/2026\"\nTicker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Shares,Price,Location,Exchange,Market Currency",
+      "verification": "Endpoint descargado por GET HTTPS de solo lectura el 2026-10-26; HTTP 200, content-type text/plain; charset=utf-8, 80.271 bytes. Original guardado en evidence/downloads/ishares-s-p-500-equal-weight-holdings.csv; cabecera parseada del archivo bruto."
+    },
+    {
+      "url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+      "title": "Xtrackers S&P 500 Equal Weight UCITS ETF 2D — official product page",
+      "claim": "La página pública de DWS identifica IE000CXLGK86, publica NAV/fecha y all-in-fee TER, y enlaza una lista completa de securities.",
+      "evidence": "NAV (23.10.2026): 104.46 USD All-in-fee (TER): 0.15%\nDownload full securities list",
+      "verification": "web_extract de la página oficial de producto el 2026-10-26. La URL de exportación enlazada se descargó por separado y se analizó como XLSX [14]."
+    },
+    {
+      "url": "https://etf.dws.com/etfdata/export/LUX/ENG/excel/product/constituent/IE000CXLGK86/",
+      "title": "DWS Xtrackers full securities list — XLSX export",
+      "claim": "El workbook descargado incluye cabecera con Name, ISIN, Country, Currency, Exchange, Type of Security, Rating, Primary Listing, Industry Classification y Weighting.",
+      "evidence": "Header cells parsed: Name | ISIN | Country | Currency | Exchange | Type of Security | Rating | Primary Listing | Industry Classification | Weighting.\nThis document is for information purposes only and does not constitute an offer, recommendation, or solicitation to enter into any transaction.",
+      "verification": "GET HTTPS sin auth el 2026-10-26; HTTP 200, 40.541 bytes. Respuesta guardada como evidence/downloads/xtrackers-ie000cxlgk86-constituents.xlsx; ZIP comprobado y hoja de holdings inspeccionada. El Content-Type fue application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml."
+    },
+    {
+      "url": "https://www.ssga.com/library-content/products/fund-data/etfs/emea/holdings-daily-emea-en-stq-fp.xlsx",
+      "title": "SPDR MSCI Europe Industrials UCITS ETF — daily holdings XLSX",
+      "claim": "El XLSX identifica el fondo IE00BKWQ0J47, ticker STQ FP y Holdings As Of 23-Oct-2026; la cabecera incluye ISIN, SEDOL, nombre, divisa, número de participaciones, peso, país, precio y sector/industria.",
+      "evidence": "State Street® SPDR® MSCI Europe Industrials UCITS ETF\nISIN: IE00BKWQ0J47\nTicker Symbol: STQ FP\nHoldings As Of: 23-Oct-2026\nISIN | SEDOL | Security Name | Currency | Number of Shares | Percent of Fund | Trade Country Name | Local Price | Sector Classification | Industry Classification | Base Market Value",
+      "verification": "GET HTTPS sin auth el 2026-10-26; HTTP 200, content-type application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, 17.661 bytes. Archivo guardado y worksheet inspeccionada."
+    },
+    {
+      "url": "https://www.amundietf.com/pdfDocuments/monthly-factsheet/IE0009DRDY20/ENG/LUX/INSTITUTIONNEL/ETF/20260831",
+      "title": "Amundi Prime Global UCITS ETF Acc — factsheet 31 August 2026",
+      "claim": "La ficha oficial identifica IE0009DRDY20, Acc, USD, UCITS, réplica física, SRI 4/7, NAV/AUM a 31-08-2026, coste de 0,05% bajo la etiqueta de gastos de gestión/administrativos/operativos y frecuencia de cálculo NAV diaria; el PDF es solo para profesionales.",
+      "evidence": "VL A : 45.84 USD\nAssets Under Management (AUM) 5,585.26 ( million USD )\nManagement fees and other administrative or operating costs * 0.05%\nNAV and AUM as of 31/08/2026\nISIN code A : IE0009DRDY20\nType of shares Accumulation\nUCITS compliant UCITS\nShare-class reference currency USD\nFrequency of NAV calculation Daily\nThis material is solely for the attention of “professional” investors.",
+      "verification": "web_extract de PDF oficial; fecha interna de ficha 31-08-2026. La ficha no es una serie NAV ni un endpoint JSON/CSV probado."
+    },
+    {
+      "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf",
+      "title": "Vanguard FTSE All-World UCITS ETF USD Acc — factsheet 31 August 2026",
+      "claim": "La ficha identifica la clase IE00BK5BQT80 USD acumulativa, OCF 0,14%, UCITS domiciliado en Irlanda y varios tickers/listings. La ficha indica uso profesional, no minorista.",
+      "evidence": "Ongoing Charges Figure†          0.14%\nIE00BK5BQT80\nAccumulated\nUCITS\nIreland\nThis document is directed at professional investors and should not be distributed to, or relied upon by retail investors.",
+      "verification": "web_extract directo del PDF oficial de Vanguard, fecha 31-08-2026. Datos de ficha; no se probó endpoint de holdings o NAV diario."
+    },
+    {
+      "url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+      "title": "iShares Core MSCI Europe EUR Acc — Spanish PRIIPs KID",
+      "claim": "El KID en español identifica IE00B4K48X80, con fecha 03-09-2026, SRI 4/7, 0,12% de gastos recurrentes y 0,01% de costes de operación estimados.",
+      "evidence": "iShares Core MSCI Europe UCITS ETF EUR (Acc), EUR Accu, ISIN: IE00B4K48X80\nLa fecha de este documento es 03 septiembre 2026.\nHemos clasificado este producto en la clase de riesgo 4 en una escala de 7\n0.12% del valor de su inversión al año.\n0.01% del valor de su inversión al año.",
+      "verification": "PDF PRIIPs español oficial de BlackRock; descargado/extractado y revisado en la investigación previa de este proyecto y vuelto a extraer en esta ronda. Documento por clase, no feed de datos."
+    },
+    {
+      "url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
+      "title": "VanEck Semiconductor UCITS ETF — official product page",
+      "claim": "Página de producto con ISIN IE00BMC38736, NAV fechado, TER y enlace KIID; no se extrajo un fichero completo de holdings.",
+      "evidence": "VanEck Semiconductor UCITS ETF\nISIN: IE00BMC38736\nNAV $97.02 as of 23 Oct 2026\nTotal Expense Ratio 0.35%",
+      "verification": "web_extract directo de la página oficial UK el 2026-10-26. Campos visibles a nivel de página; no se probó endpoint de descarga."
+    },
+    {
+      "url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+      "title": "SPDR MSCI Europe Industrials UCITS ETF — product page (Sweden locale)",
+      "claim": "Página oficial de STQ con ISIN IE00BKWQ0J47, NAV oficial fechado, TER y quick links a KID en inglés y sueco.",
+      "evidence": "ISIN | IE00BKWQ0J47\nNAV EUR (Official NAV) €411,94 as of 23 Oct 2026\nTER 0,18%\nKID (SV)pdf\nKID (EN)pdf",
+      "verification": "web_extract directo de la página de State Street con locale Sweden el 2026-10-26. La muestra no muestra vínculo español; esto no se interpreta como inexistencia de un KID español en otra localización."
+    }
+  ],
+  "tests": [
+    {
+      "url": "https://www.ishares.com/uk/individual/en/products/328657/ishares-s-p-500-equal-weight-ucits-etf/latest-holdings.csv",
+      "status": "HTTP 200; GET HTTPS sin auth; 80.271 bytes; CSV incluye fecha efectiva 23/Oct/2026.",
+      "content_type": "text/plain; charset=utf-8",
+      "observed_fields": [
+        "Fund Holdings as of",
+        "Ticker",
+        "Name",
+        "Sector",
+        "Asset Class",
+        "Market Value",
+        "Weight (%)",
+        "Notional Value",
+        "Shares",
+        "Price",
+        "Location",
+        "Exchange",
+        "Market Currency",
+        "ISIN de security: no observado en la cabecera"
+      ],
+      "evidence_path": "docs/investigacion-apis-02/evidence/downloads/ishares-s-p-500-equal-weight-holdings.csv"
+    },
+    {
+      "url": "https://etf.dws.com/etfdata/export/LUX/ENG/excel/product/constituent/IE000CXLGK86/",
+      "status": "HTTP 200; GET HTTPS sin auth; 40.541 bytes; workbook XLSX válido analizado. Content-Type no estándar para XLSX: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml.",
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
+      "observed_fields": [
+        "Name",
+        "ISIN",
+        "Country",
+        "Currency",
+        "Exchange",
+        "Type of Security",
+        "Rating",
+        "Primary Listing",
+        "Industry Classification",
+        "Weighting"
+      ],
+      "evidence_path": "docs/investigacion-apis-02/evidence/downloads/xtrackers-ie000cxlgk86-constituents.xlsx"
+    },
+    {
+      "url": "https://www.ssga.com/library-content/products/fund-data/etfs/emea/holdings-daily-emea-en-stq-fp.xlsx",
+      "status": "HTTP 200; GET HTTPS sin auth; 17.661 bytes; workbook XLSX válido analizado; Holdings As Of 23-Oct-2026.",
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "observed_fields": [
+        "Fund Name",
+        "ISIN de la clase",
+        "Ticker Symbol",
+        "Holdings As Of",
+        "ISIN",
+        "SEDOL",
+        "Security Name",
+        "Currency",
+        "Number of Shares",
+        "Percent of Fund",
+        "Trade Country Name",
+        "Local Price",
+        "Sector Classification",
+        "Industry Classification",
+        "Base Market Value"
+      ],
+      "evidence_path": "docs/investigacion-apis-02/evidence/downloads/spdr-stq-daily-holdings.xlsx"
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+[
+  {
+    "url": "https://www.raisin.es/productos",
+    "title": "Productos de ahorro: depósitos y cuentas | Raisin",
+    "claim": "La ficha pública presenta una comparación de productos de ahorro y enlaza a la información de cada producto; sirve como referencia de tabla y densidad de datos, no de marca ni de oferta vigente.",
+    "evidence": [
+      "Compara entre más de 100 depósitos y cuentas de ahorro y elige los productos de ahorro que mejor se adapten a tus necesidades."
+    ],
+    "verification": "26/10/2026: página primaria leída con extractor y texto DOM del navegador; la URL .es redirige a la ruta española .com/es-es. Se vieron encabezados de producto/importe/país/tipo/plazo; no se avanzó a contratación ni se reutilizan las ofertas dinámicas."
+  },
+  {
+    "url": "https://indexacapital.com/es/esp/questions/funds",
+    "title": "Conoce tu perfil inversor | Indexa Capital",
+    "claim": "El cuestionario real presenta progreso, salida/continuación y explicación contextual; es una referencia de estructura de onboarding, no un modelo de longitud para principiantes.",
+    "evidence": [
+      "15 preguntas para recomendarte tu plan optimizado (salir y continuar más tarde)",
+      "¿Por qué preguntamos? Anterior Siguiente"
+    ],
+    "verification": "26/10/2026: texto DOM de la página primaria leído en navegador; se verificaron contador, controles y rótulo de ayuda. No se contestaron ni se enviaron datos del cuestionario."
+  },
+  {
+    "url": "https://www.inbestme.com/es/es/nosotros/robo-advisor",
+    "title": "Guía informativa sobre Robo Advisors | inbestMe",
+    "claim": "La guía describe el patrón habitual de test, perfil/cartera y apertura de cuenta; sirve para separar etapas del recorrido, no como evidencia independiente de rentabilidad.",
+    "evidence": [
+      "El proceso de inversión típico de un Robo Advisor consta de 3 pasos principales."
+    ],
+    "verification": "26/10/2026: página primaria de la entidad extractada y leída; texto informativo/marketing distinguido de evidencia regulatoria."
+  },
+  {
+    "url": "https://myinvestor.es/inversion/carteras-automatizadas/myinvestor",
+    "title": "Carteras indexadas MyInvestor",
+    "claim": "La página describe niveles de riesgo y un test online para asignar una cartera; Paideia debe mostrar ejemplos educativos, no asignar una cartera real.",
+    "evidence": [
+      "Haz un test online y nuestro roboadvisor te asignará la cartera indexada que se ajusta a tus necesidades, horizonte temporal y perfil de riesgo.",
+      "5 niveles de riesgo"
+    ],
+    "verification": "26/10/2026: contenido de la página primaria leído con extractor. El navegador devolvió 403, por lo que no se probaron controles ni se infirieron interacciones visuales."
+  },
+  {
+    "url": "https://ayuda.finizens.com/hc/es/categories/4409325814289-Plan-de-Inversi%C3%B3n",
+    "title": "Plan de Inversión | Finizens",
+    "claim": "El centro de ayuda organiza información por temas de producto y soporte, incluidos composición y apertura; referencia para la arquitectura de explicaciones y ayuda contextual.",
+    "evidence": [
+      "¿Puedo cambiar mi perfil/cartera de mi Plan de Inversión?",
+      "Composición de nuestras carteras",
+      "Apertura de un Plan de Inversión"
+    ],
+    "verification": "26/10/2026: página primaria extractada; el navegador mostró una comprobación anti-bot. Se leyó la taxonomía publicada, no el alta interactiva."
+  },
+  {
+    "url": "https://cnmv.es/portal/inversor/decisiones-inversion?lang=es",
+    "title": "Cómo tomar decisiones de inversión | CNMV",
+    "claim": "La CNMV orienta a definir el objetivo, el plazo y el riesgo antes de elegir un producto; sustenta el orden didáctico recomendado para Paideia.",
+    "evidence": [
+      "Defina sus objetivos de inversión. Es importante definir el objetivo de su ahorro, lo que implica, entre otras cuestiones, determinar el plazo de la inversión y el riesgo que se desea asumir."
+    ],
+    "verification": "26/10/2026: página primaria oficial extractada y leída."
+  },
+  {
+    "url": "https://cnmv.es/portal/inversor/plan-educacion?lang=es",
+    "title": "Plan de Educación Financiera | CNMV",
+    "claim": "La CNMV presenta el portal de educación financiera como dirigido a personas con distintos conocimientos previos.",
+    "evidence": [
+      "Este portal ofrece información práctica y las herramientas necesarias para la formación de las personas de todos los niveles culturales sean cuales sean sus conocimientos previos."
+    ],
+    "verification": "26/10/2026: página primaria oficial extractada y leída."
+  },
+  {
+    "url": "https://www.finanzasparatodos.es/gestiona-tus-finanzas-personales-con-las-herramientas-gratuitas-de-finanzas-para-todos",
+    "title": "Herramientas gratuitas para gestionar finanzas | Finanzas para Todos",
+    "claim": "El portal oficial describe contenidos formativos y herramientas interactivas como parte de su propuesta educativa.",
+    "evidence": [
+      "contenidos formativos, guías y herramientas interactivas pensadas para mejorar tu educación financiera."
+    ],
+    "verification": "26/10/2026: artículo primario extractado y leído; el navegador bloqueó la ruta por política del sitio, sin afectar la lectura del contenido textual."
+  },
+  {
+    "url": "https://www.finanzasparatodos.es/herramientas/mipresupuesto",
+    "title": "Mi presupuesto | Finanzas para Todos",
+    "claim": "La herramienta expone resultados de presupuesto con selección de periodicidad; patrón útil para hacer visibles unidades y totales.",
+    "evidence": [
+      "Periodicidad Diario Semanal Mensual Bimensual Trimestral Semestral Anual"
+    ],
+    "verification": "26/10/2026: página primaria extractada. El texto accesible devuelve variables de plantilla y una descripción que no encaja claramente con el título; se toma solo la navegación/opciones y no se afirma que la herramienta esté íntegramente verificada."
+  },
+  {
+    "url": "https://www.chartjs.org/docs/latest",
+    "title": "Chart.js",
+    "claim": "La documentación oficial indica que Chart.js se distribuye bajo MIT.",
+    "evidence": [
+      "the very permissive MIT license"
+    ],
+    "verification": "26/10/2026: documentación oficial extractada y leída; la licencia enlaza al repositorio del proyecto."
+  },
+  {
+    "url": "https://www.chartjs.org/docs/latest/general/accessibility.html",
+    "title": "Accessibility | Chart.js",
+    "claim": "Chart.js renderiza en canvas y la documentación exige aportar nombre ARIA o contenido alternativo para accesibilidad.",
+    "evidence": [
+      "canvas content will not be accessible to screen readers."
+    ],
+    "verification": "26/10/2026: página oficial de accesibilidad extractada y leída."
+  },
+  {
+    "url": "https://www.chartjs.org/docs/latest/configuration/responsive.html",
+    "title": "Responsive Charts | Chart.js",
+    "claim": "Chart.js redimensiona el canvas al cambiar su contenedor, con requisitos de configuración del contenedor.",
+    "evidence": [
+      "Chart.js provides a few options to enable responsiveness and control the resize behavior of charts by detecting when the canvas display size changes"
+    ],
+    "verification": "26/10/2026: documentación oficial de responsive extractada y leída."
+  },
+  {
+    "url": "https://echarts.apache.org/en/feature.html",
+    "title": "Features | Apache ECharts",
+    "claim": "La documentación de ECharts declara optimización para PC/móvil y generación automática de descripciones de accesibilidad desde opciones del gráfico.",
+    "evidence": [
+      "Apache ECharts is an open-source JavaScript visualization library, optimized for both PC and mobile devices.",
+      "ECharts 4.0 complies with this specification and supports automatic generation of descriptions based on chart configuration items, enabling people with visual disabilities to understand the chart content with screenreaders, so that charts are accessible to all."
+    ],
+    "verification": "26/10/2026: página primaria extractada y sección final de accesibilidad leída en navegador."
+  },
+  {
+    "url": "https://github.com/apache/echarts/blob/master/package.json",
+    "title": "echarts package.json",
+    "claim": "El manifiesto del proyecto declara Apache-2.0.",
+    "evidence": [
+      "\"license\": \"Apache-2.0\", \"keywords\": ["
+    ],
+    "verification": "26/10/2026: manifiesto package.json del repositorio oficial extractado y leído."
+  },
+  {
+    "url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE",
+    "title": "Lucide LICENSE",
+    "claim": "El archivo de licencia de Lucide identifica un subconjunto de iconos derivados de Feather con un aviso MIT separado.",
+    "evidence": [
+      "The following Lucide icons are derived from the Feather project:"
+    ],
+    "verification": "26/10/2026: archivo LICENSE del repositorio oficial extractado y leído; se revisó la sección de excepciones/atribución."
+  },
+  {
+    "url": "https://github.com/lucide-icons/lucide/blob/main/packages/lucide-react/README.md",
+    "title": "Lucide React README",
+    "claim": "La implementación oficial para React declara licencia ISC.",
+    "evidence": [
+      "Lucide is licensed under the ISC license."
+    ],
+    "verification": "26/10/2026: README del paquete oficial extractado y leído."
+  },
+  {
+    "url": "https://motion.dev/docs/react-accessibility",
+    "title": "Create accessible animations in React | Motion",
+    "claim": "Motion ofrece API para respetar la preferencia de movimiento reducido y desactivar transformaciones/layout con la opción de usuario.",
+    "evidence": [
+      "Motion for React provides APIs that make it simple to respect these people",
+      "By setting reducedMotion to \"user\", all motion components will automatically disable transform and layout animations"
+    ],
+    "verification": "26/10/2026: guía primaria de Motion extractada y leída."
+  },
+  {
+    "url": "https://github.com/motiondivision/motion/blob/main/LICENSE.md",
+    "title": "Motion LICENSE",
+    "claim": "El archivo de licencia de Motion declara MIT.",
+    "evidence": [
+      "The MIT License (MIT)"
+    ],
+    "verification": "26/10/2026: archivo LICENSE del repositorio oficial extractado y leído."
+  },
+  {
+    "url": "https://github.com/parallax/jsPDF",
+    "title": "jsPDF repository and documentation",
+    "claim": "jsPDF se describe como biblioteca JavaScript de generación PDF, client-side, bajo MIT.",
+    "evidence": [
+      "A library to generate PDFs in JavaScript.",
+      "Public, MIT License",
+      "Client-side JavaScript PDF generation for everyone."
+    ],
+    "verification": "26/10/2026: página README/repositorio oficial extractada y leída; incluye uso en navegador y licencia."
+  },
+  {
+    "url": "https://github.com/diegomura/react-pdf",
+    "title": "React PDF repository and documentation",
+    "claim": "@react-pdf/renderer crea documentos en navegador/servidor y el repositorio declara MIT.",
+    "evidence": [
+      "React renderer for creating PDF files on the browser and server",
+      "Public, MIT License"
+    ],
+    "verification": "26/10/2026: README y metadatos del repositorio oficial extractados y leídos."
+  },
+  {
+    "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+    "title": "Understanding Contrast Minimum | WAI",
+    "claim": "WCAG 2.2 AA define mínimo 4,5:1 para texto normal, con excepciones especificadas.",
+    "evidence": [
+      "The visual presentation of text and images of text has a contrast ratio of at least 4.5:1"
+    ],
+    "verification": "26/10/2026: documento Understanding WCAG publicado por W3C/WAI extractado y leído."
+  },
+  {
+    "url": "https://www.w3.org/WAI/tutorials/forms/labels",
+    "title": "Labeling Controls | WAI",
+    "claim": "Las etiquetas de controles deben describir su propósito y asociarse con el campo.",
+    "evidence": [
+      "Labels need to describe the purpose of the form control."
+    ],
+    "verification": "26/10/2026: tutorial W3C/WAI sobre etiquetas de formularios extractado y leído."
+  },
+  {
+    "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+    "title": "Understanding Target Size Minimum | WAI",
+    "claim": "WCAG 2.2 AA establece 24 × 24 CSS px como tamaño mínimo de puntero, salvo excepciones.",
+    "evidence": [
+      "The size of the target for pointer inputs is at least 24 by 24 CSS pixels"
+    ],
+    "verification": "26/10/2026: documento Understanding WCAG 2.2 publicado por W3C/WAI extractado y leído."
+  },
+  {
+    "url": "https://myinvestor.es/inversion/carteras-automatizadas/myinvestor/indie",
+    "title": "Cartera Indie | MyInvestor",
+    "claim": "El simulador público pide aportación inicial/mensual y horizonte, contrasta tres escenarios con lo aportado y aclara que no garantiza rentabilidades; la ficha separa comisiones.",
+    "evidence": [
+      "¿Cuál será tu aportación inicial?",
+      "El siguiente gráfico te muestra los posibles resultados de las inversiones, a diferentes plazos, con tres posibles escenarios 2.",
+      "Las rentabilidades futuras no se garantizan y pueden diferir de la rentabilidad esperada.",
+      "La Cartera Indexada Indie de MyInvestor tiene tres comisiones: comisión de gestión, comisión de custodia y coste de los fondos (TER)."
+    ],
+    "verification": "26/10/2026: contenido de la ficha primaria extractado directamente; se verificaron controles/etiquetas, escenarios, caveat y desglose de costes. El navegador devolvió 403, así que no se ejercitaron los controles ni se verificó el cálculo interactivo."
+  },
+  {
+    "url": "https://github.com/apache/echarts/blob/master/LICENSE",
+    "title": "ECharts LICENSE",
+    "claim": "La licencia del repositorio ECharts advierte que subcomponentes pueden tener avisos y términos de licencia separados.",
+    "evidence": [
+      "Apache ECharts project contains subcomponents with separate copyright notices and license terms."
+    ],
+    "verification": "26/10/2026: LICENSE del repositorio oficial extractada y leída; se comprobó el apartado de subcomponentes."
+  }
+]

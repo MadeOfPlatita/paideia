@@ -1,0 +1,160 @@
+[
+  {
+    "test": "scenario_journey_focus_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": false,
+      "checks": [],
+      "error": "TypeError: window.getScenarioComparisonSnapshot is not a function"
+    },
+    "viewport": {
+      "client": 1280,
+      "scroll": 1280,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "scenario_journey_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": false,
+      "checks": [
+        {
+          "name": "formularios y secciones existentes",
+          "pass": false
+        }
+      ],
+      "error": "Error: formularios y secciones existentes"
+    },
+    "viewport": {
+      "client": 1280,
+      "scroll": 1280,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "report_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": false,
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')"
+    },
+    "viewport": {
+      "client": 1280,
+      "scroll": 1280,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "report_download_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": false,
+      "error": "TypeError: Cannot read properties of null (reading 'querySelectorAll')",
+      "checks": [
+        {
+          "name": "feature probe guard enabled",
+          "pass": true
+        }
+      ]
+    },
+    "viewport": {
+      "client": 1280,
+      "scroll": 1280,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "qa_layout_browser.js",
+    "width": 1280,
+    "result": {
+      "ok": false,
+      "error": "Error: timeout",
+      "checks": []
+    },
+    "viewport": {
+      "client": 1280,
+      "scroll": 1280,
+      "inner": 1280
+    }
+  },
+  {
+    "test": "scenario_journey_focus_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "checks": [],
+      "error": "TypeError: window.getScenarioComparisonSnapshot is not a function"
+    },
+    "viewport": {
+      "client": 980,
+      "scroll": 980,
+      "inner": 980
+    }
+  },
+  {
+    "test": "scenario_journey_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "checks": [
+        {
+          "name": "formularios y secciones existentes",
+          "pass": false
+        }
+      ],
+      "error": "Error: formularios y secciones existentes"
+    },
+    "viewport": {
+      "client": 980,
+      "scroll": 980,
+      "inner": 980
+    }
+  },
+  {
+    "test": "report_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "error": "TypeError: Cannot read properties of null (reading 'textContent')"
+    },
+    "viewport": {
+      "client": 980,
+      "scroll": 980,
+      "inner": 980
+    }
+  },
+  {
+    "test": "report_download_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "error": "TypeError: Cannot read properties of null (reading 'querySelectorAll')",
+      "checks": [
+        {
+          "name": "feature probe guard enabled",
+          "pass": true
+        }
+      ]
+    },
+    "viewport": {
+      "client": 980,
+      "scroll": 980,
+      "inner": 980
+    }
+  },
+  {
+    "test": "qa_layout_browser.js",
+    "width": 390,
+    "result": {
+      "ok": false,
+      "error": "Error: timeout",
+      "checks": []
+    },
+    "viewport": {
+      "client": 980,
+      "scroll": 980,
+      "inner": 980
+    }
+  }
+]

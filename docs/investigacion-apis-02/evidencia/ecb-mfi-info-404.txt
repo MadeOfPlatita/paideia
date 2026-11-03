@@ -1,0 +1,3 @@
+GET https://www.ecb.europa.eu/stats/financial_corporations/list_of_financial_institutions/html/mfi.en.html
+Observed on 2026-10-26: urllib.request.urlopen raised HTTPError 404: Not Found.
+No response body or headers were saved for this 404. The official ECB overview describes MFI CSV downloads, but the guessed legacy page URL was not usable; this is not evidence that the dataset is unavailable.

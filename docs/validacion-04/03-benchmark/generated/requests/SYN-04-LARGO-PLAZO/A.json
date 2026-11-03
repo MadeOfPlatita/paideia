@@ -1,0 +1,126 @@
+{
+  "request_schema": "pai-context-request/v1",
+  "case_id": "SYN-04-LARGO-PLAZO",
+  "variant": "A",
+  "provider_call_status": "not_called",
+  "provider": null,
+  "model": null,
+  "base": {
+    "system": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.",
+    "output_constraints": [
+      "Usa solo el texto de la pregunta, la evidencia sintética fija y el contexto de perfil materializado.",
+      "No busques en internet ni invoques herramientas.",
+      "Conserva exactamente importes, porcentajes, monedas y plazos proporcionados; no los redondees ni los cambies en silencio.",
+      "No conviertas null, desconocido o no declarado en cero, ni un cero declarado en desconocido.",
+      "Identifica conflictos entre datos, supuestos o condiciones cuando afecten a la conclusión."
+    ],
+    "fixed_evidence": {
+      "calculation_inputs": {
+        "monthly_contribution_eur": 300,
+        "duration_months": 240,
+        "nominal_return_assumption_pct_per_year": 5,
+        "inflation_assumption_pct_per_year": 2,
+        "annual_fee_assumption_pct": 0.5
+      },
+      "assumptions_status": "Hipótesis del usuario para ilustración, no datos observados ni condiciones de un producto.",
+      "catalogue": "No se proporciona catálogo ni oferta real."
+    },
+    "question": "¿Cómo interpretar una aportación de 300 EUR cada mes durante 240 meses si uso como hipótesis 5% nominal anual, 2% de inflación y 0,5% de comisión anual? ¿El valor liquidativo de un fondo es lo mismo que la cotización de un ETF?"
+  },
+  "base_sha256": "a946866ffb906a9687625a41fb94e7e9e1a19560960ac71f0bf23b132a77eb15",
+  "profile_context": {
+    "status": "not_provided",
+    "data": null,
+    "selected_fields": [],
+    "excluded_fields": [
+      {
+        "field": "age_band",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "currency",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "education_level",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "financial_goal",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "investment_horizon_months",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "liquid_savings_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "monthly_net_income_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "monthly_expenses_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "monthly_savings_capacity_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "planned_contribution_eur",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "upcoming_expenses",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "debts",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "risk_tolerance",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "risk_capacity",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "emergency_reserve_target_months",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "employment_income_stability",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "investment_experience",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "knowledge_level",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      },
+      {
+        "field": "declared_loss_limit_pct",
+        "reason": "Omisión intencional del perfil completo en la variante A (sin perfil)."
+      }
+    ]
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía."
+    },
+    {
+      "role": "user",
+      "content": "EVIDENCIA SINTÉTICA FIJA\n{\"assumptions_status\":\"Hipótesis del usuario para ilustración, no datos observados ni condiciones de un producto.\",\"calculation_inputs\":{\"annual_fee_assumption_pct\":0.5,\"duration_months\":240,\"inflation_assumption_pct_per_year\":2,\"monthly_contribution_eur\":300,\"nominal_return_assumption_pct_per_year\":5},\"catalogue\":\"No se proporciona catálogo ni oferta real.\"}\n\nPREGUNTA\n¿Cómo interpretar una aportación de 300 EUR cada mes durante 240 meses si uso como hipótesis 5% nominal anual, 2% de inflación y 0,5% de comisión anual? ¿El valor liquidativo de un fondo es lo mismo que la cotización de un ETF?"
+    }
+  ],
+  "rendered_prompt": "SYSTEM\nEres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.\n\nUSER\nEVIDENCIA SINTÉTICA FIJA\n{\"assumptions_status\":\"Hipótesis del usuario para ilustración, no datos observados ni condiciones de un producto.\",\"calculation_inputs\":{\"annual_fee_assumption_pct\":0.5,\"duration_months\":240,\"inflation_assumption_pct_per_year\":2,\"monthly_contribution_eur\":300,\"nominal_return_assumption_pct_per_year\":5},\"catalogue\":\"No se proporciona catálogo ni oferta real.\"}\n\nPREGUNTA\n¿Cómo interpretar una aportación de 300 EUR cada mes durante 240 meses si uso como hipótesis 5% nominal anual, 2% de inflación y 0,5% de comisión anual? ¿El valor liquidativo de un fondo es lo mismo que la cotización de un ETF?",
+  "adapter_contract": "Enviar solo messages; provider/model se configuran fuera de este artefacto. No contiene credenciales ni ejecuta red."
+}

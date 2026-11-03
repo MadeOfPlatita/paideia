@@ -1,0 +1,15 @@
+{
+  "ok": false,
+  "error": "Runtime.evaluate timed out; expression: (async () => {\\n const checks=[]; const ok=(x,n)=>{checks.push({name:n,pass:!!x});if(!x)throw Error(n)};\\n const sleep=ms=>new Promise(r=>setTimeout(r,ms)); ...",
+  "requested_viewport": {
+    "width": 390,
+    "height": 844,
+    "deviceScaleFactor": 1,
+    "mobile": false
+  },
+  "readiness_before_retry": {
+    "document_ready_state": "complete",
+    "clientWidth": 375
+  },
+  "scaling_note": "clientWidth 375 frente a 390 CDP; no se midió visualViewport ni scrollWidth después de la prueba por timeout; no atribuir causa."
+}

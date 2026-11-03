@@ -1,0 +1,96 @@
+[
+  {
+    "url": "https://yieldmeister.com/developers",
+    "resolved_url": "https://yieldmeister.com/developers",
+    "status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "checked_at": "2026-10-26T19:29:43.459159+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\01.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\01-raw.txt"
+  },
+  {
+    "url": "https://yieldmeister.com/pricing",
+    "resolved_url": "https://yieldmeister.com/pricing",
+    "status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "checked_at": "2026-10-26T19:29:43.460382+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\02.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\02-raw.txt"
+  },
+  {
+    "url": "https://yieldmeister.com/api-terms",
+    "resolved_url": "https://yieldmeister.com/api-terms",
+    "status": 200,
+    "content_type": "text/html; charset=UTF-8",
+    "checked_at": "2026-10-26T19:29:43.484363+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\03.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\03-raw.txt"
+  },
+  {
+    "url": "https://yieldmeister.com/api/v1/rates",
+    "resolved_url": "https://yieldmeister.com/api/v1/rates",
+    "status": 200,
+    "content_type": "application/json",
+    "checked_at": "2026-10-26T19:29:43.732529+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\04.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\04-raw.txt"
+  },
+  {
+    "url": "https://fundfactsapi.com/docs",
+    "resolved_url": "https://fundfactsapi.com/docs",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:29:43.603900+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\05.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\05-raw.txt"
+  },
+  {
+    "url": "https://fundfactsapi.com/pricing",
+    "resolved_url": "https://fundfactsapi.com/pricing",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:29:43.738058+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\06.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\06-raw.txt"
+  },
+  {
+    "url": "https://fundfactsapi.com/terms",
+    "resolved_url": "https://fundfactsapi.com/terms",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:29:43.693650+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\07.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\07-raw.txt"
+  },
+  {
+    "url": "https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983",
+    "resolved_url": "https://fundfactsapi.com/api/v1/demo/funds/IE00B4L5Y983",
+    "status": 200,
+    "content_type": "application/json",
+    "checked_at": "2026-10-26T19:29:43.738736+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\08.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\08-raw.txt"
+  },
+  {
+    "url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+    "resolved_url": "https://www.cnmv.es/portal/consultas/iic/fondo?lang=es&nif=V85962447",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "checked_at": "2026-10-26T19:29:44.140025+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\09.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\09-raw.txt"
+  },
+  {
+    "url": "https://bestinver.es/fondos-de-inversion/bestinver-bolsa",
+    "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+  },
+  {
+    "url": "https://www.vdos.com/es/datos.html",
+    "resolved_url": "https://www.vdos.com/es/datos.html",
+    "status": 200,
+    "content_type": "text/html",
+    "checked_at": "2026-10-26T19:29:43.844941+00:00",
+    "file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\11.txt",
+    "raw_file": "C:\\Users\\aleja\\Downloads\\App Financiera\\docs\\investigacion-apis-02\\evidencia-coordinador\\11-raw.txt"
+  }
+]

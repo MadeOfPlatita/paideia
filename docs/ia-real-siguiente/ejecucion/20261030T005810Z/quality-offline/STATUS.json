@@ -1,0 +1,25 @@
+{
+  "phase": "offline_quality",
+  "new_groq_calls": 0,
+  "mission_used_unchanged": 1,
+  "ports_listening": {
+    "8768": false,
+    "8769": false
+  },
+  "regression": {
+    "python": 255,
+    "additional_known_blocking_test_failures": 1,
+    "node": 24,
+    "http_normal_legacy_runtime": 19,
+    "fresh_guard_browser_checks": 2
+  },
+  "known_corpus_passed": 17,
+  "exploratory_uncovered": [
+    "H04",
+    "H05",
+    "H06"
+  ],
+  "model_quality_proven": false,
+  "independent_review": "failed_after_two_fix_cycles",
+  "fixture_stopped": true
+}

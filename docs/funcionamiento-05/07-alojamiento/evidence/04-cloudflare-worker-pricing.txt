@@ -1,0 +1,19 @@
+SOURCE: https://developers.cloudflare.com/workers/platform/pricing/
+RESOLVED URL: https://developers.cloudflare.com/workers/platform/pricing/
+TITLE: Pricing — Cloudflare Workers docs
+RETRIEVED: 2026-10-28 via web_extract
+PAGE DATE: Last updated Oct 2, 2026
+SCOPE: Verbatim excerpts from retrieved official documentation.
+
+By default, users have access to the Workers Free plan. The Workers Free plan includes limited usage of Workers, Pages Functions, Workers KV and Hyperdrive.
+
+The Workers Paid plan includes Workers, Pages Functions, Workers KV, Hyperdrive, and Durable Objects usage for a minimum charge of $5 USD per month for an account.
+
+| | Requests 1, 2, 3, 4 | Duration | CPU time |
+| --- | --- | --- | --- |
+| Free | 100,000 per day | No charge for duration | 10 milliseconds of CPU time per invocation |
+| Standard | 10 million included per month +$0.30 per additional million | No charge or limit for duration | 30 million CPU milliseconds included per month +$0.02 per additional million CPU milliseconds Max of 5 minutes of CPU time per invocation (default: 30 seconds) Max of 15 minutes of CPU time per Cron Trigger or Queue Consumer invocation |
+
+Inbound requests to your Worker. Cloudflare does not bill for subrequests you make from your Worker.
+
+Requests to static assets are free and unlimited.

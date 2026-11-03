@@ -1,0 +1,24 @@
+# Adaptación académica del recorrido de escenarios
+
+## Autorización y propósito
+Alejandro acepta la recomendación de adaptar una sola pantalla de Paideia y aclara:«no es para que sea open source, es para un trabajo». Es una adaptación propia para el trabajo académico; no supone publicar el código ni adoptar código AGPL. Se toman patrones de interacción como referencia, sin copiar código, marca, recursos o textos de otros servicios. La condición académica no se usa como permiso universal de reproducción; conservar las referencias para la memoria.
+
+Referencia principal de interacción:documentación de comparación de planes de ProjectionLab, consultada en la investigación anterior: https://projectionlab.com/help/using-what-if . Finect queda como referencia futura de organización de biblioteca, no un módulo que se adapte en esta entrega: https://www.finect.com/fondos-inversion/comparador . No se descargan ni ejecutan Maybe/Ghostfolio ni se reemplaza Paideia.
+
+## Entrega mínima autorizada
+1. Guía breve y accesible de la página:empezar/ajustar→comparar/entender→guardar. Formularios antes del resumen y del informe, con componentes existentes, sin rediseño visual global.
+2. Cargar explícitamente un único ejemplo ficticio en A:capital1000€,tasa2%,5años,aportación50€/mes,inflación2%,compuesto. No calcula automáticamente. Sustituir entradas existentes requiere confirmación inline; cancelar conserva su estado. B no cambia.
+3. Copiar los supuestos válidos actuales de A a B para variar una hipótesis sin reescribir todo. No copia resultados ni calcula automáticamente. Si B contiene datos, confirmar antes de sustituirlos; invalidar resultados/respuestas viejas por el mecanismo existente. No tocar A.
+4. Con ambos escenarios actualizados, explicar qué supuestos difieren y qué significan aportaciones/saldo nominal/saldo real. Sin recomendaciones de producto, nuevas fórmulas o cifras inventadas. Desaparece la comparación explicativa al editar, fallar o recalcular. Mantener el aviso si los horizontes difieren.
+5. Reutilizar la descarga HTML ya aprobada y las protecciones del informe. No prometer PDF automático ni reabrir la descarga de adjuntos de Hermes.
+
+## Fronteras
+Proyecto App Financiera y perfil Hermes trabajos. Sin instalaciones, proveedores reales de Paideia, secretos, datos personales de prueba, Tk, pagos, DB, commits o despliegue. Mantener el motor, validaciones, privacidad, biblioteca, informe y plan de Pai. No agregar persistencia, cuentas, nombre editable, tercer escenario, gráfico conjunto, cálculo inverso por objetivo ni nuevas funciones de biblioteca. Demo8765 permanece activa y sin IA; no navegar ni recargar el preview del usuario para probar. Navegador aislado para pruebas; cerrar únicamente servidores propios adicionales.
+
+## Propiedad y aceptación
+Implementación delegada deleg_caef4b60 / sa-0-fc5df452:static/app.js; nuevo tests/scenario_journey_browser.js; evidencias exclusivas implementacion/. Coordinador mantiene este plan y realiza el cierre. No se permite que el implementador apruebe su propio trabajo.
+
+TDD por cortes verticales, RED real antes de producción y GREEN después. Recorrido real con API local, escritorio y390px efectivos; comprobar accesibilidad básica, confirmación/cancelación, no solicitudes automáticas, conservación del escenario no sustituido, rechazo de fuente inválida, respuestas tardías y exportación vigente. Regresión de escenarios/informe/layout y biblioteca si afectada; Node existente, sin repetir Python intacto. Revisión independiente de archivos y ejecución con probes propios antes de declarar terminado. Máximo dos ciclos de corrección ante hallazgos; si hay bloqueo persistente, documentar y detener. Guardar guion de demo, fuentes de referencia, resultados y pendientes conservados de Pai.
+
+## Estado
+Cerrado y aceptado en el alcance autorizado. La primera revisión independiente `deleg_ef545abe` rechazó el recorrido por un defecto de teclado en la guía Guardar (Enter desplazaba al informe pero Tab volvía al capital de A); dictamen y evidencia se conservan en `revision/`. Corrección acotada `deleg_9d13a2da` (destino con `tabindex=-1`, foco `preventScroll`, mismo scroll) con RED/GREEN propios en `correccion-foco-1/`, reproducida por el coordinador en 1280 y 390 px (`coordinador/foco-ciclo1.json`). Revisión independiente final `deleg_f39b6115` **favorable**: `passed: true`, sin problemas de seguridad ni errores lógicos, 9/9 comprobaciones de foco y 33/33 del recorrido en ambos tamaños, evidencia en `revision-foco-1/`. Guion de demo en `GUION-DEMO.md`. Límites declarados, no verificados y no ampliados: impresión nativa/PDF desde el panel, auditoría global de accesibilidad y seguridad, persistencia de filtros o selección, y cualquier activación de Pai. No se modifica la licencia del proyecto ni se ha copiado código, marca o textos de otros servicios.

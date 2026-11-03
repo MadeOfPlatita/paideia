@@ -1,0 +1,28 @@
+{
+  "http_status": 200,
+  "body": {
+    "answer": "**Resultado de la simulación**\n\n| Mes | Saldo | Contribuciones | Saldo real |\n|-----|-------|----------------|------------|\n| 0   | 1 000,00 € | 1 000,00 € | 1 000,00 € |\n| 12  | 1 030,00 € | 1 000,00 € | 1 030,00 € |\n\n- **Saldo final**: 1 030,00 € (el valor que tendría tu capital después de 1 año con una rentabilidad efectiva del 3 % y sin aportaciones mensuales).  \n- **Interés ganado**: 30,00 € (3 % del capital inicial).  \n- **Ajustado por inflación**: 1 030,00 € (inflación del 0 %).  \n\n**Interpretación breve**\n\nLa herramienta aplica el 3 % de rendimiento anual compuesto sobre el capital inicial",
+    "refused": false,
+    "truncated": true,
+    "provider_mode": "external",
+    "external_sent": true,
+    "tool_events": [
+      {
+        "tool_call_id": "fc_536d0148-3284-4f50-bbc0-1927042f1496",
+        "name": "calculate_scenario",
+        "state": "executed",
+        "status": "ok"
+      }
+    ],
+    "sources": []
+  },
+  "request": {
+    "message": "Prueba con datos ficticios: usa calculate_scenario para principal 1000 euros, rentabilidad anual efectiva del 3 %, plazo 1 año, aportación mensual 0, método compuesto e inflación 0 %. Explica brevemente el resultado de la herramienta; no hagas el cálculo por tu cuenta.",
+    "consent": {
+      "notice_version": "paideia-chat-remote-v1",
+      "accepted_chat_processing": true,
+      "purpose": "free_chat",
+      "approved_fields": []
+    }
+  }
+}

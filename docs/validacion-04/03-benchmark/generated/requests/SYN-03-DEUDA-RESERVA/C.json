@@ -1,0 +1,87 @@
+{
+  "request_schema": "pai-context-request/v1",
+  "case_id": "SYN-03-DEUDA-RESERVA",
+  "variant": "C",
+  "provider_call_status": "not_called",
+  "provider": null,
+  "model": null,
+  "base": {
+    "system": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.",
+    "output_constraints": [
+      "Usa solo el texto de la pregunta, la evidencia sintética fija y el contexto de perfil materializado.",
+      "No busques en internet ni invoques herramientas.",
+      "Conserva exactamente importes, porcentajes, monedas y plazos proporcionados; no los redondees ni los cambies en silencio.",
+      "No conviertas null, desconocido o no declarado en cero, ni un cero declarado en desconocido.",
+      "Identifica conflictos entre datos, supuestos o condiciones cuando afecten a la conclusión."
+    ],
+    "fixed_evidence": {
+      "catalogue": "No se proporciona catálogo ni oferta real; no se incluyen comisiones ni condiciones de amortización anticipada."
+    },
+    "question": "Tengo 1.800 EUR ahorrados y una deuda; ¿debería invertir el ahorro o amortizar la deuda?"
+  },
+  "base_sha256": "8da42fa2fc7389f4ef0efd4494b290d36dae5b79a3e5b04e20bf32a3bcb61bf4",
+  "profile_context": {
+    "status": "complete_synthetic_profile",
+    "data": {
+      "age_band": "25-34",
+      "currency": "EUR",
+      "education_level": "universitaria",
+      "financial_goal": "reducir coste financiero y mantener liquidez suficiente",
+      "investment_horizon_months": 60,
+      "liquid_savings_eur": 1800,
+      "monthly_net_income_eur": 2300,
+      "monthly_expenses_eur": 2300,
+      "monthly_savings_capacity_eur": 0,
+      "planned_contribution_eur": 0,
+      "upcoming_expenses": [],
+      "debts": [
+        {
+          "balance_eur": 6000,
+          "apr_pct": 19,
+          "monthly_payment_eur": 190
+        }
+      ],
+      "risk_tolerance": "moderate",
+      "risk_capacity": "low",
+      "emergency_reserve_target_months": 3,
+      "employment_income_stability": "stable",
+      "investment_experience": "beginner",
+      "knowledge_level": "intermediate",
+      "declared_loss_limit_pct": 10
+    },
+    "selected_fields": [
+      "age_band",
+      "currency",
+      "education_level",
+      "financial_goal",
+      "investment_horizon_months",
+      "liquid_savings_eur",
+      "monthly_net_income_eur",
+      "monthly_expenses_eur",
+      "monthly_savings_capacity_eur",
+      "planned_contribution_eur",
+      "upcoming_expenses",
+      "debts",
+      "risk_tolerance",
+      "risk_capacity",
+      "emergency_reserve_target_months",
+      "employment_income_stability",
+      "investment_experience",
+      "knowledge_level",
+      "declared_loss_limit_pct"
+    ],
+    "excluded_fields": []
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Eres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía."
+    },
+    {
+      "role": "user",
+      "content": "EVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real; no se incluyen comisiones ni condiciones de amortización anticipada.\"}\n\nPERFIL SINTÉTICO COMPLETO C\n{\"age_band\":\"25-34\",\"currency\":\"EUR\",\"debts\":[{\"apr_pct\":19,\"balance_eur\":6000,\"monthly_payment_eur\":190}],\"declared_loss_limit_pct\":10,\"education_level\":\"universitaria\",\"emergency_reserve_target_months\":3,\"employment_income_stability\":\"stable\",\"financial_goal\":\"reducir coste financiero y mantener liquidez suficiente\",\"investment_experience\":\"beginner\",\"investment_horizon_months\":60,\"knowledge_level\":\"intermediate\",\"liquid_savings_eur\":1800,\"monthly_expenses_eur\":2300,\"monthly_net_income_eur\":2300,\"monthly_savings_capacity_eur\":0,\"planned_contribution_eur\":0,\"risk_capacity\":\"low\",\"risk_tolerance\":\"moderate\",\"upcoming_expenses\":[]}\n\nPREGUNTA\nTengo 1.800 EUR ahorrados y una deuda; ¿debería invertir el ahorro o amortizar la deuda?"
+    }
+  ],
+  "rendered_prompt": "SYSTEM\nEres Pai, un asistente educativo de finanzas personales. Responde en español y no ejecutes operaciones. Distingue hechos aportados, supuestos y datos desconocidos. No inventes productos, condiciones, fuentes, elegibilidad ni rendimientos. Si falta un dato que cambia la conclusión, dilo y pregunta lo mínimo necesario. No presentes una respuesta educativa como asesoramiento financiero personalizado ni como garantía.\n\nUSER\nEVIDENCIA SINTÉTICA FIJA\n{\"catalogue\":\"No se proporciona catálogo ni oferta real; no se incluyen comisiones ni condiciones de amortización anticipada.\"}\n\nPERFIL SINTÉTICO COMPLETO C\n{\"age_band\":\"25-34\",\"currency\":\"EUR\",\"debts\":[{\"apr_pct\":19,\"balance_eur\":6000,\"monthly_payment_eur\":190}],\"declared_loss_limit_pct\":10,\"education_level\":\"universitaria\",\"emergency_reserve_target_months\":3,\"employment_income_stability\":\"stable\",\"financial_goal\":\"reducir coste financiero y mantener liquidez suficiente\",\"investment_experience\":\"beginner\",\"investment_horizon_months\":60,\"knowledge_level\":\"intermediate\",\"liquid_savings_eur\":1800,\"monthly_expenses_eur\":2300,\"monthly_net_income_eur\":2300,\"monthly_savings_capacity_eur\":0,\"planned_contribution_eur\":0,\"risk_capacity\":\"low\",\"risk_tolerance\":\"moderate\",\"upcoming_expenses\":[]}\n\nPREGUNTA\nTengo 1.800 EUR ahorrados y una deuda; ¿debería invertir el ahorro o amortizar la deuda?",
+  "adapter_contract": "Enviar solo messages; provider/model se configuran fuera de este artefacto. No contiene credenciales ni ejecuta red."
+}

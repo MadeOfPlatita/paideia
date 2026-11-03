@@ -1,0 +1,281 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": 1,
+      "url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-global-publico-RenaultBank.pdf",
+      "title": "Información precontractual global - Renault Bank",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Promoción aplicable exclusivamente a nuevos clientes que contraten la Cuenta Contigo entre el 21/10/2026 y el 18/11/2026, ambos inclusive.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "El Depósito \"Tú+\" es un producto de ahorro con un plazo fijo, que ofrece una remuneración fija.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "No es posible la cancelación anticipada, en ningún caso, de las imposiciones a plazo fijo.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "La ENTIDAD está adherida al Fondo de Garantía de Depósitos y Resolución francés (Fonds de Garantie des Dépôts et de Résolution) que ofrece una protección de hasta 100.000 euros por titular y entidad de crédito (la misma cantidad garantizada por los fondos de garantía de depósitos en toda la Unión Europea, incluida España).",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "url": "https://doc.renaultbank.es/documentacion-legal/tarifas-comisiones-publico-RenaultBank.pdf",
+      "title": "Tarifas y comisiones - Renault Bank",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 3,
+      "url": "https://renaultbank.es",
+      "title": "Renault Bank - Cuenta Contigo",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 4,
+      "url": "https://ing.es/cuenta-naranja",
+      "title": "Cuenta NARANJA - ING",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 5,
+      "url": "https://ing.es/cuenta-nomina-ing",
+      "title": "Cuenta NÓMINA - ING",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 6,
+      "url": "https://myinvestor.es/cuentas-tarjetas/cuentas",
+      "title": "Cuenta corriente remunerada - MyInvestor",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Hazte cliente y remunera tu dinero al 2,5 % TAE durante los 6 primeros meses. Sin comisiones, sin nómina y sin requisitos.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Para un saldo máximo de 70.000 €.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Los intereses se abonan cada mes, coincidiendo con el día en el que abriste tu cuenta.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "url": "https://myinvestor.es/depositos",
+      "title": "Depósitos - MyInvestor",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 8,
+      "url": "https://traderepublic.com/es-es/interes",
+      "title": "Interés sobre efectivo - Trade Republic",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Trade Republic: 3,04 % TAE sobre tu efectivo",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "url": "https://bankinter.com/banca/cuentas-tarjetas/cuentas/cuenta-nomina",
+      "title": "Cuenta Nómina - Bankinter",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 10,
+      "url": "https://www.openbank.es/assets/static/pdf/Productos/302_923_31_Deposito_6/302_923_31_Deposito_6.pdf",
+      "title": "Ficha del Depósito Open 6 meses - Openbank",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 11,
+      "url": "https://ishares.com/uk/individual/en/products/328657/fund/1506575576011.ajax?dataType=fund&fileName=ISPE_holdings&fileType=csv",
+      "title": "iShares S&P 500 Equal Weight UCITS ETF — product/holdings download reference",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Download latest fund holdings CSV data",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "url": "https://www.ishares.com/uk/individual/en/products/328657/ishares-s-p-500-equal-weight-ucits-etf/latest-holdings.csv",
+      "title": "iShares S&P 500 Equal Weight UCITS ETF — public holdings CSV",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Ticker,Name,Sector,Asset Class,Market Value,Weight (%),Notional Value,Shares,Price,Location,Exchange,Market Currency",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+      "title": "Xtrackers S&P 500 Equal Weight UCITS ETF 2D — official product page",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "NAV (23.10.2026): 104.46 USD All-in-fee (TER): 0.15%",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Download full securities list",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "url": "https://etf.dws.com/etfdata/export/LUX/ENG/excel/product/constituent/IE000CXLGK86",
+      "title": "DWS Xtrackers full securities list — XLSX export",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "This document is for information purposes only and does not constitute an offer, recommendation, or solicitation to enter into any transaction.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Name | ISIN | Country | Currency | Exchange | Type of Security | Rating | Primary Listing | Industry Classification | Weighting",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "url": "https://www.ssga.com/fr/en_gb/intermediary/etfs/state-street-spdr-msci-europe-ucits-etf-ero-fp",
+      "title": "SPDR MSCI Europe UCITS ETF — official product page",
+      "accessed": "2026-10-26"
+    },
+    {
+      "id": 16,
+      "url": "https://www.ssga.com/library-content/products/fund-data/etfs/emea/holdings-daily-emea-en-stq-fp.xlsx",
+      "title": "SPDR MSCI Europe Industrials UCITS ETF — daily holdings XLSX",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "State Street® SPDR® MSCI Europe Industrials UCITS ETF",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Holdings As Of: 23-Oct-2026",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "ISIN | SEDOL | Security Name | Currency | Number of Shares | Percent of Fund | Trade Country Name | Local Price | Sector Classification | Industry Classification | Base Market Value",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "url": "https://www.amundietf.com/pdfDocuments/monthly-factsheet/IE0009DRDY20/ENG/LUX/INSTITUTIONNEL/ETF/20260831",
+      "title": "Amundi Prime Global UCITS ETF Acc — factsheet 31 August 2026",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Frequency of NAV calculation Daily",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Management fees and other administrative or operating costs * 0.05%",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "NAV and AUM as of 31/08/2026",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "This material is solely for the attention of “professional” investors.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "url": "https://fund-docs.vanguard.com/FTSE_All-World_UCITS_ETF_USD_Accumulating_9679_EU_INT_UK_EN.pdf",
+      "title": "Vanguard FTSE All-World UCITS ETF USD Acc — factsheet 31 August 2026",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "This document is directed at professional investors and should not be distributed to, or relied upon by retail investors.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Ongoing Charges Figure† 0.14%",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "ISIN IE00BK5BQT80 USD Accumulating",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+      "title": "iShares Core MSCI Europe EUR Acc — Spanish PRIIPs KID",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "La fecha de este documento es 03 septiembre 2026.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "Hemos clasificado este producto en la clase de riesgo 4 en una escala de 7",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "0.12% del valor de su inversión al año.",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "0.01% del valor de su inversión al año.",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
+      "title": "VanEck Semiconductor UCITS ETF — official product page",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "Total Expense Ratio 0.35%",
+          "added": "2026-10-26"
+        },
+        {
+          "text": "NAV $97.02 as of 23 Oct 2026",
+          "added": "2026-10-26"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+      "title": "SPDR MSCI Europe Industrials UCITS ETF — product page (Sweden locale)",
+      "accessed": "2026-10-26",
+      "quotes": [
+        {
+          "text": "NAV EUR (Official NAV) €411,94 as of 23 Oct 2026",
+          "added": "2026-10-26"
+        }
+      ]
+    }
+  ]
+}

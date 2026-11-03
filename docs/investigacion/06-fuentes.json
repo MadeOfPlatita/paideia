@@ -1,0 +1,310 @@
+[
+  {
+    "url": "https://modelcontextprotocol.io/introduction",
+    "title": "What is the Model Context Protocol (MCP)?",
+    "claim": "MCP is an integration protocol for AI applications to connect to external data sources and tools; it is not itself a financial dataset.",
+    "evidence": "MCP (Model Context Protocol) is an open-source standard for connecting AI applications to external systems.",
+    "verification": "Extracted from the official MCP documentation; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://docs.openbb.co/odp/python/quickstart/mcp",
+    "title": "MCP Server | OpenBB Docs",
+    "claim": "OpenBB's MCP server exposes installed OpenBB REST API routes as tools; install the MCP server package plus selected providers.",
+    "evidence": "`openbb-mcp` turns the routes of the OpenBB REST API into MCP tools. Each installed provider contributes its commands, so the tool list is whatever the environment has installed.",
+    "verification": "Read the V5 OpenBB official quickstart, install examples, and transport configuration; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://docs.openbb.co/odp/python/extensions/providers",
+    "title": "Providers | OpenBB Docs",
+    "claim": "OpenBB is a connector layer, not a host of financial data; the ECB provider is listed without credentials, while source terms and rate limits remain upstream-specific.",
+    "evidence": "OpenBB does not host or serve data. Provider packages are connectors to public or third-party services, and coverage, rate limits, and terms of use are set by those services.",
+    "verification": "Read the official provider matrix; it lists `openbb-ecb` with no credentials and explicitly assigns data coverage/terms to providers. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://docs.openbb.co/odp/python/faqs/license",
+    "title": "License | OpenBB Docs",
+    "claim": "OpenBB V5 software is Apache-2.0, but its software license does not grant redistribution rights to provider data.",
+    "evidence": "The license covers the software. Provider packages connect to public or third-party services, and the data they return is subject to each source's own terms of use, which may restrict storage, redistribution, or commercial use.",
+    "verification": "Read the official V5 license FAQ, including its separate answer on provider data; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/OpenBB-finance/OpenBB/commits?path=openbb_platform/extensions/mcp_server&per_page=1",
+    "title": "GitHub API — latest commit touching OpenBB MCP extension",
+    "claim": "GitHub's latest commit result for the OpenBB MCP extension path was dated 2026-10-17.",
+    "evidence": "2026-10-17T18:44:16Z",
+    "verification": "Read the GitHub REST commits endpoint filtered to `openbb_platform/extensions/mcp_server`; activity date taken from the commit object, not a repository `updated_at` field. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://github.com/financial-datasets/mcp-server/blob/main/README.md",
+    "title": "Financial Datasets MCP Server README",
+    "claim": "This MCP server wraps Financial Datasets' actual API for US-centric stock/crypto data; its README setup requires an API key and lists `mcp[cli]` and `httpx`.",
+    "evidence": "FINANCIAL_DATASETS_API_KEY=your-financial-datasets-api-key",
+    "verification": "Read the repository README's tool list and setup section; dependency install and key instructions are explicit. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://financialdatasets.ai/pricing",
+    "title": "Pricing | Financial Datasets",
+    "claim": "The listed entry plan is a $20 one-time purchase for 1,000 requests; higher plans are $200/month personal or $2,000/month professional with commercial redistribution rights.",
+    "evidence": "### Credits\nPay as you go, test, and explore.\n$20 one-time\n- Personal license\n- 1,000 requests\n- All core endpoints\n- Real-time data",
+    "verification": "Read the vendor's live pricing page. Prices and tier labels are copied from the page; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/financial-datasets/mcp-server/commits?per_page=1",
+    "title": "GitHub API — latest Financial Datasets MCP commit",
+    "claim": "The latest commit returned by GitHub for this repository was dated 2025-06-05.",
+    "evidence": "2025-06-05T19:50:35Z",
+    "verification": "Read the GitHub REST commits endpoint (`per_page=1`); date taken from the latest commit object. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://github.com/narumiruna/yfinance-mcp",
+    "title": "narumiruna/yfinance-mcp — GitHub repository",
+    "claim": "This MIT-licensed server wraps Yahoo Finance through yfinance and advertises tools for stocks, ETFs, funds and market news.",
+    "evidence": "A Model Context Protocol (MCP) server that provides AI assistants with access to Yahoo Finance data via yfinance.",
+    "verification": "Read repository overview, README and GitHub-displayed license; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/narumiruna/yfinance-mcp/main/pyproject.toml",
+    "title": "narumiruna/yfinance-mcp pyproject.toml",
+    "claim": "The wrapper requires Python 3.12 or newer and depends on the MCP SDK, yfinance, matplotlib, tabulate and loguru.",
+    "evidence": "requires-python = \">=3.12\"\ndependencies    = [\n  \"loguru>=0.7.3\",\n  \"matplotlib>=3.11.2\",\n  \"mcp>=1.30.0,<2\",\n  \"tabulate>=0.10.0\",\n  \"yfinance>=1.7.0\",\n]",
+    "verification": "Read the raw dependency manifest (not just README prose); retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/narumiruna/yfinance-mcp/commits?per_page=1",
+    "title": "GitHub API — latest yfinance-mcp commit",
+    "claim": "The latest commit returned by GitHub for yfinance-mcp was dated 2026-10-25.",
+    "evidence": "2026-10-25T19:54:33Z",
+    "verification": "Read the GitHub REST commits endpoint (`per_page=1`); date taken from the latest commit object. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://github.com/ranaroussi/yfinance/blob/main/doc/source/index.rst",
+    "title": "yfinance legal disclaimer",
+    "claim": "The upstream yfinance project says it is unaffiliated with Yahoo, uses public APIs, and describes Yahoo Finance API use as personal; the MIT license on the MCP wrapper does not grant rights to republish Yahoo data.",
+    "evidence": "Remember - the Yahoo! finance API is intended for personal use only.",
+    "verification": "Read the upstream yfinance legal disclaimer; it directs readers to Yahoo's terms for actual downloaded-data rights. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://github.com/brave/brave-search-mcp-server",
+    "title": "brave/brave-search-mcp-server — GitHub repository",
+    "claim": "Brave's MIT-licensed MCP server connects to Brave Search API and provides web and other search tools; it is a search connector, not finance data.",
+    "evidence": "An MCP server implementation that integrates the Brave Search API, providing comprehensive search capabilities including web search, local business search, place search, image search, video search, news search, LLM context, and AI-powered summarization.",
+    "verification": "Read the upstream Brave repository README and license metadata; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/brave/brave-search-mcp-server/main/package.json",
+    "title": "Brave Search MCP package.json",
+    "claim": "The server is a TypeScript/Node package with MIT license and dependencies on the MCP SDK, commander, dotenv, express and zod.",
+    "evidence": "\"license\": \"MIT\",\n  \"dependencies\": {\n    \"@modelcontextprotocol/sdk\": \"1.32.2\",\n    \"commander\": \"14.0.3\",\n    \"dotenv\": \"17.3.1\",\n    \"express\": \"5.2.1\",\n    \"zod\": \"4.6.7\"",
+    "verification": "Read the raw package manifest for license and runtime dependencies; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://brave.com/search/api",
+    "title": "Brave Search API pricing",
+    "claim": "Brave advertises $5 per 1,000 Search API requests and $5 in monthly free credits; a dashboard API key is still required by the MCP server.",
+    "evidence": "$5 per 1,000 requests\n#### Includes $5 in free credits every month, so small-scale projects & proofs of concept can be built free of charge.\nCredits are automatically applied to your account",
+    "verification": "Read the official product page's extracted pricing section and the MCP README's required `BRAVE_API_KEY` setting; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/brave/brave-search-mcp-server/commits?per_page=1",
+    "title": "GitHub API — latest Brave Search MCP commit",
+    "claim": "The latest commit returned by GitHub was dated 2026-10-26 and updated MCP SDK and zod dependencies.",
+    "evidence": "2026-10-26T13:26:22Z",
+    "verification": "Read GitHub REST commits endpoint (`per_page=1`); timestamp and commit message taken from the commit object. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/modelcontextprotocol/servers/main/src/fetch/README.md",
+    "title": "Model Context Protocol fetch server README",
+    "claim": "The official fetch server fetches a known URL and converts content to Markdown; it does not provide search, and its README warns about access to internal IPs.",
+    "evidence": "The fetch tool will truncate the response, but by using the `start_index` argument, you can specify where to start the content extraction.",
+    "verification": "Read current upstream README for tool purpose, SDK compatibility, security caution and MIT license; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/modelcontextprotocol/servers/main/src/fetch/pyproject.toml",
+    "title": "Model Context Protocol fetch server pyproject.toml",
+    "claim": "The fetch server uses Python packages including httpx, markdownify, MCP SDK, protego, pydantic, readabilipy and requests; the manifest pins MCP SDK below version 2.",
+    "evidence": "\"httpx>=0.27\",\n    \"markdownify>=0.13.1\",\n    \"mcp>=1.29.0,<2\",\n    \"protego>=0.6.2\",\n    \"pydantic>=2.0.0\",\n    \"readabilipy>=0.2.0\",\n    \"requests>=2.32.3\",",
+    "verification": "Read the raw current pyproject dependency block; the README separately says the port to SDK 2 is in progress. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/modelcontextprotocol/servers/commits?path=src/fetch&per_page=1",
+    "title": "GitHub API — latest fetch server commit",
+    "claim": "The latest commit returned for the fetch server path was a version stamp dated 2026-10-24.",
+    "evidence": "2026-10-24T23:04:03Z",
+    "verification": "Read the GitHub REST commits endpoint filtered to `src/fetch`; date taken from the commit object. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://github.com/cyanheads/calculator-mcp-server",
+    "title": "cyanheads/calculator-mcp-server — GitHub repository",
+    "claim": "This Apache-2.0 MCP server exposes math.js evaluation, simplification and symbolic derivatives; it computes expressions rather than providing financial data.",
+    "evidence": "Calculator powered by math.js. Verify numeric results, simplify algebraic expressions, and compute symbolic derivatives through one tool.",
+    "verification": "Read repository README and GitHub license metadata; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/cyanheads/calculator-mcp-server/main/package.json",
+    "title": "cyanheads calculator server package.json",
+    "claim": "The server uses mathjs and requires Node 24+ or Bun 1.4+; no external financial data provider is configured in the package manifest.",
+    "evidence": "\"engines\": {\n    \"node\": \">=24.0.0\",\n    \"bun\": \">=1.4.0\n  },\n  \"dependencies\": {\n    \"@cyanheads/mcp-ts-core\": \"^0.13.16\",\n    \"mathjs\": \"^15.2.0\",\n    \"pino-pretty\": \"^13.2.0\",\n    \"zod\": \"^4.6.7\"",
+    "verification": "Read raw package manifest including runtime requirements and dependency list; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/cyanheads/calculator-mcp-server/commits?per_page=1",
+    "title": "GitHub API — latest calculator MCP commit",
+    "claim": "The latest commit returned by GitHub was dated 2026-10-25 and released version 0.5.2.",
+    "evidence": "2026-10-25T10:10:46Z",
+    "verification": "Read GitHub REST commits endpoint (`per_page=1`); date and release message taken from the commit object. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://github.com/elcukro/bank-mcp",
+    "title": "elcukro/bank-mcp — GitHub repository",
+    "claim": "bank-mcp is a read-only connector to personal bank accounts, not a database of deposit-account offers; its providers include Europe-focused Enable Banking/Tink plus a Mock provider.",
+    "evidence": "Give your AI assistant secure, read-only access to your bank accounts. MCP server supporting Plaid, Teller, Enable Banking, and Tink.",
+    "verification": "Read repository overview and provider matrix, including the separate `Mock` provider and authentication-method column; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/elcukro/bank-mcp/main/package.json",
+    "title": "elcukro/bank-mcp package.json",
+    "claim": "The TypeScript server has MIT license and dependencies on MCP SDK, jsonwebtoken and zod; its use requires provider-specific account setup beyond this package.",
+    "evidence": "\"license\": \"MIT\",\n  \"dependencies\": {\n    \"@clack/prompts\": \"^1.0.1\",\n    \"@modelcontextprotocol/sdk\": \"^1.25.0\",\n    \"jsonwebtoken\": \"^9.0.0\",\n    \"zod\": \"^4.3.6\"",
+    "verification": "Read raw package manifest and README provider authentication table; provider-level fees were not verified in this audit. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/elcukro/bank-mcp/commits?per_page=1",
+    "title": "GitHub API — latest bank-mcp commit",
+    "claim": "The latest commit returned by GitHub for bank-mcp was dated 2026-02-23.",
+    "evidence": "2026-02-23T07:57:49Z",
+    "verification": "Read GitHub REST commits endpoint (`per_page=1`); date taken from the latest commit object. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/DheerajGavhane/Mcp/main/README.md",
+    "title": "DheerajGavhane/Mcp README — Mock Financial Data MCP Server",
+    "claim": "This repository describes itself as a mock financial data server and documents local mock credentials/data, not an upstream financial API.",
+    "evidence": "Mock Financial Data MCP Server for Finarrator application.",
+    "verification": "Read the entire fetched README, including mock credential and data paths; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/DheerajGavhane/Mcp/main/package.json",
+    "title": "DheerajGavhane/Mcp package.json",
+    "claim": "The package declares ISC, but its test command is only a failing placeholder.",
+    "evidence": "\"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"",
+    "verification": "Read raw package manifest; the test script is `echo \"Error: no test specified\" && exit 1`. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/DheerajGavhane/Mcp",
+    "title": "GitHub API — DheerajGavhane/Mcp repository metadata",
+    "claim": "GitHub reports no recognized repository license, despite package.json declaring ISC; latest push shown was 2025-11-21.",
+    "evidence": "\"pushed_at\":\"2025-11-21T22:49:06Z\"",
+    "verification": "Read GitHub REST repository metadata (`pushed_at` and `license`); the `license` field is null. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://data.ecb.europa.eu/help/api/overview",
+    "title": "ECB Data Portal API overview",
+    "claim": "ECB SDMX 2.1 REST exposes official statistical data and metadata with data retrieval and data discovery modes.",
+    "evidence": "The ECB SDMX 2.1 RESTful web service offers programmatic access to the statistical data and metadata disseminated via the ECB Data Portal.",
+    "verification": "Read the ECB Data Portal API overview; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html",
+    "title": "Policy regarding the reuse of ESCB statistics",
+    "claim": "Publicly available ESCB statistics are free to reuse if the source is quoted and statistics/metadata are not modified; third-party data is excluded without permission.",
+    "evidence": "All publicly available ESCB statistics may be reused free of charge on the condition that the source is quoted (e.g. “Source: ECB statistics.”) and that the statistics (including metadata) are not modified.",
+    "verification": "Read the ECB's official reuse policy and its third-party-data exception; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://ec.europa.eu/eurostat/web/user-guides/data-browser/api-data-access/api-getting-started",
+    "title": "Eurostat API — Getting started",
+    "claim": "Eurostat provides public REST APIs for statistical data and metadata, including SDMX 2.1/3.0 and catalogue dataset discovery.",
+    "evidence": "The following REST APIs are available: STATISTICS, SDMX 3.0, SDMX 2.1, CATALOGUE.",
+    "verification": "Read official Eurostat API documentation and response-format guidance; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://ec.europa.eu/eurostat/data/web-services",
+    "title": "Web services | Eurostat",
+    "claim": "Eurostat says datasets update twice daily at 11:00 and 23:00 CET when newer data or structural changes are available; that does not mean every series is a live daily quote.",
+    "evidence": "Eurostat datasets are updated twice a day at 11:00 and 23:00 CET, if newer data is available or for structural changes, for example for the dimensions in the dataset.",
+    "verification": "Read the official web-services page and described update condition; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.ec.europa.eu/eurostat/en/help/copyright-notice",
+    "title": "Copyright notice and free re-use of data | Eurostat",
+    "claim": "Eurostat permits re-use of statistical data for commercial or non-commercial purposes with source attribution; some content has third-party restrictions.",
+    "evidence": "Reuse of statistical data, metadata, publications, and other dissemination tools published on this website for commercial or non-commercial purposes is authorised provided the source is acknowledged.",
+    "verification": "Read Eurostat copyright/reuse notice, including its additional-rights caveat; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.bde.es/webbe/es/estadisticas/recursos/api-estadisticas-bde.html",
+    "title": "Servicio web de Estadísticas (API) | Banco de España",
+    "claim": "Banco de España exposes JSON URL requests for last observations and time series, with the observation frequency and reference date returned; this is statistical data, not a product-offer catalog.",
+    "evidence": "El servicio web JSON (JavaScript Object Notation) que se describe en esta sección permite acceder mediante peticiones URL a toda la información disponible tanto en la sección de Estadísticas del Banco de España como en la aplicación HERMES.",
+    "verification": "Read the official API request/response specification; it lists D, M, Q and A frequencies and `fechaValor`. The consulted API page did not state a data-reuse licence. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://tesoro.es/deuda-publica/subastas/resultado-ultimas-subastas/letras-del-tesoro",
+    "title": "Resultado de últimas subastas | Tesoro Público",
+    "claim": "Tesoro's official latest-auction page publishes dates, maturities, prices and yields for Treasury bills; auction results are not equivalent to a continuous daily secondary-market quote.",
+    "evidence": "| Fecha subasta | 14/07/2026 | 04/08/2026 | 14/07/2026 | 04/08/2026 |",
+    "verification": "Read the Treasury Public latest-auction results page and table headings; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.tesoro.es/deuda-publica/estad%C3%ADsticas-mensuales",
+    "title": "Estadísticas Mensuales | Tesoro Público",
+    "claim": "Tesoro also publishes monthly debt and auction-statistics files in PDF and XLSX; this page did not document a REST API.",
+    "evidence": "Subastas de Deuda del Estado (2026-2025): Nominal emitido y rendimientos",
+    "verification": "Read the official monthly statistics catalogue and its linked PDF/XLSX formats; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://cnmv.es/portal/inversor/fondos-como-invertir?lang=en",
+    "title": "CNMV — How to invest in funds: subscriptions, redemptions and transfers",
+    "claim": "CNMV explains that fund NAV information applicable to an order is generally published the next day, while exchange-traded funds have a public market price at order time; this page is guidance, not an API.",
+    "evidence": "En general, el valor liquidativo aplicable es el del mismo día de la solicitud (que se publicará al día siguiente).",
+    "verification": "Read official CNMV investor guidance. The searched CNMV query interface did not extract, so a public daily fund-price API was not verified. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.bolsasymercados.es/en/bme-exchange/prices-and-markets/market-data-services.html",
+    "title": "Market Data Services | BME Exchange",
+    "claim": "BME commercializes real-time, end-of-day and historical market-data products under a distribution/licensing agreement that includes a price list; no zero-cost redistribution right should be assumed.",
+    "evidence": "BME specializes in processing, generating, and commercializing information from the different regulated markets and Multilateral Trading Facilities.",
+    "verification": "Read BME Market Data service page and agreement components, which list rates/price list; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.bolsasymercados.es/en/bme-exchange/prices-and-markets/market-data-services/end-of-day-and-historical-services.html",
+    "title": "End of day and historical | BME Exchange",
+    "claim": "BME's end-of-day/historical product page lists BME-listed instruments including ETFs; this is separate from the official macroeconomic data APIs.",
+    "evidence": "**Equities, BME Growth, and ETFs**",
+    "verification": "Read the official end-of-day/historical services page; its content lists BME-listed instrument categories including ETFs. Retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.boe.es/datosabiertos/api/api.php",
+    "title": "API de datos abiertos | BOE",
+    "claim": "The BOE API documents a search endpoint for consolidated legislation with query, offset and limit parameters, useful for documentary retrieval rather than market prices.",
+    "evidence": "/datosabiertos/api/legislacion-consolidada",
+    "verification": "Read the BOE open-data API endpoint documentation; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.boe.es/datosabiertos/faq/boe.php",
+    "title": "FAQ de datos abiertos | BOE",
+    "claim": "BOE's REST API retrieves date-specific summaries and links to documents in PDF, XML and HTML; reuse remains subject to the agency's reuse licence.",
+    "evidence": "La Agencia Estatal BOE ha puesto a disposición de los reutilizadores una API REST que permite la descarga, uso y reutilización de las disposiciones y actos publicados en el BOE, mediante el acceso al sumario correspondiente a la fecha seleccionada.",
+    "verification": "Read official BOE FAQ and its linked conditions; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://www.boe.es/informacion/aviso_legal/index.php",
+    "title": "Aviso legal y condiciones de reutilización | BOE",
+    "claim": "BOE permits commercial and non-commercial reuse subject to its terms, including citation of source; some documents can have special conditions.",
+    "evidence": "Las presentes condiciones permiten la reutilización de los documentos sometidos a ellas para fines comerciales y no comerciales",
+    "verification": "Read the official legal notice and reuse terms, in force from 2024-06-28; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://api.github.com/repos/financial-datasets/mcp-server",
+    "title": "GitHub API — Financial Datasets MCP repository metadata",
+    "claim": "GitHub reports MIT License for financial-datasets/mcp-server.",
+    "evidence": "\"license\":{\"key\":\"mit\",\"name\":\"MIT License\"",
+    "verification": "Read GitHub REST repository metadata, including its machine-readable license object and latest `pushed_at`; retrieved 2026-10-26."
+  },
+  {
+    "url": "https://ec.europa.eu/eurostat/web/user-guides/data-browser/api-data-access/api-introduction",
+    "title": "API - Introduction | Eurostat",
+    "claim": "Eurostat states that its APIs provide free programmatic access to statistical metadata and data, with REST and SDMX response formats.",
+    "evidence": "These APIs are free of charge programmatic access to statistical metadata and data.",
+    "verification": "Read the official Eurostat API introduction; it also lists supported formats and update behavior. Retrieved 2026-10-26."
+  }
+]

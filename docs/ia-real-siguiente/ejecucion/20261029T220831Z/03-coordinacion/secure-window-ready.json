@@ -1,0 +1,15 @@
+{
+  "process_id": 20216,
+  "windows": [
+    {
+      "pid": 27888,
+      "title": "Paideia — sesión Groq temporal",
+      "visible": true
+    }
+  ],
+  "used": 0,
+  "remaining": 24,
+  "deadline_local": "2026-10-30T00:08:31.985015+01:00",
+  "review_passed": true,
+  "review_source": "deleg_a2409cb2"
+}

@@ -1,0 +1,62 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "feature probe guard enabled",
+      "pass": true
+    },
+    {
+      "name": "download control exists",
+      "pass": true
+    },
+    {
+      "name": "initial download disabled",
+      "pass": true
+    },
+    {
+      "name": "current download enabled",
+      "pass": true
+    },
+    {
+      "name": "guard disables print",
+      "pass": true
+    },
+    {
+      "name": "guard explanation visible",
+      "pass": true
+    },
+    {
+      "name": "download requested status",
+      "pass": true
+    },
+    {
+      "name": "guard explanation persists after request",
+      "pass": true
+    },
+    {
+      "name": "transient failure allows retry",
+      "pass": true
+    },
+    {
+      "name": "click rejects mismatch",
+      "pass": true
+    },
+    {
+      "name": "revalidated current enables retry",
+      "pass": true
+    },
+    {
+      "name": "edit disables download",
+      "pass": true
+    },
+    {
+      "name": "pending disables download",
+      "pass": true
+    },
+    {
+      "name": "error disables download",
+      "pass": true
+    }
+  ],
+  "note": "Real anchor download requested; host file verification is separate."
+}
