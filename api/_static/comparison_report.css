@@ -1,0 +1,20 @@
+.scenario-report-host { margin: 1.5rem 0; padding: 1rem; border: 1px solid #b9c4be; border-radius: .5rem; background: #fff; }
+.scenario-report-host h2 { margin: 0 0 .5rem; }
+.scenario-report-host button { max-width: 100%; white-space: normal; }
+#comparison-report-print { display: none; }
+@media print {
+  @page { size: A4; margin: 14mm; }
+  html, body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; }
+  body > :not(#comparison-report-print) { display: none !important; }
+  #comparison-report-print { display: block; }
+  .comparison-report { color: #111; font: 9pt/1.35 Arial, sans-serif; max-width: none; overflow: visible; }
+  .comparison-report h1 { font-size: 19pt; margin: 0 0 6mm; }
+  .comparison-report h2 { font-size: 13pt; margin: 6mm 0 2mm; break-after: avoid; }
+  .comparison-report p { margin: 2mm 0; }
+  .comparison-report .report-warning { border: 1px solid #333; padding: 3mm; }
+  .comparison-report table { width: 100%; border-collapse: collapse; table-layout: fixed; margin: 2mm 0 4mm; font-size: 8pt; }
+  .comparison-report thead { display: table-header-group; }
+  .comparison-report tr { break-inside: avoid; }
+  .comparison-report th, .comparison-report td { border: .5pt solid #777; padding: 2mm; text-align: left; vertical-align: top; overflow-wrap: anywhere; word-break: normal; }
+  .comparison-report th { background: #eee; }
+}

@@ -1,0 +1,5 @@
+.context-help { display: inline; }
+.context-help__trigger { margin-inline: .25em; border: 1px solid currentColor; border-radius: 50%; min-width: 1.8em; min-height: 1.8em; background: transparent; color: inherit; cursor: pointer; }
+.context-help__panel:not([hidden]) { display: inline; margin-inline-start: .35em; }
+.context-help__close { margin-inline-start: .3em; cursor: pointer; }
+.context-help__trigger:focus-visible, .context-help__close:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

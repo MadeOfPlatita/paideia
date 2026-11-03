@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta name="theme-color" content="#F7F5EF">
+  <title>Paideia — cuaderno de ruta financiera</title>
+  <link rel="icon" href="./assets/pai-neutral.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./comparison_report.css">
+  <link rel="stylesheet" href="./context_help.css">
+  <script src="./profile_model.js" defer></script>
+  <script src="./chat_context_model.js" defer></script>
+  <script src="./structured_education_ui.js" defer></script>
+  <script src="./comparison_report.js" defer></script>
+  <script src="./context_help.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Paideia, ir al inicio">
+        <img src="./assets/pai-neutral.svg" alt="" width="38" height="38">
+        <span><strong>Paideia</strong><small>Cuaderno de ruta</small></span>
+      </a>
+      <div class="topbar-actions">
+        <p id="status-chip" class="status-chip" role="status">Comprobando servicio local…</p>
+        <button id="status-retry" class="button button-quiet" type="button">Revisar estado</button>
+        <button id="clear-profile" class="button button-quiet button-clear" type="button">Borrar mi perfil local</button>
+      </div>
+    </header>
+
+    <p class="persistent-notice" role="note">
+      <strong>PROYECTO EDUCATIVO</strong>
+      <span>Productos de investigación con condiciones pendientes. Los escenarios y el ensayo son simulados; no se mueve dinero.</span>
+    </p>
+
+    <div class="app-layout">
+      <nav class="side-nav" aria-label="Secciones de Paideia">
+        <p class="nav-label">Tu recorrido</p>
+        <a class="nav-link" href="#inicio" data-route="inicio"><span class="nav-index">00</span>Inicio</a>
+        <a class="nav-link" href="#perfil" data-route="perfil"><span class="nav-index">01</span>Tu mapa</a>
+        <a class="nav-link" href="#biblioteca" data-route="biblioteca"><span class="nav-index">02</span>Biblioteca</a>
+        <a class="nav-link" href="#comparar" data-route="comparar"><span class="nav-index">03</span>Comparar</a>
+        <a class="nav-link" href="#escenarios" data-route="escenarios"><span class="nav-index">04</span>Escenarios</a>
+        <a class="nav-link" href="#simulacion" data-route="simulacion"><span class="nav-index">05</span>Ensayo ficticio</a>
+        <a class="nav-link" href="#glosario" data-route="glosario"><span class="nav-index">06</span>Glosario</a>
+        <a class="nav-link" href="#privacidad" data-route="privacidad"><span class="nav-index">07</span>Privacidad</a>
+        <p class="nav-footnote">Explora primero. Decide qué quieres guardar.</p>
+      </nav>
+
+      <main id="main-content" class="main-content" tabindex="-1">
+        <noscript>Paideia necesita JavaScript local para cargar las vistas y consultar el servicio del prototipo.</noscript>
+      </main>
+
+      <aside id="context-panel" class="context-panel" aria-label="Acompañamiento contextual de Pai"></aside>
+    </div>
+
+    <footer class="site-footer">
+      <span>Prototipo local · No es una entidad financiera ni un servicio de asesoramiento.</span>
+      <a href="#privacidad">Cómo se trata la información</a>
+    </footer>
+  </div>
+</body>
+</html>
