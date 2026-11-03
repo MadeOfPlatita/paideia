@@ -470,7 +470,7 @@ function renderHome() {
   }
   scenarioInputs.method=el("select", {id:"chat-scenario-method"}, [el("option",{value:""},"Selecciona un método"),el("option",{value:"simple"},"Simple"),el("option",{value:"compound"},"Compuesto")]);
   form.appendChild(field("Método",scenarioInputs.method,"Selecciona el método ficticio.","chat-scenario-method"));
-  const capabilitiesNote = callout(`Mapa: ${chatCapabilities?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}; historial: ${chatCapabilities?.history === true ? "habilitado" : "desactivado"}.`, "warning-note");
+  const capabilitiesNote = callout(`Mapa: ${chatCapabilities?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}; catálogo: ${chatCapabilities?.catalogue === true ? "puede consultar fichas documentadas" : "no disponible"}; historial: ${chatCapabilities?.history === true ? "habilitado" : "desactivado"}.`, "warning-note");
   capabilitiesNote.setAttribute("id", "chat-context-capabilities");
   form.appendChild(capabilitiesNote);
   const CONTEXT_LABELS = {"respuestas.objetivo":"Objetivo","respuestas.horizonte":"Horizonte","detalle_economico.importe_objetivo":"Importe objetivo","detalle_economico.colchon_liquido":"Colchón líquido"};

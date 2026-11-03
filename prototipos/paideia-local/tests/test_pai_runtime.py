@@ -91,7 +91,7 @@ class PaiRuntimeWorkflowTests(unittest.TestCase):
     def test_configured_tool_rounds_cannot_exceed_hard_cap(self):
         provider = TestOnlyFakeProvider([])
         dispatcher = TestOnlyDispatcher()
-        for value in (-1, 3, True):
+        for value in (-1, 4, True):
             with self.subTest(value=value):
                 with self.assertRaises(ValueError):
                     ToolChatRunner(provider, dispatcher, max_tool_rounds=value)

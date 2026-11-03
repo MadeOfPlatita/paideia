@@ -18,7 +18,7 @@ class ContextTests(unittest.TestCase):
 
     def test_status_advertises_disabled_capabilities(self):
         status = LocalChatService().status()
-        self.assertEqual(status['capabilities'], {'context': False, 'history': False, 'synthetic_only': True, 'structured_education': False})
+        self.assertEqual(status['capabilities'], {'context': False, 'history': False, 'synthetic_only': True, 'structured_education': False, 'catalogue': False})
 
     def test_direct_service_rejects_large_utf8_request(self):
         p = Fake()

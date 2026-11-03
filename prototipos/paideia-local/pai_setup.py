@@ -10,7 +10,9 @@ from datetime import datetime, timezone
 import os
 
 from backend_services import CatalogueComparisonService, LocalChatService
+from catalogue_adapter import CatalogueWithConditions
 from chat_admission import AdmissionPolicy, InMemoryBudgetState, InterfazChatAdmission
+from conditions_service import ConditionsService
 from pai_tools import ToolDispatcher
 from providers import (
     ALLOWED_MODELS,
@@ -91,7 +93,8 @@ def build_chat_service(repository=None, comparison_service=None):
     )
     tools = repository is not None
     dispatcher = (
-        ToolDispatcher(repository, comparison_service if comparison_service is not None else CatalogueComparisonService())
+        ToolDispatcher(CatalogueWithConditions(repository, ConditionsService()),
+                       comparison_service if comparison_service is not None else CatalogueComparisonService())
         if tools else None
     )
     return LocalChatService(
@@ -100,6 +103,7 @@ def build_chat_service(repository=None, comparison_service=None):
         admission=admission,
         dispatcher=dispatcher,
         tools_enabled=tools,
-        tools_scope="calculator_only",
+        tools_scope="catalogue_read",
+        catalogue_usage_approved=True,
         context_enabled=True,
     )

@@ -25,7 +25,7 @@ _TOOL_DEFINITIONS = [
         "type": "function",
         "function": {
             "name": "search_products",
-            "description": "Busca candidatos de investigación por identidad; no son ofertas publicables.",
+            "description": "Busca productos del catálogo; devuelve identidad y condiciones documentadas con su estado; no son ofertas publicables.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -42,7 +42,7 @@ _TOOL_DEFINITIONS = [
         "type": "function",
         "function": {
             "name": "get_product_detail",
-            "description": "Obtiene metadatos internos de identidad; no implica condiciones del producto.",
+            "description": "Devuelve identidad y condiciones documentadas (valor, estado y fuente) de un producto; no implica oferta vigente.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -172,7 +172,7 @@ class ToolDispatcher:
                     "count": len(products),
                     "limit": limit,
                     "not_for_publication": True,
-                    "scope": "product_identity_only",
+                    "scope": "identity_and_documented_conditions",
                 }
                 return self._reply(name, "ok", data=data, sources=sources)
             if name == "get_product_detail":
@@ -181,7 +181,7 @@ class ToolDispatcher:
                 return self._reply(name, "ok", data={
                     "product": product,
                     "not_for_publication": True,
-                    "scope": "product_identity_only",
+                    "scope": "identity_and_documented_conditions",
                 }, sources=[self._source_for(product)])
             if name == "calculate_scenario":
                 if type(arguments) is not dict or set(arguments) != CALCULATION_FIELDS:
@@ -237,10 +237,15 @@ class ToolDispatcher:
     @staticmethod
     def _validate_single_id(arguments):
         if (type(arguments) is not dict or set(arguments) != {"product_id"}
-                or type(arguments["product_id"]) is not str
-                or _PRODUCT_ID.fullmatch(arguments["product_id"]) is None):
+                or type(arguments["product_id"]) is not str):
             raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
-        return arguments["product_id"]
+        # El modelo a veces copia guiones tipográficos del texto; se normalizan al guion ASCII.
+        normalized = arguments["product_id"].strip()
+        for dash in ("\u2010", "\u2011", "\u2012", "\u2013", "\u2014", "\u2212"):
+            normalized = normalized.replace(dash, "-")
+        if _PRODUCT_ID.fullmatch(normalized) is None:
+            raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
+        return normalized
 
     def _lookup_product(self, product_id):
         try:
@@ -281,16 +286,16 @@ class ToolDispatcher:
 
     @staticmethod
     def _validate_search(arguments):
-        if type(arguments) is not dict or set(arguments) != {"query", "family", "limit"}:
+        if type(arguments) is not dict or not set(arguments) <= {"query", "family", "limit"}:
             raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
-        query = arguments["query"]
-        family = arguments["family"]
-        limit = arguments["limit"]
+        query = arguments.get("query")
+        family = arguments.get("family")
+        limit = arguments.get("limit", 8)
         if (type(query) is not str or len(query) > 100
                 or (family is not None and (type(family) is not str or family not in FAMILIES))
                 or type(limit) is not int or not 1 <= limit <= 20):
             raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
-        return query, family, limit
+        return query.strip(), family, limit
 
     @staticmethod
     def _project_product(raw_product):
@@ -316,10 +321,11 @@ class ToolDispatcher:
                 or not _is_repository_url(primary_url)
                 or (as_of is not None and type(as_of) is not str)
                 or raw_product.get("publication_ready") is not False
-                or raw_product.get("conditions_state") != "pending"
+                or raw_product.get("conditions_state") not in {"pending", "documented"}
                 or type(conflicts) is not list or not all(type(item) is str for item in conflicts)
                 or type(unknown_fields) is not list or not all(type(item) is str for item in unknown_fields)):
             raise _ToolFailure("REPOSITORY_ERROR", "El catálogo local devolvió metadatos no válidos.")
+        conditions = ToolDispatcher._project_conditions(raw_product.get("conditions"))
         return {
             "id": product_id,
             "name": name,
@@ -330,10 +336,51 @@ class ToolDispatcher:
             "primary_url": primary_url,
             "as_of": as_of,
             "publication_ready": False,
-            "conditions_state": "pending",
+            "conditions_state": "documented" if conditions else "identity_only",
             "conflicts": deepcopy(conflicts),
             "unknown_fields": deepcopy(unknown_fields),
+            "conditions": conditions,
         }
+
+    @staticmethod
+    def _project_conditions(raw_conditions):
+        """Solo condiciones documentadas y validadas; cualquier forma rara se descarta."""
+        if raw_conditions is None:
+            return []
+        if type(raw_conditions) is not list or len(raw_conditions) > 8:
+            raise _ToolFailure("REPOSITORY_ERROR", "Condiciones no válidas en el catálogo.")
+        projected = []
+        for item in raw_conditions:
+            if type(item) is not dict:
+                raise _ToolFailure("REPOSITORY_ERROR", "Condiciones no válidas en el catálogo.")
+            metric = item.get("metric")
+            state = item.get("state")
+            value = item.get("value")
+            unit = item.get("unit")
+            reason = item.get("reason")
+            source_ids = item.get("source_ids")
+            effective_to = item.get("effective_to")
+            notes = item.get("notes") or []
+            if (metric not in {"annual_rate_percent", "term_months"}
+                    or state not in {"known", "stale", "conflict", "unknown"}
+                    or unit not in {"PERCENT", "MONTHS"}
+                    or (value is not None and (type(value) is not str or re.fullmatch(r"-?\d+(?:\.\d+)?", value) is None))
+                    or type(reason) is not str or len(reason) > 64
+                    or type(source_ids) is not list or len(source_ids) > 4 or not all(type(entry) is str and len(entry) <= 500 for entry in source_ids)
+                    or (effective_to is not None and (type(effective_to) is not str or re.fullmatch(r"\d{4}-\d{2}-\d{2}", effective_to) is None))
+                    or type(notes) is not list or len(notes) > 4 or not all(type(entry) is str and len(entry) <= 200 for entry in notes)):
+                raise _ToolFailure("REPOSITORY_ERROR", "Condiciones no válidas en el catálogo.")
+            projected.append({
+                "metric": metric,
+                "state": state,
+                "value": value,
+                "unit": unit,
+                "reason": reason,
+                "source_ids": list(source_ids),
+                "effective_to": effective_to,
+                "notes": list(notes),
+            })
+        return projected
 
     @staticmethod
     def _source_for(product):

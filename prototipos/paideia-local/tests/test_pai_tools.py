@@ -143,8 +143,9 @@ class ToolDispatcherDetailTests(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["data"]["product"]["id"], "SYN-02")
         self.assertFalse(result["data"]["product"]["publication_ready"])
-        self.assertEqual(result["data"]["product"]["conditions_state"], "pending")
-        self.assertEqual(result["data"]["scope"], "product_identity_only")
+        self.assertEqual(result["data"]["product"]["conditions_state"], "identity_only")
+        self.assertEqual(result["data"]["scope"], "identity_and_documented_conditions")
+        self.assertEqual(result["data"]["product"]["conditions"], [])
         self.assertEqual([source["product_id"] for source in result["sources"]], ["SYN-02"])
         self.assertEqual(repository.calls, [("get_product", "SYN-02")])
 

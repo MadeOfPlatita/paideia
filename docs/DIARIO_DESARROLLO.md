@@ -285,6 +285,12 @@ Cloudflare quedó descartado: sus Python Workers fallan al desplegar con `Module
 
 Aplicación publicada en **https://paideia-mu.vercel.app**. El chat de IA va apagado en la web pública y la interfaz lo indica; la clave no se sube a un servidor ajeno. Repositorio privado hasta la entrega, por decisión del equipo.
 
+## B4 — Pai con catálogo
+
+El equipo aprobó abrir el catálogo a Pai y se hizo con un ámbito nuevo, `catalogue_read`: búsqueda, ficha y calculadora. Comparar sigue siendo cosa del comparador. El adaptador une los candidatos con los cuatro productos transcritos y adjunta cada condición con su estado y su fuente; la proyección se valida campo a campo antes de salir al modelo.
+
+Probado con Groq real: preguntando por EBN responde 3,1 % con la URL oficial; preguntando por EBN frente a Self Bank responde 3,1 % frente a 2,75 % y avisa de que la fuente de Self Bank es secundaria. Por el camino hubo que aceptar llamadas sin `family`/`limit`, normalizar guiones tipográficos en los identificadores y subir el límite de rondas a tres.
+
 ## Registro a mantener al desarrollar
 
 En cada bloque de trabajo se anotarán el prompt o su extracto identificado como tal, herramienta/modelo si se conoce, cambios realizados, decisiones, pruebas ejecutadas con su resultado real y limitaciones pendientes. No se anotarán claves ni información personal de prueba.

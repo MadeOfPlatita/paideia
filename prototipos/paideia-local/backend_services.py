@@ -114,7 +114,10 @@ CHAT_NOTICE_VERSION = "paideia-chat-remote-v1"
 CHAT_SYSTEM_PROMPT = (
     "Eres Pai, asistente educativo de Paideia para estudiantes de finanzas en España. "
     "No eres un asesor financiero ni ejecutas operaciones. No recibes ningún perfil personal. "
-    "No tienes ofertas ni condiciones verificadas: no inventes productos, tasas, fuentes ni citas. "
+    "No tienes ofertas publicables, pero sí un catálogo consultable: si la pregunta menciona un producto, "
+    "un banco o una tasa, usa primero search_products y, si hace falta el detalle, get_product_detail. "
+    "Responde solo con lo que devuelva la herramienta, indicando el estado de cada condición "
+    "(documentada, vencida, en conflicto o desconocida) y su fuente; nunca inventes productos, tasas, fuentes ni citas. "
     "Los cálculos numéricos corresponden a la calculadora determinista de la aplicación; "
     "sin una herramienta de cálculo disponible explica conceptos, no inventes resultados. "
     + FINANCIAL_EDUCATION_PROMPT +
@@ -184,6 +187,23 @@ class _CalculatorOnlyDispatcher:
         return self._dispatcher.dispatch(name, arguments)
 
 
+class _CatalogueReadDispatcher:
+    """Lectura del catálogo y calculadora; nunca comparación ni fuentes en bloque."""
+    ALLOWED = frozenset({"search_products", "get_product_detail", "calculate_scenario"})
+
+    def __init__(self, dispatcher):
+        self._dispatcher = dispatcher
+
+    def definitions(self):
+        return [item for item in self._dispatcher.definitions()
+                if item.get("function", {}).get("name") in self.ALLOWED]
+
+    def dispatch(self, name, arguments):
+        if name not in self.ALLOWED:
+            raise ValueError("tool outside configured scope")
+        return self._dispatcher.dispatch(name, arguments)
+
+
 class LocalChatService:
     """Stateless chat boundary. Disabled unless an operator injects and enables a provider."""
 
@@ -222,11 +242,15 @@ class LocalChatService:
         self._provider = provider
         self._enabled = enabled is True
         self._test_only = test_only is True
-        if type(tools_scope) is not str or tools_scope not in {"catalogue", "calculator_only"}:
+        if type(tools_scope) is not str or tools_scope not in {"catalogue", "catalogue_read", "calculator_only"}:
             raise ValueError("invalid tool scope")
         self._tools_scope = tools_scope
-        self._dispatcher = (_CalculatorOnlyDispatcher(dispatcher)
-                            if tools_scope == "calculator_only" and dispatcher is not None else dispatcher)
+        if tools_scope == "calculator_only" and dispatcher is not None:
+            self._dispatcher = _CalculatorOnlyDispatcher(dispatcher)
+        elif tools_scope == "catalogue_read" and dispatcher is not None:
+            self._dispatcher = _CatalogueReadDispatcher(dispatcher)
+        else:
+            self._dispatcher = dispatcher
         self._tools_enabled = tools_enabled is True
         self._admission = admission
         self._catalogue_usage_approved = catalogue_usage_approved is True
@@ -253,7 +277,8 @@ class LocalChatService:
     def status(self):
         capabilities = {"context": self._context_enabled, "history": self._history_enabled,
                         "synthetic_only": self._test_only or not self._enabled,
-                        "structured_education": self._structured_mode}
+                        "structured_education": self._structured_mode,
+                        "catalogue": bool(self._tools_enabled and self._tools_scope in {"catalogue", "catalogue_read"})}
         if not self._enabled or self._provider is None:
             return {"connected": False, "status": "not_configured",
                     "message": "Chat IA no conectado. No se han enviado datos a proveedores.", "capabilities": capabilities}

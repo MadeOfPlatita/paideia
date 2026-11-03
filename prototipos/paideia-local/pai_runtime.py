@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import re
 from decimal import Decimal, InvalidOperation
 
@@ -42,12 +43,12 @@ _TOOL_FAILURE_MESSAGE = "Se rechazó una llamada de herramienta no válida."
 class ToolChatRunner:
     """Run a model/tool cycle with a fixed registry and at most two tool rounds."""
 
-    def __init__(self, provider, dispatcher, max_tool_rounds=2):
+    def __init__(self, provider, dispatcher, max_tool_rounds=3):
         if (not callable(getattr(provider, "chat", None))
                 or not callable(getattr(dispatcher, "definitions", None))
                 or not callable(getattr(dispatcher, "dispatch", None))
                 or type(max_tool_rounds) is not int
-                or not 0 <= max_tool_rounds <= 2):
+                or not 0 <= max_tool_rounds <= 3):
             raise ValueError("invalid tool chat configuration")
         self._provider = provider
         self._dispatcher = dispatcher
@@ -107,20 +108,25 @@ class ToolChatRunner:
             return False
 
         if name == "search_products":
+            if not set(arguments) <= {"query", "family", "limit"} or "query" not in arguments:
+                return False
+            query = arguments["query"]
+            family = arguments.get("family")
+            limit = arguments.get("limit", 8)
             return (
-                set(arguments) == {"query", "family", "limit"}
-                and type(arguments["query"]) is str and len(arguments["query"]) <= 100
-                and (arguments["family"] is None or (
-                    type(arguments["family"]) is str and arguments["family"] in PRODUCT_FAMILIES
-                ))
-                and type(arguments["limit"]) is int and 1 <= arguments["limit"] <= 20
+                type(query) is str and len(query) <= 100
+                and (family is None or (type(family) is str and family in PRODUCT_FAMILIES))
+                and type(limit) is int and 1 <= limit <= 20
             )
 
         if name == "get_product_detail":
-            return (
-                set(arguments) == {"product_id"}
-                and cls._is_local_product_id(arguments["product_id"])
-            )
+            value = arguments.get("product_id")
+            if set(arguments) != {"product_id"} or type(value) is not str:
+                return False
+            normalized = value.strip()
+            for dash in ("\u2010", "\u2011", "\u2012", "\u2013", "\u2014", "\u2212"):
+                normalized = normalized.replace(dash, "-")
+            return cls._is_local_product_id(normalized)
 
         if name == "compare_products":
             product_ids = arguments.get("product_ids")
@@ -253,9 +259,13 @@ class ToolChatRunner:
         for _model_call in range(self._max_tool_rounds + 1):
             try:
                 result = self._provider.chat(copy.deepcopy(current_messages), tools=copy.deepcopy(definitions))
-            except Exception:
+            except Exception as exc:
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] provider.chat fallo: {type(exc).__name__}: {exc}", flush=True)
                 return self._failure(tool_events=tool_events, sources=sources)
             if not self._valid_chat_result(result):
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] respuesta de chat invalida: {type(result).__name__}", flush=True)
                 return self._failure(tool_events=tool_events, sources=sources)
 
             # Reasoning is intentionally ignored: it is neither returned nor appended to context.
@@ -266,6 +276,9 @@ class ToolChatRunner:
             if not result.tool_calls:
                 return self._dto(result.answer, None, result.finish_reason, tool_events, sources)
             if len(result.tool_calls) != 1:
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] llamadas simultaneas: {len(result.tool_calls)} "
+                          f"{[getattr(c, 'name', None) for c in result.tool_calls]}", flush=True)
                 for call in result.tool_calls:
                     tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True)
@@ -280,12 +293,18 @@ class ToolChatRunner:
             seen_call_ids.add(call.id)
 
             if type(call.name) is not str or call.name not in advertised_names:
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] herramienta no anunciada: {call.name!r}", flush=True)
                 tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True)
             if not self._valid_arguments(call.name, call.arguments):
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] argumentos invalidos: {call.name} {call.arguments!r}", flush=True)
                 tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True)
             if tool_rounds >= self._max_tool_rounds:
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print("[tools] limite de rondas alcanzado", flush=True)
                 tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True)
 
@@ -295,21 +314,29 @@ class ToolChatRunner:
                 tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True)
             if invocation in seen_invocations:
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] invocacion duplicada: {call.name} {call.arguments!r}", flush=True)
                 tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True)
             seen_invocations.add(invocation)
 
             try:
                 dispatched = self._dispatcher.dispatch(call.name, copy.deepcopy(call.arguments))
-            except Exception:
+            except Exception as exc:
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] dispatch fallo: {call.name} {type(exc).__name__}: {exc}", flush=True)
                 tool_events.append(self._event(call, state="rejected", status="temporarily_unavailable"))
                 return self._failure(tool_events=tool_events, sources=sources)
             if not self._valid_dispatch_result(dispatched, call.name):
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] resultado invalido de {call.name}", flush=True)
                 tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources)
 
             status = dispatched["status"]
             if status not in _SUCCESS_STATUSES or dispatched["error"] is not None:
+                if os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    print(f"[tools] estado no util de {call.name}: {status} {dispatched.get('error')}", flush=True)
                 tool_events.append(self._event(call, state="rejected", status=status))
                 return self._failure(tool_events=tool_events, sources=sources)
 
