@@ -2296,7 +2296,9 @@ async function checkLocalStatus() {
       control.disabled = !available;
       if (!available) control.checked = false;
     });
-    const mode = status.mode === "local_prototype" ? "Prototipo local" : "Servicio local";
+    const mode = status.mode === "local_prototype" ? "Prototipo local"
+      : status.mode === "public_serverless" ? "Versión pública"
+      : "Servicio local";
     const aiConfigured = status.ai?.status === "configured_not_verified";
     setStatusChip(`${mode} · ${aiConfigured ? "IA configurada" : "IA no conectada"}`, "ready");
     if (state.route) renderContext(state.route);

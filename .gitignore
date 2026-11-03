@@ -10,3 +10,5 @@ __pycache__/
 
 
 # (clave retirada de este archivo; ahora vive solo en prototipos/paideia-local/.env)
+.vercel
+.env*
