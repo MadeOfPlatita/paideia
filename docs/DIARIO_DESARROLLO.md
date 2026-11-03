@@ -279,6 +279,12 @@ Código subido a **https://github.com/MadeOfPlatita/paideia** (público). El equ
 
 El enlace público de la web sigue pendiente: el servidor actual es `ThreadingHTTPServer` en loopback y Cloudflare Workers usa el modelo `fetch`, de modo que hay que portar la capa HTTP. Esa parte necesita la cuenta de Cloudflare del equipo.
 
+## B7 — web pública en Vercel
+
+Cloudflare quedó descartado: sus Python Workers fallan al desplegar con `ModuleNotFoundError: workers` incluso con el proyecto oficial (issue abierto). Se portó la capa HTTP a una función WSGI para Vercel (`api/index.py`), reutilizando el motor y las condiciones; el catálogo y los estáticos se empaquetan en el build. Probada primero en local y después sobre la URL pública: catálogo, ficha, comparación (EBN 3,10 % / Self Bank 2,75 %, `quantitative_ready: true`) y cálculo (4.255,02 €) coinciden con la app local.
+
+Aplicación publicada en **https://paideia-mu.vercel.app**. El chat de IA va apagado en la web pública y la interfaz lo indica; la clave no se sube a un servidor ajeno. Repositorio privado hasta la entrega, por decisión del equipo.
+
 ## Registro a mantener al desarrollar
 
 En cada bloque de trabajo se anotarán el prompt o su extracto identificado como tal, herramienta/modelo si se conoce, cambios realizados, decisiones, pruebas ejecutadas con su resultado real y limitaciones pendientes. No se anotarán claves ni información personal de prueba.

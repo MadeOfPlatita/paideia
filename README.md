@@ -1,6 +1,10 @@
 # Paideia — cuaderno de ruta financiera
 
-Trabajo académico de Finanzas y Contabilidad (Universidad de Málaga). Paideia es una aplicación web local, en español, para explorar productos financieros con explicaciones, comparar hipótesis y llevarse un informe descargable. No es un asesor financiero, no ejecuta operaciones y no solicita datos personales.
+Trabajo académico de Finanzas y Contabilidad (Universidad de Málaga). Paideia es una aplicación web, en español, para explorar productos financieros con explicaciones, comparar hipótesis y llevarse un informe descargable. No es un asesor financiero, no ejecuta operaciones y no solicita datos personales.
+
+**Versión pública:** https://paideia-mu.vercel.app — biblioteca, comparador, escenarios y glosario. El chat con IA está apagado ahí a propósito: la clave no se publica en un servidor ajeno.
+
+**Ejecución local:** `cd prototipos/paideia-local && python app.py --port 8765` y abrir `http://127.0.0.1:8765/`. Sin dependencias externas; solo Python 3.10 o superior. En local, el chat se activa con una clave propia en `.env`.
 
 ## Qué se puede hacer hoy
 
