@@ -5,6 +5,7 @@ This is not a Groq protocol implementation and must not be used for real models.
 import json
 from enum import Enum
 from providers import ChatResult, ProviderError, ToolCall, build_chat_request
+from claims_catalog import VERSION as CLAIMS_VERSION
 from structured_education import EDITORIAL, VERSION
 
 
@@ -164,7 +165,13 @@ def parse_selection(result):
         if len(result.answer.encode('utf-8', errors='strict')) > MAX_RESPONSE_BYTES:
             raise ValueError('too large')
         selection = json.loads(result.answer, object_pairs_hook=_unique, parse_constant=_reject_constant)
-        if type(selection) is not dict or set(selection) != {'version', 'intent', 'claim_ids'}:
+        if type(selection) is not dict:
+            raise ValueError('invalid')
+        if selection.get('version') == CLAIMS_VERSION:
+            # Canal de afirmaciones cerradas (v2): la validación vive en claims_channel.
+            from claims_channel import validate_selection
+            return validate_selection(selection)
+        if set(selection) != {'version', 'intent', 'claim_ids'}:
             raise ValueError('invalid')
         ids = selection['claim_ids']
         if (type(selection['version']) is not str or selection['version'] != VERSION

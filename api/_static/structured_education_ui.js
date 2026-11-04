@@ -37,6 +37,20 @@
   function project(value,submitted){
     if(!obj(value) || value.provider_mode!=='test_only' || value.external_sent!==false) throw new Error('Origen estructurado no válido');
     const d=value.structured_education;
+    if(obj(d) && d.version==='paideia-education-v2'){
+      // v2: el catálogo lo posee el servidor (39 afirmaciones). El cliente comprueba
+      // forma y las invariantes del catálogo, no la igualdad con una copia local.
+      if(!keys(d,['version','kind','items','calculation']) || d.kind!=='claims' || !Array.isArray(d.items) || d.items.length>6) throw new Error('Contenido estructurado no válido');
+      const vistos=new Set();
+      for(const item of d.items){
+        if(!keys(item,['id','text']) || typeof item.id!=='string' || !/^[a-z0-9_]{3,64}$/.test(item.id) || vistos.has(item.id)) throw new Error('Afirmación no válida');
+        if(typeof item.text!=='string' || item.text.length<20 || item.text.length>600 || /[0-9%€]/.test(item.text)) throw new Error('Texto de afirmación no válido');
+        vistos.add(item.id);
+      }
+      if(d.calculation!==null) calculation(d.calculation,submitted);
+      else if(submitted) throw new Error('Falta el cálculo solicitado');
+      return {items:d.items.map(({id,text})=>({id,text})),calculation:d.calculation};
+    }
     if(!keys(d,['version','kind','items','calculation']) || d.version!=='paideia-education-v1' || d.kind!=='editorial' || !Array.isArray(d.items) || d.items.length<1 || d.items.length>5) throw new Error('Contenido estructurado no válido');
     const ids=new Set();
     for(const item of d.items) { if(!keys(item,['id','text']) || typeof item.id!=='string' || !Object.hasOwn(editorial,item.id) || editorial[item.id]!==item.text || ids.has(item.id)) throw new Error('Contenido editorial no válido'); ids.add(item.id); }

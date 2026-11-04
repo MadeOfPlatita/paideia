@@ -1102,6 +1102,10 @@ function renderHome() {
             feedback.appendChild(textElement("p", result.answer));
             if (calculation) renderChatCalculation(feedback, calculation);
           }
+          if (result.claims && typeof PaideiaClaims !== "undefined" && PaideiaClaims
+              && typeof PaideiaClaims.render === "function") {
+            PaideiaClaims.render(feedback, result.claims);
+          }
           renderChatSources(feedback, result.sources, result.sources_total, result.sources_truncated);
           renderChatProvenance(feedback, provenance);
           if (!withheld && includeHistory && historyConsent.checked && historyAtSend === historyRevision && result.provider_mode === "test_only" && result.answer) {
