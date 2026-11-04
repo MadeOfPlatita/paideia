@@ -431,7 +431,7 @@ function renderContext(route) {
   }[route] || ["Acompañamiento de Pai", "Explora con calma y separa los datos de los supuestos."];
   const aside = document.getElementById("context-panel");
   const head = el("div", { className: "context-heading" });
-  head.appendChild(el("img", { src: "./assets/pai-neutral.svg", alt: "", width: 46, height: 46 }));
+  head.appendChild(el("img", { src: "./assets/pai-mark.svg", alt: "", width: 46, height: 46 }));
   const identity = el("div");
   identity.appendChild(el("h2", {}, "Pai"));
   identity.appendChild(textElement("p", "Acompañamiento contextual"));
@@ -651,12 +651,12 @@ function renderHome() {
 
   const actions = el("div", { className: "home-actions" });
   const explore = el("section");
-  explore.appendChild(textElement("p", "03 / EXPLORAR", "eyebrow"));
+  explore.appendChild(textElement("p", "EXPLORAR", "eyebrow"));
   explore.appendChild(el("h2", {}, "Explora la biblioteca"));
   explore.appendChild(textElement("p", "Candidatos del catálogo local. La identidad y las condiciones se muestran por separado, sin mezclarlas."));
   explore.appendChild(routeLink("Abrir biblioteca", "#biblioteca", "button button-secondary"));
   const map = el("section");
-  map.appendChild(textElement("p", "01 / TU MAPA", "eyebrow"));
+  map.appendChild(textElement("p", "TU MAPA", "eyebrow"));
   map.appendChild(el("h2", {}, state.profileComplete ? "Tu mapa está listo" : "Empieza por tu mapa"));
   map.appendChild(textElement("p", state.profileComplete ? "Puedes editar cada respuesta o retomar las que dejaste pendientes." : "Unas preguntas sobre objetivos, situación y riesgo. Puedes responder «No lo sé», omitir o pausar cuando quieras."));
   map.appendChild(routeLink(state.profileComplete ? "Revisar mi mapa" : "Crear mi perfil", "#perfil", "button button-primary"));
