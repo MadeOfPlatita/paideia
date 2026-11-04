@@ -1,0 +1,6 @@
+{
+ "n": 7,
+ "q": "¿Qué significa la garantía de depósitos y por qué necesito consultar su cobertura y condiciones en fuentes oficiales?",
+ "answer_text": "El texto del modelo no se muestra en esta consulta de catálogo: no está validado y no puede adjudicar fuentes ni tasas. Se muestran los datos locales con su clase, fechas y límites.\n\nDatos locales del catálogo con su procedencia; no son una oferta publicable.\n\nNo hay fichas locales en este turno; no se muestra texto del modelo para evitar atribuciones no verificadas.\n\nTrazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.\n\nEl texto del modelo se ha omitido en este turno porque la consulta usó datos del catálogo; se muestran los datos locales con su fuente, clase, fechas y límites. El modelo no puede adjudicar fuentes ni tasas.\n\nEl texto de la respuesta no se valida semánticamente contra las fuentes ni contra las condiciones; solo las citas de la herramienta son datos locales.\n\nSin resultados de herramienta en este turno: cualquier cifra del texto no está respaldada por una cita local.\n\nHerramientas: search_products (executed)",
+ "elapsed_s": 6.0
+}

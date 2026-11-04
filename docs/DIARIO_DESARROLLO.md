@@ -285,11 +285,61 @@ Cloudflare quedó descartado: sus Python Workers fallan al desplegar con `Module
 
 Aplicación publicada en **https://paideia-mu.vercel.app**. El chat de IA va apagado en la web pública y la interfaz lo indica; la clave no se sube a un servidor ajeno. Repositorio privado hasta la entrega, por decisión del equipo.
 
+## B6 — detenido tras revisión final
+
+El segundo ciclo no supera la revisión independiente. Persisten defectos confirmados de paridad, estados y vigencia, además de un caso del ensayo B5 para ACC-01 que no se cubrió con Openbank. No se hace un tercer ciclo ni se presenta B6 como terminado. Detalle y límites en `informe-b6/REVISION-CICLO-2.md`.
+
+## B5 — ensayo ficticio con producto documentado
+
+**Actualización:** la aceptación inicial solo acreditó Openbank; la revisión B6 posterior halló un caso ACC-01 con condiciones falsamente ausentes. La aceptación general queda pendiente.
+
+Se conservó el recorrido de cinco pasos y se añadieron hechos con fuente, fecha y estado sin presentarlos como ofertas vigentes. El primer dictamen independiente fue desfavorable; tras un ciclo de corrección, el segundo informó resultado favorable, incluidos el recorrido con Openbank sin POST, recuperación y paridad de datos local/WSGI. Evidencia y límites en `ensayo-b5/EVIDENCIA.md`; cambios locales, sin publicación. El cálculo y los importes siguen siendo ficticios.
+
 ## B4 — Pai con catálogo
+
+**Actualización final de misión:** tras dos ciclos la revisión independiente volvió a rechazar B4; se ha detenido sin aceptar ni publicar. `pai-catalogo-20261103/REVISION-CICLO-2.md` conserva casos y límites.
+
+## B9 — robustez y accesibilidad funcional
+
+## B1 — avisos de error del chat
+
+Se distinguen límite y timeout sin prometer que una petición incierta no llegó al proveedor. El segundo ciclo recibió revisión independiente favorable acotada, con una observación pendiente de reproducir; B1 en su conjunto sigue sin aprobarse por calidad y riesgos del filtro. `pai-calidad/REVISION-ERRORES-CICLO-2.md`.
+
+## B9 — detalle
+
+La segunda corrección obtuvo revisión independiente favorable para el alcance local. Mejora foco, recuperación de errores y validación; se mantiene un desplazamiento horizontal residual en escritorio a 320 px y no se ha ensayado con lector de pantalla real. Sin publicación. Ver `robustez-accesibilidad/REVISION-CICLO-2.md`.
+
+## B8 — privacidad del chat (aceptado)
+
+El diagnóstico con pruebas RED demostró cuatro defectos reales: el consentimiento negaba enviar el mapa mientras el cuerpo lo llevaba, con la IA pública apagada la interfaz afirmaba «no se envía nada» y hacía un POST que recibía 405, el borrado no distinguía historial ni lo ya enviado al proveedor, y otra pestaña resucitaba la copia borrada.
+
+El ciclo 1 corrigió textos, gate de envío, alcance del borrado, avisos de fallo de almacenamiento y revocación entre pestañas por `storage`. La revisión independiente `deleg_f88b1fa6` aprobó los cuatro objetivos pero falló el bloqueo porque `chatIsConfigured()` devolvía verdadero con un `/api/status` sin bloque `ai`. El ciclo 2 lo cerró: sin `ai` o sin `status` textual no hay envío, se añadió la prueba `B8-2b` (roja antes del arreglo, verde después) y el aviso se actualiza si falla el estado.
+
+La revisión final `deleg_604d244d` dio dictamen favorable con 72 comprobaciones propias y reproducción independiente del caso en rojo. Sin rediseño, sin proveedor real y sin publicar. Evidencia y límites en `privacidad-capacidad/EVIDENCIA.md`.
+
+**Rectificación:** no consta revisión independiente favorable de B4 y una respuesta atribuyó a una fuente oficial un dato de fuente secundaria; su aceptación sigue pendiente. El servidor local que estaba en modo de depuración se detuvo; el chat público continúa desactivado.
 
 El equipo aprobó abrir el catálogo a Pai y se hizo con un ámbito nuevo, `catalogue_read`: búsqueda, ficha y calculadora. Comparar sigue siendo cosa del comparador. El adaptador une los candidatos con los cuatro productos transcritos y adjunta cada condición con su estado y su fuente; la proyección se valida campo a campo antes de salir al modelo.
 
 Probado con Groq real: preguntando por EBN responde 3,1 % con la URL oficial; preguntando por EBN frente a Self Bank responde 3,1 % frente a 2,75 % y avisa de que la fuente de Self Bank es secundaria. Por el camino hubo que aceptar llamadas sin `family`/`limit`, normalizar guiones tipográficos en los identificadores y subir el límite de rondas a tres.
+
+## Misión de 4 h 30 min — 4 de noviembre de 2026
+
+Trabajo local con el encargo `GOAL-PAIDEIA-4H30-20261104.md`: prioridad en una experiencia útil de Pai con productos trazables, sin rediseño y sin publicar nada que no estuviera revisado.
+
+**Trazabilidad del catálogo.** Las condiciones derivadas del snapshot citaban la fuente como un id interno (`"1"`, `"2"`) sin URL: la ficha de ACC-01 mostraba «2,61 % TAE» sin enlace. Ahora `catalogue_conditions.derive(..., sources=...)` resuelve esos ids con el ledger real de fuentes (`docs/validacion-04/05-catalogo/evidencia/sources-ledger.json`), añade `source_refs` con URL, título y fecha de consulta y falla cerrado (`SOURCE_UNRESOLVED`) si un id no resuelve. La app local lee el ledger y la función WSGI lo lleva empaquetado.
+
+Los dos depósitos comparables (`DEP-EBN-12` y `DEP-SELF-12`) existían en las condiciones y en el comparador pero no tenían ficha: `/api/products/<id>` devolvía `product: null`. Ahora tienen ficha mínima con lo transcrito y `conditions_state: "documented"`, sin entrar en la lista de 20 candidatos. El conflicto documentado de ACC-02 se sustituía por una frase genérica; ahora la ficha muestra el texto literal, mientras la lista y el comparador de metadatos siguen sin publicar cifras.
+
+**Ensayo ficticio.** El paso de condiciones decía «Condiciones no documentadas» con una tasa documentada delante porque solo miraba `entry.source`; ahora usa también `source_refs`. Verificado en navegador con ACC-01: 2,61 % TAE, vigencia hasta 2026-11-18 y fuente enlazada.
+
+**Pai con catálogo.** La proyección de herramientas descartaba `source_refs`; ahora las condiciones del chat llevan la fuente enlazada con título y fecha, con atribución «parcial» y clase «desconocida» cuando el registro no declara si es oficial o secundaria. El DTO de `/api/chat` ya no degrada esa condición a «desconocida», y un turno de catálogo con lista vacía deja de suprimir una explicación conceptual: no hay nada que atribuir y se mantiene el aviso de texto no validado.
+
+**Contador global de intentos.** `mission_ledger.py` cuenta cada envío real antes de abrir la conexión, con manifest por perfil fuera del repositorio (`Paideia/ledger-missions`), diario append-only con `fsync`, corte duro y lock entre procesos; cubre las dos rutinas que abren HTTPS al proveedor (`providers._post` y `secure_groq_session._guarded_https_post`). La primera revisión independiente encontró un bypass por la ruta de sesión contada, el corte que solo dejaba de contar, la colisión con el directorio de la misión nocturna y la falta de `send_state` en el HTTP; los cuatro se corrigieron y se verificaron.
+
+**Prueba real autorizada.** Con el cupo confirmado, se hicieron diez preguntas ficticias de la rúbrica desde la interfaz real: 15 intentos contados de 100. Tres respuestas conceptuales se mostraron, dos escenarios devolvieron el cálculo determinista correcto (1.000 € al 2 % compuesto dos años: 1.040,40 € y 40,40 €) y cinco quedaron suprimidas por el filtro léxico, incluidas preguntas legítimas sobre TIN/TAE o fuentes oficiales. Es un falso positivo del filtro, no una prueba de calidad del modelo: se documenta como límite y no se presenta a Pai como asesor validado.
+
+**Maquetas.** Tres propuestas aisladas de la pantalla Comparar en `docs/diseno-ideas/maquetas/`, con datos ficticios, sin red y sin tocar la aplicación.
 
 ## Registro a mantener al desarrollar
 

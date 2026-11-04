@@ -1,0 +1,7 @@
+{
+  "schema": "paideia-night-mission.v1",
+  "mission_id": "paideia-night-20261104",
+  "start_utc": "2026-11-04T00:00:00Z",
+  "deadline_utc": "2026-11-04T08:00:00Z",
+  "max_external_attempts": 20
+}

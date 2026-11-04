@@ -1,5 +1,13 @@
 # Pai — continuidad y pendientes, sin perder lo construido
 
+## Actualización tras la misión de 4 h 30 min (4/11/2026)
+
+La trazabilidad de las condiciones ya no se pierde en el camino: el registro de fuentes resuelve los ids del snapshot a URL con título y fecha, la ficha y el ensayo muestran esa fuente y el chat la enlaza. Un id sin resolver deja la condición en «desconocida» en lugar de publicar la cifra.
+
+La prueba real de la rúbrica (diez preguntas ficticias, 15 intentos de 100, sin perfil) deja tres conclusiones que condicionan el siguiente paso: (1) el motor determinista responde bien y con supuestos visibles; (2) el filtro léxico suprime respuestas legítimas que mencionan cifras, fuentes oficiales o vigencia —cinco de diez— así que no basta con ajustar el proveedor: hay que decidir el criterio de supresión; (3) un turno de catálogo sin resultados ya no borra la explicación conceptual, pero la ausencia de fichas locales sigue impidiendo atribuir datos. No se presenta a Pai como asesor financiero validado y la muestra no permite inferir una tasa de error.
+
+Pendiente inmediato, por orden: decidir el criterio de supresión con ejemplos revisados (falsos positivos documentados), completar la evaluación con proveedor y datos ficticios cuando el criterio esté aprobado, y solo después plantear publicación. El contador global (`mission_ledger.py`) queda disponible para la próxima ventana con cupo: se provisiona con `scripts/provision_mission.py` y se retira con `--close`.
+
 ## Cierre de correcciones QA, 3/11/2026
 
 [Correcciones locales aprobadas independientemente](correcciones-qa-20261103T172201/RESULTADOS.md): informe HTML autónomo guardado desde Hermes y leído en disco; wrapping móvil, horizontes comparativos y aviso temporal de Biblioteca. No se construyó ni habilitó Pai, ni se envió perfil/informe/escenarios a proveedores. No hay nuevas fórmulas, persistencia automática ni despliegue. Impresión nativa/PDF y adjunto del chat no certificados. Se conserva el orden de construcción de Pai descrito abajo; este cierre no autoriza iniciarlo ni convierte las propuestas de comparación de producto en un encargo activo.
@@ -38,7 +46,18 @@ Referencia histórica reciente:404Python/40Node/19HTTP con6GUIexcluidas; no pres
 
 Ruta estructurada real no ensamblada/habilitada/validada; calidad/contexto reales pendientes. Catálogo: candidatos no equivalen a condiciones cuantitativas vigentes y autorizadas. Hosting, carga y publicación pendientes. Control arbitrario del proceso Python no está aislado por la app ni por sus guardas de pruebas; no gastar ciclos indefinidos intentando prometer ese sandbox.
 
-## Prioridad actual del equipo
+## Actualización de continuidad — B4 y B5
+
+B9 tiene revisión local favorable acotada; queda el desplazamiento horizontal residual en escritorio a 320 px y la comprobación con lector de pantalla y dispositivo físico. No está publicado. Evidencia `robustez-accesibilidad/REVISION-CICLO-2.md`.
+
+B1 sigue pendiente de calidad y evaluación real: el historial solo está verificado con proveedor sintético y el filtro no cubre todas las recomendaciones ni afirmaciones de riesgo. Rúbrica preparada pero no ejecutada (`pai-calidad/RUBRICA-DIEZ-PREGUNTAS.md`); ver también `pai-calidad/REVISION-FILTRO-Y-ERRORES.md`. No reabrir B4 dentro de esta misión.
+
+Los avisos de error recibieron revisión favorable limitada a cuatro defectos (`pai-calidad/REVISION-ERRORES-CICLO-2.md`); queda una observación sin reproducir sobre volver al texto idéntico durante una petición. Eso no aprueba el conjunto de B1.
+
+B4 está detenido y no aceptado tras dos ciclos y revisión independiente desfavorable (`pai-catalogo-20261103/REVISION-CICLO-2.md`); no abrir un tercero en esta misión. B6 está detenido tras dos ciclos y dictamen desfavorable (`informe-b6/REVISION-CICLO-2.md`).
+B8 (privacidad y capacidad del chat) quedó aceptado el 4/11/2026 con revisión independiente favorable; evidencia en `privacidad-capacidad/EVIDENCIA.md`. Falta decidir si se publica, porque la web pública conserva la versión anterior. B5 solo está acreditado para Openbank: el mismo dictamen halló condiciones falsamente ausentes para ACC-01. Ninguno de estos cambios se ha desplegado. Continuar únicamente con trabajo independiente que no dependa de B6, sin rediseño. Los apartados anteriores y posteriores conservan su contexto histórico.
+
+## Prioridad actual del equipo (histórica)
 
 Ejecución de `docs/GOAL-PENDIENTES-20261103.md` (sin diseño). Cerrados B0, B1.1-B1.2, B2 y B3. El catálogo ya tiene condiciones con fuente y fecha, la biblioteca y la ficha las muestran con su estado, y el comparador compara TAE a 12 meses entre EBN (3,10 %) y Self Bank (2,75 %), con salto a Escenarios desde cada ficha. Siguiente en el orden: **B7 (publicación)**, bloqueado hasta que el equipo decida visibilidad y licencia del repositorio y la cuenta de hosting. De Pai quedan historial, filtro de calidad, errores reales y rúbrica (B1.3-B1.6), y la decisión sobre el catálogo por el modelo (B4).
 
