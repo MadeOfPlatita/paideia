@@ -84,3 +84,23 @@ La evaluación de diez preguntas señaló que Pai suprime respuestas legítimas,
 ---
 
 **Ningún resultado sintético se presenta como producción, ninguna prueba propia se presenta como aprobación y no se ha consumido cuota real de IA.**
+
+---
+
+## 7. Fase posterior — 5/11/2026, 00:55 (Málaga)
+
+Por indicación de Alejandro se abrió el repositorio y se actualizó la web. Resumen de lo hecho y su estado real:
+
+| Frente | Estado | Evidencia |
+|---|---|---|
+| Repositorio público | **Hecho** | `MadeOfPlatita/paideia` → `public`, verificado por API. Auditoría independiente: sin secretos en árbol ni en 1.371 objetos de historia; «apto con condiciones» de higiene |
+| Estado local de wrangler | **Retirado** | `worker/.wrangler/` incluía ciudad, código postal y coordenadas; fuera del árbol e ignorado. Los objetos siguen en la historia pública |
+| Cabeceras de seguridad | **Desplegadas** | `nosniff`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy` verificadas en producción |
+| Capa visual 2 | **Aprobada y desplegada** | Tarjetas de 16 px, borde `#303431`, rellenos 22-30 px, títulos de la maqueta. Revisión: 1.422 elementos/8 rutas con 0 fallos de contraste (sonda 0→1→0), 24/24 sin desbordes, avisos e informe en claro |
+| Regresión | **Sin regresiones** | 631+1 Python, 95 Node y 21/23 suites de navegador; las dos que fallan lo hacen igual sin la capa nueva |
+| Canal de afirmaciones cerradas | **Aprobado con un límite** | 39 afirmaciones, 7 códigos de rechazo, 54/54 ataques rechazados, 10/10 XSS literales. 676 Python + 108 Node |
+| Prueba real con IA | **Bloqueada** | 0 llamadas a Groq: el contador sigue con N2 abierto |
+
+**Límite declarado del canal (D6):** no hay `catalog_digest`, así que el navegador valida forma e invariantes del texto (longitud, charset, sin cifras) pero no una copia firmada del catálogo. Cerrarlo exige publicar el catálogo al cliente o firmar la respuesta.
+
+**Lo que sigue siendo decisión del equipo:** rediseñar el contador (N2), firmar o publicar el catálogo, acreditar permisos y vigencia del catálogo de productos, y las cuatro frases del catálogo editorial que la revisión pidió matizar (dato vencido, inflación, ejemplo TIN/TAE y garantía por persona).

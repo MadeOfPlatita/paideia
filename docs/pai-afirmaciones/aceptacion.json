@@ -1,0 +1,1601 @@
+{
+  "schema": "paideia-afirmaciones-aceptacion.v1",
+  "fecha": "2026-11-04",
+  "estado": "propuesta de aceptación; el contrato v2 no está implementado",
+  "estado_actual": {
+    "casos_verdes": 0,
+    "casos": 10,
+    "motivo": "`structured_education.VERSION` sigue en v1; los diez fixtures v2 devuelven 502.",
+    "validacion_de_la_matriz": {
+      "renderizador_v2_de_referencia": "10/10 verdes",
+      "controles_legado": "10/10 coinciden",
+      "adversariales": "7/7 rechazados"
+    }
+  },
+  "fuentes": {
+    "rubrica": "docs/pai-calidad/RUBRICA-DIEZ-PREGUNTAS.md",
+    "evaluacion": "docs/pai-calidad/ejecucion-4h30/EVALUACION.md",
+    "catalogo": "docs/pai-afirmaciones/CATALOGO.md",
+    "especificacion": "docs/pai-afirmaciones/ESPECIFICACION.md",
+    "precedente_codigo": "prototipos/paideia-local/structured_education.py"
+  },
+  "snapshot": {
+    "catalogo_sha256": "3afc93307bc6a426b52fcf2cedabd4cb357c639c0ac6a21fbb1fe0cbc5e5fa16",
+    "especificacion_sha256": "f6d7d36b532a4f5dbebc86bfba7eb7fe53ef186e135d7f2c610c33ec5a18f62c",
+    "catalogo_claims": 39,
+    "version_contenido": "paideia-education-v2",
+    "version_canal": "paideia-education-v2",
+    "catalogo_claims_evidencia": 5,
+    "especificacion_max_claims": 6,
+    "especificacion_max_answer_chars": 3000,
+    "claim_hashes": {
+      "alcance_educativo_sin_asesoramiento": "42208d90e9251d097ec96b9b635163a28082c964706d7a9bf37151bd06177589",
+      "alcance_datos_que_faltan": "25162a0fd1ee61c783cfc9e541898642885183ea6fbae4f86d0de3c5381e18c5",
+      "alcance_no_confirma_condiciones": "a605529ff105eb8d3cfbb8c386d623d62c2f8d121ff72f9cc2f4540a90124e0b",
+      "ahorro_frente_a_inversion": "da9f9147557eff6959e24635026186600d2f4ad3eb64b00c468e98c3d16b7f4c",
+      "ahorro_riesgo_inflacion": "bdc09641bca2c5e641b903f9f2b9894b1c64baf9e426772523077d5945dc9a04",
+      "ahorro_riesgos_de_invertir": "abce4e4b7153afea5fb01ba3901054127df3c08db9b61a644facb5280bb43982",
+      "interes_tin_nominal": "6fab65fcc8c7e5b988e29eb4546b3116b2d5025aea9fd607cefcb47006fbe99a",
+      "interes_tae_equivalente": "02d6ec0a782072e6345c113b2af06e7602a2c4180e39a4f0c6cac071f8ac1da6",
+      "interes_ejemplo_tin_tae": "b6e241e878b7a492e14ff7e04a572c9f9418a8c6c665cfc748fd75c6dbe3f6bc",
+      "interes_misma_base_comparacion": "69cd2024f322912b9a0d8fdc1ed615bb0e55a3bcf4553c20e40a832a4ac7144f",
+      "interes_compuesto": "45a757f15382dcf5f4040bc18de3ebda31e4de7b8a83f9bdada64798a89c2233",
+      "inflacion_que_es": "a792ae3984b07efbf482a405e7e0da6bb1c9905bbeb18596a07a72fed6a402ec",
+      "inflacion_nominal_y_real": "e3e9e11d213e50c75e32e61874dd1d41fa29c9fc82baa01048a43904d630ff2b",
+      "inflacion_descontar_no_restar": "13bdbe36670acfab277295c86ec6d68552ab52b2e1cb5a025dc5417bc2e53fa4",
+      "inflacion_limites_escenario": "0d568ce775bee49c6a578bab42e2d8a17803473f8ac015f7528ab15b4d2b8e9d",
+      "liquidez_que_es": "a704db9ee25bac14fe2c6403e7f46d3bd1cb78e8d943ec93cf2ecb496639024e",
+      "liquidez_plazo_y_vencimiento": "cfda4be6f408a3fab4d1d07693a83e6294730e6ca732a99e2d13bb68577625ac",
+      "liquidez_cancelacion_anticipada": "3040505c85e6c83a6a5ce8b7d5a7cadc9ae6d30158184f049e0b479ed2965936",
+      "liquidez_comisiones_y_penalizaciones": "acd17a613d1adcc979ea1adb348fbcfd7c1f7acfe47e8bffd24ec96ffdd67f95",
+      "comparar_criterios": "ccd85817accd6d8f0fc0b333bee49118dc66747a99e84ebe98dc58ce3fa2be73",
+      "comparar_misma_base": "8734477bfa627ca36a88c423602fc370406798b7836600154281750d67b5c2f9",
+      "comparar_falta_plazo": "8aea18f4d71b46fce0f21a497f15d3e70d2f16f9d7293688a669af6bb7009628",
+      "comparar_sin_mejor_absoluto": "3d68cd1e7a3f434bd84b72ecb7ce33d3d9c86d34f7e2cb1b2591017092762fc0",
+      "comparar_sin_recomendar": "73a2987fe3490f03161e5e4e42efcee81508656ff4bf69733c2e73071c98b938",
+      "garantia_de_depositos_que_es": "b37c110f7fcdeb3c2cdc6ddd6b8cd818269c6d8b96be8d678782af0f71bd92eb",
+      "garantia_limite_por_persona": "cd8b635cc5ba9c637f30e2bd32442d0394845eba544f769913890946de566e62",
+      "garantia_no_cubre_inversiones": "d365d93d727f86f208a812f3f56d12558c93f64afec25c41cd8f5657dfa19690",
+      "garantia_frente_a_solvencia": "f31c8825277b4d6f7b0905a37ae24d8ab450be01818ef64edbce6a3b0b98ff53",
+      "garantia_como_comprobarla": "ea517a8a0ea69f061a4631a0c4a4c90ad661b8c81f488d15fc12e1d367b095f5",
+      "garantia_capital_garantizado": "6b130796bcb820f66bb8bde94a3bdc8a4bdbd2dda9ee3f7312d21ba10c27a7b8",
+      "fuente_dato_vencido_no_sirve": "74132f256aa560dd6b0243917063e61f245226af85574830d31586e6869ec4c8",
+      "fuente_vencido_no_se_renueva_solo": "39b8f593985ad120d2495e26eaba2fcb68a8e09985b361588f83db1ae5d4c668",
+      "fuente_secundaria_que_es": "3eeb481c4723f680edb7f94812a445fd4fa89b31b3d1f17c5d17710a736ba609",
+      "fuente_secundaria_no_basta": "a1d806e672cde4fa2e08628fc06852d9f455704679af7434e6cd6eb24571b4e1",
+      "fuente_atribucion_con_prueba": "65d3b10b1e73f5464a9a4ce9168c7ac7a65e995c6e7cd0f1601f85ebba7ed2f8",
+      "simulacion_es_hipotetica": "08373004298cbcf9d637b358d153f75cb00ea34431f9ee088bcdf766fe0414f0",
+      "simulacion_supuestos": "9a89ccae35da15c231823d29f440284b8591cb3cdfa203d6f9b3a05a056c5631",
+      "simulacion_sin_costes_ni_impuestos": "cd2e24e6fe0668eb43e7e2c9348073d666f104b01978341617d344f036298a5f",
+      "simulacion_convencion_del_tipo": "b6767b4156fbf2c11077fd543293e995e5adab741f86402ef3642ceabde14696"
+    }
+  },
+  "contrato": {
+    "perfil_primario": "structured_education_v2",
+    "por_que": "Es el camino offline que ya existe y se ejecuta sin Groq: render_selection compone answer e items desde un diccionario del servidor. La matriz lo usa con el registro de 39 afirmaciones de CATALOGO.md.",
+    "perfil_alternativo": "claims_channel_v2",
+    "equivalencias": {
+      "claims": "structured_education.items",
+      "claims_state": "structured_education (sin state; el éxito es la presencia de items)",
+      "answer_text_state_exito": {
+        "structured_education_v2": "ausente o shown_unverified",
+        "claims_channel_v2": "shown_closed_claims"
+      },
+      "text_validation": {
+        "structured_education_v2": "ausente o not_performed",
+        "claims_channel_v2": "closed_selection"
+      },
+      "text_origin": {
+        "structured_education_v2": "no aplica",
+        "claims_channel_v2": "server"
+      },
+      "catalog_digest": {
+        "structured_education_v2": "snapshot.claim_hashes",
+        "claims_channel_v2": "claims.catalog_digest"
+      },
+      "rechazo": {
+        "structured_education_v2": "502 CHAT_STRUCTURED_INVALID_RESPONSE",
+        "claims_channel_v2": "200 con claims.state=rejected"
+      }
+    },
+    "estado_de_alineacion": "CATALOGO.md y ESPECIFICACION.md comparten la versión `paideia-education-v2` y el registro de 39 afirmaciones editoriales. Lo que difiere es el envoltorio del DTO, el estado de éxito y el límite de selección.",
+    "diferencias_de_envoltorio": [
+      "El contenido es el mismo: 39 editoriales de CATALOGO.md. ESPECIFICACION.md añade 5 plantillas de evidencia (`ficha_*`) que esta matriz no usa porque los diez casos son conceptuales o de motor, no consultas de ficha.",
+      "El perfil primario usa `structured_education.items` y `render_selection`; el canal de producción usa `claims.items`, `claims.state`, `claims.model_text_used` y `claims.catalog_digest`.",
+      "El éxito en el perfil primario es `shown_unverified` o la ausencia de estado; en el canal es `shown_closed_claims`, con `text_validation: closed_selection` y `text_origin: server`.",
+      "El rechazo en el perfil primario es `502 CHAT_STRUCTURED_INVALID_RESPONSE`; en el canal es `200` con `claims.state=rejected` y el motivo estable.",
+      "El canal permite `MAX_CLAIMS=6` y 3000 caracteres; esta matriz selecciona como máximo 5 y fija un objetivo de 2000, ambos compatibles con el límite del canal."
+    ],
+    "prerequisitos": [
+      "Implementar el registro v2: 39 textos de CATALOGO.md y su digest SHA-256.",
+      "Elegir el envoltorio: `structured_education` v2 (perfil primario) o `claims_channel` (perfil alternativo).",
+      "Espejar el registro en la UI correspondiente (`structured_education_ui.js` o `claims_ui.js`).",
+      "Fijar `MAX_CLAIMS` explícito (5 en esta matriz; 6 en la especificación) y el límite de longitud."
+    ]
+  },
+  "global": {
+    "consent": {
+      "notice_version": "paideia-chat-remote-v1",
+      "accepted_chat_processing": true,
+      "purpose": "free_chat",
+      "approved_fields": []
+    },
+    "proveedor_falso": "FakeChatProvider (structured_provider_adapter) con un único ChatResult(json.dumps(selection), None, (), 'stop'); sin transporte, sin red y sin lectura de entorno.",
+    "adaptador": "StructuredProviderAdapter(fake, test_only=True)",
+    "servicio": "LocalChatService(provider=adapter, enabled=True, test_only=True, structured_mode=True)",
+    "endpoint_opcional": "POST /api/chat con running_server/request de tests/test_backend_integration.py",
+    "como_ejecutar": {
+      "directorio": "prototipos/paideia-local",
+      "comando": "python -m pytest tests/test_pai_afirmaciones_aceptacion.py -q",
+      "no_necesita": [
+        "GROQ_API_KEY",
+        "red",
+        "Session",
+        "MissionBudget",
+        "StructuredSessionFixture"
+      ]
+    },
+    "max_claims": 5,
+    "spec_max_claims": 6,
+    "max_answer_chars": 3000,
+    "soft_target_chars": 2000,
+    "version_contenido": "paideia-education-v2",
+    "nunca_en_la_respuesta": {
+      "literales": [
+        "Este depósito es la mejor opción para ti.",
+        "Te recomiendo contratar el producto de esta entidad.",
+        "El capital está protegido en caso de insolvencia.",
+        "El capital está garantizado al cien por cien.",
+        "Los depósitos están cubiertos hasta una cifra concreta.",
+        "Este producto no tiene riesgo / es seguro.",
+        "La oferta sigue vigente / la fuente es oficial.",
+        "La TAE de este producto es la más alta del mercado.",
+        "El TIN siempre es menor que la TAE.",
+        "Si el plazo venció, la oferta se renueva.",
+        "El dato vencido del ejemplo sigue siendo la referencia.",
+        "Una fuente secundaria es fiable si el medio es conocido.",
+        "La garantía de depósitos cubre fondos de inversión y ETF.",
+        "La solvencia de la entidad garantiza el capital.",
+        "Esta simulación muestra lo que ganarás.",
+        "El resultado ya incluye impuestos y comisiones.",
+        "La aplicación ha revisado la ficha y confirma las condiciones.",
+        "Este depósito no tiene comisiones / puedes cancelar cuando quieras.",
+        "Los depósitos son la opción más segura para ahorrar.",
+        "La TAE incluye todos los gastos."
+      ],
+      "regex": [
+        "\\d",
+        "[%€$£]",
+        "\\b(?:oficial|oficiales|oficialmente|vigente|vigentes|vigencia)\\b",
+        "\\ben\\s+vigor\\b",
+        "\\b(?:100\\s*%|cien\\s+por\\s+cien)\\b",
+        "\\b(?:sin\\s+riesgo|libre\\s+de\\s+riesgo|no\\s+conlleva\\s+ning[uú]n\\s+riesgo)\\b",
+        "\\bcapital\\s+protegid[oa]\\b",
+        "\\b(?:te\\s+recomiendo|recomiendo\\s+contratar|deber[ií]as\\s+contratar)\\b",
+        "\\b(?:la\\s+mejor\\s+(?:opci[oó]n|elecci[oó]n)|m[aá]s\\s+seguro)\\b",
+        "\\b(?:sigue\\s+(?:vigente|siendo\\s+v[aá]lido)|se\\s+renueva\\s+autom[aá]ticamente)\\b",
+        "\\bconfirmad[oa]\\s+por\\b",
+        "\\bseg[uú]n\\s+(?:el|la)\\s+(?:banco|entidad|fuente)\\b",
+        "\\b(?:Openbank|Pibank|Sinycon|Bestinver|Azvalor|OLEA|iShares|Xtrackers|VanEck|State Street|Self Bank)\\b",
+        "\\bFondo de Garant[ií]a de Dep[oó]sitos\\b",
+        "\\bCuenta Contigo\\b",
+        "\\bDep[oó]sito T[uú]\\+",
+        "\\bLetra del Tesoro\\b"
+      ]
+    },
+    "como_se_evalua_no_debe_aparecer": "Las listas `no_debe_aparecer` de cada caso son criterios de revisión. La comprobación ejecutable es `esperado.answer_matches_none` + `global.nunca_en_la_respuesta.regex` + `esperado.answer_no_digits`.",
+    "dto": {
+      "provider_mode": "test_only",
+      "external_sent": false,
+      "answer_equals_join": true,
+      "answer_text_state_prohibidos": [
+        "withheld_unbacked_claim",
+        "withheld_catalogue_evidence"
+      ],
+      "sources": "vacio_o_ausente",
+      "text_validation": [
+        "ausente",
+        "not_performed"
+      ],
+      "answer_provenance": "ausente_o_sin_withheld_reason",
+      "catalogue_used": false
+    },
+    "auditoria_catalogo": {
+      "claims": 39,
+      "ids": [
+        "ahorro_frente_a_inversion",
+        "ahorro_riesgo_inflacion",
+        "ahorro_riesgos_de_invertir",
+        "alcance_datos_que_faltan",
+        "alcance_educativo_sin_asesoramiento",
+        "alcance_no_confirma_condiciones",
+        "comparar_criterios",
+        "comparar_falta_plazo",
+        "comparar_misma_base",
+        "comparar_sin_mejor_absoluto",
+        "comparar_sin_recomendar",
+        "fuente_atribucion_con_prueba",
+        "fuente_dato_vencido_no_sirve",
+        "fuente_secundaria_no_basta",
+        "fuente_secundaria_que_es",
+        "fuente_vencido_no_se_renueva_solo",
+        "garantia_capital_garantizado",
+        "garantia_como_comprobarla",
+        "garantia_de_depositos_que_es",
+        "garantia_frente_a_solvencia",
+        "garantia_limite_por_persona",
+        "garantia_no_cubre_inversiones",
+        "inflacion_descontar_no_restar",
+        "inflacion_limites_escenario",
+        "inflacion_nominal_y_real",
+        "inflacion_que_es",
+        "interes_compuesto",
+        "interes_ejemplo_tin_tae",
+        "interes_misma_base_comparacion",
+        "interes_tae_equivalente",
+        "interes_tin_nominal",
+        "liquidez_cancelacion_anticipada",
+        "liquidez_comisiones_y_penalizaciones",
+        "liquidez_plazo_y_vencimiento",
+        "liquidez_que_es",
+        "simulacion_convencion_del_tipo",
+        "simulacion_es_hipotetica",
+        "simulacion_sin_costes_ni_impuestos",
+        "simulacion_supuestos"
+      ],
+      "reglas": [
+        "texto sin dígitos",
+        "texto sin % € $ £",
+        "texto sin oficial/oficiales/oficialmente/vigente/vigentes/vigencia/en vigor",
+        "texto sin nombres de entidades, productos o medios",
+        "texto sin recomendación, superlativo ni garantía absoluta",
+        "texto sin duplicados",
+        "entre una y tres frases por afirmación",
+        "id único en snake_case"
+      ],
+      "excepciones_conocidas": "7 de los 39 textos disparan `_text_surface_gate` por términos como «porcentaje», «punto», «confirma» o «fuente:»; el canal cerrado no aplica esa frontera y no debe aplicarla. 32/39 pasan la frontera léxica.",
+      "gate_limpio": 32
+    },
+    "ui": {
+      "archivo": "prototipos/paideia-local/static/structured_education_ui.js",
+      "copia": "api/_static/structured_education_ui.js",
+      "assertions": [
+        "version === 'paideia-education-v2'",
+        "los 39 ids del catálogo existen en el diccionario editorial de la UI",
+        "items.length <= 5",
+        "un id desconocido, un texto cambiado o un duplicado lanzan error",
+        "project(dto).items[].text === CATALOGO[id].text",
+        "project no devuelve ni muestra answer"
+      ]
+    },
+    "adversarial": [
+      {
+        "nombre": "seleccion_v1",
+        "fixture": {
+          "version": "paideia-education-v1",
+          "intent": "explain",
+          "claim_ids": [
+            "risk"
+          ]
+        },
+        "esperado": "502 CHAT_STRUCTURED_INVALID_RESPONSE"
+      },
+      {
+        "nombre": "claim_desconocido",
+        "fixture": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "claim_inexistente"
+          ]
+        },
+        "esperado": "502 CHAT_STRUCTURED_INVALID_RESPONSE"
+      },
+      {
+        "nombre": "claim_duplicado",
+        "fixture": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "ahorro_frente_a_inversion",
+            "ahorro_frente_a_inversion"
+          ]
+        },
+        "esperado": "502 CHAT_STRUCTURED_INVALID_RESPONSE"
+      },
+      {
+        "nombre": "lista_vacia",
+        "fixture": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": []
+        },
+        "esperado": "502 CHAT_STRUCTURED_INVALID_RESPONSE"
+      },
+      {
+        "nombre": "texto_libre_adicional",
+        "fixture": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "ahorro_frente_a_inversion"
+          ],
+          "answer": "SECRET_SYNTHETIC"
+        },
+        "esperado": "502 CHAT_STRUCTURED_INVALID_RESPONSE"
+      },
+      {
+        "nombre": "scenario_en_explain",
+        "fixture": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "ahorro_frente_a_inversion"
+          ]
+        },
+        "request_extra": {
+          "scenario": {
+            "principal": "1000.00",
+            "annual_rate_percent": "0",
+            "years": 1,
+            "monthly_contribution": "0.00",
+            "method": "compound",
+            "inflation_percent": "0"
+          }
+        },
+        "esperado": "502 CHAT_STRUCTURED_INVALID_RESPONSE"
+      },
+      {
+        "nombre": "calculate_sin_scenario",
+        "fixture": {
+          "version": "paideia-education-v2",
+          "intent": "calculate",
+          "claim_ids": [
+            "simulacion_supuestos"
+          ]
+        },
+        "esperado": "502 CHAT_STRUCTURED_INVALID_RESPONSE"
+      }
+    ],
+    "regresion_si": [
+      "La respuesta vuelve a `withheld_unbacked_claim` o `withheld_catalogue_evidence`.",
+      "El texto visible contiene cualquier dígito, % o símbolo monetario.",
+      "Aparece «oficial», «vigente», «vigencia» o «en vigor», incluso negado.",
+      "Aparece un nombre de producto, entidad o medio.",
+      "El `answer` no es exactamente la unión de los `items` esperados.",
+      "Un id seleccionado no existe en el registro o se repite.",
+      "El proveedor recibe el escenario, el consentimiento o datos del usuario.",
+      "El proveedor se llama más de una vez o se reintenta el turno."
+    ]
+  },
+  "casos": [
+    {
+      "id": "P1",
+      "pregunta": "¿En qué se diferencian ahorro e inversión y qué riesgos puede tener cada uno?",
+      "esperado_usuario": "Cuatro párrafos seguidos, sin avisos de retención ni prosa del modelo: distinción entre ahorrar e invertir, pérdida de poder adquisitivo del ahorro, riesgos de invertir (emisor, liquidez, custodia, mercado) y diferencia entre importe nominal y real. Ninguna cifra.",
+      "no_debe_aparecer": [
+        "que ahorrar sea sin riesgo",
+        "que invertir garantice rentabilidad",
+        "«instrumentos seguros»",
+        "«riesgo mínimo de pérdida»"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "ahorro_frente_a_inversion",
+            "ahorro_riesgo_inflacion",
+            "ahorro_riesgos_de_invertir",
+            "inflacion_nominal_y_real"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "¿En qué se diferencian ahorro e inversión y qué riesgos puede tener cada uno?",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "ahorro_frente_a_inversion",
+          "ahorro_riesgo_inflacion",
+          "ahorro_riesgos_de_invertir",
+          "inflacion_nominal_y_real"
+        ],
+        "claims_min": 4,
+        "aporta": {
+          "ahorro_frente_a_inversion": "Qué separa ahorrar de invertir y qué prioriza cada uno.",
+          "ahorro_riesgo_inflacion": "El ahorro nominal no protege por sí solo de la inflación.",
+          "ahorro_riesgos_de_invertir": "Riesgos de emisor, liquidez, custodia y mercado; diversificar no los elimina.",
+          "inflacion_nominal_y_real": "Nominal frente a real; el cálculo real es una aproximación."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "Ahorrar es apartar dinero",
+          "invertir es poner ese dinero a trabajar",
+          "pérdida de poder adquisitivo",
+          "solvencia del emisor"
+        ],
+        "answer_matches_none": [
+          "ahorr\\w*\\s+es\\s+sin\\s+riesgo",
+          "invertir\\s+garantiza",
+          "rendimiento\\s+garantizado"
+        ],
+        "answer_chars": 1261,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "Ahorrar es reservar dinero; invertir busca rendimiento y puede perder valor. El ahorro afronta la inflación y la inversión añade volatilidad y riesgo de la entidad.",
+        "answer_text_state": "shown_unverified",
+        "withheld_reason": null
+      },
+      "estado_partida": "Prosa mostrada (`shown_unverified`, 164 caracteres); sin afirmaciones v2. La prosa usa «instrumentos seguros» y «riesgo mínimo», punto ciego que la evaluación ya señaló.",
+      "regresion_si": [
+        "La respuesta omite la distinción ahorro/inversión o los riesgos de invertir.",
+        "Aparece «sin riesgo», «instrumentos seguros» o una promesa de rentabilidad.",
+        "Se nombra un producto o una entidad.",
+        "El panel vuelve a estar dominado por avisos y no por las afirmaciones."
+      ]
+    },
+    {
+      "id": "P2",
+      "pregunta": "¿Qué diferencia hay entre TIN y TAE? Explica un ejemplo hipotético sin atribuirlo a una entidad.",
+      "esperado_usuario": "Cuatro párrafos: qué es el TIN, qué añade la TAE, un ejemplo conceptual sin porcentajes y por qué la capitalización separa ambos. El ejemplo no se atribuye a ninguna entidad ni producto y no contiene cifras.",
+      "no_debe_aparecer": [
+        "cualquier cifra o porcentaje",
+        "«la TAE siempre es mayor»",
+        "atribuir el ejemplo a una entidad o producto",
+        "«TAE de este producto»"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "interes_tin_nominal",
+            "interes_tae_equivalente",
+            "interes_ejemplo_tin_tae",
+            "interes_compuesto"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "¿Qué diferencia hay entre TIN y TAE? Explica un ejemplo hipotético sin atribuirlo a una entidad.",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "interes_tin_nominal",
+          "interes_tae_equivalente",
+          "interes_ejemplo_tin_tae",
+          "interes_compuesto"
+        ],
+        "claims_min": 4,
+        "aporta": {
+          "interes_tin_nominal": "El TIN no incorpora la frecuencia de pago ni todos los gastos.",
+          "interes_tae_equivalente": "La TAE resume coste o rendimiento anual bajo supuestos.",
+          "interes_ejemplo_tin_tae": "Ejemplo conceptual sin cifras: reinvertir separa la TAE del TIN.",
+          "interes_compuesto": "La capitalización frecuente separa el resultado del cálculo lineal."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "El TIN es el tipo de interés nominal",
+          "La TAE es la tasa anual equivalente",
+          "Ejemplo conceptual",
+          "El interés compuesto"
+        ],
+        "answer_matches_none": [
+          "siempre\\s+es\\s+mayor",
+          "siempre\\s+(?:es\\s+)?menor",
+          "\\bTAE\\s+siempre\\b"
+        ],
+        "answer_chars": 1017,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "El TIN es el tipo nominal y la TAE incluye la capitalización y los gastos. Ejemplo hipotético: un 3 % nominal capitalizado mensualmente da una TAE algo mayor, sin atribuirlo a ninguna entidad.",
+        "answer_text_state": "withheld_unbacked_claim",
+        "withheld_reason": "figure"
+      },
+      "estado_partida": "Prosa retenida: `answer_text_state=withheld_unbacked_claim`, `withheld_reason=figure`, `answer=\"\"`; cero contenido. Es el falso positivo estructural confirmado por la evaluación.",
+      "regresion_si": [
+        "La respuesta vuelve a quedar vacía o solo con avisos.",
+        "Aparece un porcentaje, un importe o una cifra junto a TIN/TAE.",
+        "Se atribuye el ejemplo a una entidad, producto o medio.",
+        "Se afirma que la TAE siempre supera al TIN sin matizar que pueden coincidir."
+      ]
+    },
+    {
+      "id": "P3",
+      "pregunta": "¿Cómo afecta la inflación al poder adquisitivo de 1.000 € en un escenario ficticio?",
+      "esperado_usuario": "Cinco párrafos sobre inflación, nominal/real, descuento frente a resta, límites del escenario y supuestos; debajo, el bloque del motor con principal 1.000,00, inflación 2, saldo nominal 1.000,00, saldo ajustado 980,39 e interés 0,00.",
+      "no_debe_aparecer": [
+        "«la inflación será del 2 %»",
+        "«pérdida exacta»",
+        "presentar 980,39 como predicción",
+        "omitir el bloque de supuestos"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "calculate",
+          "claim_ids": [
+            "inflacion_que_es",
+            "inflacion_nominal_y_real",
+            "inflacion_descontar_no_restar",
+            "inflacion_limites_escenario",
+            "simulacion_supuestos"
+          ]
+        },
+        "scenario": {
+          "principal": "1000.00",
+          "annual_rate_percent": "0",
+          "years": 1,
+          "monthly_contribution": "0.00",
+          "method": "compound",
+          "inflation_percent": "2"
+        },
+        "request": {
+          "message": "¿Cómo afecta la inflación al poder adquisitivo de 1.000 € en un escenario ficticio?",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "inflacion_que_es",
+          "inflacion_nominal_y_real",
+          "inflacion_descontar_no_restar",
+          "inflacion_limites_escenario",
+          "simulacion_supuestos"
+        ],
+        "claims_min": 5,
+        "aporta": {
+          "inflacion_que_es": "Qué es la inflación y que la cesta media no representa a una persona.",
+          "inflacion_nominal_y_real": "Saldo nominal frente a poder adquisitivo real.",
+          "inflacion_descontar_no_restar": "Se descuenta la inflación acumulada; no se resta linealmente.",
+          "inflacion_limites_escenario": "El escenario es una hipótesis, no un pronóstico.",
+          "simulacion_supuestos": "El resultado depende de los supuestos y el cálculo no los justifica."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "descuenta la inflación acumulada",
+          "no se resta un porcentaje suelto",
+          "hipótesis, no un pronóstico"
+        ],
+        "answer_matches_none": [
+          "p[eé]rdida\\s+exacta",
+          "inflaci[oó]n\\s+(?:ser[aá]|futura)",
+          "garantiza\\s+el\\s+poder"
+        ],
+        "answer_chars": 1188,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": "presente",
+        "motor": {
+          "summary": {
+            "contributions": "1000.00",
+            "final_balance": "1000.00",
+            "interest": "0.00",
+            "inflation_adjusted": "980.39"
+          },
+          "assumptions": {
+            "principal": "1000.00",
+            "annual_rate_percent": "0",
+            "years": 1,
+            "monthly_contribution": "0.00",
+            "method": "compound",
+            "inflation_percent": "2"
+          },
+          "convention": {
+            "annual_rate_convention": "effective_annual_rate",
+            "monthly_rate_conversion": "effective_monthly_rate",
+            "taxes_included": false,
+            "fees_included": false
+          },
+          "flags": {
+            "hypothetical": true,
+            "not_prediction": true,
+            "currency": "EUR"
+          }
+        }
+      },
+      "control_legado": {
+        "prosa": "Con un 2 % de inflación, 1.000 € pasan a equivaler a 980,39 € en poder adquisitivo; la pérdida es 19,61 €.",
+        "answer_text_state": "withheld_unbacked_claim",
+        "withheld_reason": "figure"
+      },
+      "estado_partida": "Motor correcto: `final_balance=1000.00`, `inflation_adjusted=980.39`, `interest=0.00`; prosa retenida por `figure`; sin afirmaciones v2.",
+      "regresion_si": [
+        "Falta el bloque `calculation` o alguno de los seis supuestos.",
+        "`inflation_adjusted` no es 980.39 o el motor usa descuento lineal (980.00).",
+        "La respuesta no explica que se descuenta la inflación en lugar de restarla.",
+        "Se presenta el 2 % como dato de la pregunta o el 980,39 como predicción."
+      ]
+    },
+    {
+      "id": "P4",
+      "pregunta": "¿Qué debo revisar sobre liquidez y cancelación antes de elegir un depósito?",
+      "esperado_usuario": "Cinco párrafos: qué es la liquidez, plazo y vencimiento, cancelación anticipada, comisiones y penalizaciones, y por qué la solvencia no sustituye a la garantía. No aparece la frase «capital protegido» sin límite.",
+      "no_debe_aparecer": [
+        "«capital protegido en caso de insolvencia»",
+        "«la solvencia garantiza el capital»",
+        "«sin comisiones»",
+        "«puedes cancelar cuando quieras»"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "liquidez_que_es",
+            "liquidez_plazo_y_vencimiento",
+            "liquidez_cancelacion_anticipada",
+            "liquidez_comisiones_y_penalizaciones",
+            "garantia_frente_a_solvencia"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "¿Qué debo revisar sobre liquidez y cancelación antes de elegir un depósito?",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "liquidez_que_es",
+          "liquidez_plazo_y_vencimiento",
+          "liquidez_cancelacion_anticipada",
+          "liquidez_comisiones_y_penalizaciones",
+          "garantia_frente_a_solvencia"
+        ],
+        "claims_min": 5,
+        "aporta": {
+          "liquidez_que_es": "Disponibilidad sin perder valor ni asumir costes relevantes.",
+          "liquidez_plazo_y_vencimiento": "Plazo y vencimiento no equivalen a disponibilidad.",
+          "liquidez_cancelacion_anticipada": "Puede ser libre, con penalización o no permitida.",
+          "liquidez_comisiones_y_penalizaciones": "Costes que reducen el resultado neto.",
+          "garantia_frente_a_solvencia": "Solvencia y garantía son protecciones distintas."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "facilidad para disponer del dinero",
+          "cancelación anticipada",
+          "Comisiones, penalizaciones y gastos",
+          "La solvencia de una entidad y la garantía de depósitos son cosas distintas"
+        ],
+        "answer_matches_none": [
+          "solvencia\\s+garantiza",
+          "sin\\s+comisiones",
+          "capital\\s+protegido"
+        ],
+        "answer_chars": 1148,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "Antes de elegir un depósito revisa plazo, cancelación, comisiones, tipo y garantía. Para asegurarte de que tu capital está protegido en caso de insolvencia, comprueba también la solvencia de la entidad.",
+        "answer_text_state": "shown_unverified",
+        "withheld_reason": null
+      },
+      "estado_partida": "Prosa mostrada (`shown_unverified`, 202 caracteres); la frase «capital protegido en caso de insolvencia» pasa el filtro. Es la casi-puerta que la evaluación señala como defecto de fondo. Sin afirmaciones v2.",
+      "regresion_si": [
+        "Aparece «capital protegido» o «protegido en caso de insolvencia» sin límite de cobertura.",
+        "Se presenta la solvencia como sustituto de la garantía.",
+        "Se afirma que un producto no tiene comisiones o que se cancela siempre gratis.",
+        "Falta la cancelación anticipada o las comisiones entre los párrafos."
+      ]
+    },
+    {
+      "id": "P5",
+      "pregunta": "Tengo como objetivo ficticio aprender y un horizonte de dos años. ¿Qué cuestiones me ayudarían a comparar alternativas sin recomendarme una contratación?",
+      "esperado_usuario": "Cinco párrafos: criterios de comparación, base común, ausencia de una opción mejor en abstracto, frontera de no recomendar y comparabilidad de TAE. Ninguna recomendación ni nombre de producto.",
+      "no_debe_aparecer": [
+        "«te recomiendo»",
+        "«contrata»",
+        "«la mejor opción»",
+        "«la TAE más alta es la mejor»",
+        "nombres de producto"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "comparar_criterios",
+            "comparar_misma_base",
+            "comparar_sin_mejor_absoluto",
+            "comparar_sin_recomendar",
+            "interes_misma_base_comparacion"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "Tengo como objetivo ficticio aprender y un horizonte de dos años. ¿Qué cuestiones me ayudarían a comparar alternativas sin recomendarme una contratación?",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "comparar_criterios",
+          "comparar_misma_base",
+          "comparar_sin_mejor_absoluto",
+          "comparar_sin_recomendar",
+          "interes_misma_base_comparacion"
+        ],
+        "claims_min": 5,
+        "aporta": {
+          "comparar_criterios": "Lista de criterios que hay que leer juntos.",
+          "comparar_misma_base": "Solo se compara con el mismo plazo, moneda y fecha.",
+          "comparar_sin_mejor_absoluto": "No hay una opción mejor en abstracto.",
+          "comparar_sin_recomendar": "Se explican criterios; no se recomienda contratar.",
+          "interes_misma_base_comparacion": "Dos TAE solo son comparables con la misma base."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "Para comparar alternativas conviene mirar",
+          "No hay una opción mejor en abstracto",
+          "no se puede recomendar la contratación"
+        ],
+        "answer_matches_none": [
+          "te\\s+recomiendo",
+          "contrata\\s+(?:este|el)\\s+producto",
+          "ordenar\\s+por\\s+TAE"
+        ],
+        "answer_chars": 1214,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "Para comparar sin recomendación, mira la ficha y la fuente oficial, la TAE, el plazo, la liquidez y las comisiones; no elijas por una sola cifra.",
+        "answer_text_state": "withheld_unbacked_claim",
+        "withheld_reason": "attribution"
+      },
+      "estado_partida": "Prosa retenida: `withheld_unbacked_claim`, `withheld_reason=attribution`, `answer=\"\"`; cero contenido. El enunciado y la respuesta correcta contienen los disparadores («oficial», TAE).",
+      "regresion_si": [
+        "La respuesta recomienda contratar, elegir o ordenar productos.",
+        "Aparece un superlativo («la mejor», «la más segura») o un nombre de producto.",
+        "Se omite la frontera de que no es una recomendación personalizada.",
+        "La respuesta vuelve a quedar vacía o solo con avisos."
+      ]
+    },
+    {
+      "id": "P6",
+      "pregunta": "Quiero comparar dos depósitos, pero solo conozco el plazo de uno. ¿Qué datos faltan antes de comparar?",
+      "esperado_usuario": "Cinco párrafos: falta el plazo del segundo depósito, qué hacer cuando faltan datos, criterios de comparación, base común y plazo/vencimiento. No se supone el dato ausente.",
+      "no_debe_aparecer": [
+        "«puedes comparar sin el plazo»",
+        "«el plazo es el mismo»",
+        "«no falta ningún dato»",
+        "nombres de producto o entidad"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "comparar_falta_plazo",
+            "alcance_datos_que_faltan",
+            "comparar_criterios",
+            "comparar_misma_base",
+            "liquidez_plazo_y_vencimiento"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "Quiero comparar dos depósitos, pero solo conozco el plazo de uno. ¿Qué datos faltan antes de comparar?",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "comparar_falta_plazo",
+          "alcance_datos_que_faltan",
+          "comparar_criterios",
+          "comparar_misma_base",
+          "liquidez_plazo_y_vencimiento"
+        ],
+        "claims_min": 5,
+        "aporta": {
+          "comparar_falta_plazo": "Sin el plazo del segundo no hay comparación posible.",
+          "alcance_datos_que_faltan": "Si falta un dato, se dice y se señala; no se supone.",
+          "comparar_criterios": "Qué mirar además del plazo.",
+          "comparar_misma_base": "La comparación exige la misma base temporal.",
+          "liquidez_plazo_y_vencimiento": "Plazo y vencimiento como datos necesarios."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "Si solo se conoce el plazo de uno de los dos productos",
+          "no se puede comparar su rendimiento",
+          "decir que no se puede concluir"
+        ],
+        "answer_matches_none": [
+          "puedes\\s+comparar\\s+sin",
+          "el\\s+plazo\\s+es\\s+el\\s+mismo"
+        ],
+        "answer_chars": 1167,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "Falta el plazo del segundo depósito, su capitalización, comisiones, liquidez y cancelación, garantía y emisor; sin el plazo no hay comparación posible.",
+        "answer_text_state": "shown_unverified",
+        "withheld_reason": null
+      },
+      "estado_partida": "Prosa mostrada (`shown_unverified`, 151 caracteres), pero no nombra el plazo del segundo depósito como dato faltante. Sin afirmaciones v2.",
+      "regresion_si": [
+        "La respuesta no identifica el plazo del segundo depósito como dato que falta.",
+        "Se supone que el plazo desconocido es igual al conocido.",
+        "Se afirma que la comparación es posible sin ese dato.",
+        "Se nombra un producto concreto."
+      ]
+    },
+    {
+      "id": "P7",
+      "pregunta": "¿Qué significa la garantía de depósitos y por qué necesito consultar su cobertura y condiciones en fuentes oficiales?",
+      "esperado_usuario": "Cinco párrafos: qué protege la garantía, límite por persona y entidad, solvencia frente a garantía, cómo comprobarla y qué no cubre. Sin cifras de cobertura ni la palabra «oficial»; la idea se expresa como documentación y régimen aplicable.",
+      "no_debe_aparecer": [
+        "«100 %»",
+        "«hasta 100.000 €»",
+        "«todos los depósitos»",
+        "«cobertura total»",
+        "«Fondo de Garantía de Depósitos»",
+        "«fuente oficial»"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "garantia_de_depositos_que_es",
+            "garantia_limite_por_persona",
+            "garantia_frente_a_solvencia",
+            "garantia_como_comprobarla",
+            "garantia_no_cubre_inversiones"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "¿Qué significa la garantía de depósitos y por qué necesito consultar su cobertura y condiciones en fuentes oficiales?",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "garantia_de_depositos_que_es",
+          "garantia_limite_por_persona",
+          "garantia_frente_a_solvencia",
+          "garantia_como_comprobarla",
+          "garantia_no_cubre_inversiones"
+        ],
+        "claims_min": 5,
+        "aporta": {
+          "garantia_de_depositos_que_es": "Protección legal limitada a depósitos que cumplen requisitos.",
+          "garantia_limite_por_persona": "Límite por persona y entidad; repartir cuentas no multiplica la cobertura.",
+          "garantia_frente_a_solvencia": "La solvencia no sustituye a la garantía.",
+          "garantia_como_comprobarla": "Qué documento y qué extremos hay que comprobar.",
+          "garantia_no_cubre_inversiones": "Fondos, ETF y valores quedan fuera."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "protección legal para depósitos",
+          "límite máximo por persona y entidad",
+          "no cubre fondos de inversión",
+          "comprobar el tipo de producto"
+        ],
+        "answer_matches_none": [
+          "todos\\s+los\\s+dep[oó]sitos",
+          "cualquier\\s+importe",
+          "cobertura\\s+total",
+          "hasta\\s+\\d"
+        ],
+        "answer_chars": 1355,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "La garantía de depósitos protege hasta un límite de cobertura y no alcanza todos los productos; conviene comprobar cobertura y condiciones en fuentes oficiales.",
+        "answer_text_state": "withheld_unbacked_claim",
+        "withheld_reason": "attribution"
+      },
+      "estado_partida": "Prosa retenida: `withheld_unbacked_claim`, `withheld_reason=attribution`, `answer=\"\"`. Solo existe `guarantees` v1, que no cubre la comprobación de cobertura.",
+      "regresion_si": [
+        "La respuesta no explica qué protege la garantía o su límite.",
+        "Aparece una cifra de cobertura, «100 %», «todos los depósitos» o «cobertura total».",
+        "Se presenta la solvencia como equivalente a la garantía.",
+        "Se nombra el fondo o una entidad concreta."
+      ]
+    },
+    {
+      "id": "P8",
+      "pregunta": "Un dato documentado que se proporciona como vencido indica un 3 % TAE. ¿Puede tratarse como oferta actual? Explica el límite.",
+      "esperado_usuario": "Cuatro párrafos: un periodo terminado no sirve para decidir hoy, no se presume renovación, qué hacer si faltan datos y base común. El 3 % del enunciado no reaparece.",
+      "no_debe_aparecer": [
+        "«3 %»",
+        "«sigue vigente»",
+        "«se renueva»",
+        "«puede tratarse como oferta actual» (afirmativo)",
+        "cualquier cifra"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "fuente_dato_vencido_no_sirve",
+            "fuente_vencido_no_se_renueva_solo",
+            "alcance_datos_que_faltan",
+            "comparar_misma_base"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "Un dato documentado que se proporciona como vencido indica un 3 % TAE. ¿Puede tratarse como oferta actual? Explica el límite.",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "fuente_dato_vencido_no_sirve",
+          "fuente_vencido_no_se_renueva_solo",
+          "alcance_datos_que_faltan",
+          "comparar_misma_base"
+        ],
+        "claims_min": 4,
+        "aporta": {
+          "fuente_dato_vencido_no_sirve": "Un periodo terminado es registro histórico, no oferta.",
+          "fuente_vencido_no_se_renueva_solo": "No se presume prórroga ni sustitución.",
+          "alcance_datos_que_faltan": "Sin el dato actual, se dice que falta.",
+          "comparar_misma_base": "Mezclar fechas invalida la comparación."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "periodo de aplicación terminado",
+          "no sirve como oferta",
+          "no permite suponer que se ha prorrogado"
+        ],
+        "answer_matches_none": [
+          "3\\s*%",
+          "sigue\\s+vigente",
+          "se\\s+renueva",
+          "puede\\s+tratarse\\s+como\\s+oferta\\s+actual"
+        ],
+        "answer_chars": 878,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "Un dato vencido no puede tratarse como oferta actual: la vigencia es parte del dato y hay que comprobarla de nuevo antes de usarlo.",
+        "answer_text_state": "withheld_unbacked_claim",
+        "withheld_reason": "attribution"
+      },
+      "estado_partida": "Prosa retenida: `withheld_unbacked_claim`, `withheld_reason=attribution`, `answer=\"\"`. El 3 % del enunciado no se repite. La prueba no adjunta documento, igual que en la ejecución evaluada.",
+      "regresion_si": [
+        "La respuesta repite el 3 % o cualquier otra cifra.",
+        "Trata el dato vencido como oferta actual o como base de comparación.",
+        "Presume que la condición se ha renovado o prorrogado.",
+        "La respuesta vuelve a quedar vacía o solo con avisos."
+      ]
+    },
+    {
+      "id": "P9",
+      "pregunta": "Una fuente secundaria atribuye una tasa a una entidad. ¿Basta para afirmar que la fuente es oficial?",
+      "esperado_usuario": "Cinco párrafos: qué es una fuente secundaria, por qué no basta, qué exige atribuir, cómo comprobar y base común. No se valida la atribución ni se llama oficial a la fuente.",
+      "no_debe_aparecer": [
+        "«es oficial»",
+        "«basta con»",
+        "«fuente fiable»",
+        "nombres de medios o entidades",
+        "cualquier cifra"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "explain",
+          "claim_ids": [
+            "fuente_secundaria_que_es",
+            "fuente_secundaria_no_basta",
+            "fuente_atribucion_con_prueba",
+            "garantia_como_comprobarla",
+            "comparar_misma_base"
+          ]
+        },
+        "scenario": null,
+        "request": {
+          "message": "Una fuente secundaria atribuye una tasa a una entidad. ¿Basta para afirmar que la fuente es oficial?",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "fuente_secundaria_que_es",
+          "fuente_secundaria_no_basta",
+          "fuente_atribucion_con_prueba",
+          "garantia_como_comprobarla",
+          "comparar_misma_base"
+        ],
+        "claims_min": 5,
+        "aporta": {
+          "fuente_secundaria_que_es": "Qué es una fuente secundaria y qué no es.",
+          "fuente_secundaria_no_basta": "No basta para tratar la condición como aplicable.",
+          "fuente_atribucion_con_prueba": "Atribuir exige documento, fecha y localización.",
+          "garantia_como_comprobarla": "Un resumen de un tercero no confirma los extremos.",
+          "comparar_misma_base": "La comparación exige la misma base y fecha."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "Una fuente secundaria es la que resume",
+          "no basta para tratarla como la condición aplicable",
+          "señalar el documento, la fecha y el punto concreto"
+        ],
+        "answer_matches_none": [
+          "es\\s+oficial",
+          "basta\\s+con",
+          "fuente\\s+fiable"
+        ],
+        "answer_chars": 1236,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": null,
+        "motor": null
+      },
+      "control_legado": {
+        "prosa": "No basta: una fuente secundaria no es una fuente oficial y puede resumir mal la tasa; hay que comprobarlo en la fuente primaria.",
+        "answer_text_state": "withheld_unbacked_claim",
+        "withheld_reason": "attribution"
+      },
+      "estado_partida": "Prosa retenida: `withheld_unbacked_claim`, `withheld_reason=attribution`, `answer=\"\"`; cero contenido. La respuesta correcta contiene justo el token que dispara la frontera.",
+      "regresion_si": [
+        "La respuesta afirma o insinúa que la fuente secundaria es oficial o suficiente.",
+        "Se valida la atribución sin documento, fecha y localización.",
+        "Aparece un nombre de medio o entidad.",
+        "La respuesta vuelve a quedar vacía o solo con avisos."
+      ]
+    },
+    {
+      "id": "P10",
+      "pregunta": "Calcula un escenario ficticio con 1.000 €, interés anual del 2 %, dos años, capitalización anual y sin aportaciones; explica supuestos y límites.",
+      "esperado_usuario": "Cinco párrafos: hipótesis, supuestos, costes e impuestos excluidos, convención del tipo e interés compuesto; debajo, el bloque del motor con 1.000,00, 2 %, dos años, saldo 1.040,40 e interés 40,40.",
+      "no_debe_aparecer": [
+        "«rendimiento garantizado»",
+        "«capitalización simple»",
+        "«incluye impuestos»",
+        "«incluye comisiones»",
+        "presentar 1.040,40 como seguro"
+      ],
+      "canal": "structured_education_v2",
+      "fixture": {
+        "proveedor": "FakeChatProvider",
+        "adaptador": "StructuredProviderAdapter",
+        "servicio": "LocalChatService(structured_mode=True)",
+        "selection": {
+          "version": "paideia-education-v2",
+          "intent": "calculate",
+          "claim_ids": [
+            "simulacion_es_hipotetica",
+            "simulacion_supuestos",
+            "simulacion_sin_costes_ni_impuestos",
+            "simulacion_convencion_del_tipo",
+            "interes_compuesto"
+          ]
+        },
+        "scenario": {
+          "principal": "1000.00",
+          "annual_rate_percent": "2",
+          "years": 2,
+          "monthly_contribution": "0.00",
+          "method": "compound",
+          "inflation_percent": "0"
+        },
+        "request": {
+          "message": "Calcula un escenario ficticio con 1.000 €, interés anual del 2 %, dos años, capitalización anual y sin aportaciones; explica supuestos y límites.",
+          "consent": {
+            "notice_version": "paideia-chat-remote-v1",
+            "accepted_chat_processing": true,
+            "purpose": "free_chat",
+            "approved_fields": []
+          }
+        }
+      },
+      "esperado": {
+        "claim_ids": [
+          "simulacion_es_hipotetica",
+          "simulacion_supuestos",
+          "simulacion_sin_costes_ni_impuestos",
+          "simulacion_convencion_del_tipo",
+          "interes_compuesto"
+        ],
+        "claims_min": 5,
+        "aporta": {
+          "simulacion_es_hipotetica": "No es predicción, oferta ni garantía.",
+          "simulacion_supuestos": "Importe, aportaciones, plazo, tipo, capitalización e inflación.",
+          "simulacion_sin_costes_ni_impuestos": "El resultado bruto no incluye impuestos ni comisiones.",
+          "simulacion_convencion_del_tipo": "La conversión del tipo anual cambia el resultado.",
+          "interes_compuesto": "Los intereses reinvertidos generan más intereses."
+        },
+        "answer_equals_join": true,
+        "answer_contains_all": [
+          "ejercicio hipotético",
+          "depende de sus supuestos",
+          "dejar fuera impuestos, comisiones",
+          "convención"
+        ],
+        "answer_matches_none": [
+          "rendimiento\\s+garantizado",
+          "capitalizaci[oó]n\\s+simple",
+          "incluye\\s+impuestos",
+          "incluye\\s+comisiones"
+        ],
+        "answer_chars": 1170,
+        "answer_chars_max": 3000,
+        "answer_no_digits": true,
+        "answer_text_state_prohibidos": [
+          "withheld_unbacked_claim",
+          "withheld_catalogue_evidence"
+        ],
+        "sources": "vacio_o_ausente",
+        "text_validation": [
+          "ausente",
+          "not_performed"
+        ],
+        "answer_provenance": "ausente_o_sin_withheld_reason",
+        "catalogue_used": false,
+        "calculation": "presente",
+        "motor": {
+          "summary": {
+            "contributions": "1000.00",
+            "final_balance": "1040.40",
+            "interest": "40.40",
+            "inflation_adjusted": "1040.40"
+          },
+          "assumptions": {
+            "principal": "1000.00",
+            "annual_rate_percent": "2",
+            "years": 2,
+            "monthly_contribution": "0.00",
+            "method": "compound",
+            "inflation_percent": "0"
+          },
+          "convention": {
+            "annual_rate_convention": "effective_annual_rate",
+            "monthly_rate_conversion": "effective_monthly_rate",
+            "taxes_included": false,
+            "fees_included": false
+          },
+          "flags": {
+            "hypothetical": true,
+            "not_prediction": true,
+            "currency": "EUR"
+          }
+        }
+      },
+      "control_legado": {
+        "prosa": "Con 1.000 € al 2 % anual compuesto durante dos años, el saldo final es 1.040,40 € y el interés 40,40 €; es un escenario hipotético sin impuestos ni comisiones.",
+        "answer_text_state": "withheld_unbacked_claim",
+        "withheld_reason": "figure"
+      },
+      "estado_partida": "Motor correcto: `final_balance=1040.40`, `interest=40.40`, `inflation_adjusted=1040.40`; prosa retenida por `figure`. Solo existe `simulation` v1.",
+      "regresion_si": [
+        "Falta el bloque `calculation` o alguno de los seis supuestos.",
+        "`final_balance` no es 1040.40 o `interest` no es 40.40.",
+        "No se declara la convención del tipo o se presenta como capitalización simple.",
+        "Se afirma que el resultado incluye impuestos/comisiones o que está garantizado."
+      ]
+    }
+  ],
+  "inventario_pruebas": [
+    {
+      "archivo": "tests/test_structured_education.py",
+      "test": "StructuredEducationTests::test_gate_requires_exact_explicit_isolation",
+      "estado": "reutilizar",
+      "motivo": "Prueba el constructor cerrado; no depende de la versión ni de los ids."
+    },
+    {
+      "archivo": "tests/test_structured_education.py",
+      "test": "StructuredEducationTests::test_consent_privacy_and_client_mode_are_enforced_before_call",
+      "estado": "reutilizar",
+      "motivo": "Consentimiento y rechazo antes de invocar al proveedor."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_arbitrary_test_only_network_like_provider_rejected_before_invocation",
+      "estado": "reutilizar",
+      "motivo": "Rechaza proveedores que no son el fixture cerrado."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_history_or_extra_message_fields_never_reach_fake",
+      "estado": "reutilizar",
+      "motivo": "Rechaza mensajes con roles o campos extra antes de invocar al proveedor."
+    },
+    {
+      "archivo": "tests/test_financial_quality_known_gap.py",
+      "test": "KnownNegationGapTests::test_prefix_denial_does_not_become_a_risk_free_promise",
+      "estado": "reutilizar",
+      "motivo": "Detector léxico de «sin riesgo»; se usa como comprobación extra de los textos."
+    },
+    {
+      "archivo": "tests/test_pai_setup_integration.py",
+      "test": "SetupIntegrationTests::test_app_server_keeps_the_historical_ordinary_route",
+      "estado": "reutilizar",
+      "motivo": "La ruta ordinaria conserva la prosa si `claims_mode=False`; es la no-regresión del modo legado."
+    },
+    {
+      "archivo": "tests/test_structured_education.py",
+      "test": "StructuredEducationTests::test_editorial_response_is_rendered_server_side",
+      "estado": "adaptar",
+      "motivo": "Sustituir `VALID` v1 e `inflation` por v2 y una afirmación de P1/P3; la mecánica de render se conserva."
+    },
+    {
+      "archivo": "tests/test_structured_education.py",
+      "test": "StructuredEducationTests::test_closed_selection_rejects_untrusted_content",
+      "estado": "adaptar",
+      "motivo": "Actualizar literales a v2, añadir el registro de 39 ids y el rechazo explícito de v1."
+    },
+    {
+      "archivo": "tests/test_structured_education.py",
+      "test": "StructuredEducationTests::test_calculation_really_invokes_domain_with_parameters_from_this_turn",
+      "estado": "adaptar",
+      "motivo": "v2 y `simulacion_supuestos`; el motor y el escenario se conservan."
+    },
+    {
+      "archivo": "tests/test_structured_education.py",
+      "test": "StructuredEducationTests::test_http_success_calculation_and_safe_failure",
+      "estado": "adaptar",
+      "motivo": "v2 y un id de cálculo; el contrato HTTP se conserva."
+    },
+    {
+      "archivo": "tests/test_structured_turn_scenario.py",
+      "test": "TurnScenarioTests::test_current_turn_scenario_only_and_no_reuse",
+      "estado": "adaptar",
+      "motivo": "Constantes v2; el resto del caso sigue siendo válido."
+    },
+    {
+      "archivo": "tests/test_structured_turn_scenario.py",
+      "test": "TurnScenarioTests::test_provider_cannot_forge_scenario_or_reference",
+      "estado": "adaptar",
+      "motivo": "Constantes v2."
+    },
+    {
+      "archivo": "tests/test_structured_turn_scenario.py",
+      "test": "TurnScenarioTests::test_provider_scenario_without_user_scenario_is_rejected",
+      "estado": "adaptar",
+      "motivo": "Constantes v2."
+    },
+    {
+      "archivo": "tests/test_structured_turn_scenario.py",
+      "test": "TurnScenarioTests::test_invalid_request_scenarios_and_legacy_rejected",
+      "estado": "adaptar",
+      "motivo": "Constantes v2."
+    },
+    {
+      "archivo": "tests/test_structured_turn_scenario.py",
+      "test": "TurnScenarioTests::test_explain_rejects_scenario_without_calculation",
+      "estado": "adaptar",
+      "motivo": "Constantes v2."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_pure_parser_projects_raw_result_and_rejects_adversarial_results",
+      "estado": "adaptar",
+      "motivo": "Literal v2; el parser se conserva."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_valid_fake_chat_result_is_projected_to_closed_selection",
+      "estado": "adaptar",
+      "motivo": "Literal v2."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_closed_contract_rejects_adversarial_chat_results",
+      "estado": "adaptar",
+      "motivo": "Literal v2; añadir `version` v1 explícita."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_service_and_http_calculation_bound_to_same_turn_and_safe_failure",
+      "estado": "adaptar",
+      "motivo": "Literal v2."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_fake_only_and_no_environment_network_or_tools",
+      "estado": "adaptar",
+      "motivo": "El literal v1 se proyecta con `select_education`; cambiar a v2."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_exact_types_and_pinned_methods_prevent_dynamic_dispatch",
+      "estado": "adaptar",
+      "motivo": "Llama a `service.chat` con una selección v1; cambiar a v2."
+    },
+    {
+      "archivo": "tests/test_structured_provider_adapter.py",
+      "test": "AdapterTests::test_engine_failure_is_safe_and_not_retried",
+      "estado": "adaptar",
+      "motivo": "El literal v1 llega al parser; cambiar a v2 antes del fallo del motor."
+    },
+    {
+      "archivo": "tests/structured_education_ui.test.cjs",
+      "test": "structured fixture exposes server-owned editorial without using free answer; structured mode never falls back to an unstructured answer; structured response refuses external provenance or malformed editorial data",
+      "estado": "adaptar",
+      "motivo": "v2, 39 ids y máximo 5; el mecanismo de proyección se conserva."
+    },
+    {
+      "archivo": "tests/structured_fix1.test.cjs",
+      "test": "real local calculation schema matches scenario; tampered assumptions and extras fail; closed editorial catalogue rejects unknown, changed and duplicated claims; structured mode refuses legacy answer and arbitrary calculation without submitted scenario",
+      "estado": "adaptar",
+      "motivo": "v2 y `simulacion_supuestos`; el script que invoca Python también cambia de versión."
+    },
+    {
+      "archivo": "tests/chat_frontend_contract.test.cjs",
+      "test": "synthetic calculation is opt-in, bound to explicit form inputs and sent once",
+      "estado": "adaptar",
+      "motivo": "El stub usa v1; actualizar a v2 para que el contrato de UI siga probando el canal."
+    },
+    {
+      "archivo": "tests/test_financial_quality_known_gap.py",
+      "test": "KnownNegationGapTests::test_untrusted_comma_separated_assertion_never_enters_structured_content",
+      "estado": "adaptar",
+      "motivo": "v2; conserva el contraejemplo y el rechazo de `answer`."
+    },
+    {
+      "archivo": "tests/test_b4_cycle4_outcomes.py",
+      "test": "CalculatorEngineOutcomeTests::test_engine_result_and_assumptions_reach_the_client",
+      "estado": "adaptar",
+      "motivo": "Conservar las aserciones del motor; separar la expectativa de `withheld_unbacked_claim`, que es del modo legado."
+    },
+    {
+      "archivo": "tests/test_chat_context.py",
+      "test": "ContextTests::test_status_advertises_disabled_capabilities",
+      "estado": "adaptar",
+      "motivo": "Diccionario exacto de capacidades; añadir `claims_channel: false` si el canal se anuncia."
+    },
+    {
+      "archivo": "tests/test_b4_cycle2_provenance.py",
+      "test": "ServiceAndHttpProvenanceTests::test_conceptual_claim_of_official_or_current_rate_is_withheld",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "Fija como deseado el defecto de P7/P9; sigue cubriendo el modo legado, no se usa como criterio."
+    },
+    {
+      "archivo": "tests/test_b4_cycle2_provenance.py",
+      "test": "ServiceAndHttpProvenanceTests::test_conceptual_definition_without_attribution_keeps_its_text",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "Solo describe el modo legado."
+    },
+    {
+      "archivo": "tests/test_b4_cycle2_provenance.py",
+      "test": "WithheldCatalogueAnswerTests::test_catalogue_turn_withholds_unverified_text_and_exposes_local_evidence",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "Ruta de catálogo, no de afirmaciones editoriales."
+    },
+    {
+      "archivo": "tests/test_b4_cycle3_boundary.py",
+      "test": "NoToolProseBoundaryTests::test_no_tool_prose_with_figures_or_attributions_is_withheld",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "Frontera léxica del modo legado; útil como control, no como aceptación."
+    },
+    {
+      "archivo": "tests/test_b4_cycle3_boundary.py",
+      "test": "PlainChatBoundaryTests::test_plain_chat_withholds_invented_rate",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "Frontera léxica del modo legado."
+    },
+    {
+      "archivo": "tests/test_b4_cycle3_boundary.py",
+      "test": "CalculatorBoundaryTests::test_calculator_prose_with_engine_figures_is_withheld_and_the_result_is_delivered",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "El canal cerrado no tiene prosa de calculadora que retener."
+    },
+    {
+      "archivo": "tests/test_b4_cycle4_outcomes.py",
+      "test": "CalculatorEngineOutcomeTests::test_model_prose_with_numbers_or_attributions_is_never_shown",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "Corpus negativo del modo legado; conservar como regresión de esa ruta."
+    },
+    {
+      "archivo": "tests/test_pai_runtime.py",
+      "test": "PaiRuntimeWorkflowTests::test_catalogue_result_with_items_still_withholds_free_text",
+      "estado": "obsoleta_para_la_aceptacion",
+      "motivo": "Ruta de catálogo del runtime, no del canal cerrado."
+    }
+  ]
+}
