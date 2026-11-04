@@ -95,6 +95,7 @@
   .data-panel + .data-panel,
   .summary-card + .summary-card { margin-top: 16px; }
   .home-actions { gap: 16px; }
+  .home-actions:has(> section:only-child) { grid-template-columns: 1fr; }
   .home-actions section {
     padding: 26px;
     border: 1px solid #303431;
@@ -104,14 +105,15 @@
   }
   .route-strip {
     margin: 20px 0 24px;
-    padding: 22px 24px 0;
+    padding: 14px 24px 0;
     border: 1px solid #303431;
     border-top: 1px solid #303431;
     border-radius: 16px;
     background: var(--surface);
   }
-  .route-strip li { min-height: 74px; padding: 0 16px 20px 0; }
-  .route-strip li::before { top: 2px; }
+  /* El marcador va encima del texto, no pisando el número. */
+  .route-strip li { min-height: 74px; padding: 20px 16px 20px 0; }
+  .route-strip li::before { top: 4px; left: 0; }
   .button { padding: 0 15px; border-radius: 9px; font-size: 13px; font-weight: 600; }
   .button-secondary { border-color: #4a514d; }
   .chat-panel { padding: 26px; }

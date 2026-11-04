@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc" focusable="false">
+  <title id="title">Paideia</title>
+  <desc id="desc">Marca cuadrada de esquinas redondeadas con una letra P.</desc>
+  <rect width="64" height="64" rx="18" fill="#d4efe3"/>
+  <path d="M22 47V18h12.5c6.6 0 11 3.7 11 9.8 0 6.2-4.4 9.9-11 9.9H29.5V47H22zm7.5-15.9h4.3c2.7 0 4.4-1.3 4.4-3.4 0-2.1-1.7-3.4-4.4-3.4h-4.3v6.8z" fill="#17251f"/>
+</svg>

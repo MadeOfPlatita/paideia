@@ -639,9 +639,9 @@ function saveProfileAfterConsent() {
 }
 
 function renderHome() {
-  const { page, heading } = pageFrame("Inicio · explorar sin prisa", "Tu ruta, a tu ritmo", "Empieza por comparar lo que se conoce y lo que sigue pendiente. No hace falta completar un perfil para explorar.");
+  const { page, heading } = pageFrame("Inicio · explorar sin prisa", "Tu ruta, a tu ritmo", "Primero prepara tu mapa; después Pai puede responderte con tus datos. Explorar y comparar no necesitan perfil.");
   const route = el("ol", { className: "route-strip", "aria-label": "Pasos de exploración" });
-  [["01", "Explora", "Candidatos y fuentes"], ["02", "Compara", "Metadatos en paralelo"], ["03", "Prueba", "Supuestos tuyos"], ["04", "Ensaya", "Sin operación real"]].forEach((item) => {
+  [["01", "Prepara tu mapa", "Dos minutos, sin datos personales"], ["02", "Habla con Pai", "Con tu contexto"], ["03", "Explora y compara", "Fuentes y condiciones"]].forEach((item) => {
     const li = el("li");
     li.appendChild(textElement("strong", `${item[0]} · ${item[1]}`));
     li.appendChild(textElement("span", item[2]));
@@ -651,17 +651,17 @@ function renderHome() {
 
   const actions = el("div", { className: "home-actions" });
   const explore = el("section");
-  explore.appendChild(textElement("p", "01 / EXPLORAR", "eyebrow"));
-  explore.appendChild(el("h2", {}, "Empieza por la biblioteca"));
-  explore.appendChild(textElement("p", "Busca entre los candidatos del catálogo local. Identidad y condiciones se muestran por separado."));
-  explore.appendChild(routeLink("Abrir biblioteca", "#biblioteca", "button button-primary"));
+  explore.appendChild(textElement("p", "03 / EXPLORAR", "eyebrow"));
+  explore.appendChild(el("h2", {}, "Explora la biblioteca"));
+  explore.appendChild(textElement("p", "Candidatos del catálogo local. La identidad y las condiciones se muestran por separado, sin mezclarlas."));
+  explore.appendChild(routeLink("Abrir biblioteca", "#biblioteca", "button button-secondary"));
   const map = el("section");
-  map.appendChild(textElement("p", "02 / TU MAPA", "eyebrow"));
-  map.appendChild(el("h2", {}, state.profileComplete ? "Tu resumen está disponible" : "Responde solo lo que quieras"));
-  map.appendChild(textElement("p", state.profileComplete ? "Puedes editar cada respuesta o retomar las preguntas pendientes desde el resumen." : "Un cuestionario continuo sobre tus objetivos, situación económica y riesgo. Puedes responder, elegir «No lo sé», omitir o pausar para retomarlo después."));
-  map.appendChild(routeLink(state.profileComplete ? "Revisar mi mapa" : "Preparar mi mapa", "#perfil", "button button-secondary"));
-  actions.append(explore, map);
-  page.appendChild(actions);
+  map.appendChild(textElement("p", "01 / TU MAPA", "eyebrow"));
+  map.appendChild(el("h2", {}, state.profileComplete ? "Tu mapa está listo" : "Empieza por tu mapa"));
+  map.appendChild(textElement("p", state.profileComplete ? "Puedes editar cada respuesta o retomar las que dejaste pendientes." : "Unas preguntas sobre objetivos, situación y riesgo. Puedes responder «No lo sé», omitir o pausar cuando quieras."));
+  map.appendChild(routeLink(state.profileComplete ? "Revisar mi mapa" : "Crear mi perfil", "#perfil", "button button-primary"));
+  actions.append(explore);
+  page.appendChild(map);
 
   const chat = section("Pregunta a Pai", "Consulta educativa con el proveedor configurado. Pai explica y calcula con el motor local; no decide por ti.", "paper-section chat-panel");
   chat.id = "chat-panel";
@@ -1166,6 +1166,7 @@ function renderHome() {
   chat.appendChild(form);
   page.appendChild(chat);
   if (state.storageNotice) page.appendChild(callout(state.storageNotice, state.storageProblem ? "warning-note" : "note"));
+  page.appendChild(actions);
   return heading;
 }
 
@@ -1891,7 +1892,12 @@ function loadProductDetail(id) {
       state.detail.loading = false;
       renderProductDetail();
       const target = document.getElementById("product-detail");
-      if (target) target.focus({ preventScroll: true });
+      if (target) {
+        // El panel vive bajo la lista: si no se trae a la vista, «Ver detalle»
+        // parece no hacer nada.
+        target.scrollIntoView({ block: "start", behavior: "smooth" });
+        target.focus({ preventScroll: true });
+      }
       announce(state.detail.error ? "No se pudo cargar la ficha" : "Ficha cargada");
     }
   });
@@ -2033,10 +2039,11 @@ function renderLibrary() {
   page.appendChild(selectionMessage);
   const results = el("section", { id: "catalogue-results", className: "catalogue-results", "aria-label": "Candidatos del catálogo" });
   page.appendChild(results);
-  const curatedSection = el("section", { id: "curated-results", className: "catalogue-results", "aria-label": "Productos con condiciones transcritas" });
-  page.appendChild(curatedSection);
+  // La ficha abierta va junto a la lista de candidatos, no al final del documento.
   const detail = el("section", { id: "product-detail", className: "data-panel detail-panel", "aria-label": "Detalle del candidato", tabindex: -1 });
   page.appendChild(detail);
+  const curatedSection = el("section", { id: "curated-results", className: "catalogue-results", "aria-label": "Productos con condiciones transcritas" });
+  page.appendChild(curatedSection);
   search.addEventListener("input", () => {
     state.library.query = search.value;
     clearTimeout(state.libraryTimer);
@@ -2752,6 +2759,20 @@ function renderScenarioPanel(page, scenario, suffix, name) {
   method.addEventListener("change", edited);
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    // Calcular B con el formulario vacío es lo normal: se parte de A para
+    // comparar un cambio, en vez de obligar a rellenar seis campos a mano.
+    if (name === "B" && [principal.input, rate.input, years.input, contribution.input, inflation.input].every((input) => input.value === "")) {
+      const source = document.querySelectorAll(".scenario-form")[0];
+      try {
+        readScenarioForm(source);
+        ["principal", "rate", "years", "contribution", "inflation", "method"].forEach((id) => {
+          form.querySelector(`#scenario-${id}-b`).value = source.querySelector(`#scenario-${id}`).value;
+        });
+        edited();
+      } catch (_) {
+        // Si A tampoco está completo, el error de validación de B lo explicará.
+      }
+    }
     try {
       const payload = readScenarioForm(form, suffix);
       error.textContent = "";
@@ -3257,7 +3278,9 @@ async function checkLocalStatus() {
       : status.mode === "public_serverless" ? "Versión pública"
       : "Servicio local";
     const aiConfigured = status.ai?.status === "configured_not_verified";
-    setStatusChip(`${mode} · ${aiConfigured ? "IA configurada" : "IA no conectada"}`, "ready");
+    // Sin IA configurada el aviso vive en el panel de Pai, no en la cabecera:
+    // «IA no conectada» arriba desanima sin explicar nada.
+    setStatusChip(aiConfigured ? `${mode} · IA configurada` : mode, "ready");
     if (state.route) renderContext(state.route);
   } catch (error) {
     state.statusError = error;
