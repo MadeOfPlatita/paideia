@@ -1,5 +1,7 @@
 # Contador global de intentos reales — misión del 4/11/2026
 
+> **Corrección de continuidad, 4/11/2026:** la segunda revisión independiente fue **desfavorable** (`REVISION-CONTADOR-CICLO-2.md`). El manifest de la misión de 4 h 30 min fue retirado tras 15 intentos reales; no reutilizar esta misión ni su script de provisión para otra ventana. Aunque las rutas indicadas abajo se corrigieron después de aquella revisión, no hay dictamen favorable sobre esta versión. En una prueba independiente de lock obsoleto se concedieron 6 reservas para un cupo de 5: el máximo no está acreditado en ese caso. Hasta reparar y revisar la versión exacta, **no usar este mecanismo para autorizar nuevos envíos**.
+
 ## Qué se ha construido
 
 `prototipos/paideia-local/mission_ledger.py` es un contador con cupo duro, corte y
@@ -58,8 +60,17 @@ conexión; y el JSON HTTP lleva `send_state=not_started` con un mensaje explíci
 
 - No es un sandbox: quien controle el proceso, el reloj o el sistema de archivos puede
   borrar el diario o el manifest, o mover la hora. No hay testigo externo.
-- Solo cubre rutas que pasen por el transporte real de `providers.py`; un cliente
-  propio que hable con el proveedor por otra vía no queda contado.
+- Solo cubre las dos rutas enumeradas arriba: el transporte real de `providers.py`
+  y `_guarded_https_post` de `secure_groq_session.py`. Un cliente propio que hable
+  con el proveedor por otra vía no queda contado.
+- Las pruebas del proyecto pueden reservar intentos incluso con HTTPS sustituido.
+  La revisión observó **85 reservas de 100** en una suite offline con manifest activo.
+  No ejecutar pruebas con un manifest real activo; usar un directorio de estado
+  absoluto, independiente y comprobado para cada prueba. `LOCALAPPDATA` relativo
+  no aísla, porque el módulo vuelve al perfil real.
+- La recuperación del lock obsoleto no garantiza exclusión mutua si el primer
+  poseedor sigue vivo. No usar el cupo en condiciones reales hasta corregir y revisar
+  esa carrera y los demás límites enumerados en la segunda revisión.
 - La cuota diaria de la app (60/día) sigue existiendo y **no se eleva** para alcanzar
   el cupo de la misión.
 - El cupo autorizado por Alejandro es un máximo de 100 intentos reales desde el
@@ -67,8 +78,9 @@ conexión; y el JSON HTTP lleva `send_state=not_started` con un mensaje explíci
 
 ## Estado
 
-Contador implementado y probado offline. **No se ha provisionado todavía la misión ni
-se ha hecho ninguna llamada real en esta ventana.** Provisionar consiste en crear el
-manifest en el directorio canónico con `cap` y corte correctos; se hará solo después de
-que la revisión independiente del bloque de Pai y la suite completa estén en verde, y
-quedará documentado aquí con la hora exacta y el consumo real.
+En la misión histórica se contaron 15 intentos reales; se realizaron pese a que la
+segunda revisión era desfavorable, un incumplimiento reconocido en el cierre de esa
+misión. El manifest de aquella ventana se retiró; el diario se conserva. La misión
+posterior no ha realizado llamadas reales y necesita una provisión propia, segura y
+revisada: la herramienta histórica fija un corte que ya pasó. Véanse
+`../CIERRE-4H30-20261104.md` y `../PAIDEIA-HASTA-BLOQUEO-SEGUIMIENTO.md`.

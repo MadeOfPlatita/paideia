@@ -1,12 +1,16 @@
 # Pai — continuidad y pendientes, sin perder lo construido
 
+## Estado vigente de la puerta de proveedor
+
+La última revisión independiente del contador de la misión anterior fue **desfavorable**, no una aprobación para reutilizarlo. Hay que corregir o aclarar la ruta documentada, verificar aislamiento, carreras, límites y provisión para una nueva misión, y obtener una revisión independiente favorable de la versión exacta antes de cualquier llamada real. No usar `scripts/provision_mission.py` a ciegas: su ventana puede estar fijada a la misión anterior. La misión nueva suma **cero intentos reales** hasta este punto. `PAIDEIA-HASTA-BLOQUEO-SEGUIMIENTO.md` recoge el avance actual; los apartados inferiores son históricos.
+
 ## Actualización tras la misión de 4 h 30 min (4/11/2026)
 
 La trazabilidad de las condiciones ya no se pierde en el camino: el registro de fuentes resuelve los ids del snapshot a URL con título y fecha, la ficha y el ensayo muestran esa fuente y el chat la enlaza. Un id sin resolver deja la condición en «desconocida» en lugar de publicar la cifra.
 
 La prueba real de la rúbrica (diez preguntas ficticias, 15 intentos de 100, sin perfil) deja tres conclusiones que condicionan el siguiente paso: (1) el motor determinista responde bien y con supuestos visibles; (2) el filtro léxico suprime respuestas legítimas que mencionan cifras, fuentes oficiales o vigencia —cinco de diez— así que no basta con ajustar el proveedor: hay que decidir el criterio de supresión; (3) un turno de catálogo sin resultados ya no borra la explicación conceptual, pero la ausencia de fichas locales sigue impidiendo atribuir datos. No se presenta a Pai como asesor financiero validado y la muestra no permite inferir una tasa de error.
 
-Pendiente inmediato, por orden: decidir el criterio de supresión con ejemplos revisados (falsos positivos documentados), completar la evaluación con proveedor y datos ficticios cuando el criterio esté aprobado, y solo después plantear publicación. El contador global (`mission_ledger.py`) queda disponible para la próxima ventana con cupo: se provisiona con `scripts/provision_mission.py` y se retira con `--close`.
+Pendiente inmediato, por orden: decidir el criterio de supresión con ejemplos revisados (falsos positivos documentados), completar la evaluación con proveedor y datos ficticios cuando el criterio esté aprobado, y solo después plantear publicación. La frase anterior de disponibilidad del contador queda reemplazada por la puerta vigente descrita arriba; no se autoriza su provisión ni uso sin revisión favorable.
 
 ## Cierre de correcciones QA, 3/11/2026
 

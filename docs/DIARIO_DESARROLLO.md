@@ -1,5 +1,9 @@
 # Diario de desarrollo de Paideia
 
+## Actualización de la misión hasta bloqueo — 4/11/2026
+
+Se aplicó localmente la dirección B oscura aprobada a la aplicación real, conservando componentes y avisos. Se amplió la procedencia del informe B6 con título, URL y fecha de la fuente de condición. La coordinación ejecutó pruebas offline y recorridos ficticios en escritorio y móvil emulado; faltan revisión independiente y aceptación de ambos bloques. Las delegaciones de revisión fallaron por autorización del proveedor de agentes. No se han realizado intentos reales de Groq en esta misión ni se ha desplegado. Detalle, evidencia y límites: `PAIDEIA-HASTA-BLOQUEO-SEGUIMIENTO.md`.
+
 ## Estado
 
 Estado actual: prototipo local navegable verificado, sin proveedor IA activo, PostgreSQL ni despliegue público. Las entradas conservan la evolución desde definición e investigación. Este diario distingue propuestas y pruebas reales; no sustituye las instrucciones definitivas de entrega de la profesora.

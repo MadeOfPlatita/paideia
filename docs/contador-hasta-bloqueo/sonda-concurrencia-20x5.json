@@ -1,0 +1,59 @@
+[
+ {
+  "processes": 20,
+  "cap": 5,
+  "ok": 5,
+  "codes": [
+   "MISSION_EXHAUSTED"
+  ],
+  "journal_lines": 5,
+  "distinct_n": 5,
+  "n_values": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "lock_left": false,
+  "cap_exceeded": false
+ },
+ {
+  "processes": 20,
+  "cap": 5,
+  "ok": 5,
+  "codes": [
+   "MISSION_EXHAUSTED"
+  ],
+  "journal_lines": 5,
+  "distinct_n": 5,
+  "n_values": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "lock_left": false,
+  "cap_exceeded": false
+ },
+ {
+  "processes": 20,
+  "cap": 5,
+  "ok": 5,
+  "codes": [
+   "MISSION_EXHAUSTED"
+  ],
+  "journal_lines": 5,
+  "distinct_n": 5,
+  "n_values": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "lock_left": false,
+  "cap_exceeded": false
+ }
+]
