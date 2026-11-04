@@ -2,6 +2,7 @@ import argparse
 import copy
 import importlib
 import json
+import os
 import re
 import uuid
 from datetime import date
@@ -384,6 +385,10 @@ class _Handler(BaseHTTPRequestHandler):
         origin_values = self.headers.get_all("Origin", [])
         if len(host_values) != 1 or len(origin_values) != 1:
             self._reject_bad_transport(403, "ORIGIN_REJECTED", "Origen no permitido.")
+        declared = declared_public_origin()
+        if declared:
+            self._assert_declared_origin(host_values[0], origin_values[0], declared)
+            return
         raw_host = host_values[0]
         try:
             host_parts = urlsplit("//" + raw_host)
@@ -406,6 +411,27 @@ class _Handler(BaseHTTPRequestHandler):
                 or origin_port != host_port or origin.username is not None
                 or origin.password is not None or origin.query or origin.fragment
                 or origin.path not in {"", "/"}):
+            self._reject_bad_transport(403, "ORIGIN_REJECTED", "Origen no permitido.")
+
+    def _assert_declared_origin(self, raw_host, raw_origin, declared):
+        """Origen exacto cuando la app se sirve detrás de un proxy HTTPS (p. ej. Render)."""
+        try:
+            expected = urlsplit(declared)
+            origin = urlsplit(raw_origin)
+            host = urlsplit("//" + raw_host)
+            expected_port = expected.port or 443
+            pairs = [(expected, expected_port, "https"),
+                     (origin, expected_port, "https"),
+                     (host, expected_port, None)]
+            for candidate, port, required_scheme in pairs:
+                if (candidate.hostname != expected.hostname
+                        or (candidate.port or 443) != port
+                        or candidate.path not in ("", "/") or candidate.query
+                        or candidate.fragment or candidate.username is not None
+                        or candidate.password is not None
+                        or (required_scheme is not None and candidate.scheme != required_scheme)):
+                    self._reject_bad_transport(403, "ORIGIN_REJECTED", "Origen no permitido.")
+        except ValueError:
             self._reject_bad_transport(403, "ORIGIN_REJECTED", "Origen no permitido.")
 
     def _read_json_body(self):
@@ -740,8 +766,22 @@ class _Handler(BaseHTTPRequestHandler):
         return
 
 
+def declared_public_origin():
+    """Origen público exacto, si este proceso se sirve detrás de un proxy HTTPS."""
+    for name in ("PAIDEIA_PUBLIC_ORIGIN", "RENDER_EXTERNAL_URL"):
+        value = os.environ.get(name, "").strip()
+        if value:
+            return value.rstrip("/")
+    return ""
+
+
 def create_server(host="127.0.0.1", port=8765, repository=None, *, comparison_service=None, chat_service=None):
-    if host != "127.0.0.1":
+    allowed_hosts = {"127.0.0.1"}
+    # Un despliegue público declara su origen exacto; solo entonces se permite
+    # escuchar fuera del bucle local. Sin esa variable todo sigue siendo local.
+    if declared_public_origin():
+        allowed_hosts.add("0.0.0.0")
+    if host not in allowed_hosts:
         raise ValueError("the local prototype binds only to 127.0.0.1")
     if isinstance(port, bool) or not isinstance(port, int) or not 0 <= port <= 65535:
         raise ValueError("port must be an integer from 0 through 65535")
@@ -780,8 +820,10 @@ def parse_args(argv=None):
 def main(argv=None):
     args = parse_args(argv)
     load_env()
-    server = create_server(port=args.port)
-    print(f"Paideia local prototype listening on http://127.0.0.1:{server.server_port}/")
+    port = int(os.environ.get("PORT") or args.port)
+    host = os.environ.get("PAIDEIA_HOST") or ("0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
+    server = create_server(host=host, port=port)
+    print(f"Paideia listening on http://{host}:{server.server_port}/")
     print("Chat IA: " + ("conectado a Groq; una llamada por turno admitido." if chat_enabled() else "no configurado (sin .env con PAIDEIA_GROQ_ENABLED=1 y GROQ_API_KEY)."))
     try:
         server.serve_forever()

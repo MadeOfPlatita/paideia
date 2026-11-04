@@ -1,0 +1,26 @@
+# Despliegue de Paideia con Pai conectada (Render, plan gratuito)
+#
+# La app es un servidor HTTP con estado (contador de llamadas, sesiones y
+# catálogo en memoria), no una función sin estado. Render ejecuta el proceso
+# tal cual, sin reescribir el backend ni exponer la clave en el navegador.
+#
+# La clave de Groq NO se guarda aquí: se pega en el panel de Render y queda
+# marcada con `sync: false`.
+services:
+  - type: web
+    name: paideia
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: python --version
+    startCommand: python prototipos/paideia-local/app.py
+    healthCheckPath: /api/status
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: PAIDEIA_GROQ_ENABLED
+        value: "1"
+      - key: PAIDEIA_GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: GROQ_API_KEY
+        sync: false
