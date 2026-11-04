@@ -639,10 +639,10 @@ function saveProfileAfterConsent() {
 }
 
 function renderHome() {
-  const { page, heading } = pageFrame("Inicio · explorar sin prisa", "Tu ruta, a tu ritmo", "Primero prepara tu mapa; después Pai puede responderte con tus datos. Explorar y comparar no necesitan perfil.");
+  const { page, heading } = pageFrame("Inicio · explorar sin prisa", "Tu ruta, a tu ritmo", "Prepara tu perfil y después pregunta a Pai. Tu perfil no se comparte sin tu permiso; también puedes explorar sin completarlo.");
   const route = el("ol", { className: "route-strip", "aria-label": "Pasos de exploración" });
   // La navegación lateral ya numera las secciones: aquí no se repiten números.
-  [["Prepara tu mapa", "Dos minutos, sin datos personales"], ["Habla con Pai", "Con tu contexto"], ["Explora y compara", "Fuentes y condiciones"]].forEach((item) => {
+  [["Prepara tu perfil", "A tu ritmo"], ["Habla con Pai", "Con tu permiso"], ["Explora y compara", "Fuentes y condiciones"]].forEach((item) => {
     const li = el("li");
     li.appendChild(textElement("strong", item[0]));
     li.appendChild(textElement("span", item[1]));
@@ -664,7 +664,7 @@ function renderHome() {
   actions.append(explore);
   page.appendChild(map);
 
-  const chat = section("Pregunta a Pai", "Consulta educativa con el proveedor configurado. Pai explica y calcula con el motor local; no decide por ti.", "paper-section chat-panel");
+  const chat = section("Pregunta a Pai", "Escribe tu pregunta. Pai ofrece orientación educativa, no decide por ti.", "paper-section chat-panel");
   chat.id = "chat-panel";
   // Presentación de procedencia del chat: la prosa del modelo nunca se usa para adjudicar
   // fuentes ni tasas cuando el turno consultó el catálogo. Se muestran los datos locales.
@@ -895,7 +895,7 @@ function renderHome() {
       if (typeof note === "string") container.appendChild(textElement("p", note, "field-help"));
     }
   }
-  chat.appendChild(callout("Tu pregunta se envía al proveedor de IA configurado. Si marcas el consentimiento del mapa, se envían solo los campos que selecciones de tu mapa, nunca el perfil completo. Pai puede calcular escenarios con el motor local. No incluyas nombres, documentos ni datos bancarios.", "warning-note"));
+  chat.appendChild(callout("Si la IA está disponible y das tu consentimiento, tu pregunta se enviará al proveedor. No incluyas nombres, documentos ni datos bancarios.", "warning-note"));
   const form = el("form", { className: "chat-form" });
   const message = el("textarea", { id: "chat-message", name: "message", maxlength: 1200, "aria-describedby": "chat-help chat-feedback" });
   message.value = state.chatMessage;
@@ -904,10 +904,14 @@ function renderHome() {
   form.appendChild(messageField);
   const consent = el("label", { className: "choice", htmlFor: "chat-consent" }, [el("input", { type: "checkbox", id: "chat-consent" }), el("span", {}, "Autorizo enviar esta pregunta al proveedor IA si está configurado y habilitado. No incluiré datos personales. El mapa completo no se envía: solo los campos que marques y autorices aparte." )]);
   form.appendChild(consent);
-  form.appendChild(callout("Mapa e historial: opcionales y con consentimiento aparte. El historial sigue desactivado en el servidor normal; el mapa se envía solo con los campos que marques.", "warning-note"));
+  const chatOptions = el("details", { id: "pai-context", className: "data-panel" });
+  chatOptions.appendChild(el("summary", {}, "Opciones de privacidad para Pai"));
+  chatOptions.appendChild(callout("Compartir datos del mapa o historial es opcional y requiere consentimiento aparte. El historial solo está disponible en pruebas sintéticas.", "info-note"));
   const chatCapabilities = state.status?.ai?.capabilities;
   const scenarioEnabled = el("input", {type:"checkbox", id:"chat-scenario-enabled"});
-  form.appendChild(el("label", {className:"choice", htmlFor:"chat-scenario-enabled"}, [scenarioEnabled, el("span", {}, "Añadir escenario ficticio para cálculo estructurado (solo prueba local; completa todos los campos).") ]));
+  const testOptions = el("details", { className: "data-panel", id: "pai-test-options" });
+  testOptions.appendChild(el("summary", {}, "Opciones de prueba sintética"));
+  testOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-scenario-enabled"}, [scenarioEnabled, el("span", {}, "Añadir escenario ficticio para cálculo estructurado (solo prueba local; completa todos los campos).") ]));
   // Los seis campos del cálculo no se muestran hasta que se piden: en Inicio
   // ocupaban media pantalla antes de escribir la primera pregunta.
   const scenarioFields = el("div", {id:"chat-scenario-fields", hidden:""});
@@ -919,10 +923,10 @@ function renderHome() {
   }
   scenarioInputs.method=el("select", {id:"chat-scenario-method"}, [el("option",{value:""},"Selecciona un método"),el("option",{value:"simple"},"Simple"),el("option",{value:"compound"},"Compuesto")]);
   scenarioFields.appendChild(field("Método",scenarioInputs.method,"Selecciona el método ficticio.","chat-scenario-method"));
-  form.appendChild(scenarioFields);
+  testOptions.appendChild(scenarioFields);
   const capabilitiesNote = callout(`Mapa: ${chatCapabilities?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}; catálogo: ${chatCapabilities?.catalogue === true ? "puede consultar fichas documentadas" : "no disponible"}; historial: ${chatCapabilities?.history === true ? "habilitado" : "desactivado"}.`, "warning-note");
   capabilitiesNote.setAttribute("id", "chat-context-capabilities");
-  form.appendChild(capabilitiesNote);
+  chatOptions.appendChild(capabilitiesNote);
   const CONTEXT_LABELS = {"respuestas.objetivo":"Objetivo","respuestas.horizonte":"Horizonte","detalle_economico.importe_objetivo":"Importe objetivo","detalle_economico.colchon_liquido":"Colchón líquido"};
   const contextChoices = PaideiaChatContext.fields.map((key, index) => {
     const answer = PROFILE_MODEL.getAnswer(state.profile, key);
@@ -930,17 +934,17 @@ function renderHome() {
     const available = answered && chatCapabilities?.context === true;
     const box = el("input", {type:"checkbox", id:`chat-context-field-${index}`, disabled:!available});
     const value = answered ? displayProfileValue(key, answer) : "sin responder en tu mapa";
-    form.appendChild(el("label", {className:"choice", htmlFor:`chat-context-field-${index}`}, [box, el("span", {}, `${CONTEXT_LABELS[key] || key}: ${value}`)]));
+    chatOptions.appendChild(el("label", {className:"choice", htmlFor:`chat-context-field-${index}`}, [box, el("span", {}, `${CONTEXT_LABELS[key] || key}: ${value}`)]));
     return box;
   });
   const contextConsent = el("input", {type:"checkbox", id:"chat-context-consent", disabled:chatCapabilities?.context !== true});
   const historyConsent = el("input", {type:"checkbox", id:"chat-history-consent", disabled:chatCapabilities?.history !== true});
-  form.appendChild(el("label", {className:"choice", htmlFor:"chat-context-consent"}, [contextConsent, el("span", {}, "Autorizo adjuntar a esta pregunta solo los campos de mi mapa que he marcado.")]));
-  form.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, "Autorizo conservar en esta pestaña, solo durante esta prueba con contenido ficticio, mis preguntas y las respuestas de Pai de hasta dos turnos anteriores (cuatro mensajes como máximo) y reenviarlos con la pregunta siguiente; sin guardado automático.")]));
+  chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-context-consent"}, [contextConsent, el("span", {}, "Autorizo adjuntar a esta pregunta solo los campos de mi mapa que he marcado.")]));
+  chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, "Autorizo conservar en esta pestaña, solo durante esta prueba con contenido ficticio, mis preguntas y las respuestas de Pai de hasta dos turnos anteriores (cuatro mensajes como máximo) y reenviarlos con la pregunta siguiente; sin guardado automático.")]));
   let historyRevision = 0;
   const historyClear = button("Borrar historial de esta pestaña", () => { historyRevision += 1; PaideiaChatContext.clear(); feedback.textContent = "Historial borrado de esta pestaña. Los mensajes ya enviados al proveedor no se borran."; }, "button button-quiet", {id:"chat-history-clear", type:"button"});
   historyClear.setAttribute("id", "chat-history-clear");
-  form.appendChild(historyClear);
+  chatOptions.appendChild(historyClear);
   historyConsent.addEventListener("change", () => {
     feedback.textContent = historyConsent.checked
       ? "Historial activado: se reenviarán hasta dos turnos anteriores, solo en esta pestaña."
@@ -1170,7 +1174,9 @@ function renderHome() {
     }
   });
   chat.appendChild(form);
+  page.appendChild(chatOptions);
   page.appendChild(chat);
+  if (state.status?.ai?.status === "test_only" && chatCapabilities?.structured_education === true) page.appendChild(testOptions);
   if (state.storageNotice) page.appendChild(callout(state.storageNotice, state.storageProblem ? "warning-note" : "note"));
   page.appendChild(actions);
   return heading;
@@ -1450,9 +1456,19 @@ function renderProfileSummary(page) {
   summary.appendChild(list);
   renderLegacyAnswers(summary);
   summary.appendChild(callout("Solo se guarda si das permiso explícito en Privacidad. Este mapa no se envía por defecto: solo saldrían los campos que marques y autorices en el chat, nunca el mapa completo. No solicita nombre, DNI, cuenta ni credenciales.", "info-note"));
+  const continueToPai = routeLink("Continuar con Pai", "#inicio", "button button-primary");
+  continueToPai.addEventListener("click", (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    window.addEventListener("hashchange", () => {
+      requestAnimationFrame(() => {
+        if (location.hash === "#inicio") document.getElementById("chat-message")?.focus();
+      });
+    }, { once: true });
+  });
   summary.appendChild(el("div", { className: "button-row" }, [
     button(PROFILE_FIELDS.some(key => PROFILE_MODEL.getAnswer(state.profile, key).estado === "sin_preguntar") ? "Continuar donde lo dejé" : "Revisar cuestionario", () => enterProfileMode("core", true), "button button-secondary"),
-    routeLink("Seguir explorando", "#biblioteca", "button button-primary")
+    continueToPai,
+    routeLink("Seguir explorando", "#biblioteca", "button button-secondary")
   ]));
   page.appendChild(summary);
 }
@@ -3288,6 +3304,19 @@ async function checkLocalStatus() {
     // «IA no conectada» arriba desanima sin explicar nada.
     setStatusChip(aiConfigured ? `${mode} · IA configurada` : mode, "ready");
     if (state.route) renderContext(state.route);
+    // El primer render ocurre sin estado; si el servicio resulta ser de prueba con
+    // cálculo estructurado, el bloque sintético debe aparecer sin cambiar de ruta.
+    if (state.route === "inicio" && status.ai?.status === "test_only"
+        && status.ai?.capabilities?.structured_education === true
+        && !document.getElementById("pai-test-options")) {
+      // El estado llega tarde y el render sustituye el DOM: se conserva lo que el
+      // usuario ya tenía abierto o enfocado para no moverle el cursor ni la vista.
+      const focused = document.activeElement?.id === "chat-message";
+      const openOptions = document.getElementById("pai-context")?.open === true;
+      render({ preserveFocus: true });
+      if (openOptions) { const panel = document.getElementById("pai-context"); if (panel) panel.open = true; }
+      if (focused) document.getElementById("chat-message")?.focus();
+    }
   } catch (error) {
     state.statusError = error;
     setStatusChip("Servicio local sin respuesta", "error");

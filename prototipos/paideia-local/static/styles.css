@@ -254,7 +254,8 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; flex: 0
 .choice { min-height: 48px; display: flex; align-items: center; gap: 11px; padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; }
 .choice:has(input:checked) { border-color: var(--blue); background: var(--info-bg); }
 .choice > span { line-height: 1.35; }
-#chat-panel label[for^="chat-context-field-"] > span { min-width: 0; overflow-wrap: anywhere; }
+summary { min-height: 24px; padding: 4px 0; }
+#pai-context label[for^="chat-context-field-"] > span { min-width: 0; overflow-wrap: anywhere; }
 .form-error { min-height: 1.5em; margin: 8px 0 0; color: var(--danger); font-size: .9rem; }
 .step-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .step-progress progress { width: min(220px, 42vw); height: 10px; accent-color: var(--blue); }
