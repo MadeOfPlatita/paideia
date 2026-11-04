@@ -1,7 +1,7 @@
 # Cierre — misión Paideia hasta bloqueo
 
 **Apertura:** 4/11/2026, 18:20 (Málaga).
-**Cierre:** 4/11/2026, 22:20 (Málaga).
+**Cierre:** 4/11/2026, 23:45 (Málaga).
 **Raíz:** `C:/Users/aleja/Downloads/App Financiera`, rama `master`.
 **Resultado:** tres bloques aceptados por revisión independiente, subidos al repositorio privado y **desplegados en la web pública con la IA apagada**; dos frentes se detienen con dictamen desfavorable y evidencia (el contador global y un intento de relajar la frontera de Pai), con **0 llamadas reales a Groq**.
 
@@ -57,6 +57,7 @@ La evaluación de diez preguntas señaló que Pai suprime respuestas legítimas,
 |---|---|
 | Python (`pytest tests`) | **631 passed, 1 skipped**, exit 0. El caso omitido documenta el defecto N2 abierto. |
 | Node del prototipo | **95 comprobaciones** (14 archivos + módulo de avisos), exit 0 |
+| Tras descartar el intento de atribuciones | **631 aprobadas, 1 omitida**, exit 0; el árbol vuelve al código desplegado |
 | Navegador B1 / B8 / B9 | 74 (72 PASS + 2 observaciones) / 28/28 / 32/32 |
 | Recorrido B6 con tema oscuro | 40/40 en escritorio y 40/40 en móvil emulado |
 | Concurrencia del contador (sonda propia, 20 procesos, cupo 5) | 5/5 reservas, sin lock huérfano, cupo nunca superado, 3/3 repeticiones |
