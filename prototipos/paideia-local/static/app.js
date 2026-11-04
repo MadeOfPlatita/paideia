@@ -641,10 +641,11 @@ function saveProfileAfterConsent() {
 function renderHome() {
   const { page, heading } = pageFrame("Inicio · explorar sin prisa", "Tu ruta, a tu ritmo", "Primero prepara tu mapa; después Pai puede responderte con tus datos. Explorar y comparar no necesitan perfil.");
   const route = el("ol", { className: "route-strip", "aria-label": "Pasos de exploración" });
-  [["01", "Prepara tu mapa", "Dos minutos, sin datos personales"], ["02", "Habla con Pai", "Con tu contexto"], ["03", "Explora y compara", "Fuentes y condiciones"]].forEach((item) => {
+  // La navegación lateral ya numera las secciones: aquí no se repiten números.
+  [["Prepara tu mapa", "Dos minutos, sin datos personales"], ["Habla con Pai", "Con tu contexto"], ["Explora y compara", "Fuentes y condiciones"]].forEach((item) => {
     const li = el("li");
-    li.appendChild(textElement("strong", `${item[0]} · ${item[1]}`));
-    li.appendChild(textElement("span", item[2]));
+    li.appendChild(textElement("strong", item[0]));
+    li.appendChild(textElement("span", item[1]));
     route.appendChild(li);
   });
   page.appendChild(route);
@@ -907,13 +908,18 @@ function renderHome() {
   const chatCapabilities = state.status?.ai?.capabilities;
   const scenarioEnabled = el("input", {type:"checkbox", id:"chat-scenario-enabled"});
   form.appendChild(el("label", {className:"choice", htmlFor:"chat-scenario-enabled"}, [scenarioEnabled, el("span", {}, "Añadir escenario ficticio para cálculo estructurado (solo prueba local; completa todos los campos).") ]));
+  // Los seis campos del cálculo no se muestran hasta que se piden: en Inicio
+  // ocupaban media pantalla antes de escribir la primera pregunta.
+  const scenarioFields = el("div", {id:"chat-scenario-fields", hidden:""});
+  scenarioEnabled.addEventListener("change", () => { scenarioFields.hidden = !scenarioEnabled.checked; });
   const scenarioInputs = {};
   for (const [key,label] of [["principal","Capital inicial EUR"],["annual_rate_percent","Tasa anual %"],["years","Años enteros (1–40)"],["monthly_contribution","Aportación mensual EUR"],["inflation_percent","Inflación anual %"]]) {
     const input=el("input", {id:`chat-scenario-${key}`, type:"text", inputmode:"decimal"});
-    scenarioInputs[key]=input; form.appendChild(field(label,input,"Solo cifras ficticias; usa punto decimal.",`chat-scenario-${key}`));
+    scenarioInputs[key]=input; scenarioFields.appendChild(field(label,input,"Solo cifras ficticias; usa punto decimal.",`chat-scenario-${key}`));
   }
   scenarioInputs.method=el("select", {id:"chat-scenario-method"}, [el("option",{value:""},"Selecciona un método"),el("option",{value:"simple"},"Simple"),el("option",{value:"compound"},"Compuesto")]);
-  form.appendChild(field("Método",scenarioInputs.method,"Selecciona el método ficticio.","chat-scenario-method"));
+  scenarioFields.appendChild(field("Método",scenarioInputs.method,"Selecciona el método ficticio.","chat-scenario-method"));
+  form.appendChild(scenarioFields);
   const capabilitiesNote = callout(`Mapa: ${chatCapabilities?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}; catálogo: ${chatCapabilities?.catalogue === true ? "puede consultar fichas documentadas" : "no disponible"}; historial: ${chatCapabilities?.history === true ? "habilitado" : "desactivado"}.`, "warning-note");
   capabilitiesNote.setAttribute("id", "chat-context-capabilities");
   form.appendChild(capabilitiesNote);
