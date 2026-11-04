@@ -1085,11 +1085,17 @@ function renderHome() {
           const withheld = textState.startsWith("withheld") || catalogueUsed;
           const withheldReason = provenance && typeof provenance.withheld_reason === "string" ? provenance.withheld_reason : "";
           if (withheld) {
-            feedback.appendChild(textElement("p", catalogueUsed
-              ? "El texto del modelo no se muestra en esta consulta de catálogo: no está validado y no puede adjudicar fuentes ni tasas. Se muestran los datos locales con su clase, fechas y límites."
-              : (calculation || withheldReason === "calculation")
-                ? "Se ha omitido el texto del modelo en este turno de calculadora: una cifra de la prosa puede atribuirse al concepto equivocado. Se muestra el resultado y los supuestos del motor local."
-                : "Se ha omitido el texto del modelo porque contenía una afirmación de fuente oficial o vigencia sin respaldo local. No se presenta como dato."));
+            // El aviso debe decir el motivo real declarado por el backend; si no consta,
+            // no se acusa de «fuente oficial»: solo de no ser verificable localmente.
+            const withheldNotice = (typeof PaideiaWithheldNotice !== "undefined" && PaideiaWithheldNotice
+              && typeof PaideiaWithheldNotice.notice === "function")
+              ? PaideiaWithheldNotice.notice({
+                catalogueUsed,
+                hasCalculation: Boolean(calculation) || withheldReason === "calculation",
+                reason: withheldReason
+              })
+              : "Se ha omitido el texto del modelo porque no se pudo verificar localmente. No se presenta como dato.";
+            feedback.appendChild(textElement("p", withheldNotice));
             if (catalogueUsed && catalogue) renderChatCatalogue(feedback, catalogue);
             if (calculation) renderChatCalculation(feedback, calculation);
           } else if (typeof result.answer === "string" && result.answer) {
