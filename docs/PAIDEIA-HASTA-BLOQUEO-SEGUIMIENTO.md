@@ -113,4 +113,20 @@ Intenté sustituir el lock por uno del sistema operativo (`msvcrt.locking`/`floc
 
 **Consecuencia, sin ambigüedad:** se agotaron los dos ciclos de corrección permitidos para este bloque. **La puerta de Groq sigue cerrada y esta misión termina con 0 intentos reales.** El diario histórico conserva sus 15 líneas intactas. Corregir N2 exige un diseño distinto (lock del SO o un testigo externo) y una revisión favorable de la versión exacta: es una decisión y un trabajo del equipo, no algo que deba seguir intentando a ciegas.
 
-Las correcciones que **sí** están cerradas por revisión (B2, B3, B4, L1–L3, N1) quedan en el árbol de trabajo, sin commit, porque comparten fichero con el lock pendiente y separarlas requeriría reescribir código ya revisado.
+Las correcciones que **sí** están cerradas por revisión (B2, B3, B4, L1–L3, N1) quedan en el árbol de trabajo, sin commit, porque comparten fichero con el lock pendiente y separarlas requeriría reescribir código ya verificado.
+
+## Pai — honestidad del aviso de omisión, 4/11/2026 21:40
+
+La evaluación de las diez preguntas dejó un defecto de veracidad en la interfaz: cuando el backend retenía la prosa por una **cifra** o un **identificador**, la interfaz decía siempre «afirmación de fuente oficial o vigencia». El motivo mostrado no coincidía con el declarado en cinco de los diez paneles.
+
+Corregido con TDD: módulo puro `static/chat_withheld_notice.js` (8 pruebas nuevas en `tests/chat_withheld_notice.test.cjs`, RED antes de implementar) que traduce el motivo declarado —`figure`, `attribution`, `identifier`, `invalid`— a un aviso exacto; catálogo y calculadora conservan su explicación propia; un motivo desconocido ya no se convierte en una acusación de fuente oficial, solo declara que no se pudo verificar localmente. La frontera no se relaja: el texto retenido sigue sin mostrarse nunca.
+
+Suites: Node al completo en verde (87 + 8 del módulo nuevo), B1 74 (72 PASS + 2 observaciones). Módulo comprobado cargando en la app real bajo su CSP. **Dictamen independiente en curso**; sin commit hasta que sea favorable.
+
+## Publicación — intento bloqueado por Vercel, 4/11/2026 21:55
+
+El paquete que despliega Vercel (`api/_core/**` y `api/_static/**`) **no incluye** el contador: solo catálogo, dominio y estáticos. Con los tres bloques revisados (diseño, B6 y aviso de omisión), la instantánea desplegable contenía únicamente trabajo aprobado y la IA pública seguía configurada como no disponible.
+
+El primer `vercel --prod` **no llegó a producción**: el despliegue quedó en estado `BLOCKED` con el motivo «the commit author doesn't have permission to create deployments for this project». La causa es mía: los commits se firmaron con una dirección de ejemplo (`alejandro@example.invalid`) para no inventar la identidad de Alejandro, y Vercel exige que el autor del commit sea una cuenta con permiso en el proyecto. La cuenta de GitHub (`MadeOfPlatita`, id 307587994) no publica correo, así que el remitente correcto es su dirección noreply.
+
+Corregido sin reescribir historia: se fija la identidad local del repositorio en `307587994+MadeOfPlatita@users.noreply.github.com` y se reintenta el despliegue con un commit nuevo. Los commits anteriores conservan su autoría y su contenido. **La web pública sigue sirviendo la versión anterior** (verificado: `theme-color` antiguo, sin `dark_theme.css`, `ai.connected=false`).
