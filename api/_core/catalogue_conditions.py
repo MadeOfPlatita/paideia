@@ -9,6 +9,8 @@ Reglas deliberadamente conservadoras:
 - Una promoción con `effective_to` vencida queda `stale`; nunca se presenta como vigente.
 - El permiso de visualización se informa aparte (`permission_state`) y no se declara
   concedido: el módulo no redistribuye contenido de la fuente.
+- Los `source_ids` numéricos del snapshot solo se aceptan si un registro de fuentes los
+  resuelve a una URL. Sin resolución, la condición no se declara `known`: fail closed.
 
 No hace E/S ni red: recibe el snapshot ya cargado y la fecha de referencia.
 """
@@ -16,7 +18,7 @@ No hace E/S ni red: recibe el snapshot ya cargado y la fecha de referencia.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date, datetime, timedelta
 
 ISO_DATE = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b")
@@ -47,6 +49,7 @@ class Condition:
     state: str  # known | unknown | conflict | stale
     reason: str
     source_ids: tuple[str, ...] = ()
+    source_refs: tuple[tuple[str, str | None, str | None], ...] = ()
     effective_from: str | None = None
     effective_to: str | None = None
     retrieved_at: str | None = None
@@ -63,6 +66,10 @@ class Condition:
             "state": self.state,
             "reason": self.reason,
             "source_ids": list(self.source_ids),
+            "source_refs": [
+                {"url": url, "title": title, "accessed": accessed}
+                for url, title, accessed in self.source_refs
+            ],
             "effective_from": self.effective_from,
             "effective_to": self.effective_to,
             "retrieved_at": self.retrieved_at,
@@ -107,6 +114,62 @@ def _source_ids(field: object) -> tuple[str, ...]:
     if isinstance(field, dict):
         return tuple(str(item) for item in field.get("source_ids") or ())
     return ()
+
+
+def index_sources(sources: object) -> dict[str, dict]:
+    """Normaliza un registro de fuentes `{id: {url, title, accessed}}`.
+
+    Acepta el documento del ledger (`{"version": 1, "sources": [...]}`) o una lista.
+    Un id sin URL válida no entra en el índice: no se puede enlazar.
+    """
+    if sources is None:
+        return {}
+    records = sources.get("sources") if isinstance(sources, dict) else sources
+    if not isinstance(records, (list, tuple)):
+        raise ValueError("source registry without sources")
+    index: dict[str, dict] = {}
+    for item in records:
+        if not isinstance(item, dict):
+            continue
+        raw_id = item.get("id")
+        url = item.get("url")
+        if raw_id is None or not isinstance(url, str) or not url.startswith(("http://", "https://")):
+            continue
+        index[str(raw_id)] = {
+            "url": url,
+            "title": item.get("title") if isinstance(item.get("title"), str) else None,
+            "accessed": item.get("accessed") if isinstance(item.get("accessed"), str) else None,
+        }
+    return index
+
+
+def resolve_sources(
+    ids: tuple[str, ...], registry: dict[str, dict] | None
+) -> tuple[tuple[str, ...], tuple[tuple[str, str | None, str | None], ...], tuple[str, ...]]:
+    """Resuelve ids a URL. Devuelve `(urls, refs, sin_resolver)`.
+
+    Con `registry is None` no se exige resolución (comportamiento histórico); con un
+    registro —aunque esté vacío— todo id debe resolverse o es un defecto.
+    """
+    if registry is None:
+        return ids, (), ()
+    urls: list[str] = []
+    refs: list[tuple[str, str | None, str | None]] = []
+    unresolved: list[str] = []
+    for raw in ids:
+        if raw.startswith(("http://", "https://")):
+            if raw not in urls:
+                urls.append(raw)
+                refs.append((raw, None, None))
+            continue
+        entry = registry.get(raw)
+        if not entry:
+            unresolved.append(raw)
+            continue
+        if entry["url"] not in urls:
+            urls.append(entry["url"])
+            refs.append((entry["url"], entry["title"], entry["accessed"]))
+    return tuple(urls), tuple(refs), tuple(unresolved)
 
 
 def _field_dates(field: object) -> tuple[str | None, str | None]:
@@ -201,16 +264,36 @@ def term_months(candidate: dict) -> Condition:
                      "TERM_NOT_DOCUMENTED", retrieved_at=retrieved)
 
 
-def derive(snapshot: dict, today: date | None = None, curated: dict | None = None) -> dict:
+def _with_registry(condition: Condition, registry: dict[str, dict] | None) -> Condition:
+    """Sustituye ids por URLs del registro de fuentes y falla cerrado si no resuelven."""
+    if registry is None or not condition.source_ids:
+        return condition
+    urls, refs, unresolved = resolve_sources(condition.source_ids, registry)
+    if unresolved:
+        notes = tuple(condition.notes) + (
+            "Fuente sin URL verificable (ids: " + ", ".join(unresolved) + "); no se publica el dato.",
+        )
+        return replace(condition, value=None, state="unknown", reason="SOURCE_UNRESOLVED",
+                       source_ids=urls, source_refs=refs, notes=notes)
+    return replace(condition, source_ids=urls, source_refs=refs)
+
+
+def derive(snapshot: dict, today: date | None = None, curated: dict | None = None,
+           sources: object = None) -> dict:
     """Devuelve condiciones por producto y un resumen, sin inventar campos.
 
     `curated` (opcional) son condiciones transcritas a mano de una fuente con URL y
     fecha; cuando existen, sustituyen al literal del snapshot para ese producto.
+
+    `sources` (opcional) es el ledger de fuentes con `id → url`. Si se pasa un registro
+    —aunque esté vacío—, toda condición del snapshot debe resolver su fuente o queda
+    `unknown` con motivo `SOURCE_UNRESOLVED`.
     """
     reference = today or date.today()
     candidates = snapshot.get("candidates")
     if not isinstance(candidates, list):
         raise ValueError("snapshot without candidates")
+    registry = None if sources is None else index_sources(sources)
     curated_records = _index_curated(curated)
     products = []
     seen = set()
@@ -224,9 +307,9 @@ def derive(snapshot: dict, today: date | None = None, curated: dict | None = Non
             conditions.extend(_curated_conditions(record, reference))
         else:
             if family in RATE_FIELDS:
-                conditions.append(annual_rate(candidate, reference))
+                conditions.append(_with_registry(annual_rate(candidate, reference), registry))
             if family in TERM_FIELDS:
-                conditions.append(term_months(candidate))
+                conditions.append(_with_registry(term_months(candidate), registry))
         products.append({
             "product_id": product_id,
             "family": family,
@@ -259,6 +342,7 @@ def derive(snapshot: dict, today: date | None = None, curated: dict | None = Non
         "products": products,
         "state_counts": counts,
         "rules_version": "catalogue-conditions.v1",
+        "source_registry": "applied" if registry is not None else "not_provided",
         "not_for_publication": True,
         "note": "Estados derivados del snapshot y de condiciones transcritas con fuente; permisos de publicación sin revisar.",
     }
@@ -304,10 +388,11 @@ def _curated_conditions(record: dict, today: date) -> list[Condition]:
             state, reason = "stale", "PROMOTION_EXPIRED"
             notes.append("La vigencia declarada ya terminó.")
         conditions.append(Condition(product_id, family, "annual_rate_percent", value, "PERCENT", state,
-                                    reason, source_ids=(str(source.get("url")),), effective_to=valid_to,
+                                    reason, source_ids=(str(source.get("url")),) if source.get("url") else (), effective_to=valid_to,
                                     retrieved_at=retrieved, notes=tuple(notes)))
     term = record.get("term_months")
     if isinstance(term, int) and 1 <= term <= 120:
         conditions.append(Condition(product_id, family, "term_months", str(term), "MONTHS", "known",
-                                    "CURATED_TERM", retrieved_at=retrieved))
+                                    "CURATED_TERM", source_ids=(str(source.get("url")),) if source.get("url") else (),
+                                    retrieved_at=retrieved))
     return conditions

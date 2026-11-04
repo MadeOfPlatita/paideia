@@ -11,6 +11,7 @@ from catalogue_conditions import derive
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SNAPSHOT_RELATIVE = Path("docs/validacion-04/05-catalogo/candidatos.json")
 CURATED_RELATIVE = Path("prototipos/paideia-local/data/condiciones.json")
+SOURCES_RELATIVE = Path("docs/validacion-04/05-catalogo/evidencia/sources-ledger.json")
 
 
 def _read_json(path: Path) -> object:
@@ -23,9 +24,11 @@ def _read_json(path: Path) -> object:
 class ConditionsService:
     """Deriva condiciones con la fecha del día; nunca inventa ni cachea estados."""
 
-    def __init__(self, snapshot_path: Path | None = None, curated_path: Path | None = None):
+    def __init__(self, snapshot_path: Path | None = None, curated_path: Path | None = None,
+                 sources_path: Path | None = None):
         self._snapshot_path = snapshot_path or (PROJECT_ROOT / SNAPSHOT_RELATIVE)
         self._curated_path = curated_path or (PROJECT_ROOT / CURATED_RELATIVE)
+        self._sources_path = sources_path or (PROJECT_ROOT / SOURCES_RELATIVE)
 
     def _curated(self) -> dict | None:
         try:
@@ -34,11 +37,22 @@ class ConditionsService:
             return None
         return document if isinstance(document, dict) else None
 
+    def _sources(self) -> dict:
+        """Ledger de fuentes `id → url`. Si falta o está roto, el registro va vacío y
+        cualquier condición del snapshot con id sin URL queda `unknown` (fail closed)."""
+        try:
+            document = _read_json(self._sources_path)
+        except (OSError, ValueError, RuntimeError):
+            return {"sources": []}
+        if not isinstance(document, dict) or not isinstance(document.get("sources"), list):
+            return {"sources": []}
+        return document
+
     def describe(self, today: date | None = None) -> dict:
         snapshot = _read_json(self._snapshot_path)
         if not isinstance(snapshot, dict):
             raise RuntimeError("snapshot is not an object")
-        return derive(snapshot, today=today, curated=self._curated())
+        return derive(snapshot, today=today, curated=self._curated(), sources=self._sources())
 
     def for_product(self, product_id: str, today: date | None = None) -> dict | None:
         report = self.describe(today)

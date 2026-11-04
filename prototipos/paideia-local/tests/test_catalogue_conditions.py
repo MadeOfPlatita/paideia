@@ -160,6 +160,12 @@ class CuratedTests(unittest.TestCase):
         self.assertIn("Fuente secundaria", rate["notes"][0])
         self.assertEqual(product["identity_state"], "press_documented")
 
+    def test_curated_term_carries_source_traceability(self):
+        record = self.curated()
+        result = derive({"candidates": []}, TODAY, record)
+        term = next(c for c in result["products"][0]["conditions"] if c["metric"] == "term_months")
+        self.assertEqual(term["source_ids"], ["https://example.invalid/ficha"])
+
     def test_real_curated_file_parses(self):
         import json
         from pathlib import Path

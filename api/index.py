@@ -17,10 +17,21 @@ from urllib.parse import parse_qs, unquote
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _core.catalogue_conditions import derive  # noqa: E402
-from _core.catalogue_data import CANDIDATES, CURATED  # noqa: E402
+from _core.catalogue_data import CANDIDATES, CURATED, SOURCES  # noqa: E402
 from _core.domain import InputValidationError, calculate_scenario  # noqa: E402
 
 PRODUCT_ID = re.compile(r"[A-Z0-9]{1,16}(?:-[A-Z0-9]{1,16}){0,3}\Z")
+
+
+def _conflict_text(item):
+    """Texto documentado del conflicto: acotado y sin caracteres de control.
+
+    La vista lo escapa; una frase genérica ocultaría qué discrepa.
+    """
+    if not isinstance(item, str):
+        return ""
+    clean = "".join(char for char in item if char.isprintable() or char == " ")
+    return " ".join(clean.split())[:300]
 FAMILIES = {"cuenta_remunerada", "deposito", "letra_deuda_publica", "fondo_tradicional", "etf_ucits"}
 DEPOSIT_CRITERION = "deposit_tae_12m_eur"
 MAX_BODY = 16384
@@ -73,17 +84,39 @@ def _product(candidate):
         "as_of": as_of,
         "publication_ready": False,
         "conditions_state": "pending",
-        "conflicts": ["Conflicto de fuentes o condiciones pendiente de revisión." for item in conflicts[:5] if isinstance(item, str)],
+        # La lista y el comparador de metadatos no publican cifras: el texto literal
+        # del conflicto, que puede citar tasas, se reserva para la ficha del producto.
+        "conflicts": ["Conflicto de fuentes pendiente de revisión; ver la ficha del producto."
+                      for item in conflicts[:5] if isinstance(item, str)],
         "unknown_fields": [item for item in unknown if isinstance(item, str)],
     }
 
 
 PRODUCTS = [item for item in (_product(candidate) for candidate in CANDIDATES) if item is not None]
 BY_ID = {product["id"]: product for product in PRODUCTS}
+CONFLICT_DETAILS = {
+    candidate.get("candidate_id"): tuple(
+        text for item in (candidate.get("conflicts") or [])
+        if (text := _conflict_text(item))
+    )[:5]
+    for candidate in CANDIDATES
+    if isinstance(candidate, dict) and isinstance(candidate.get("candidate_id"), str)
+}
+
+
+def _product_detail(product):
+    """Copia para la ficha, con el texto literal del conflicto documentado."""
+    if product is None:
+        return None
+    detail = json.loads(json.dumps(product))
+    raw = CONFLICT_DETAILS.get(detail.get("id"))
+    if raw:
+        detail["conflicts"] = list(raw)
+    return detail
 
 
 def _report():
-    return derive({"candidates": CANDIDATES}, today=date.today(), curated=CURATED)
+    return derive({"candidates": CANDIDATES}, today=date.today(), curated=CURATED, sources=SOURCES)
 
 
 def _entry(product_id, report):
@@ -210,9 +243,11 @@ def _compare(payload):
         if product is None:
             return _error("404 Not Found", "PRODUCT_NOT_FOUND", "Candidato no encontrado.")
         items.append(product)
-    reasons = ["Candidatos de investigación no publicables; se comparan condiciones documentadas y metadatos de identidad."]
+    reasons = ["Candidatos internos no publicables; solo se comparan metadatos de identidad y fuente."]
     if len({item["family"] for item in items}) > 1:
         reasons.append("Las familias tienen distinta naturaleza; no se ordenan numéricamente.")
+    if any(item["conflicts"] or item["unknown_fields"] for item in items):
+        reasons.append("Persisten conflictos o campos desconocidos pendientes de revisión.")
     result = {
         "items": items,
         "comparison_kind": "educational_metadata_only",
@@ -257,7 +292,7 @@ def app(environ, start_response):
             status, headers, body = _error("404 Not Found", "NOT_FOUND", "Producto no encontrado.")
         else:
             report = _report()
-            product = BY_ID.get(product_id) or _curated_product(product_id, report)
+            product = _product_detail(BY_ID.get(product_id) or _curated_product(product_id, report))
             conditions = _entry(product_id, report)
             if product is None and conditions is None:
                 status, headers, body = _error("404 Not Found", "NOT_FOUND", "Producto no encontrado.")

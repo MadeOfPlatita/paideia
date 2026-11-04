@@ -20,6 +20,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 APP_DIR = Path(__file__).resolve().parent
 SNAPSHOT_RELATIVE_PATH = Path("docs/validacion-04/05-catalogo/candidatos.json")
 SNAPSHOT_PATH = PROJECT_ROOT / SNAPSHOT_RELATIVE_PATH
+CURATED_RELATIVE_PATH = Path("prototipos/paideia-local/data/condiciones.json")
+CURATED_PATH = PROJECT_ROOT / CURATED_RELATIVE_PATH
 STATIC_ROOT = APP_DIR / "static"
 MAX_STATIC_BYTES = 2 * 1024 * 1024
 STATIC_MIME_TYPES = {
@@ -50,6 +52,73 @@ CONTEXT_PURPOSE_FIELDS = {
 }
 _PRODUCT_ID = re.compile(r"[A-Z0-9]{1,12}(?:-[A-Z0-9]{1,12}){0,2}\Z")
 _DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z")
+_CONFLICT_TEXT_LIMIT = 300
+
+
+def _conflict_text(item):
+    """Texto del conflicto tal y como está documentado, sin HTML ni controles.
+
+    Se escapa al renderizar; aquí solo se acota longitud y se quitan caracteres de
+    control. Sustituirlo por una frase genérica ocultaría qué discrepa.
+    """
+    if not isinstance(item, str):
+        return ""
+    clean = "".join(char for char in item if char.isprintable() or char == " ")
+    clean = " ".join(clean.split())
+    return clean[:_CONFLICT_TEXT_LIMIT]
+
+
+def _curated_product_records():
+    """Fichas mínimas de los productos que solo existen como condiciones transcritas.
+
+    Solo datos transcritos con fuente: nombre, entidad, familia y URL. Nada se
+    inventa y la ficha sigue marcada como no publicable.
+    """
+    try:
+        resolved = CURATED_PATH.resolve(strict=True)
+        if not resolved.is_relative_to(PROJECT_ROOT.resolve(strict=True)):
+            return ()
+        document = json.loads(resolved.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, ValueError):
+        return ()
+    records = document.get("records") if isinstance(document, dict) else None
+    if not isinstance(records, list):
+        return ()
+    products = []
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        product_id = record.get("candidate_id")
+        name = record.get("name")
+        family = record.get("family")
+        provider = record.get("provider")
+        source = record.get("source") if isinstance(record.get("source"), dict) else {}
+        url = source.get("url")
+        kind = source.get("kind")
+        if (not isinstance(product_id, str) or not _PRODUCT_ID.fullmatch(product_id)
+                or not isinstance(name, str) or not name.strip()
+                or family not in ALLOWED_FAMILIES
+                or not isinstance(url, str)):
+            continue
+        parts = urlsplit(url)
+        if parts.scheme != "https" or not parts.hostname or parts.username is not None:
+            continue
+        products.append({
+            "id": product_id,
+            "name": name.strip(),
+            "family": family,
+            "issuer": provider if isinstance(provider, str) else None,
+            "isin": None,
+            "identity_state": "verified" if kind == "official" else "proposed",
+            "primary_url": url,
+            "as_of": source.get("retrieved_at") if isinstance(source.get("retrieved_at"), str) else None,
+            "publication_ready": False,
+            "conditions_state": "documented",
+            "conflicts": [],
+            "unknown_fields": [],
+            "origin": "curated_conditions",
+        })
+    return tuple(products)
 
 
 class ApiProblem(Exception):
@@ -107,14 +176,25 @@ class SnapshotRepository(CatalogueRepository):
 
         products = []
         seen_ids = set()
+        conflict_details = {}
         for candidate in candidates:
             product = self._to_product(candidate)
             if product["id"] in seen_ids:
                 raise RuntimeError("catalogue snapshot contains duplicate candidate IDs")
             seen_ids.add(product["id"])
             products.append(product)
+            raw_conflicts = [_conflict_text(item) for item in (candidate.get("conflicts") or [])
+                             if isinstance(item, str)]
+            raw_conflicts = [text for text in raw_conflicts if text][:5]
+            if raw_conflicts:
+                conflict_details[product["id"]] = tuple(raw_conflicts)
+        self._conflict_details = conflict_details
         self._products = tuple(products)
         self._by_id = {product["id"]: product for product in products}
+        # Los transcritos solo existen como condiciones: se añaden a la consulta por id
+        # para que su ficha exista, sin alterar la lista de candidatos del snapshot.
+        for product in _curated_product_records():
+            self._by_id.setdefault(product["id"], product)
 
     @staticmethod
     def _to_product(candidate):
@@ -164,11 +244,10 @@ class SnapshotRepository(CatalogueRepository):
         source_conflicts = candidate.get("conflicts", [])
         if not isinstance(source_conflicts, list):
             source_conflicts = []
-        conflicts = [
-            "Conflicto de fuentes o condiciones pendiente de revisión."
-            for item in source_conflicts[:5]
-            if isinstance(item, str)
-        ]
+        # La lista y el comparador de metadatos no publican cifras: el texto literal
+        # del conflicto, que puede citar tasas, se reserva para la ficha del producto.
+        conflicts = ["Conflicto de fuentes pendiente de revisión; ver la ficha del producto."
+                     for item in source_conflicts[:5] if isinstance(item, str)]
         unknown = candidate.get("unknown_fields", [])
         if not isinstance(unknown, list) or not all(isinstance(item, str) for item in unknown):
             unknown = []
@@ -210,6 +289,13 @@ class SnapshotRepository(CatalogueRepository):
     def get_product(self, product_id):
         product = self._by_id.get(product_id)
         return copy.deepcopy(product) if product is not None else None
+
+    def get_product_detail(self, product_id):
+        """Ficha: incluye el texto literal del conflicto documentado, sin cifras sueltas."""
+        product = self.get_product(product_id)
+        if product is not None and product_id in getattr(self, "_conflict_details", {}):
+            product["conflicts"] = list(self._conflict_details[product_id])
+        return product
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -627,7 +713,8 @@ class _Handler(BaseHTTPRequestHandler):
                 product_id = path[len("/api/products/"):]
                 if not _PRODUCT_ID.fullmatch(product_id):
                     self._not_found()
-                product = self.server.catalogue_repository.get_product(product_id)
+                repository = self.server.catalogue_repository
+                product = getattr(repository, "get_product_detail", repository.get_product)(product_id)
                 service = self.server.conditions_service
                 conditions = None
                 if service is not None:

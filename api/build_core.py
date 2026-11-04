@@ -13,10 +13,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "docs" / "validacion-04" / "05-catalogo" / "candidatos.json"
 CURATED = ROOT / "prototipos" / "paideia-local" / "data" / "condiciones.json"
+SOURCES = ROOT / "docs" / "validacion-04" / "05-catalogo" / "evidencia" / "sources-ledger.json"
 TARGET_DIR = Path(__file__).resolve().parent / "_core"
 
 KEEP = ("candidate_id", "family", "candidate_state", "name_literal", "issuer_manager",
-        "isin", "primary_url", "dates", "conflicts", "unknown_fields")
+        "isin", "primary_url", "dates", "conflicts", "unknown_fields", "available_fields")
 SHARED = ("domain.py", "catalogue_conditions.py")
 
 
@@ -25,10 +26,18 @@ def main() -> None:
     snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
     candidates = [{key: item.get(key) for key in KEEP} for item in snapshot.get("candidates", [])]
     curated = json.loads(CURATED.read_text(encoding="utf-8"))
+    ledger = json.loads(SOURCES.read_text(encoding="utf-8"))
+    sources = [
+        {"id": item.get("id"), "url": item.get("url"), "title": item.get("title"),
+         "accessed": item.get("accessed")}
+        for item in ledger.get("sources", [])
+        if isinstance(item, dict)
+    ]
     body = (
         '"""Datos empaquetados para Vercel. Generado por api/build_core.py."""\n\n'
         f"CANDIDATES = {pprint.pformat(candidates, width=110, sort_dicts=False)}\n\n"
-        f"CURATED = {pprint.pformat(curated, width=110, sort_dicts=False)}\n"
+        f"CURATED = {pprint.pformat(curated, width=110, sort_dicts=False)}\n\n"
+        f"SOURCES = {pprint.pformat({'sources': sources}, width=110, sort_dicts=False)}\n"
     )
     (TARGET_DIR / "catalogue_data.py").write_text(body, encoding="utf-8")
     source_dir = ROOT / "prototipos" / "paideia-local"
