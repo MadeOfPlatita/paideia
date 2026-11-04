@@ -3,7 +3,7 @@
 **Apertura:** 4/11/2026, 18:20 (Málaga).
 **Cierre:** 4/11/2026, 22:20 (Málaga).
 **Raíz:** `C:/Users/aleja/Downloads/App Financiera`, rama `master`.
-**Resultado:** tres bloques aceptados por revisión independiente, subidos al repositorio privado y **desplegados en la web pública con la IA apagada**; el contador global se detiene tras agotar sus dos ciclos de corrección, con **0 llamadas reales a Groq**.
+**Resultado:** tres bloques aceptados por revisión independiente, subidos al repositorio privado y **desplegados en la web pública con la IA apagada**; dos frentes se detienen con dictamen desfavorable y evidencia (el contador global y un intento de relajar la frontera de Pai), con **0 llamadas reales a Groq**.
 
 ---
 
@@ -43,6 +43,14 @@ Se agotaron los **dos ciclos de corrección** que permite la misión. Probé ade
 
 **Consecuencia:** **0 llamadas reales a Groq en esta misión**; el diario histórico conserva sus 15 líneas; no hay manifest activo. Las correcciones cerradas (B2, B3, B4, L1–L3, N1) quedan **sin commit**, porque comparten fichero con el lock pendiente.
 
+## 3 bis. Descartado: relajar la frontera de atribuciones de Pai
+
+La evaluación de diez preguntas señaló que Pai suprime respuestas legítimas, y una causa era que la frontera léxica retenía también las negaciones («una fuente secundaria **no** es oficial»). Se implementó con TDD una regla de negación y se sometió a revisión independiente: **dos dictámenes desfavorables** (`deleg_e4d6eb3d` y `deleg_273d4b47`), con 6 y 21 atribuciones afirmadas que se colaban —la mayoría por coordinación («**No** es un banco **y** el folleto lo publica»)— y que la versión anterior sí retenía.
+
+**No se ha subido.** El código se revirtió a `HEAD`; el intento, las 29 pruebas y ambos dictámenes quedan archivados en `docs/pai-calidad/intento-atribuciones/`. El alcance de la negación no se resuelve con expresiones regulares: una regla que parece estricta pero deja pasar una atribución inventada es peor que retener. Cerrarlo exige extracción de afirmaciones con salida estructurada o verificación frase a frase contra el catálogo.
+
+**Pai sigue suprimiendo respuestas legítimas.** Lo que sí cambió es que ahora declara el motivo real de cada retención en vez de atribuirlo siempre a «fuente oficial».
+
 ## 4. Suites ejecutadas
 
 | Comprobación | Resultado |
@@ -67,7 +75,7 @@ Se agotaron los **dos ciclos de corrección** que permite la misión. Probé ade
 |---|---|---|
 | Reparar N2 con otro diseño de exclusión | El cupo puede superarse por una carrera al recuperar un lock obsoleto | Lock del sistema operativo o testigo externo, más revisión favorable de la versión exacta |
 | Ejecutar la prueba real de Pai | La puerta sigue cerrada | Autorizar el bloque corregido y su revisión; después, muestra pequeña con datos ficticios |
-| Mejorar la supresión de Pai | Sigue reteniendo respuestas legítimas que el usuario no llega a ver | Cambio de criterio con TDD y revisión; no se tocó para no debilitar la frontera sin supervisión |
+| Mejorar la supresión de Pai | Sigue reteniendo respuestas legítimas; el intento léxico fue rechazado dos veces | Sustituir la clasificación por expresiones regulares: afirmaciones estructuradas o verificación frase a frase contra el catálogo, con las diez preguntas como aceptación |
 | Catálogo | Los 20 candidatos no son 20 ofertas; permisos y vigencia sin acreditar | Revisión de fuentes y permisos, producto a producto |
 | Desbloquear los despliegues desde git | La regla de autoría bloquea cada `vercel --prod` del repositorio | Verificar el correo o el asiento del miembro en el panel de Vercel |
 | Visibilidad al entregar | El repositorio sigue privado | Invitar a la profesora o cambiar la visibilidad |

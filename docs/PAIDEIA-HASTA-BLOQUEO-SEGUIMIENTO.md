@@ -130,3 +130,39 @@ El paquete que despliega Vercel (`api/_core/**` y `api/_static/**`) **no incluye
 El primer `vercel --prod` **no llegó a producción**: el despliegue quedó en estado `BLOCKED` con el motivo «the commit author doesn't have permission to create deployments for this project». La causa es mía: los commits se firmaron con una dirección de ejemplo (`alejandro@example.invalid`) para no inventar la identidad de Alejandro, y Vercel exige que el autor del commit sea una cuenta con permiso en el proyecto. La cuenta de GitHub (`MadeOfPlatita`, id 307587994) no publica correo, así que el remitente correcto es su dirección noreply.
 
 Corregido sin reescribir historia: se fija la identidad local del repositorio en `307587994+MadeOfPlatita@users.noreply.github.com` y se reintenta el despliegue con un commit nuevo. Los commits anteriores conservan su autoría y su contenido. **La web pública sigue sirviendo la versión anterior** (verificado: `theme-color` antiguo, sin `dark_theme.css`, `ai.connected=false`).
+
+## Publicación — desplegada y verificada, 4/11/2026 22:15
+
+El reintento **sí llegó a producción**, y la causa del bloqueo quedó confirmada: Vercel rechaza los despliegues cuyo autor de commit no es una cuenta con permiso. Se publicó desde una copia de `api/` + `vercel.json` + `.vercel` sin metadatos de git (`paideia-oc1h537hd-platita1`), que es la ruta que evita esa atribución. La identidad local del repositorio queda en `307587994+MadeOfPlatita@users.noreply.github.com` para los commits siguientes; no se reescribió historia.
+
+Leído de vuelta en la URL pública: `theme-color #101112`, `dark_theme.css` servido como `text/css`, `chat_withheld_notice.js` presente, 20 fichas de catálogo, cinco rutas sin errores ni desbordamiento y `ai.connected=false`. El contenido desplegado coincide con `HEAD` (`git diff --stat HEAD -- api prototipos/paideia-local/static` vacío en ese momento).
+
+## Pai — atribuciones negadas, 4/11/2026 23:05
+
+La evaluación de las diez preguntas señaló la supresión de respuestas legítimas como el defecto de forma más grave: cinco paneles sin contenido. Una de las causas era que la frontera léxica trataba igual «según la fuente oficial» y «una fuente secundaria **no** es oficial», de modo que la forma correcta de responder era justo la que se retenía.
+
+Cambio acotado, con TDD: `_text_surface_gate` solo considera afirmada una atribución si aparece en una cláusula sin partícula negativa previa. Se corta por `. , ; : ! ?` y por `pero / aunque / sino / mientras / salvo`; se excluyen los giros que llevan negación pero afirman («no solo», «sin duda», «no cabe duda», «no deja de», «nada menos que»); las URL y `fuente:` nunca cuentan como negados. Cifras e identificadores conservan su comprobación y su prioridad.
+
+19 pruebas nuevas en `tests/test_pai_attribution_negation.py`, escritas antes del cambio (RED: 5 fallos por negaciones legítimas). Suite completa: **650 aprobadas, 1 omitida**. Node: 95/95. Una ejecución anterior de la suite tuvo un fallo intermitente de Tk en `test_secure_groq_smoke.py` que pasó al repetir y en aislamiento.
+
+Lo que **no** cambia: el caso P2 (ejemplo hipotético con «%») sigue retenido a propósito, porque una cifra inventada y una ilustrativa son indistinguibles para un filtro léxico; en turnos de calculadora cualquier cifra de la prosa sigue retenida; el texto retenido no se muestra nunca. El cambio no afecta a la web pública: `api/index.py` no importa `backend_services` y el chat público sigue apagado.
+
+**Dictamen independiente en curso** (`deleg_e4d6eb3d`, adversarial); sin commit hasta que sea favorable.
+
+### Ciclo de corrección 1 del bloque «atribuciones negadas», 4/11/2026 23:25
+
+El primer dictamen (`deleg_e4d6eb3d`) fue **favorable en lo estructural pero rechazó el bloque** por seis frases que dejaban pasar atribuciones afirmadas. Las dos graves eran fugas reales introducidas por mi cambio: «no obstante el folleto lo publica» y «sin embargo el folleto lo publica», donde el «no» y el «sin» de un conector adversativo se leían como negación. Las otras cuatro: una atribución preposicional («no es un banco **según la entidad**») y tres dobles negaciones afirmativas («no dudo», «no es menos cierto», «no hay quien dude»).
+
+Corregido en una sola pasada: conectores adversativos y dobles negaciones añadidos a los giros que afirman; las atribuciones introducidas por «según / de acuerdo con / tal como / conforme a / como confirma» se consideran siempre afirmadas; se admite la negación hacia delante («el folleto **no** lo recoge»); y la excepción ya no anula una negación posterior, de modo que «sin duda **no** está vigente» se permite.
+
+Las cuatro mejoras que el revisor echó en falta quedan cubiertas con pruebas. Total del fichero: **29 pruebas**; suite completa **660 aprobadas, 1 omitida**; Node 95/95. Segundo dictamen en curso (`deleg_273d4b47`), con barrido adversarial nuevo; es el último ciclo permitido para este bloque.
+
+### Bloque «atribuciones negadas» — descartado, 4/11/2026 23:40
+
+El segundo dictamen (`deleg_273d4b47`) también fue **desfavorable**: 21 atribuciones afirmadas de 59 frases pasaban, en su mayoría por coordinación («**No** es una fuente oficial **y** el folleto lo publica») y por la rama de negación hacia delante, que no consultaba las excepciones. Las 21 se retenían antes del cambio, así que eran regresiones del intento, no lagunas heredadas.
+
+Decisión: **no se sube**. El código se revirtió a `HEAD` y el intento queda archivado en `docs/pai-calidad/intento-atribuciones/` con el diff, el módulo tal como se revisó, las 29 pruebas y el resumen de los dos dictámenes.
+
+El motivo no es que falte un conector más: el alcance de la negación no se resuelve con expresiones regulares. Cada lista de excepciones deja fuera la siguiente coordinación, y una regla que *parece* estricta pero deja pasar «no es un banco y el folleto lo publica» es más peligrosa que la retención. Cerrar esto exige extracción de afirmaciones con salida estructurada o verificación frase a frase contra el catálogo: es una decisión de producto y arquitectura para el equipo.
+
+Lo que sí queda: la frontera original intacta y el aviso con el motivo real. Pai **sigue suprimiendo respuestas legítimas**; ahora al menos explica por qué. Suite tras la reversión: **631 aprobadas, 1 omitida**; Node 95/95.
