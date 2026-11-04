@@ -61,9 +61,11 @@
     const condition = input.rateCondition && typeof input.rateCondition === 'object' ? input.rateCondition : null;
     const term = input.termCondition && typeof input.termCondition === 'object' ? input.termCondition : null;
     const entrySource = entry.source && typeof entry.source === 'object' ? entry.source : null;
-    const conditionUrl = entrySource ? url(entrySource.url) : '';
+    const refs = condition && Array.isArray(condition.source_refs) ? condition.source_refs : [];
+    const conditionRef = refs.find((ref) => ref && typeof ref === 'object' && url(ref.url));
+    const conditionUrl = conditionRef ? url(conditionRef.url) : (entrySource ? url(entrySource.url) : '');
     const catalogueUrl = url(product.primary_url);
-    const kind = entrySource ? text(entrySource.kind, 40) : '';
+    const kind = conditionRef ? '' : (entrySource ? text(entrySource.kind, 40) : '');
     const notes = condition && Array.isArray(condition.notes) ? condition.notes.map((note) => text(note, 200)) : [];
     const secondary = Boolean((kind && kind !== 'official') || notes.some((note) => /fuente secundaria/i.test(note)));
     const tiers = Array.isArray(entry.rate_tiers)
@@ -81,6 +83,8 @@
       product_id: text(product.id, 80),
       url: conditionUrl || catalogueUrl,
       url_origin: conditionUrl ? 'condition_source' : (catalogueUrl ? 'catalogue_record' : ''),
+      source_title: conditionRef ? text(conditionRef.title, 160) : '',
+      source_accessed_at: conditionRef ? date(conditionRef.accessed) : '',
       retrieved_at: date(condition && condition.retrieved_at) || date(entrySource && entrySource.retrieved_at),
       kind,
       secondary,

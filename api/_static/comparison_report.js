@@ -65,6 +65,7 @@
     const urlOrigin = ['condition_source', 'catalogue_record'].includes(raw.url_origin) ? raw.url_origin : '';
     const clean = {
       product, product_id: productId, url, url_origin: urlOrigin, retrieved_at,
+      source_title: cleanText(raw.source_title, 160), source_accessed_at: cleanDate(raw.source_accessed_at),
       kind, secondary: raw.secondary === true || (kind !== '' && kind !== 'official'),
       document_date: cleanDate(raw.document_date),
       condition, selected_tier: cleanText(raw.selected_tier, 180), selected_condition: cleanText(raw.selected_condition, 60),
@@ -77,9 +78,12 @@
     if (!src) return 'Supuesto manual: sin fuente de producto ni fecha.';
     const parts = [];
     if (src.product) parts.push(src.product);
+    if (src.source_title) parts.push(src.source_title);
     if (src.url) parts.push(src.url);
+    if (src.source_accessed_at) parts.push('fuente consultada ' + src.source_accessed_at);
     if (src.retrieved_at) parts.push('consultada ' + src.retrieved_at);
     if (src.secondary) parts.push('fuente secundaria, pendiente de confirmar');
+    else if (src.url_origin === 'condition_source' && !src.kind) parts.push('clase de fuente desconocida');
     return parts.length ? parts.join(' · ') : 'Supuesto manual: sin fuente de producto ni fecha.';
   }
   function rateDisplay(value) {

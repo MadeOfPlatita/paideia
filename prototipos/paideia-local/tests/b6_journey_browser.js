@@ -50,7 +50,8 @@
     ok(seeded.source.retrieved_at === '2026-10-26', 'semilla usa la fecha de la condición');
     ok(seeded.source.condition && seeded.source.condition.value === '2.61', 'semilla lleva la condición de tasa');
     ok(seeded.source.condition.effective_to === '2026-11-18', 'semilla lleva la vigencia de la condición');
-    ok(seeded.source.url_origin === 'catalogue_record', 'semilla distingue la URL del registro');
+    ok(seeded.source.url_origin === 'condition_source', 'semilla identifica la URL de la condición');
+    ok(seeded.source.source_accessed_at === '2026-10-27', 'semilla distingue la fecha del registro de fuentes');
     ok(seeded.source.secondary === false, 'ACC-01 no se marca como secundaria');
     const independent = window.getScenarioComparisonSnapshot();
     independent.scenarios[0].source.product = 'MUTADO';
