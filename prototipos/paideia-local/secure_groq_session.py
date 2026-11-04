@@ -1,5 +1,7 @@
 """Explicitly authorized, memory-only, bounded Groq session."""
 from datetime import datetime, timedelta, timezone
+import http.client
+import socket
 import threading
 import time
 import math
@@ -7,7 +9,12 @@ import uuid
 from contextlib import contextmanager
 from pathlib import Path
 
-from providers import API_KEY_ENV, DEFAULT_MODEL, GroqHTTPSJSONTransport, GroqProvider, ProviderError, SendState
+import providers as _providers
+from providers import (
+    API_KEY_ENV, DEFAULT_MODEL, DEFAULT_OUTPUT_TOKENS, GROQ_HOST, GROQ_PATH, MAX_REQUEST_BYTES,
+    MAX_RESPONSE_BYTES, GroqHTTPSJSONTransport, GroqProvider, ProviderError,
+    SendState, TransportResponse,
+)
 from mission_budget import MissionBudget, load_mission
 
 HARD_DEADLINE = datetime(2026, 10, 29, 17, 40, 20, tzinfo=timezone.utc)
@@ -25,7 +32,8 @@ def __getattr__(name):
 
 
 class Session:
-    def __init__(self, key, *, transport=None, clock=None, deadline=HARD_DEADLINE, test_only=False, monotonic=None, mission_budget=None):
+    def __init__(self, key, *, transport=None, clock=None, deadline=HARD_DEADLINE, test_only=False, monotonic=None, mission_budget=None,
+                 model=DEFAULT_MODEL, timeout=15, max_output_tokens=DEFAULT_OUTPUT_TOKENS):
         if type(test_only) is not bool or (not test_only and (transport is not None or clock is not None or monotonic is not None)):
             raise ValueError('transport injection requires test_only')
         from structured_session_fixture import StructuredSessionFixture
@@ -74,12 +82,18 @@ class Session:
         self._started = False
         self._upstream = transport if test_only else GroqHTTPSJSONTransport()
         self.transport = _CountedTransport(self, test_only, self._upstream)
-        raw_provider = GroqProvider(self.transport, opt_in=True, environment=self._environment, timeout=15)
+        raw_provider = GroqProvider(self.transport, opt_in=True, environment=self._environment,
+                                    model=model, timeout=timeout, max_output_tokens=max_output_tokens)
         self.provider = _SingleFlightProvider(self, raw_provider)
 
     @property
     def test_only(self):
         return self.transport._binding[0]
+
+    @property
+    def _call_limit(self):
+        # Legacy sessions keep 24; a mission carries its own hard cap.
+        return self._mission_budget.config.cap if self._mission_budget is not None else 24
 
     def _check(self, *, allow_quota=False):
         try:
@@ -186,8 +200,9 @@ class Session:
             self._started = True
             try:
                 repository = app.SnapshotRepository()
-                policy = AdmissionPolicy(max_concurrent=1, max_queue=0, calls_per_minute=24,
-                                         calls_per_day=24, ticket_ttl_seconds=120,
+                limit = self._call_limit
+                policy = AdmissionPolicy(max_concurrent=1, max_queue=0, calls_per_minute=limit,
+                                         calls_per_day=limit, ticket_ttl_seconds=120,
                                          claim_ttl_seconds=120, scope='single-session')
                 gate = InterfazChatAdmission(policy, self._clock,
                     budget_state=InMemoryBudgetState.new_empty(scope=policy.scope))
@@ -246,7 +261,7 @@ class Session:
                     remaining = self._mission_budget.remaining()
             except Exception:
                 self.revoke()
-            return {'state': self._state, 'calls': self._calls, 'limit': 24, 'mission_remaining': remaining, 'run_id': self._run_id,
+            return {'state': self._state, 'calls': self._calls, 'limit': self._call_limit, 'mission_remaining': remaining, 'run_id': self._run_id,
                     'final_pending': self._final_pending,
                     'deadline_utc': self._deadline.astimezone(timezone.utc).isoformat(),
                     'benchmark': self._benchmark_state, 'test_only': self.test_only}
@@ -307,15 +322,26 @@ class _CountedTransport:
         session = self._session
         test_only, upstream = self._binding
         with session._lock:
-            if session._state != 'active' or not session._check() or session._calls >= 24:
+            limit = getattr(session, '_call_limit', 24)
+            if not test_only and not _providers._real_transport_intact(upstream):
+                # A mutated or replaced upstream must not consume a reservation.
                 raise ProviderError('disabled', send_state=SendState.NOT_STARTED)
+            if session._state != 'active' or not session._check() or session._calls >= limit:
+                raise ProviderError('disabled', send_state=SendState.NOT_STARTED)
+            now = session._clock() if session._mission_budget is not None else None
             try:
-                remaining = session._mission_budget.reserve(session._clock()) if session._mission_budget else None
+                if session._mission_budget is not None:
+                    # The cutoff is checked immediately before reserving, and
+                    # again at the real send boundary below.
+                    session._mission_budget.verify_cutoff(now)
+                    remaining = session._mission_budget.reserve(now)
+                else:
+                    remaining = None
             except Exception:
                 session.revoke()
                 raise ProviderError('disabled', send_state=SendState.NOT_STARTED) from None
             session._calls += 1
-            final_slot = session._calls == 24 or remaining == 0
+            final_slot = session._calls == limit or remaining == 0
             if final_slot:
                 session._final_pending = True
                 session._state = 'quota_exhausted'
@@ -330,6 +356,9 @@ class _CountedTransport:
                 with session._lock:
                     try:
                         if session._mission_budget is not None:
+                            # Re-read the manifest, ledger and seal, then check
+                            # the exact cutoff immediately before the send.
+                            session._mission_budget.verify_cutoff(session._clock())
                             session._mission_budget.remaining()
                     except Exception:
                         session.revoke()
@@ -341,7 +370,7 @@ class _CountedTransport:
                     yield
             if test_only:
                 return fixture_post(upstream, **kwargs, send_guard=send_guard)
-            return _AUTHORIZED_GROQ_POST(upstream, **kwargs, send_guard=send_guard)
+            return _guarded_https_post(upstream, **kwargs, send_guard=send_guard)
         finally:
             if final_slot:
                 with session._lock:
@@ -349,7 +378,76 @@ class _CountedTransport:
 
 
 _COUNTED_POST_IMPL = _CountedTransport._post
-from providers import _GROQ_POST as _AUTHORIZED_GROQ_POST
+
+
+def _guarded_https_post(transport, *, host, path, headers, body, timeout, send_guard):
+    """Single Groq POST with a guard before TCP/TLS and another before POST.
+
+    providers.GroqHTTPSJSONTransport opens TCP/TLS before entering its guard.
+    This equivalent, bounded routine first clears the caller's guard, so a
+    revoked session, an exhausted budget or a passed cutoff cannot even start
+    a connection, then re-enters it immediately before the request so a
+    revoke or deadline during the handshake cancels without sending.  Request
+    validation mirrors the locked real transport.
+    """
+    expected_headers = {'Authorization', 'Content-Type', 'Accept'}
+    authorization = headers.get('Authorization') if type(headers) is dict else None
+    valid_authorization = (
+        type(authorization) is str
+        and authorization.startswith('Bearer ')
+        and len(authorization) > len('Bearer ')
+        and all(0x21 <= ord(character) <= 0x7E for character in authorization[len('Bearer '):])
+    )
+    if (host != GROQ_HOST or path != GROQ_PATH or type(headers) is not dict
+            or set(headers) != expected_headers or headers.get('Content-Type') != 'application/json'
+            or headers.get('Accept') != 'application/json' or not valid_authorization
+            or type(body) is not bytes or len(body) > MAX_REQUEST_BYTES
+            or type(timeout) not in {int, float} or not 0.1 <= timeout <= 20.0
+            or not callable(send_guard)):
+        raise ValueError('invalid transport request')
+    state = SendState.NOT_STARTED
+    connection = None
+    failure = None
+    # Cupo global de la misión: esta ruta abre su propia conexión HTTPS, así que
+    # también debe reservar antes de conectar. Sin esto sería un bypass del contador.
+    try:
+        from mission_ledger import MissionBlocked, reserve_for_active_mission
+    except ImportError as error:
+        raise ProviderError('mission_guard_unavailable', send_state=SendState.NOT_STARTED) from error
+    try:
+        reserve_for_active_mission('groq_session')
+    except MissionBlocked as blocked:
+        raise ProviderError(blocked.code.lower(), send_state=SendState.NOT_STARTED) from blocked
+    try:
+        # Preflight guard: a revoked session, exhausted budget or passed cutoff
+        # must prevent the TCP/TLS connection from starting at all.
+        with send_guard():
+            pass
+        connection = http.client.HTTPSConnection(GROQ_HOST, timeout=timeout)
+        connection.connect()
+        state = SendState.UNKNOWN
+        # Final guard immediately before the POST.  It stays relockable so a
+        # revoke or deadline during the TLS handshake can still cancel safely.
+        with send_guard():
+            connection.request('POST', GROQ_PATH, body=body, headers=headers)
+            state = SendState.COMPLETED
+        response = connection.getresponse()
+        response_body = response.read(MAX_RESPONSE_BYTES + 1)
+        result = TransportResponse(status=response.status, body=response_body, send_state=state)
+    except (TimeoutError, socket.timeout):
+        failure = 'timeout'
+    except Exception:
+        failure = 'transport_error'
+    finally:
+        if connection is not None:
+            try:
+                connection.close()
+            except Exception:
+                if failure is None:
+                    failure = 'transport_error'
+    if failure is not None:
+        raise ProviderError(failure, send_state=state)
+    return result
 
 
 def _install_counted_trust():
@@ -397,6 +495,7 @@ def create_window(*, deadline=HARD_DEADLINE, test_only=False, transport=None, cl
     if not test_only and (transport is not None or clock is not None or port != 8768 or output is not None):
         raise ValueError('test injection is disabled')
     budget = MissionBudget(mission_config) if mission_config is not None else None
+    call_limit = mission_config.cap if mission_config is not None else 24
     root = tk.Tk()
     root.title('Paideia — sesión Groq temporal')
     root.geometry('760x680')
@@ -409,7 +508,7 @@ def create_window(*, deadline=HARD_DEADLINE, test_only=False, transport=None, cl
         'Comprueba personalmente que tu organización de Groq está en Free, sin facturación. '
         'Pega la clave solo aquí; no la envíes al chat. La clave permanece en memoria.\n\n'
         'El chat puede enviar a Groq el texto que escribas: utiliza únicamente datos ficticios. '
-        'Solo se habilita la calculadora, no el catálogo para el modelo. Máximo 24 llamadas '
+        'Solo se habilita la calculadora, no el catálogo para el modelo. Máximo ' + str(call_limit) + ' llamadas '
         'incluidas continuaciones, sin reintentos, durante una hora como máximo y nunca después '
         'del límite UTC indicado. La casilla no verifica tu plan ni garantiza ausencia de costes.'
     )).pack(anchor='w', pady=12)
@@ -487,7 +586,7 @@ def create_window(*, deadline=HARD_DEADLINE, test_only=False, transport=None, cl
             end_pending(message)
             return
         label = 'SINTÉTICO — TEST ONLY. ' if test_only else ''
-        status.set(label + f'Activo en http://127.0.0.1:{server.server_port}/ — 0/24 llamadas. Límite: {session.status()["deadline_utc"]}.')
+        status.set(label + f'Activo en http://127.0.0.1:{server.server_port}/ — 0/{session.status()["limit"]} llamadas. Límite: {session.status()["deadline_utc"]}.')
         print(ready_event(session.status()['run_id'], test_only) if session._run_id else 'READY test_only=' + str(test_only), flush=True)
 
     def close():
@@ -521,7 +620,7 @@ def create_window(*, deadline=HARD_DEADLINE, test_only=False, transport=None, cl
                 session.close()
                 return
             status.set(('SINTÉTICO — TEST ONLY. ' if test_only else '') +
-                       f'Activo: {state["calls"]}/24 llamadas; restante misión {state["mission_remaining"]}/24; límite {state["deadline_utc"]}.')
+                       f'Activo: {state["calls"]}/{state["limit"]} llamadas; restante misión {state["mission_remaining"]}/{state["limit"]}; límite {state["deadline_utc"]}.')
         timer[0] = root.after(500, poll)
 
     start_button = ttk.Button(frame, text='Iniciar sesión limitada', command=start)

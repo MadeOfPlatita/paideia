@@ -209,6 +209,12 @@ _ERROR_MESSAGES = {
     "provider_unavailable": "El proveedor IA no está disponible.",
     "provider_rejected": "El proveedor IA rechazó la solicitud.",
     "invalid_response": "La respuesta del proveedor IA no cumple el contrato.",
+    # Cupo global de la misión: el envío no llegó a producirse.
+    "mission_exhausted": "Se agotó el cupo de intentos reales de esta misión.",
+    "mission_closed": "La ventana de la misión ya está cerrada.",
+    "mission_unavailable": "No se pudo verificar el contador de intentos; no se envió nada.",
+    "mission_corrupt": "El contador de intentos no es legible; no se envió nada.",
+    "mission_guard_unavailable": "Falta el contador de intentos; no se envió nada.",
 }
 
 
@@ -285,6 +291,16 @@ class GroqHTTPSJSONTransport:
                 or type(body) is not bytes or len(body) > MAX_REQUEST_BYTES
                 or type(timeout) not in {int, float} or not 0.1 <= timeout <= 20.0):
             raise ValueError("invalid transport request")
+        # Cupo global de la misión: se cuenta ANTES de abrir la conexión. Fuera de una
+        # ventana de misión provisionada no interviene y la ruta ordinaria usa su cuota.
+        try:
+            from mission_ledger import MissionBlocked, reserve_for_active_mission
+        except ImportError as error:  # sin contador no se envía: fail closed
+            raise ProviderError("mission_guard_unavailable", send_state=SendState.NOT_STARTED) from error
+        try:
+            reserve_for_active_mission("groq_chat")
+        except MissionBlocked as blocked:
+            raise ProviderError(blocked.code.lower(), send_state=SendState.NOT_STARTED) from blocked
         state = SendState.NOT_STARTED
         connection = None
         failure = None
