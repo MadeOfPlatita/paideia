@@ -189,3 +189,16 @@ Lo que sí queda: la frontera original intacta y el aviso con el motivo real. Pa
 **Publicado:** `https://paideia-mu.vercel.app` sirve ya la capa nueva; `dark_theme.css` servido coincide byte a byte con el local (hash `999820d0…`), `theme-color #101112`, `ai.connected=false` y 20 candidatos. Las cabeceras de seguridad nuevas se comprueban en producción (`nosniff`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`).
 
 **Canal de afirmaciones cerradas** (commit `1cf5ab5`): 39 afirmaciones, 7 códigos de rechazo, composición solo desde el servidor y UI sin `innerHTML`. 675 pruebas Python y 108 Node. Revisión adversarial independiente en curso (`deleg_f78d0bbf`). Para usar el canal con un modelo real hace falta la prueba de Groq, que sigue bloqueada por el contador: **0 intentos reales**.
+
+### Revisión del canal y cierre de defectos, 5/11/2026 00:45
+
+El dictamen adversarial (`deleg_f78d0bbf`) fue **apto con salvedades**: 54/54 ataques rechazados con código exacto, 12/12 JSON hostil, 10/10 payloads XSS renderizados como texto literal y ninguna de las 39 afirmaciones promete rentabilidad ni recomienda contratar. Encontró cinco defectos; cuatro corregidos en `09e6934`:
+
+- **D1** la UI de v2 no usaba `claims_view.js` (la rama estructurada nunca llegaba al módulo); ahora sí.
+- **D2** un rechazo devolvía 502 en vez de un turno 200 con `claims.state="rejected"`.
+- **D3** una selección vacía se aceptaba; ahora se rechaza (`invalid_shape`), como pide el catálogo.
+- **D5** el orden documentado decía «catálogo» y la implementación usa el orden elegido: se corrige la documentación.
+
+Queda **D6** como límite declarado: no hay `catalog_digest`, así que el cliente valida forma e invariantes (longitud, charset, sin cifras) pero no una copia firmada del catálogo. Cerrarlo exige publicar el catálogo al cliente o firmar el DTO; es una decisión de diseño.
+
+**Estado:** 676 pruebas Python (1 omitida) y 108 Node en verde; producción sirviendo `app.js` idéntico al `HEAD` (`516a2770…`, normalizando CRLF), IA apagada y `/api/chat` 405. **0 llamadas reales a Groq.**
