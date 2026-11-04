@@ -222,7 +222,59 @@ class PaiRuntimeWorkflowTests(unittest.TestCase):
         self.assertNotIn("PRIVATE TEST ONLY", json.dumps(resumed))
         self.assertNotIn(hostile_source_content, json.dumps(result))
         self.assertEqual(result["sources"][0]["tool"], "search_products")
-        self.assertEqual(result["answer"], "TEST ONLY: resultado de búsqueda sin condiciones verificadas.")
+        # Un turno de catálogo no entrega prosa no validada, aunque el texto no contenga
+        # el contenido hostil; la evidencia local se conserva por separado.
+        self.assertEqual(result["answer"], "")
+        self.assertEqual(result["answer_text_state"], "withheld_catalogue_evidence")
+        self.assertTrue(result["catalogue"]["used"])
+
+    def test_empty_catalogue_search_does_not_swallow_a_conceptual_answer(self):
+        """Una búsqueda sin resultados no atribuye nada: no debe borrar la explicación.
+
+        Antes, cualquier respuesta de una herramienta de catálogo suprimía la prosa,
+        aunque la lista volviera vacía. En una pregunta conceptual el usuario se
+        quedaba sin respuesta y sin ningún dato al que atribuirla.
+        """
+        provider = TestOnlyFakeProvider([
+            ChatResult("", None, (
+                ToolCall("call_empty", "search_products", {"query": "garantía de depósitos"}),
+            ), "tool_calls"),
+            ChatResult("TEST ONLY: la garantía cubre hasta un límite por titular.", None, (), "stop"),
+        ])
+        dispatcher = TestOnlyDispatcher([tool_result("search_products", data={"items": []})])
+
+        result = ToolChatRunner(provider, dispatcher).run([
+            {"role": "user", "content": "TEST ONLY: ¿qué cubre la garantía de depósitos?"},
+        ])
+
+        self.assertEqual([event["state"] for event in result["tool_events"]], ["executed"])
+        self.assertFalse(result["catalogue"]["used"])
+        self.assertEqual(result["answer"], "TEST ONLY: la garantía cubre hasta un límite por titular.")
+        self.assertEqual(result["answer_text_state"], "shown_unverified")
+        self.assertTrue(any("no está validado" in note.lower() or "no se valida" in note.lower()
+                            for note in result["limitations"]))
+
+    def test_catalogue_result_with_items_still_withholds_free_text(self):
+        provider = TestOnlyFakeProvider([
+            ChatResult("", None, (
+                ToolCall("call_items", "search_products", {"query": "depósito"}),
+            ), "tool_calls"),
+            ChatResult("TEST ONLY: prosa no verificada.", None, (), "stop"),
+        ])
+        dispatcher = TestOnlyDispatcher([tool_result(
+            "search_products",
+            data={"items": [{"id": "SYN-01", "name": "TEST ONLY", "family": "deposito",
+                             "identity_state": "proposed", "publication_ready": False,
+                             "conflicts": [], "unknown_fields": []}]},
+        )])
+
+        result = ToolChatRunner(provider, dispatcher).run([
+            {"role": "user", "content": "TEST ONLY: busca depósitos."},
+        ])
+
+        self.assertTrue(result["catalogue"]["used"])
+        self.assertEqual(result["answer"], "")
+        self.assertEqual(result["answer_text_state"], "withheld_catalogue_evidence")
 
     def test_only_dispatcher_sources_are_returned_not_model_generated_urls(self):
         provider = TestOnlyFakeProvider([
@@ -391,7 +443,9 @@ class PaiRuntimeWorkflowTests(unittest.TestCase):
         self.assertEqual(len(provider.requests[0]["tools"]), 5)
         self.assertEqual(result["sources"][0]["source"]["claim_scope"], "product_identity_only")
         self.assertTrue(result["sources"][0]["source"]["not_for_publication"])
-        self.assertEqual(result["answer"], "TEST ONLY: identidad candidata; condiciones pendientes.")
+        self.assertEqual(result["answer"], "")
+        self.assertEqual(result["answer_text_state"], "withheld_catalogue_evidence")
+        self.assertEqual(result["catalogue"]["products"][0]["id"], "SYN-01")
         self.assertNotIn("PRIVATE TEST ONLY", json.dumps(provider.requests[1]))
 
     def test_scenario_uses_real_dispatcher_engine_without_tool_sources(self):

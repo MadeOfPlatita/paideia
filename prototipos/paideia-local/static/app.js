@@ -39,14 +39,17 @@ function isSafePrimaryUrl(value) {
 }
 
 class ApiFailure extends Error {
-  constructor(message, status, code, retryable) {
+  constructor(message, status, code, retryable, sendState) {
     super(message || "La solicitud no pudo completarse.");
     this.name = "ApiFailure";
     this.status = status;
     this.code = code || "LOCAL_API_ERROR";
     this.retryable = Boolean(retryable);
+    this.sendState = ["not_started", "unknown", "completed"].includes(sendState) ? sendState : null;
   }
 }
+
+const API_TIMEOUT_MS = 12000;
 
 async function apiRequest(path, options = {}) {
   const request = { method: options.method || "GET", headers: { Accept: "application/json" } };
@@ -54,20 +57,48 @@ async function apiRequest(path, options = {}) {
     request.headers["Content-Type"] = "application/json";
     request.body = JSON.stringify(options.body);
   }
+  const controller = typeof AbortController === "function" ? new AbortController() : null;
+  let timedOut = false;
+  const timer = controller
+    ? setTimeout(() => { timedOut = true; controller.abort(); }, API_TIMEOUT_MS)
+    : null;
+  if (controller) request.signal = controller.signal;
   let response;
+  let body = null;
   try {
     response = await fetch(path, request);
+    try { body = await response.json(); } catch (_) { body = null; }
   } catch (error) {
+    if (timedOut) throw new ApiFailure("El servicio local tardó demasiado en responder. Vuelve a intentarlo.", 0, "LOCAL_TIMEOUT", true);
     throw new ApiFailure("No se pudo conectar con el servicio local. Comprueba que el prototipo esté iniciado.", 0, "LOCAL_UNREACHABLE", true);
+  } finally {
+    if (timer !== null) clearTimeout(timer);
   }
-  let body = null;
-  try { body = await response.json(); } catch (_) { body = null; }
   if (!response.ok) {
     const error = body && body.error ? body.error : {};
-    throw new ApiFailure(typeof error.message === "string" ? error.message : "El servicio local devolvió un error sin detalle.", response.status, error.code, error.retryable);
+    throw new ApiFailure(typeof error.message === "string" ? error.message : "El servicio local devolvió un error sin detalle.", response.status, error.code, error.retryable, error.send_state);
   }
   if (!body || typeof body !== "object") throw new ApiFailure("La respuesta del servicio local no tenía el formato esperado.", response.status, "INVALID_RESPONSE", false);
+  if (path !== API.status && typeof refreshStatusAfterApiSuccess === "function") refreshStatusAfterApiSuccess();
   return body;
+}
+
+function chatIsConfigured() {
+  if (state.statusError) return false;
+  if (state.status === null) return false;
+  const ai = state.status?.ai;
+  if (!ai || typeof ai.status !== "string") return false;
+  return ai.status === "configured_not_verified" || ai.status === "test_only";
+}
+
+function chatProviderNote() {
+  const quota = state.status?.ai?.quota;
+  const quotaText = quota && Number.isInteger(quota.calls_day) && Number.isInteger(quota.calls_per_day)
+    ? ` Llamadas usadas hoy: ${quota.calls_day} de ${quota.calls_per_day}.` : "";
+  if (chatIsConfigured()) return "Proveedor configurado. Cada envío requiere tu consentimiento; no hay reintentos automáticos." + quotaText;
+  if (state.statusError) return "No se pudo comprobar la IA: no se envía nada; el botón no hará ninguna petición de chat al servidor. Los cálculos y la biblioteca funcionan sin IA." + quotaText;
+  if (state.status === null) return "Comprobando la IA: todavía no se envía nada. Los cálculos y la biblioteca funcionan sin IA." + quotaText;
+  return "Chat IA no configurado: no se envía nada; el botón no hará ninguna petición de chat al servidor. Los cálculos y la biblioteca funcionan sin IA." + quotaText;
 }
 
 const state = {
@@ -81,11 +112,13 @@ const state = {
   profileOptIn: false,
   storageNotice: "",
   storageProblem: false,
+  storageRevokedElsewhere: false,
+  storageExternalCopy: false,
   profileUnsaved: false,
   status: null,
   statusError: null,
   library: { query: "", family: "", items: [], count: 0, loading: false, error: null, requestId: 0, loaded: false },
-  conditions: { loaded: false, error: null, byId: new Map(), referenceDate: null },
+  conditions: { loaded: false, loading: false, error: null, byId: new Map(), referenceDate: null },
   catalogueCache: new Map(),
   selectedIds: [],
   compareResult: null,
@@ -104,6 +137,10 @@ const state = {
   chatBusy: false,
   chatMessage: "",
   chatTicket: null,
+  chatTicketQuery: null,
+  chatUncertain: false,
+  chatUncertainQuery: null,
+  chatUncertainTicket: false,
   libraryTimer: null
 };
 
@@ -198,6 +235,99 @@ function apiErrorText(error) {
   return "No se pudo cargar esta información desde el servicio local.";
 }
 
+/* Solo estos fallos de chat necesitan redacción propia: el resto conserva el
+   mensaje del servidor. Ninguno reintenta ni reenvía por su cuenta.
+   `send_state` describe un intento de transporte, no el turno completo: un
+   turno con herramientas puede tener varias rondas, así que no se usa para
+   afirmar que el proveedor recibió o procesó todo el turno. */
+function chatFailureNotice(error) {
+  if (!(error instanceof ApiFailure)) return null;
+  if (error.code === "LOCAL_TIMEOUT") {
+    return {
+      uncertain: true,
+      text: `El navegador dejó de esperar a los ${API_TIMEOUT_MS / 1000} s, pero la petición pudo llegar al servidor y al proveedor. No se sabe si el turno llegó a completarse. No hay reintento automático.`
+    };
+  }
+  if (error.code === "CHAT_TIMEOUT" || error.status === 504) {
+    const stateText = error.sendState === "not_started"
+      ? "La petición terminó con un timeout del proveedor (504). El último intento de transporte consta como no iniciado, pero ese dato no demuestra que el turno completo no se enviara al proveedor."
+      : error.sendState === "completed"
+        ? "La petición terminó con un timeout del proveedor (504). El último intento de transporte consta como completado, pero eso no confirma que el proveedor aceptara ni procesara el turno completo."
+        : "El proveedor agotó el tiempo de espera (504) y no está confirmado si el turno llegó a completarse; la petición pudo llegar al proveedor.";
+    return { uncertain: true, text: stateText + " No hay reintento automático." };
+  }
+  if (error.code === "CHAT_RATE_LIMITED") {
+    return {
+      uncertain: false,
+      text: "El proveedor rechazó la llamada por límite de uso (429); no es un timeout. No hay reintento automático; espera antes de volver a enviar."
+    };
+  }
+  /* Cupo global de intentos reales: la petición no llegó a salir hacia el proveedor
+     porque el contador la detuvo antes de abrir la conexión. */
+  if (error.code === "CHAT_MISSION_EXHAUSTED" || error.code === "CHAT_MISSION_CLOSED"
+      || error.code === "CHAT_MISSION_UNAVAILABLE") {
+    const reason = error.code === "CHAT_MISSION_EXHAUSTED"
+      ? "se agotó el cupo de intentos reales de esta prueba"
+      : error.code === "CHAT_MISSION_CLOSED"
+        ? "la ventana de esta prueba ya está cerrada"
+        : "no se pudo verificar el contador de intentos";
+    return {
+      uncertain: false,
+      text: `No se envió la pregunta al proveedor: ${reason}. No hay reintento automático ni consumo de cuota del proveedor.`
+    };
+  }
+  return null;
+}
+
+/* La incertidumbre y el ticket pertenecen al texto exacto que se envió. La
+   interfaz no los transfiere a una pregunta editada ni presenta esa pregunta
+   nueva como si fuera un reenvío de la anterior. */
+function chatSubmitLabel() {
+  const draft = state.chatMessage.trim();
+  if (state.chatTicket && state.chatTicketQuery === draft) return "Reenviar turno en cola";
+  if (state.chatUncertain && state.chatUncertainQuery === draft) return "Reenviar pregunta";
+  return "Enviar pregunta";
+}
+
+function chatInitialStatus() {
+  const draft = state.chatMessage.trim();
+  if (state.chatUncertain) {
+    const sameDraft = state.chatUncertainQuery === draft;
+    const ticketNote = state.chatUncertainTicket
+      ? " El ticket de cola del intento anterior no se reutiliza: pudo quedar reclamado o cerrado; un reenvío manual podría duplicar el turno o ser rechazado."
+      : "";
+    return {
+      warning: true,
+      text: sameDraft
+        ? "El último envío quedó sin confirmar: la petición pudo llegar al servidor o al proveedor y no se sabe si el turno llegó a completarse. La pregunta sigue en el cuadro; un reenvío manual podría duplicar el turno o ser rechazado. No se reenvía automáticamente." + ticketNote
+        : "El envío anterior quedó sin confirmar: la petición pudo llegar al servidor o al proveedor y no se sabe si el turno llegó a completarse. La pregunta actual todavía no se ha enviado y no se reenvía automáticamente." + ticketNote
+    };
+  }
+  if (state.chatTicket && state.chatTicketQuery === draft) {
+    return {
+      warning: true,
+      text: "Hay un turno en cola pendiente de reenvío manual. No se envía automáticamente; al reenviarlo se usará su ticket."
+    };
+  }
+  return {
+    warning: false,
+    text: state.chatMessage ? "La pregunta sigue solo en memoria. Aún no se ha enviado." : "Sin respuesta; todavía no se ha enviado nada."
+  };
+}
+
+function chatFailureDraftText(query, sameDraft, attemptedTicket) {
+  const notes = [];
+  if (attemptedTicket) {
+    notes.push("El ticket de cola usado en este intento no se reutiliza: pudo quedar reclamado o cerrado. Un reenvío manual empezaría un turno nuevo y podría duplicar el turno o ser rechazado.");
+  }
+  if (sameDraft) {
+    notes.push("La pregunta enviada sigue en el cuadro; puedes reenviarla manualmente, pero podría duplicar el turno o ser rechazada.");
+  } else {
+    notes.push("La pregunta enviada ya no está en el cuadro y no se reenvía automáticamente. La pregunta actual todavía no se ha enviado.");
+  }
+  return notes.join(" ");
+}
+
 function errorBox(message, retryHandler, extraLink) {
   const box = el("div", { className: "error-note", role: "alert" });
   box.appendChild(textElement("p", message));
@@ -228,6 +358,40 @@ function pageFrame(eyebrow, title, lede) {
 function focusHeading(heading) {
   if (!heading) return;
   window.requestAnimationFrame(() => heading.focus({ preventScroll: true }));
+}
+
+function announce(message) {
+  const region = document.getElementById("app-status");
+  if (!region || typeof message !== "string" || !message) return;
+  if (region.textContent !== message) region.textContent = message;
+}
+
+function captureFocus() {
+  const active = document.activeElement;
+  const lost = !active || active === document.body || active === document.documentElement || !active.isConnected;
+  return {
+    id: active && active.id ? active.id : null,
+    hadFocus: !lost
+  };
+}
+
+function restoreFocus(snapshot, fallback) {
+  if (!snapshot || !snapshot.hadFocus) return false;
+  const active = document.activeElement;
+  const lost = !active || active === document.body || active === document.documentElement || !active.isConnected;
+  if (!lost) return false;
+  if (snapshot.id) {
+    const same = document.getElementById(snapshot.id);
+    if (same && !same.disabled && same.isConnected) {
+      same.focus({ preventScroll: true });
+      return true;
+    }
+  }
+  if (fallback && fallback.isConnected) {
+    fallback.focus({ preventScroll: true });
+    return true;
+  }
+  return false;
 }
 
 function section(title, intro, className = "paper-section") {
@@ -293,11 +457,7 @@ function updateNavigation(route) {
 function routeFromHash() {
   const route = window.location.hash.replace(/^#/, "") || "inicio";
   const allowed = new Set(["inicio", "perfil", "biblioteca", "comparar", "escenarios", "simulacion", "glosario", "privacidad"]);
-  if (!allowed.has(route)) {
-    window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}#inicio`);
-    return "inicio";
-  }
-  return route;
+  return allowed.has(route) ? route : "inicio";
 }
 
 function displayProfileValue(key, answer = PROFILE_MODEL.getAnswer(state.profile, key)) {
@@ -317,6 +477,8 @@ function formatPercentValue(value) {
 }
 
 function initStorage() {
+  state.storageRevokedElsewhere = false;
+  state.storageExternalCopy = false;
   let loaded;
   try { loaded = PROFILE_MODEL.loadStoredProfile(window.localStorage); }
   catch (_) {
@@ -351,6 +513,8 @@ function saveProfileLocally() {
   if (result.ok) {
     state.profileOptIn = true;
     state.storageProblem = false;
+    state.storageRevokedElsewhere = false;
+    state.storageExternalCopy = false;
     state.profileUnsaved = false;
     state.storageNotice = "Perfil guardado solo en este dispositivo.";
     return { ok: true, message: state.storageNotice };
@@ -368,24 +532,72 @@ function saveProfileLocally() {
   }
 }
 
+function autosaveProfileLocally() {
+  let current;
+  try { current = window.localStorage.getItem(PROFILE_MODEL.STORAGE_KEY); }
+  catch (_) {
+    state.storageProblem = true;
+    state.storageNotice = "No se pudo comprobar la copia local antes de autoguardar. El guardado automático se ha detenido para no reescribir datos que otra pestaña haya podido borrar; el mapa sigue en memoria.";
+    return { ok: false, reason: "storage_read_failed", snapshotWritten: false };
+  }
+  if (current === null) {
+    state.profileOptIn = false;
+    state.storageProblem = false;
+    state.storageRevokedElsewhere = true;
+    state.storageExternalCopy = false;
+    state.storageNotice = "Otra pestaña borró la copia local. El guardado automático se ha detenido en esta pestaña; el mapa sigue solo en memoria y el historial del chat no se ha borrado.";
+    return { ok: false, reason: "revoked_elsewhere", snapshotWritten: false };
+  }
+  return saveProfileLocally();
+}
+
 function removeSavedProfile() {
   let result;
   try { result = PROFILE_MODEL.clearStoredProfiles(window.localStorage); }
   catch (_) { result = { ok: false, removed: [] }; }
   state.profileOptIn = false;
+  state.storageRevokedElsewhere = false;
+  state.storageExternalCopy = false;
   if (result.ok) {
-    state.storageNotice = "Copia local borrada; el mapa actual permanece solo en memoria.";
+    state.storageNotice = "Copia local borrada; el historial del chat de esta pestaña y los mensajes ya enviados al proveedor no se borran con esta acción.";
     state.storageProblem = false;
     state.profileUnsaved = false;
   } else {
     state.storageProblem = true;
-    state.storageNotice = "No se pudo borrar todo el almacenamiento local. Revisa los permisos de este navegador.";
+    state.storageNotice = "No se pudo borrar toda la copia local. Revisa los permisos de este navegador; el historial del chat no se ha tocado y los mensajes ya enviados al proveedor siguen fuera de este dispositivo.";
   }
   return result;
 }
 
+function handleStorageEvent(event) {
+  if (!event || event.key !== PROFILE_MODEL.STORAGE_KEY) return;
+  if (event.storageArea && event.storageArea !== window.localStorage) return;
+  if (event.newValue === null) {
+    state.profileOptIn = false;
+    state.profileUnsaved = false;
+    state.storageRevokedElsewhere = true;
+    state.storageExternalCopy = false;
+    state.storageNotice = "Otra pestaña revocó el permiso y borró la copia local del mapa. En esta pestaña el mapa sigue solo en memoria; el historial del chat no se ha borrado.";
+  } else {
+    state.storageExternalCopy = true;
+    state.storageRevokedElsewhere = false;
+    state.storageNotice = state.profileOptIn
+      ? "Otra pestaña actualizó la copia local del mapa. Esta pestaña mantiene su propio mapa en memoria y puede sobrescribir esa copia al autoguardar."
+      : "Otra pestaña guardó una copia local del mapa. Esta pestaña no tiene permiso de guardado activo y no la reescribirá automáticamente.";
+  }
+  const toggle = document.getElementById("profile-persist-toggle");
+  if (toggle) toggle.checked = state.profileOptIn;
+  const feedback = document.getElementById("profile-storage-feedback");
+  if (feedback) {
+    feedback.className = "warning-note";
+    feedback.replaceChildren(textElement("p", state.storageNotice));
+  }
+  updateStorageStatusLine();
+  renderStorageWarning();
+}
+
 function clearProfile() {
-  if (!window.confirm("¿Borrar el mapa actual y todas sus copias guardadas en este dispositivo, incluidas las versiones anteriores? Esta acción no se puede deshacer.")) return;
+  if (!window.confirm("¿Borrar el mapa actual y todas sus copias guardadas en este dispositivo, incluidas las versiones anteriores? No se borra el historial del chat ni los mensajes ya enviados al proveedor. Esta acción no se puede deshacer.")) return;
   state.profile = PROFILE_MODEL.createEmptyProfile();
   state.profileLegacy = {};
   state.profileComplete = false;
@@ -405,7 +617,10 @@ function updateStorageStatusLine() {
 
 function storageStatusText() {
   if (state.storageProblem) return "Estado local incompleto o desconocido: podrían quedar copias en este dispositivo.";
-  return state.profileOptIn ? "Hay un perfil guardado localmente por elección previa." : "Ahora: solo memoria de esta pestaña.";
+  if (state.storageRevokedElsewhere) return "Otra pestaña borró la copia local; aquí el mapa sigue solo en memoria.";
+  if (state.profileOptIn) return "Hay un perfil guardado localmente por elección previa.";
+  if (state.storageExternalCopy) return "Hay una copia guardada por otra pestaña; aquí el guardado automático sigue desactivado.";
+  return "Ahora: solo memoria de esta pestaña.";
 }
 
 function saveProfileAfterConsent() {
@@ -450,6 +665,235 @@ function renderHome() {
 
   const chat = section("Pregunta a Pai", "Consulta educativa con el proveedor configurado. Pai explica y calcula con el motor local; no decide por ti.", "paper-section chat-panel");
   chat.id = "chat-panel";
+  // Presentación de procedencia del chat: la prosa del modelo nunca se usa para adjudicar
+  // fuentes ni tasas cuando el turno consultó el catálogo. Se muestran los datos locales.
+  const CHAT_SOURCE_CLASS_LABELS = { official: "Oficial", secondary: "Secundaria", mixed: "Mixta", unknown: "Desconocida" };
+  const CHAT_CONDITION_STATE_LABELS = { known: "documentada", stale: "vencida", conflict: "en conflicto", unknown: "desconocida" };
+  const CHAT_CONDITIONS_STATE_LABELS = {
+    documented: "documentadas", documented_not_current: "documentadas pero no vigentes",
+    documented_unattributed: "documentadas sin fuente atribuible", conditions_unknown: "desconocidas",
+    identity_only: "solo identidad, sin condiciones"
+  };
+  const CHAT_ATTRIBUTION_LABELS = {
+    resolved: "fuente resuelta", partial: "atribución parcial", unresolved: "sin fuente resoluble",
+    inconsistent: "fuente incoherente", none: "sin fuente citada"
+  };
+  const CHAT_ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+  const CHAT_DECIMAL = /^-?\d+(?:\.\d+)?$/;
+  function chatText(value, limit = 300) {
+    return typeof value === "string" ? value.slice(0, limit) : "";
+  }
+  function chatDate(value) {
+    if (typeof value !== "string" || !CHAT_ISO_DATE.test(value)) return "";
+    const [year, month, day] = value.split("-").map(Number);
+    const parsed = new Date(Date.UTC(year, month - 1, day));
+    const valid = parsed.getUTCFullYear() === year && parsed.getUTCMonth() === month - 1 && parsed.getUTCDate() === day;
+    return valid ? value : "";
+  }
+  function chatDecimal(value) {
+    return typeof value === "string" && CHAT_DECIMAL.test(value) ? value : "";
+  }
+  function chatConditionValue(condition) {
+    const metric = condition && condition.metric;
+    const unit = condition && condition.unit;
+    const coherent = (metric === "annual_rate_percent" && unit === "PERCENT")
+      || (metric === "term_months" && unit === "MONTHS");
+    if (!coherent) return "unidad incoherente; no se muestra el valor";
+    if (condition.state === "unknown") return "sin valor documentado";
+    const value = chatDecimal(condition && condition.value);
+    if (!value) return "sin valor documentado";
+    return unit === "MONTHS" ? `${value} meses` : `${value} %`;
+  }
+  function chatConditionName(condition) {
+    return condition && condition.metric === "term_months" ? "Plazo" : "TAE";
+  }
+  const CHAT_MONEY = /^-?\d{1,18}(?:\.\d{1,2})?$/;
+  const CHAT_PERCENT = /^-?\d{1,4}(?:\.\d{1,4})?$/;
+  const CHAT_CALC_METHODS = { simple: "simple", compound: "compuesto" };
+  function chatMoney(value) {
+    if (typeof value !== "string" || !CHAT_MONEY.test(value)) return "";
+    const negative = value.startsWith("-");
+    const [whole, fraction = ""] = (negative ? value.slice(1) : value).split(".");
+    return `${negative ? "-" : ""}${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ".")},${(fraction + "00").slice(0, 2)}`;
+  }
+  function chatPercentValue(value) {
+    if (typeof value !== "string" || !CHAT_PERCENT.test(value)) return "";
+    const negative = value.startsWith("-");
+    const [whole, fraction = ""] = (negative ? value.slice(1) : value).split(".");
+    return `${negative ? "-" : ""}${whole},${(fraction + "00").slice(0, 2)}`;
+  }
+  // Forma cerrada del DTO del motor: si algo no encaja, no se muestra ninguna cifra.
+  function chatCalculationView(calculation) {
+    if (!calculation || typeof calculation !== "object") return null;
+    if (calculation.hypothetical !== true || calculation.not_prediction !== true
+        || calculation.currency !== "EUR") return null;
+    const assumptions = calculation.assumptions;
+    const summary = calculation.summary;
+    if (!assumptions || typeof assumptions !== "object" || !summary || typeof summary !== "object") return null;
+    if (!Number.isInteger(assumptions.years) || assumptions.years < 1 || assumptions.years > 40) return null;
+    if (!Object.prototype.hasOwnProperty.call(CHAT_CALC_METHODS, assumptions.method)) return null;
+    if (assumptions.taxes_included !== false || assumptions.fees_included !== false) return null;
+    const principal = chatMoney(assumptions.principal);
+    const monthly = chatMoney(assumptions.monthly_contribution);
+    const rate = chatPercentValue(assumptions.annual_rate_percent);
+    const inflation = chatPercentValue(assumptions.inflation_percent);
+    const money = {
+      contributions: chatMoney(summary.contributions),
+      final_balance: chatMoney(summary.final_balance),
+      interest: chatMoney(summary.interest),
+      inflation_adjusted: chatMoney(summary.inflation_adjusted)
+    };
+    if (!principal || !monthly || !rate || !inflation) return null;
+    if (!money.contributions || !money.final_balance || !money.interest || !money.inflation_adjusted) return null;
+    return {
+      principal, monthly, rate, inflation,
+      years: assumptions.years,
+      method: CHAT_CALC_METHODS[assumptions.method],
+      money
+    };
+  }
+  function renderChatCalculation(container, calculation) {
+    const view = chatCalculationView(calculation);
+    container.appendChild(textElement("p", "Resultado del motor determinista local (escenario hipotético):", "chat-provenance-title"));
+    if (!view) {
+      container.appendChild(textElement("p", "El resultado del motor local no llegó con una forma válida; no se muestran cifras. No se sustituye por la prosa del modelo.", "field-help"));
+      return;
+    }
+    container.appendChild(textElement("p", `Supuestos: principal ${view.principal} EUR; aportación mensual ${view.monthly} EUR; plazo ${view.years} ${view.years === 1 ? "año" : "años"}; método ${view.method}; tasa anual ${view.rate} %; inflación anual ${view.inflation} %.`));
+    for (const [label, key] of [["Aportaciones", "contributions"], ["Saldo final", "final_balance"], ["Interés", "interest"], ["Saldo ajustado por inflación", "inflation_adjusted"]]) {
+      container.appendChild(textElement("p", `${label}: ${view.money[key]} EUR`));
+    }
+    container.appendChild(textElement("p", "No incluye impuestos ni comisiones. Es un cálculo determinista con los supuestos mostrados; no es una predicción ni una oferta.", "field-help"));
+  }
+  function renderChatCatalogue(container, catalogue) {
+    const products = catalogue && Array.isArray(catalogue.products) ? catalogue.products.slice(0, 20) : [];
+    const box = el("div", { className: "chat-catalogue" });
+    box.appendChild(textElement("p", "Datos locales del catálogo con su procedencia; no son una oferta publicable.", "chat-provenance-title"));
+    if (!products.length) {
+      box.appendChild(textElement("p", "No hay fichas locales en este turno; no se muestra texto del modelo para evitar atribuciones no verificadas."));
+      container.appendChild(box);
+      return;
+    }
+    for (const product of products) {
+      if (!product || typeof product !== "object" || typeof product.id !== "string") continue;
+      const card = el("div", { className: "chat-catalogue-item" });
+      card.appendChild(textElement("h3", `${chatText(product.name, 200) || product.id} (${product.id})`));
+      const identity = product.identity_state === "verified" ? "identidad verificada" : "identidad propuesta";
+      const issuer = chatText(product.issuer, 120);
+      card.appendChild(textElement("p", `Familia: ${chatText(product.family, 40) || "no indicada"} · Emisor: ${issuer || "no indicado"} · ${identity}`));
+      const conditionsState = CHAT_CONDITIONS_STATE_LABELS[product.conditions_state] || "estado no reconocido";
+      const attribution = CHAT_ATTRIBUTION_LABELS[product.attribution_state] || "atribución no reconocida";
+      const reference = chatDate(product.conditions_reference_date);
+      card.appendChild(textElement("p", `Condiciones ${conditionsState}; ${attribution}${reference ? ` · fecha de referencia: ${reference}` : ""}.`));
+      for (const reason of Array.isArray(product.conditions_state_reasons) ? product.conditions_state_reasons.slice(0, 4) : []) {
+        if (typeof reason === "string") card.appendChild(textElement("p", reason, "field-help"));
+      }
+      const conditions = Array.isArray(product.conditions) ? product.conditions.slice(0, 8) : [];
+      for (const condition of conditions) {
+        if (!condition || typeof condition !== "object") continue;
+        const state = CHAT_CONDITION_STATE_LABELS[condition.state] || "desconocida";
+        const sourceClass = CHAT_SOURCE_CLASS_LABELS[condition.source_class] || "Desconocida";
+        card.appendChild(textElement("p", `${chatConditionName(condition)}: ${chatConditionValue(condition)} — ${state}; clase de fuente: ${sourceClass}.`));
+        const retrieved = chatDate(condition.retrieved_at);
+        if (retrieved) card.appendChild(textElement("p", `Consulta de la fuente: ${retrieved}.`, "field-help"));
+        const from = chatDate(condition.effective_from);
+        const to = chatDate(condition.effective_to);
+        if (from || to) card.appendChild(textElement("p", `Vigencia: ${from || "sin inicio declarado"} → ${to || "sin fin declarado"}.`, "field-help"));
+        const resolution = CHAT_ATTRIBUTION_LABELS[condition.source_resolution] || "atribución no reconocida";
+        card.appendChild(textElement("p", `Atribución de la condición: ${resolution}.`, "field-help"));
+        for (const note of Array.isArray(condition.limitations) ? condition.limitations.slice(0, 4) : []) {
+          if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
+        }
+        for (const note of Array.isArray(condition.notes) ? condition.notes.slice(0, 4) : []) {
+          if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
+        }
+        const conditionSources = Array.isArray(condition.sources) ? condition.sources.slice(0, 4) : [];
+        for (const conditionSource of conditionSources) {
+          if (!conditionSource || typeof conditionSource !== "object" || !isSafePrimaryUrl(conditionSource.url)) continue;
+          const conditionSourceTitle = typeof conditionSource.title === "string" && conditionSource.title.trim()
+            ? chatText(conditionSource.title.trim(), 160) : "";
+          const sourceLine = el("p", { className: "field-help" }, [
+            document.createTextNode("Fuente de la condición: "),
+            el("a", { href: conditionSource.url, target: "_blank", rel: "noopener noreferrer" },
+              conditionSourceTitle ? `${conditionSourceTitle} — ${chatText(conditionSource.url, 300)}` : chatText(conditionSource.url, 300))
+          ]);
+          card.appendChild(sourceLine);
+        }
+      }
+      const conflicts = Array.isArray(product.conflicts) ? product.conflicts.filter((item) => typeof item === "string").slice(0, 5) : [];
+      const unknownFields = Array.isArray(product.unknown_fields) ? product.unknown_fields.filter((item) => typeof item === "string").slice(0, 12) : [];
+      if (conflicts.length || unknownFields.length) {
+        card.appendChild(textElement("p", "Revisión pendiente declarada por la ficha:", "chat-provenance-title"));
+        if (conflicts.length) {
+          card.appendChild(textElement("p", "Conflictos que siguen abiertos:", "field-help"));
+          for (const conflict of conflicts) card.appendChild(textElement("p", chatText(conflict, 200), "field-help"));
+        }
+        if (unknownFields.length) {
+          card.appendChild(textElement("p", "Campos desconocidos:", "field-help"));
+          for (const field of unknownFields) card.appendChild(textElement("p", chatText(field, 120), "field-help"));
+        }
+      } else {
+        card.appendChild(textElement("p", "La ficha no enumera conflictos ni campos desconocidos; eso no equivale a que no existan.", "field-help"));
+      }
+      const tiers = Array.isArray(product.rate_tiers) ? product.rate_tiers.slice(0, 6) : [];
+      if (tiers.length) {
+        const list = el("ul", { className: "chat-rate-tiers" });
+        for (const tier of tiers) {
+          if (!tier || typeof tier !== "object") continue;
+          const tae = chatDecimal(tier.tae);
+          const tin = chatDecimal(tier.tin);
+          const label = chatText(tier.condition_label, 160) || chatText(tier.condition, 64) || "Tramo";
+          list.appendChild(textElement("li", `${label}: TAE ${tae ? `${tae} %` : "no disponible"}; TIN ${tin ? `${tin} %` : "no disponible"}.`));
+        }
+        card.appendChild(list);
+        if (product.rate_tiers_validity !== "known") {
+          card.appendChild(textElement("p", "Los tramos no constan como vigentes; no se presentan como actuales.", "field-help"));
+        }
+        const tierDate = chatDate(product.rate_tiers_effective_to);
+        if (tierDate) card.appendChild(textElement("p", `Vigencia de los tramos: hasta ${tierDate}.`, "field-help"));
+      } else if (product.rate_tiers_state === "invalid" || product.rate_tiers_state === "inconsistent") {
+        card.appendChild(textElement("p", "Los tramos no se muestran porque su forma o sus cifras son incoherentes.", "field-help"));
+      }
+      for (const note of Array.isArray(product.rate_tiers_limitations) ? product.rate_tiers_limitations.slice(0, 4) : []) {
+        if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
+      }
+      box.appendChild(card);
+    }
+    container.appendChild(box);
+  }
+  function renderChatSources(container, sources, sourcesTotal, sourcesTruncated) {
+    const list = el("ul", { className: "chat-sources" });
+    const items = Array.isArray(sources) ? sources.slice(0, 20) : [];
+    let shown = 0;
+    for (const item of items) {
+      const source = item && item.source;
+      if (!source || typeof source !== "object" || !isSafePrimaryUrl(source.url)) continue;
+      const line = el("li");
+      line.appendChild(el("a", { href: source.url, target: "_blank", rel: "noopener noreferrer" }, chatText(source.label, 160) || chatText(source.product_id, 40) || "Fuente"));
+      const kind = source.kind === "identity" ? "Identidad" : (CHAT_SOURCE_CLASS_LABELS[source.source_class] || "Desconocida");
+      const retrieved = chatDate(source.retrieved_at);
+      line.appendChild(textElement("span", ` — clase: ${kind}; ${retrieved ? `consultada: ${retrieved}` : "fecha no disponible"}.`));
+      const scope = source.claim_scope === "product_identity_only" ? "Acredita identidad, no condiciones." : (source.claim_scope === "condition_documentation_only" ? "Documenta condiciones; no es una oferta vigente." : "");
+      if (scope) line.appendChild(textElement("span", ` ${scope}`));
+      list.appendChild(line);
+      shown += 1;
+    }
+    if (shown) {
+      container.appendChild(textElement("p", "Referencias locales (la clase y la fecha acompañan a cada cita):", "chat-provenance-title"));
+      container.appendChild(list);
+      const total = Number.isInteger(sourcesTotal) && sourcesTotal > shown ? sourcesTotal : (Number.isInteger(sourcesTruncated) && sourcesTruncated > 0 ? shown + sourcesTruncated : shown);
+      if (total > shown) {
+        container.appendChild(textElement("p", `Se muestran ${shown} de ${total} referencias locales; ${total - shown} se omiten por el límite agregado de 20 o por no tener una URL HTTPS segura, y no se presentan como inexistentes.`, "field-help"));
+      }
+    }
+  }
+  function renderChatProvenance(container, provenance) {
+    if (!provenance || typeof provenance !== "object") return;
+    container.appendChild(textElement("p", "Trazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.", "field-help"));
+    for (const note of Array.isArray(provenance.limitations) ? provenance.limitations.slice(0, 6) : []) {
+      if (typeof note === "string") container.appendChild(textElement("p", note, "field-help"));
+    }
+  }
   chat.appendChild(callout("Tu pregunta se envía al proveedor de IA configurado. Si marcas el consentimiento del mapa, se envían solo los campos que selecciones de tu mapa, nunca el perfil completo. Pai puede calcular escenarios con el motor local. No incluyas nombres, documentos ni datos bancarios.", "warning-note"));
   const form = el("form", { className: "chat-form" });
   const message = el("textarea", { id: "chat-message", name: "message", maxlength: 1200, "aria-describedby": "chat-help chat-feedback" });
@@ -457,7 +901,7 @@ function renderHome() {
   const messageField = field("Escribe una pregunta de prueba", message, "El texto solo se enviará tras marcar la casilla y pulsar el botón.", "chat-message");
   messageField.querySelector(".field-help").id = "chat-help";
   form.appendChild(messageField);
-  const consent = el("label", { className: "choice", htmlFor: "chat-consent" }, [el("input", { type: "checkbox", id: "chat-consent" }), el("span", {}, "Autorizo enviar esta pregunta al proveedor IA si está configurado y habilitado. No se enviará mi mapa de perfil. No incluiré datos personales." )]);
+  const consent = el("label", { className: "choice", htmlFor: "chat-consent" }, [el("input", { type: "checkbox", id: "chat-consent" }), el("span", {}, "Autorizo enviar esta pregunta al proveedor IA si está configurado y habilitado. No incluiré datos personales. El mapa completo no se envía: solo los campos que marques y autorices aparte." )]);
   form.appendChild(consent);
   form.appendChild(callout("Mapa e historial: opcionales y con consentimiento aparte. El historial sigue desactivado en el servidor normal; el mapa se envía solo con los campos que marques.", "warning-note"));
   const chatCapabilities = state.status?.ai?.capabilities;
@@ -486,41 +930,83 @@ function renderHome() {
   const contextConsent = el("input", {type:"checkbox", id:"chat-context-consent", disabled:chatCapabilities?.context !== true});
   const historyConsent = el("input", {type:"checkbox", id:"chat-history-consent", disabled:chatCapabilities?.history !== true});
   form.appendChild(el("label", {className:"choice", htmlFor:"chat-context-consent"}, [contextConsent, el("span", {}, "Autorizo adjuntar a esta pregunta solo los campos de mi mapa que he marcado.")]));
-  form.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, "Autorizo conservar en esta pestaña y reenviar hasta dos turnos anteriores ficticios en esta prueba; sin guardado automático.")]));
+  form.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, "Autorizo conservar en esta pestaña, solo durante esta prueba con contenido ficticio, mis preguntas y las respuestas de Pai de hasta dos turnos anteriores (cuatro mensajes como máximo) y reenviarlos con la pregunta siguiente; sin guardado automático.")]));
   let historyRevision = 0;
-  const historyClear = button("Borrar historial de esta pestaña", () => { historyRevision += 1; PaideiaChatContext.clear(); feedback.textContent = "Historial borrado de esta pestaña."; }, "button button-quiet", {id:"chat-history-clear", type:"button"});
+  const historyClear = button("Borrar historial de esta pestaña", () => { historyRevision += 1; PaideiaChatContext.clear(); feedback.textContent = "Historial borrado de esta pestaña. Los mensajes ya enviados al proveedor no se borran."; }, "button button-quiet", {id:"chat-history-clear", type:"button"});
   historyClear.setAttribute("id", "chat-history-clear");
   form.appendChild(historyClear);
-  const quota = state.status?.ai?.quota;
-  const quotaText = quota && Number.isInteger(quota.calls_day) && Number.isInteger(quota.calls_per_day)
-    ? ` Llamadas usadas hoy: ${quota.calls_day} de ${quota.calls_per_day}.` : "";
-  const providerNote = textElement("p", (state.status?.ai?.status === "configured_not_verified" ? "Proveedor configurado. Cada envío requiere tu consentimiento; no hay reintentos automáticos." : "Chat IA no configurado: no se envía nada. Los cálculos y la biblioteca funcionan sin IA.") + quotaText, "field-help");
+  historyConsent.addEventListener("change", () => {
+    feedback.textContent = historyConsent.checked
+      ? "Historial activado: se reenviarán hasta dos turnos anteriores, solo en esta pestaña."
+      : "Historial desactivado: la próxima pregunta no reenviará turnos anteriores. Lo ya conservado sigue en esta pestaña hasta que pulses «Borrar historial de esta pestaña».";
+  });
+  const providerNote = textElement("p", chatProviderNote(), "field-help");
   providerNote.id = "chat-provider-note";
   form.appendChild(providerNote);
-  const submit = button(state.chatTicket ? "Reenviar turno en cola" : "Enviar pregunta", null, "button button-primary", { type: "submit" });
+  const submit = button(chatSubmitLabel(), null, "button button-primary", { type: "submit" });
+  submit.setAttribute("id", "chat-submit");
   form.appendChild(el("div", { className: "button-row" }, submit));
-  const feedback = textElement("p", state.chatMessage ? "La pregunta sigue solo en memoria. Aún no se ha enviado." : "Sin respuesta; todavía no se ha enviado nada.", "chat-state");
+  const initialStatus = chatInitialStatus();
+  const feedback = textElement(
+    "p",
+    initialStatus.text,
+    initialStatus.warning ? "chat-state warning-note" : "chat-state"
+  );
   feedback.id = "chat-feedback";
   feedback.setAttribute("role", "status");
   form.appendChild(feedback);
   let messageRevision = 0;
-  message.addEventListener("input", () => { messageRevision += 1; state.chatMessage = message.value; state.chatTicket = null; submit.textContent = "Enviar pregunta"; });
+  const markDraftChanged = () => {
+    messageRevision += 1;
+    state.chatMessage = message.value;
+    const hadTicket = Boolean(state.chatTicket);
+    state.chatTicket = null;
+    state.chatTicketQuery = null;
+    submit.textContent = chatSubmitLabel();
+    if (hadTicket) {
+      feedback.textContent = "La pregunta o el escenario cambiaron: el turno en cola anterior no se asociará a este contenido y su ticket queda descartado. No se reenvía automáticamente.";
+      feedback.className = "chat-state warning-note";
+    } else if (state.chatUncertain) {
+      const status = chatInitialStatus();
+      feedback.textContent = status.text;
+      feedback.className = status.warning ? "chat-state warning-note" : "chat-state";
+    }
+  };
+  message.addEventListener("input", markDraftChanged);
   for (const control of [scenarioEnabled, ...Object.values(scenarioInputs)]) {
-    for (const eventName of ["input", "change"]) control.addEventListener(eventName, () => { messageRevision += 1; state.chatTicket = null; submit.textContent = "Enviar pregunta"; });
+    for (const eventName of ["input", "change"]) control.addEventListener(eventName, markDraftChanged);
   }
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (state.chatBusy) return;
+    feedback.setAttribute("role", "status");
+    feedback.setAttribute("aria-live", "polite");
     const revision = messageRevision;
     const query = message.value.trim();
     state.chatMessage = query;
     if (!query) { feedback.textContent = "Escribe una pregunta antes de continuar."; message.focus(); return; }
     if (query.length > 1200) { feedback.textContent = "La pregunta supera el límite de 1.200 caracteres."; message.focus(); return; }
     if (!document.getElementById("chat-consent").checked) { feedback.textContent = "Marca la confirmación de privacidad antes de enviar el texto."; document.getElementById("chat-consent").focus(); return; }
+    if (!chatIsConfigured()) {
+      feedback.textContent = state.status === null && !state.statusError
+        ? "Todavía no se ha comprobado la configuración de la IA. La pregunta no se ha enviado y no se hará ninguna petición de chat al servidor."
+        : "Chat IA no configurado o no verificable: la pregunta no se ha enviado y no se hará ninguna petición de chat al servidor. Los cálculos y la biblioteca siguen disponibles.";
+      feedback.className = "chat-state warning-note";
+      return;
+    }
     const selectedFields = PaideiaChatContext.fields.filter((_, index) => contextChoices[index].checked);
     if (contextConsent.checked && !selectedFields.length) { feedback.textContent = "Marca al menos un campo de tu mapa para adjuntarlo."; return; }
     if (historyConsent.checked && query.length > 1000) { feedback.textContent = "Límite de historial: 1.000 caracteres por mensaje; solo se conservan los dos últimos turnos. Reduce la pregunta o desmarca su envío."; return; }
     const includeContext = contextConsent.checked, includeHistory = historyConsent.checked, historyAtSend = historyRevision;
+    const attemptedTicket = state.chatTicket && state.chatTicketQuery === query ? state.chatTicket : null;
+    if (!attemptedTicket && state.chatTicket) {
+      state.chatTicket = null;
+      state.chatTicketQuery = null;
+    }
+    const submitHadFocus = document.activeElement === submit;
+    if (submitHadFocus) {
+      try { message.focus({ preventScroll: true }); } catch (_) { message.focus(); }
+    }
     submit.disabled = true;
     state.chatBusy = true;
     feedback.textContent = "Intentando contactar el endpoint local /api/chat…";
@@ -532,7 +1018,7 @@ function renderHome() {
         if (includeHistory) payload.history = PaideiaChatContext.history().slice(-4);
         if (typeof TextEncoder !== "undefined" && new TextEncoder().encode(JSON.stringify(payload)).length > 16384) throw new ApiFailure("La petición supera 16 KiB; borra historial o reduce la pregunta. No se ha enviado nada.", 400, "REQUEST_TOO_LARGE", false);
       }
-      if (state.chatTicket) payload.ticket = state.chatTicket;
+      if (attemptedTicket) payload.ticket = attemptedTicket;
       let submittedScenario = null;
       if (scenarioEnabled.checked) {
         if (state.statusError || state.status?.ai?.status !== "test_only" || state.status?.ai?.capabilities?.structured_education !== true) throw new ApiFailure("El cálculo ficticio requiere modo estructurado de prueba verificado.", 400, "SCENARIO_UNAVAILABLE", false);
@@ -547,12 +1033,17 @@ function renderHome() {
       if (result.status === "queued" && result.queue && /^[0-9a-f]{32}$/.test(result.queue.ticket)) {
         if (revision !== messageRevision || state.chatMessage.trim() !== query) {
           state.chatTicket = null;
+          state.chatTicketQuery = null;
           submit.textContent = "Enviar pregunta";
-          feedback.textContent = "La pregunta cambió mientras se esperaba la cola. El turno anterior no se reenviará; envía la nueva pregunta manualmente.";
+          feedback.textContent = "La pregunta cambió mientras se esperaba la cola. El turno anterior no se asociará a esta pregunta nueva y no se reenvía automáticamente; su ticket no se conserva aquí.";
           feedback.className = "chat-state warning-note";
           return;
         }
         state.chatTicket = result.queue.ticket;
+        state.chatTicketQuery = query;
+        state.chatUncertain = false;
+        state.chatUncertainQuery = null;
+        state.chatUncertainTicket = false;
         const position = Number.isInteger(result.queue.position) ? result.queue.position : "pendiente";
         const budgetNotice = result.queue.code === "quota_exhausted" ? " El cupo está agotado." : "";
         const testNotice = result.provider_mode === "test_only" ? "PRUEBA SINTÉTICA, no IA real. " : "";
@@ -567,6 +1058,10 @@ function renderHome() {
         try { structured = PaideiaStructuredEducation.select(result, Boolean(expectedStructured), submittedScenario); }
         catch (_) { throw new ApiFailure("Respuesta educativa estructurada no válida; no se mostrará texto libre.", 502, "INVALID_STRUCTURED_RESPONSE", false); }
         state.chatTicket = null;
+        state.chatTicketQuery = null;
+        state.chatUncertain = false;
+        state.chatUncertainQuery = null;
+        state.chatUncertainTicket = false;
         submit.textContent = "Enviar pregunta";
         feedback.replaceChildren();
         if (result.provider_mode === "test_only") feedback.appendChild(textElement("strong", "PRUEBA SINTÉTICA — NO ES UNA IA REAL."));
@@ -579,36 +1074,77 @@ function renderHome() {
             for (const [label,key] of [["Aportaciones","contributions"],["Saldo final","final_balance"],["Interés","interest"],["Saldo ajustado por inflación","inflation_adjusted"]]) feedback.appendChild(textElement("p", `${label}: ${data.summary[key]} EUR`));
             for (const point of data.series) feedback.appendChild(textElement("p", `Mes ${point.month}: aportaciones ${point.contributions}, saldo ${point.balance}, saldo real ${point.real_balance} EUR`));
           }
-        } else feedback.appendChild(textElement("p", result.answer));
-        if (!structured && includeHistory && historyConsent.checked && historyAtSend === historyRevision && result.provider_mode === "test_only") {
-          try { PaideiaChatContext.add(query, result.answer); }
-          catch (_) { feedback.appendChild(textElement("p", "Este turno no se conservó: excede el límite de historial. Borra el historial para continuar.")); }
+        } else {
+          const catalogue = result.catalogue && typeof result.catalogue === "object" ? result.catalogue : null;
+          const provenance = result.answer_provenance && typeof result.answer_provenance === "object" ? result.answer_provenance : null;
+          const textState = typeof result.answer_text_state === "string"
+            ? result.answer_text_state
+            : (provenance && typeof provenance.text_state === "string" ? provenance.text_state : "");
+          const catalogueUsed = Boolean(catalogue && catalogue.used === true);
+          const calculation = result.calculation && typeof result.calculation === "object" ? result.calculation : null;
+          const withheld = textState.startsWith("withheld") || catalogueUsed;
+          const withheldReason = provenance && typeof provenance.withheld_reason === "string" ? provenance.withheld_reason : "";
+          if (withheld) {
+            feedback.appendChild(textElement("p", catalogueUsed
+              ? "El texto del modelo no se muestra en esta consulta de catálogo: no está validado y no puede adjudicar fuentes ni tasas. Se muestran los datos locales con su clase, fechas y límites."
+              : (calculation || withheldReason === "calculation")
+                ? "Se ha omitido el texto del modelo en este turno de calculadora: una cifra de la prosa puede atribuirse al concepto equivocado. Se muestra el resultado y los supuestos del motor local."
+                : "Se ha omitido el texto del modelo porque contenía una afirmación de fuente oficial o vigencia sin respaldo local. No se presenta como dato."));
+            if (catalogueUsed && catalogue) renderChatCatalogue(feedback, catalogue);
+            if (calculation) renderChatCalculation(feedback, calculation);
+          } else if (typeof result.answer === "string" && result.answer) {
+            feedback.appendChild(textElement("p", result.answer));
+            if (calculation) renderChatCalculation(feedback, calculation);
+          }
+          renderChatSources(feedback, result.sources, result.sources_total, result.sources_truncated);
+          renderChatProvenance(feedback, provenance);
+          if (!withheld && includeHistory && historyConsent.checked && historyAtSend === historyRevision && result.provider_mode === "test_only" && result.answer) {
+            try { PaideiaChatContext.add(query, result.answer); }
+            catch (_) { feedback.appendChild(textElement("p", "Este turno no se conservó: excede el límite de historial. Borra el historial para continuar.")); }
+          }
         }
         if (!structured && result.refused) feedback.appendChild(textElement("p", "El proveedor ha rechazado esta consulta."));
         if (!structured && result.truncated) feedback.appendChild(textElement("p", "Respuesta incompleta: se alcanzó el límite de salida."));
         if (!structured && Array.isArray(result.tool_events) && result.tool_events.length) {
           feedback.appendChild(textElement("p", "Herramientas: " + result.tool_events.map(item => `${item.name || "rechazada"} (${item.state})`).join("; ")));
         }
-        if (!structured && Array.isArray(result.sources) && result.sources.length) {
-          feedback.appendChild(textElement("p", "Fuentes recuperadas por las herramientas. Las fuentes de identidad no acreditan condiciones ni rentabilidades."));
-          for (const item of result.sources.slice(0, 20)) {
-            const source = item.source;
-            if (source && isSafePrimaryUrl(source.url)) {
-              feedback.appendChild(el("a", { href: source.url, target: "_blank", rel: "noopener noreferrer" }, source.label || source.product_id || "Fuente"));
-              feedback.appendChild(document.createTextNode(" "));
-            }
-          }
-        }
         feedback.className = "chat-state note";
       }
     } catch (error) {
-      state.chatTicket = null;
-      submit.textContent = "Enviar pregunta";
-      feedback.textContent = apiErrorText(error);
-      feedback.className = "chat-state error-note";
+      const notice = chatFailureNotice(error);
+      if (notice) {
+        const sameDraft = revision === messageRevision && message.value.trim() === query;
+        state.chatTicket = null;
+        state.chatTicketQuery = null;
+        state.chatUncertain = notice.uncertain;
+        state.chatUncertainQuery = notice.uncertain ? query : null;
+        state.chatUncertainTicket = notice.uncertain && Boolean(attemptedTicket);
+        feedback.textContent = notice.text + " " + chatFailureDraftText(query, sameDraft, Boolean(attemptedTicket));
+        feedback.className = "chat-state error-note";
+        feedback.setAttribute("role", "alert");
+        feedback.setAttribute("aria-live", "assertive");
+        submit.textContent = chatSubmitLabel();
+      } else {
+        state.chatTicket = null;
+        state.chatTicketQuery = null;
+        state.chatUncertain = false;
+        state.chatUncertainQuery = null;
+        state.chatUncertainTicket = false;
+        submit.textContent = "Enviar pregunta";
+        feedback.textContent = apiErrorText(error);
+        feedback.className = "chat-state error-note";
+        feedback.setAttribute("role", "alert");
+        feedback.setAttribute("aria-live", "assertive");
+      }
     } finally {
       state.chatBusy = false;
       submit.disabled = false;
+      if (submitHadFocus) {
+        const active = document.activeElement;
+        if (!active || active === document.body || active === document.documentElement) {
+          try { message.focus({ preventScroll: true }); } catch (_) { message.focus(); }
+        }
+      }
     }
   });
   chat.appendChild(form);
@@ -822,8 +1358,8 @@ function recordProfileAnswer(key, answer) {
   if (!PROFILE_MODEL.setAnswer(state.profile, key, answer)) return false;
   profileLegacyFieldAnswered(PROFILE_QUESTION_BY_KEY.get(key));
   if (state.profileOptIn) {
-    const result = saveProfileLocally();
-    if (!result.ok && !result.snapshotWritten) state.profileUnsaved = true;
+    const result = autosaveProfileLocally();
+    if (!result.ok && !result.snapshotWritten && result.reason !== "revoked_elsewhere") state.profileUnsaved = true;
   }
   if (state.profileMode === "edit") {
     state.profileMode = "summary";
@@ -890,7 +1426,7 @@ function renderProfileSummary(page) {
   });
   summary.appendChild(list);
   renderLegacyAnswers(summary);
-  summary.appendChild(callout("Solo se guarda si das permiso explícito en Privacidad. Este mapa no se envía al chat, la API local ni proveedores de IA. No solicita nombre, DNI, cuenta ni credenciales.", "info-note"));
+  summary.appendChild(callout("Solo se guarda si das permiso explícito en Privacidad. Este mapa no se envía por defecto: solo saldrían los campos que marques y autorices en el chat, nunca el mapa completo. No solicita nombre, DNI, cuenta ni credenciales.", "info-note"));
   summary.appendChild(el("div", { className: "button-row" }, [
     button(PROFILE_FIELDS.some(key => PROFILE_MODEL.getAnswer(state.profile, key).estado === "sin_preguntar") ? "Continuar donde lo dejé" : "Revisar cuestionario", () => enterProfileMode("core", true), "button button-secondary"),
     routeLink("Seguir explorando", "#biblioteca", "button button-primary")
@@ -952,7 +1488,13 @@ function renderProfile() {
     if (!PROFILE_MODEL.canContinueAnswer(question.key, answer)) {
       formError.textContent = "Responde o selecciona una opción válida antes de continuar. Si no sabes o prefieres no responder, elige «No lo sé» u «Omitir». En los detalles visibles, indica un valor válido o elige su estado explícitamente.";
       const focusTarget = control.focus || control.wrapper.querySelector("input, select");
-      if (focusTarget) focusTarget.focus();
+      if (focusTarget) {
+        focusTarget.setAttribute("aria-invalid", "true");
+        const ids = new Set((focusTarget.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean));
+        ids.add(formError.id);
+        focusTarget.setAttribute("aria-describedby", [...ids].join(" "));
+        focusTarget.focus();
+      }
       return;
     }
     recordProfileAnswer(question.key, answer);
@@ -1046,10 +1588,31 @@ function conditionOf(productId, metric) {
   return entry.conditions.find((item) => item && item.metric === metric) || null;
 }
 
+function conditionConsultedAt(productId) {
+  const rate = conditionOf(productId, "annual_rate_percent");
+  if (rate && typeof rate.retrieved_at === "string" && rate.retrieved_at) return rate.retrieved_at;
+  const entry = state.conditions.byId.get(productId);
+  return entry && entry.source && typeof entry.source.retrieved_at === "string" ? entry.source.retrieved_at : "";
+}
+
+function conditionValidityText(productId) {
+  const rate = conditionOf(productId, "annual_rate_percent");
+  if (!rate) return "Sin vigencia documentada para la tasa.";
+  const prefix = rate.state === "stale" ? "vencida · " : "";
+  if (rate.effective_from && rate.effective_to) return `${prefix}del ${rate.effective_from} al ${rate.effective_to}`;
+  if (rate.effective_to) return `${prefix}hasta ${rate.effective_to}`;
+  if (rate.effective_from) return `${prefix}desde ${rate.effective_from}, sin fecha de fin documentada`;
+  return "sin fechas de vigencia documentadas";
+}
+
+function productEffectiveDate(product) {
+  if (!product || product.origin === "curated_conditions") return "";
+  return typeof product.as_of === "string" && product.as_of ? product.as_of : "";
+}
+
 function formatRate(value) {
-  const number = Number(value);
-  if (!Number.isFinite(number)) return "No disponible";
-  return `${number.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`;
+  const formatted = window.PaideiaConditionsLoad.formatRate(value);
+  return formatted || "No disponible";
 }
 
 function conditionStateText(condition) {
@@ -1071,40 +1634,36 @@ function conditionStateText(condition) {
     MULTIPLE_TERMS_DOCUMENTED: "varios plazos en el documento",
     DOCUMENTED_OFFICIAL_DOCUMENT_IDENTITY: "documento oficial"
   };
-  const stateLabel = { known: "vigente según la fuente", stale: "vencido", conflict: "en conflicto", unknown: "sin dato" }[condition.state] || condition.state;
+  const stateLabel = { known: "documentada por la fuente", stale: "vencida", conflict: "en conflicto", unknown: "sin dato" }[condition.state] || condition.state;
   return `${stateLabel}; ${reasons[condition.reason] || "documentado"}`;
 }
 
 function rateSummary(productId) {
-  const rate = conditionOf(productId, "annual_rate_percent");
-  if (!rate) return { text: "Sin tasa documentada para este producto.", kind: "pending" };
-  if (rate.state === "known") {
-    const secondary = (rate.notes || []).some((note) => /Fuente secundaria/i.test(note));
-    return {
-      text: `TAE documentada: ${formatRate(rate.value)}${secondary ? " · fuente secundaria, pendiente de confirmar" : ""}`,
-      kind: "verified"
-    };
-  }
-  if (rate.state === "stale") return { text: "Oferta vencida: no se muestra como tasa vigente.", kind: "pending" };
-  if (rate.state === "conflict") return { text: "Tasas en conflicto entre fuentes: no se comparan.", kind: "pending" };
-  return { text: "Sin tasa documentada para este producto.", kind: "pending" };
+  return window.PaideiaConditionsLoad.rateSummary(state.conditions, conditionOf(productId, "annual_rate_percent"));
 }
 
-async function loadConditions() {
-  if (state.conditions.loaded) return;
+async function loadConditions(force = false) {
+  if (!force && (state.conditions.loaded || state.conditions.loading)) return;
+  if (state.conditions.loading) return;
+  state.conditions = window.PaideiaConditionsLoad.begin();
   try {
-    const data = await apiRequest(API.conditions);
-    if (!data || !Array.isArray(data.products)) throw new Error("invalid conditions");
-    const byId = new Map();
-    for (const product of data.products) {
-      if (product && typeof product.product_id === "string") byId.set(product.product_id, product);
-    }
-    state.conditions = { loaded: true, error: null, byId, referenceDate: data.reference_date || null };
+    state.conditions = window.PaideiaConditionsLoad.succeed(await apiRequest(API.conditions));
   } catch (error) {
-    state.conditions = { loaded: false, error, byId: new Map(), referenceDate: null };
+    state.conditions = window.PaideiaConditionsLoad.fail(error);
   }
   if (state.route === "biblioteca") { renderCuratedCatalogue(); renderCatalogueResults(); renderProductDetail(); }
   if (state.route === "comparar") renderComparisonResult();
+  if (state.route === "simulacion") {
+    const amountInput = document.getElementById("simulation-amount");
+    const draft = amountInput ? amountInput.value : null;
+    const snapshot = captureFocus();
+    render({ preserveFocus: true });
+    if (draft !== null) {
+      const nextInput = document.getElementById("simulation-amount");
+      if (nextInput) nextInput.value = draft;
+    }
+    restoreFocus(snapshot, document.getElementById("main-content"));
+  }
 }
 
 function renderCuratedCatalogue() {
@@ -1149,12 +1708,46 @@ function productCard(product) {
   const rateLine = textElement("p", rate.text, "small");
   rateLine.id = `rate-${product.id}`;
   card.appendChild(rateLine);
+  const rateCondition = conditionOf(product.id, "annual_rate_percent");
+  if (rateCondition && Array.isArray(rateCondition.notes)) {
+    for (const note of rateCondition.notes.slice(0, 2)) {
+      if (typeof note === "string" && note.trim()) card.appendChild(textElement("p", note.slice(0, 200), "small muted"));
+    }
+  }
   card.appendChild(textElement("p", "Candidato de investigación · No es una oferta publicable. La tasa solo se muestra si está documentada con fuente y fecha.", "small muted"));
   appendPrimarySource(card, product);
+  const conditionEntry = state.conditions.byId.get(product.id);
+  const conditionSourceUrl = conditionEntry && conditionEntry.source && isSafePrimaryUrl(conditionEntry.source.url)
+    ? conditionEntry.source.url : "";
+  if (conditionSourceUrl) {
+    card.appendChild(el("p", { className: "source-line" }, [
+      document.createTextNode("Fuente de las condiciones: "),
+      el("a", { href: conditionSourceUrl, target: "_blank", rel: "noopener noreferrer" }, conditionSourceUrl),
+      document.createTextNode(conditionEntry.source.retrieved_at ? ` · consultada el ${conditionEntry.source.retrieved_at}` : " · sin fecha de consulta declarada"),
+    ]));
+  }
+  const conflicts = Array.isArray(product.conflicts) ? product.conflicts.filter((item) => typeof item === "string").slice(0, 5) : [];
+  const unknownFields = Array.isArray(product.unknown_fields) ? product.unknown_fields.filter((item) => typeof item === "string").slice(0, 12) : [];
+  const review = el("div", { className: "product-review" });
+  if (conflicts.length) {
+    review.appendChild(textElement("p", "Conflictos que siguen abiertos:", "small"));
+    for (const conflict of conflicts) review.appendChild(textElement("p", conflict.slice(0, 200), "small muted"));
+  }
+  if (unknownFields.length) {
+    review.appendChild(textElement("p", "Campos desconocidos:", "small"));
+    for (const field of unknownFields) review.appendChild(textElement("p", field.slice(0, 120), "small muted"));
+  }
+  if (!conflicts.length && !unknownFields.length) {
+    review.appendChild(textElement("p", "La respuesta de API no enumera conflictos ni campos desconocidos; eso no equivale a que no existan.", "small muted"));
+  }
+  review.appendChild(textElement("p", "Identidad y condiciones se muestran por separado; los huecos no se completan.", "small muted"));
+  card.appendChild(review);
   const actions = el("div", { className: "product-actions" });
   const selected = state.selectedIds.includes(product.id);
   const choose = button(selected ? "Quitar de comparar" : "Añadir a comparar", () => toggleSelection(product.id), "button button-secondary", { pressed: selected, disabled: !selected && state.selectedIds.length >= 4 });
+  choose.id = `choose-${product.id}`;
   const details = button("Ver detalle", () => loadProductDetail(product.id), "button-link");
+  details.id = `detail-${product.id}`;
   actions.append(choose, details);
   card.appendChild(actions);
   return card;
@@ -1163,7 +1756,18 @@ function productCard(product) {
 function renderCatalogueResults() {
   const results = document.getElementById("catalogue-results");
   if (!results || state.route !== "biblioteca") return;
+  const snapshot = captureFocus();
   results.replaceChildren();
+  results.setAttribute("tabindex", "-1");
+  results.appendChild(el("h2", { className: "visually-hidden" }, "Candidatos del catálogo"));
+  try {
+    renderCatalogueResultsBody(results);
+  } finally {
+    restoreFocus(snapshot, results);
+  }
+}
+
+function renderCatalogueResultsBody(results) {
   results.setAttribute("aria-busy", String(state.library.loading));
   if (state.library.loading) {
     results.appendChild(textElement("p", "Cargando candidatos del catálogo local…", "loading-state"));
@@ -1176,6 +1780,12 @@ function renderCatalogueResults() {
   if (!state.library.loaded) {
     results.appendChild(textElement("p", "El catálogo aún no se ha consultado.", "loading-state"));
     return;
+  }
+  const conditionsNotice = window.PaideiaConditionsLoad.catalogueNotice(state.conditions);
+  if (conditionsNotice) {
+    results.appendChild(conditionsNotice.kind === "error"
+      ? errorBox(conditionsNotice.message, conditionsNotice.retry ? () => loadConditions(true) : null)
+      : textElement("p", conditionsNotice.message, "loading-state"));
   }
   const countText = state.library.count === 1 ? "1 candidato" : `${state.library.count} candidatos`;
   results.appendChild(textElement("p", `${countText} devueltos por la API · Todos son metadatos de investigación interna.`, "small muted"));
@@ -1220,6 +1830,7 @@ async function loadCatalogueForLibrary() {
   state.library.loading = true;
   state.library.error = null;
   state.library.loaded = false;
+  announce("Cargando catálogo…");
   renderCatalogueResults();
   const params = new URLSearchParams();
   if (state.library.query.trim()) params.set("q", state.library.query.trim());
@@ -1240,6 +1851,9 @@ async function loadCatalogueForLibrary() {
       state.library.loading = false;
       renderCatalogueResults();
       renderLibrarySelection();
+      announce(state.library.error
+        ? "No se pudo cargar el catálogo"
+        : `${state.library.count === 1 ? "1 candidato" : `${state.library.count} candidatos`} en la biblioteca`);
     }
   }
 }
@@ -1247,6 +1861,7 @@ async function loadCatalogueForLibrary() {
 function loadProductDetail(id) {
   state.detail = { id, product: null, loading: true, error: null, requestId: state.detail.requestId + 1 };
   const seq = state.detail.requestId;
+  announce("Cargando ficha…");
   renderProductDetail();
   apiRequest(`${API.product}${encodeURIComponent(id)}`).then((data) => {
     if (state.detail.requestId !== seq) return;
@@ -1261,6 +1876,7 @@ function loadProductDetail(id) {
       renderProductDetail();
       const target = document.getElementById("product-detail");
       if (target) target.focus({ preventScroll: true });
+      announce(state.detail.error ? "No se pudo cargar la ficha" : "Ficha cargada");
     }
   });
 }
@@ -1292,11 +1908,14 @@ function renderProductDetail() {
   holder.appendChild(title);
   const chips = el("div", { className: "badge-row" }, [badge(identityLabel(product), identityKind(product)), badge(conditionsLabel(product), "pending")]);
   holder.appendChild(chips);
+  const conditionsFailed = Boolean(state.conditions.error);
   const pairs = [
     ["Familia", familyLabel(product.family)],
     ["Emisor / marca", issuerLabel(product)],
     ["ISIN", product.isin || "No indicado en los metadatos"],
-    ["Fecha asociada", product.as_of || "No consta una fecha efectiva inequívoca"],
+    ["Fecha efectiva del producto", productEffectiveDate(product) || "No consta una fecha efectiva del producto en los metadatos."],
+    ["Consulta de la condición", conditionsFailed ? "No disponible: fallo al cargar las condiciones documentadas." : (conditionConsultedAt(product.id) || "No consta fecha de consulta de la condición.")],
+    ["Vigencia de la condición", conditionsFailed ? "No disponible: fallo al cargar las condiciones documentadas." : conditionValidityText(product.id)],
     ["Publicación", product.publication_ready === true ? "Estado indicado por API" : "No listo para publicar"],
     ["Alcance", "Identidad de candidato; no acredita condiciones vigentes, elegibilidad ni disponibilidad"]
   ];
@@ -1304,9 +1923,22 @@ function renderProductDetail() {
   for (const [label, value] of pairs) dl.append(el("dt", {}, label), el("dd", {}, value));
   holder.appendChild(dl);
   appendPrimarySource(holder, product);
+  const conditionsNotice = window.PaideiaConditionsLoad.catalogueNotice(state.conditions);
+  if (conditionsNotice && conditionsNotice.kind === "error") {
+    holder.appendChild(errorBox(conditionsNotice.message, () => loadConditions(true)));
+  }
   const conditionEntry = state.conditions.byId.get(product.id);
+  const conditionStates = conditionEntry && Array.isArray(conditionEntry.conditions)
+    ? conditionEntry.conditions.map((condition) => condition && condition.state) : [];
+  const allConditionsDocumented = conditionStates.length > 0 && conditionStates.every((item) => item === "known");
   if (conditionEntry && Array.isArray(conditionEntry.conditions) && conditionEntry.conditions.length) {
-    const block = section("Condiciones documentadas", "Solo lo que consta en una fuente con fecha; los huecos no se rellenan.", "data-panel");
+    const allDocumented = allConditionsDocumented;
+    const block = section(
+      allDocumented ? "Condiciones documentadas" : "Condiciones declaradas, no todas documentadas",
+      allDocumented
+        ? "Solo lo que consta en una fuente con fecha; los huecos no se rellenan."
+        : "Los estados vencida, en conflicto o sin dato se muestran tal cual; no se presentan como documentados ni como oferta vigente.",
+      "data-panel");
     const list = el("ul", { className: "detail-list" });
     for (const condition of conditionEntry.conditions) {
       let text = "";
@@ -1317,6 +1949,9 @@ function renderProductDetail() {
         text = `Plazo: ${condition.state === "known" ? `${condition.value} meses` : "no documentado"} · ${conditionStateText(condition)}`;
       }
       if (condition.effective_to) text += ` · vigencia hasta ${condition.effective_to}`;
+      if (Array.isArray(condition.notes) && condition.notes.length) {
+        text += ` · ${condition.notes.filter((note) => typeof note === "string").join(" ").slice(0, 400)}`;
+      }
       const item = el("li", {}, text);
       list.appendChild(item);
     }
@@ -1336,6 +1971,17 @@ function renderProductDetail() {
       ]));
     }
     holder.appendChild(block);
+  } else if (conditionEntry && conditionEntry.source && isSafePrimaryUrl(conditionEntry.source.url)) {
+    const block = section("Fuente de las condiciones", "Documenta las condiciones declaradas; no acredita por sí sola que la oferta siga abierta.", "data-panel");
+    block.appendChild(el("p", { className: "source-line" }, [
+      document.createTextNode("Fuente de las condiciones: "),
+      el("a", { href: conditionEntry.source.url, target: "_blank", rel: "noopener noreferrer" }, conditionEntry.source.url),
+      document.createTextNode(conditionEntry.source.retrieved_at ? ` · consultada el ${conditionEntry.source.retrieved_at}` : " · sin fecha de consulta declarada"),
+    ]));
+    if (conditionEntry.conditions_state && conditionEntry.conditions_state !== "documented") {
+      block.appendChild(textElement("p", "Las condiciones no constan como documentadas y vigentes; no se presentan como oferta.", "field-help"));
+    }
+    holder.appendChild(block);
   }
   const conflicts = section("Conflictos que siguen abiertos", "No se resuelven ni se corrigen en silencio.", "data-panel");
   appendList(conflicts, product.conflicts, "La respuesta de API no enumera conflictos.");
@@ -1343,7 +1989,9 @@ function renderProductDetail() {
   const unknown = section("Datos que siguen desconocidos", "La ausencia de un campo no equivale a cero ni a ausencia de riesgo.", "data-panel");
   appendList(unknown, product.unknown_fields, "La respuesta de API no enumera campos desconocidos.");
   holder.appendChild(unknown);
-  holder.appendChild(callout("Las condiciones mostradas son las documentadas en la fuente citada; no acreditan disponibilidad, elegibilidad ni que la oferta siga abierta. Ningún dato se completa por inferencia.", "warning-note"));
+  holder.appendChild(callout(allConditionsDocumented && conditionEntry && conditionEntry.source && isSafePrimaryUrl(conditionEntry.source.url)
+    ? "Las condiciones mostradas constan en la fuente citada; no acreditan disponibilidad, elegibilidad ni que la oferta siga abierta. Ningún dato se completa por inferencia."
+    : "Lo mostrado son condiciones declaradas o datos ausentes, no una oferta vigente: una tasa vencida, en conflicto o sin dato se muestra tal cual y no acredita disponibilidad ni elegibilidad.", "warning-note"));
   const concepts = el("p", {}, "Entender los conceptos: ");
   for (const key of ["tae", "tin", "liquidez", "riesgo"]) concepts.appendChild(window.ContextHelp.createHelp(key));
   holder.appendChild(concepts);
@@ -1431,7 +2079,9 @@ function comparisonCard(product) {
     ["Condiciones / garantía", "Pendientes de validación; no se infieren."],
     ["Posible pérdida", "No evaluada en estos metadatos; no se deduce por familia."],
     ["Rendimiento", rate.text],
-    ["Fecha asociada", product.as_of || "No consta una fecha efectiva inequívoca"]
+    ["Fecha de consulta de la condición", conditionConsultedAt(product.id) || "No consta fecha de consulta de la condición."],
+    ["Vigencia de la condición", conditionValidityText(product.id)],
+    ["Fecha efectiva del producto", productEffectiveDate(product) || "No consta una fecha efectiva del producto en los metadatos."]
   ];
   for (const [label, value] of fields) rows.append(el("dt", {}, label), el("dd", {}, value));
   card.appendChild(rows);
@@ -1445,11 +2095,19 @@ function comparisonCard(product) {
   appendList(conflicts, product.conflicts, "No enumerados por esta respuesta.");
   card.appendChild(conflicts);
   const rateEntry = conditionOf(product.id, "annual_rate_percent");
-  if (rateEntry && rateEntry.state === "known") {
+  if (rateEntry && rateEntry.state === "known" && window.PaideiaConditionsLoad.formatRate(rateEntry.value)) {
     const termEntry = conditionOf(product.id, "term_months");
     const years = termEntry && termEntry.state === "known" ? Math.max(1, Math.round(Number(termEntry.value) / 12)) : 1;
     const explore = button("Explorar escenarios con esta tasa", () => {
-      state.scenarioSeed = { name: productName(product), rate: Number(rateEntry.value).toFixed(2), years };
+      const conditionEntry = state.conditions.byId.get(product.id);
+      const source = window.PaideiaScenarioProvenance.buildSource({
+        product: { id: product.id, name: productName(product), primary_url: product.primary_url },
+        conditionEntry,
+        rateCondition: rateEntry,
+        termCondition: termEntry && termEntry.state === "known" ? termEntry : null,
+        rate: rateEntry.value
+      });
+      state.scenarioSeed = { name: productName(product), rate: source && source.rate_at_seed ? source.rate_at_seed : String(rateEntry.value), years, source };
       window.location.hash = "#escenarios";
     }, "button-link");
     explore.id = `explore-${product.id}`;
@@ -1461,10 +2119,27 @@ function comparisonCard(product) {
 function renderComparisonResult() {
   const holder = document.getElementById("compare-result");
   if (!holder || state.route !== "comparar") return;
+  const snapshot = captureFocus();
   holder.replaceChildren();
+  holder.setAttribute("tabindex", "-1");
+  try {
+    renderComparisonResultBody(holder);
+  } finally {
+    restoreFocus(snapshot, holder);
+  }
+}
+
+function renderComparisonResultBody(holder) {
   holder.setAttribute("aria-busy", String(state.compareBusy));
   if (state.compareBusy) { holder.appendChild(textElement("p", "Alineando metadatos del servicio local…", "loading-state")); return; }
   if (state.compareError) { holder.appendChild(errorBox(apiErrorText(state.compareError), () => loadComparison())); return; }
+  const conditionsNotice = window.PaideiaConditionsLoad.comparisonNotice(state.conditions);
+  if (conditionsNotice) {
+    holder.appendChild(conditionsNotice.kind === "error"
+      ? errorBox(conditionsNotice.message, conditionsNotice.retry ? () => loadConditions(true) : null)
+      : textElement("p", conditionsNotice.message, "loading-state"));
+    return;
+  }
   if (!state.compareResult || JSON.stringify(state.compareIds) !== JSON.stringify(state.selectedIds)) return;
   const result = state.compareResult;
   if (!Array.isArray(result.items)) { holder.appendChild(callout("La API no devolvió los metadatos comparables esperados.", "error-note")); return; }
@@ -1473,7 +2148,16 @@ function renderComparisonResult() {
   holder.appendChild(columns);
   const message = result.reasons && result.reasons.length ? result.reasons.join(" ") : "Solo se comparan metadatos educativos.";
   holder.appendChild(callout(`${message} No se ordenan candidatos ni se calcula una recomendación.`, "info-note"));
-  holder.appendChild(callout("Datos cuantitativos no disponibles. La respuesta marca quantitative_ready=false; no se muestran tasas, NAV ni ceros como sustituto.", "warning-note"));
+  const documentedRates = result.items.filter(safeComparisonProduct).filter((product) => rateSummary(product.id).kind === "verified").length;
+  let comparisonNote;
+  if (result.quantitative_ready === true) {
+    comparisonNote = "La API marca quantitative_ready=true para el criterio documentado; la comparación se limita a esa métrica y no es una oferta ni una recomendación.";
+  } else if (documentedRates) {
+    comparisonNote = `Se muestran ${documentedRates} ${documentedRates === 1 ? "tasa documentada" : "tasas documentadas"} con fuente y fecha. La API no emite un ranking cuantitativo completo (quantitative_ready=false): no se ordenan ni se calcula una recomendación. Los huecos no se rellenan con ceros ni con NAV.`;
+  } else {
+    comparisonNote = "No consta una tasa documentada que mostrar en esta comparación. La API no emite un ranking cuantitativo (quantitative_ready=false) y los huecos no se rellenan con ceros ni con NAV.";
+  }
+  holder.appendChild(callout(comparisonNote, "warning-note"));
   const concepts = el("p", {}, "Conceptos de la comparación: ");
   for (const key of ["tae", "tin", "liquidez", "riesgo"]) concepts.appendChild(window.ContextHelp.createHelp(key));
   holder.appendChild(concepts);
@@ -1488,7 +2172,9 @@ function renderComparePage(focus = true) {
   const selected = el("div", { id: "compare-selection" });
   selection.appendChild(selected);
   const actions = el("div", { className: "button-row" });
-  actions.appendChild(button("Comparar metadatos", () => loadComparison(), "button button-primary", { disabled: state.selectedIds.length < 2 || state.selectedIds.length > 4 }));
+  const compareButton = button("Comparar metadatos", () => loadComparison(), "button button-primary", { disabled: state.selectedIds.length < 2 || state.selectedIds.length > 4 || state.compareBusy });
+  compareButton.id = "compare-submit";
+  actions.appendChild(compareButton);
   actions.appendChild(routeLink("Cambiar selección", "#biblioteca", "button-link"));
   selection.appendChild(actions);
   page.appendChild(selection);
@@ -1572,11 +2258,15 @@ async function loadDiagnosis() {
 }
 
 async function loadComparison() {
+  if (state.compareBusy) return;
   if (state.selectedIds.length < 2 || state.selectedIds.length > 4) return;
   const ids = [...state.selectedIds];
   const requestId = ++state.compareRequestId;
   state.compareBusy = true;
   state.compareError = null;
+  const compareButton = document.getElementById("compare-submit");
+  if (compareButton) compareButton.disabled = true;
+  announce("Comparando metadatos…");
   renderComparisonResult();
   try {
     const data = await apiRequest(API.compare, { method: "POST", body: { product_ids: ids } });
@@ -1592,6 +2282,9 @@ async function loadComparison() {
     if (requestId === state.compareRequestId) {
       state.compareBusy = false;
       renderComparisonResult();
+      const button = document.getElementById("compare-submit");
+      if (button) button.disabled = state.selectedIds.length < 2 || state.selectedIds.length > 4;
+      announce(state.compareError ? "No se pudo comparar" : "Comparación lista");
     }
   }
 }
@@ -1650,14 +2343,38 @@ function makeScenarioChart(series, chartId = "chart") {
   return svg;
 }
 
+function focusResultsRegion(holder, preferred) {
+  if (!holder || !holder.isConnected) return false;
+  if (preferred && preferred.isConnected && !preferred.disabled) {
+    preferred.focus({ preventScroll: true });
+    return true;
+  }
+  holder.setAttribute("tabindex", "-1");
+  holder.focus({ preventScroll: true });
+  return true;
+}
+
 function buildScenarioOutput(scenario = state.scenario, suffix = "") {
   const holder = document.getElementById(`scenario-output${suffix}`);
   if (!holder) return;
+  const active = document.activeElement;
+  const hadFocusInside = Boolean(active && holder.contains(active));
+  fillScenarioOutput(holder, scenario, suffix);
+  if (hadFocusInside) focusResultsRegion(holder, holder.querySelector(".error-note button"));
+}
+
+function fillScenarioOutput(holder, scenario, suffix) {
   holder.replaceChildren();
   holder.setAttribute("aria-busy", String(scenario.status === "pending"));
   holder.dataset.status = scenario.status;
   if (scenario.status === "pending") { holder.appendChild(textElement("p", "Calculando con los supuestos indicados…", "loading-state")); return; }
-  if (scenario.status === "error") { holder.appendChild(callout(apiErrorText(scenario.error), "error-note")); return; }
+  if (scenario.status === "error") {
+    holder.appendChild(errorBox(
+      apiErrorText(scenario.error),
+      scenario.submitted ? () => submitScenario({ ...scenario.submitted }, scenario, suffix) : null
+    ));
+    return;
+  }
   if (scenario.status !== "current") { holder.appendChild(textElement("p", "Introduce los supuestos y calcula este escenario.", "small muted")); return; }
   const data = scenario.result;
   if (!data) return;
@@ -1734,22 +2451,56 @@ function buildScenarioOutput(scenario = state.scenario, suffix = "") {
 }
 
 function readScenarioForm(form, suffix = "") {
-  const value = (id) => form.querySelector(`#${id}${suffix}`).value.trim();
-  const principal = value("scenario-principal");
-  const rate = value("scenario-rate");
-  const years = value("scenario-years");
-  const contribution = value("scenario-contribution");
-  const inflation = value("scenario-inflation");
-  const method = value("scenario-method");
+  const idFor = (name) => `scenario-${name}${suffix}`;
+  const value = (id) => form.querySelector(`#${id}`).value.trim();
+  const fail = (name, message) => {
+    const error = new Error(message);
+    error.fieldId = idFor(name);
+    throw error;
+  };
+  const principal = value(idFor("principal"));
+  const rate = value(idFor("rate"));
+  const years = value(idFor("years"));
+  const contribution = value(idFor("contribution"));
+  const inflation = value(idFor("inflation"));
+  const method = value(idFor("method"));
   const amounts = [principal, rate, years, contribution, inflation];
-  if (amounts.some((item) => item === "" || !Number.isFinite(Number(item)))) throw new Error("Completa todos los campos con números válidos.");
+  const names = ["principal", "rate", "years", "contribution", "inflation"];
+  const invalidIndex = amounts.findIndex((item) => item === "" || !Number.isFinite(Number(item)));
+  if (invalidIndex !== -1) fail(names[invalidIndex], "Completa todos los campos con números válidos.");
   const moneyPattern = /^(?:0|[1-9][0-9]{0,9})(?:\.[0-9]{1,2})?$/;
   const ratePattern = /^-?(?:0|[1-9][0-9]{0,3})(?:\.[0-9]{1,4})?$/;
-  if (![principal, contribution].every(item => moneyPattern.test(item) && Number(item) <= 1000000000)) throw new Error("Capital y aportación: escribe importes de 0 a 1.000.000.000 €, con hasta dos decimales y sin exponentes.");
-  if (![rate, inflation].every(item => ratePattern.test(item) && Number(item) > -100 && Number(item) <= 1000)) throw new Error("Tasa e inflación: escribe valores mayores que −100 y hasta 1000 %, con hasta cuatro decimales y sin exponentes.");
-  if (!Number.isInteger(Number(years)) || Number(years) < 1 || Number(years) > 40) throw new Error("El horizonte debe ser un número entero de 1 a 40 años.");
-  if (!new Set(["simple", "compound"]).has(method)) throw new Error("Elige un método de cálculo disponible.");
+  const moneyIndex = [principal, contribution].findIndex((item) => !moneyPattern.test(item) || Number(item) > 1000000000);
+  if (moneyIndex !== -1) fail(moneyIndex === 0 ? "principal" : "contribution", "Capital y aportación: escribe importes de 0 a 1.000.000.000 €, con hasta dos decimales y sin exponentes.");
+  const rateIndex = [rate, inflation].findIndex((item) => !ratePattern.test(item) || Number(item) <= -100 || Number(item) > 1000);
+  if (rateIndex !== -1) fail(rateIndex === 0 ? "rate" : "inflation", "Tasa e inflación: escribe valores mayores que −100 y hasta 1000 %, con hasta cuatro decimales y sin exponentes.");
+  if (!Number.isInteger(Number(years)) || Number(years) < 1 || Number(years) > 40) fail("years", "El horizonte debe ser un número entero de 1 a 40 años.");
+  if (!new Set(["simple", "compound"]).has(method)) fail("method", "Elige un método de cálculo disponible.");
   return { principal, annual_rate_percent: rate, years: Number(years), monthly_contribution: contribution, method, inflation_percent: inflation };
+}
+
+function clearScenarioFieldErrors(form) {
+  if (!form) return;
+  for (const control of form.querySelectorAll('[aria-invalid="true"]')) {
+    control.removeAttribute("aria-invalid");
+    const describedBy = (control.getAttribute("aria-describedby") || "")
+      .split(/\s+/)
+      .filter((id) => id && !/^scenario-form-error/.test(id));
+    if (describedBy.length) control.setAttribute("aria-describedby", describedBy.join(" "));
+    else control.removeAttribute("aria-describedby");
+  }
+}
+
+function markScenarioFieldError(form, fieldId, errorNode) {
+  if (!form || !fieldId || !errorNode) return null;
+  const control = document.getElementById(fieldId);
+  if (!control || !form.contains(control)) return null;
+  control.setAttribute("aria-invalid", "true");
+  const ids = new Set((control.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean));
+  ids.add(errorNode.id);
+  control.setAttribute("aria-describedby", [...ids].join(" "));
+  control.focus();
+  return control;
 }
 
 // Public read-only snapshot: only current versions expose a server response.
@@ -1758,7 +2509,8 @@ function scenarioComparisonSnapshot() {
     scenarios: [state.scenario, state.scenarioSecond].map((scenario, index) => ({
       id: index ? "B" : "A", status: scenario.status, version: scenario.version,
       inputs: { ...scenario.form },
-      result: scenario.status === "current" ? JSON.parse(JSON.stringify(scenario.result)) : null
+      result: scenario.status === "current" ? JSON.parse(JSON.stringify(scenario.result)) : null,
+      source: scenario.source ? JSON.parse(JSON.stringify(scenario.source)) : null
     })) };
 }
 window.getScenarioComparisonSnapshot = scenarioComparisonSnapshot;
@@ -1802,6 +2554,13 @@ function renderScenarioComparisonSummary() {
   if ([state.scenario, state.scenarioSecond].every(s => s.status === "current") && Number(state.scenario.form.years) !== Number(state.scenarioSecond.form.years)) {
     holder.appendChild(textElement("p", "Los horizontes son distintos: los saldos corresponden a momentos diferentes.", "warning-note"));
   }
+  const statusNode = document.getElementById("scenario-comparison-status");
+  if (statusNode) {
+    const statusText = [state.scenario, state.scenarioSecond]
+      .map((scenario, index) => `Escenario ${index ? "B" : "A"}: ${labels[scenario.status].toLowerCase()}`)
+      .join(" · ");
+    if (statusNode.textContent !== statusText) statusNode.textContent = statusText;
+  }
 }
 window.addEventListener("scenario-comparison-change", renderScenarioComparisonSummary);
 function scenarioChanged(scenario, suffix) {
@@ -1810,16 +2569,26 @@ function scenarioChanged(scenario, suffix) {
   scenario.result = null;
   scenario.submitted = null;
   scenario.error = null;
+  scenario.source = window.PaideiaScenarioProvenance.sourceAfterEdit(scenario.source, scenario.form);
+  const submitButton = document.getElementById(`scenario-submit${suffix}`);
+  if (submitButton) submitButton.disabled = false;
   buildScenarioOutput(scenario, suffix);
   window.dispatchEvent(new CustomEvent("scenario-comparison-change"));
 }
 async function submitScenario(payload, scenario = state.scenario, suffix = "") {
   if (!payload) return;
+  if (scenario.status === "pending") return;
   const version = ++scenario.version;
   scenario.status = "pending";
   scenario.result = null;
   scenario.error = null;
   scenario.submitted = { ...payload };
+  const submitButton = document.getElementById(`scenario-submit${suffix}`);
+  const outputHolder = document.getElementById(`scenario-output${suffix}`);
+  // Deshabilitar el botón enfocado movería el foco a BODY: llévalo antes a la región de resultado.
+  if (submitButton && submitButton === document.activeElement && outputHolder) focusResultsRegion(outputHolder);
+  if (submitButton) submitButton.disabled = true;
+  announce(`Calculando escenario ${suffix ? "B" : "A"}…`);
   buildScenarioOutput(scenario, suffix);
   window.dispatchEvent(new CustomEvent("scenario-comparison-change"));
   try {
@@ -1837,6 +2606,11 @@ async function submitScenario(payload, scenario = state.scenario, suffix = "") {
     if (version === scenario.version) {
       buildScenarioOutput(scenario, suffix);
       window.dispatchEvent(new CustomEvent("scenario-comparison-change"));
+      const button = document.getElementById(`scenario-submit${suffix}`);
+      if (button) button.disabled = false;
+      announce(scenario.status === "current"
+        ? `Escenario ${suffix ? "B" : "A"} calculado`
+        : `No se pudo calcular el escenario ${suffix ? "B" : "A"}`);
     }
   }
 }
@@ -1846,11 +2620,14 @@ function renderScenario() {
   if (seed) {
     state.scenarioSeed = null;
     state.scenario.form = { ...state.scenario.form, annual_rate_percent: seed.rate, years: String(seed.years) };
-    state.scenario = { ...state.scenario, status: "dirty", version: 0, result: null, error: null, submitted: null };
+    state.scenario = { ...state.scenario, status: "dirty", version: 0, result: null, error: null, submitted: null, source: seed.source || null };
   }
   const { page, heading } = pageFrame("Escenarios · supuestos editables", "Prueba otros supuestos", "Los números describen una hipótesis tuya. El cálculo no usa tasas de producto y no es una predicción.");
   if (seed) {
-    page.appendChild(callout(`Supuesto importado de «${seed.name}»: tasa anual ${seed.rate} % y horizonte ${seed.years} año(s), ya escritos en el escenario A. Es una hipótesis editable, no una oferta ni una proyección.`, "info-note"));
+    const termNote = seed.source && seed.source.term_months && Number(seed.years) * 12 !== seed.source.term_months
+      ? ` El plazo documentado es de ${seed.source.term_months} meses; el horizonte editable se redondea a ${seed.years} año(s) y no se presenta como plazo del producto.`
+      : "";
+    page.appendChild(callout(`Supuesto importado de «${seed.name}»: tasa anual ${seed.rate} % y horizonte ${seed.years} año(s), ya escritos en el escenario A. Es una hipótesis editable, no una oferta ni una proyección.${termNote} La tasa, el tramo y la fuente se copian solo a este formulario local: el perfil no se incluye y no se envía al proveedor de IA.`, "info-note"));
   }
   page.appendChild(callout("Hipótesis del usuario · no predicción · bruto, sin fiscalidad ni costes de producto. El método compuesto convierte la tasa anual efectiva a mensual; en simple la tasa anual se divide entre 12. Aportaciones al final de cada mes.", "warning-note"));
   page.appendChild(el("p", {}, "Compara dos hipótesis independientes. Cada resultado muestra los valores nominales, reales y aportados del motor local."));
@@ -1865,7 +2642,8 @@ function renderScenario() {
   page.appendChild(start);
   renderScenarioPanel(start, state.scenario, "", "A");
   renderScenarioPanel(start, state.scenarioSecond, "-b", "B");
-  page.appendChild(el("section", { id: "scenario-comparison-summary", className: "paper-section", "aria-live": "polite" }));
+  page.appendChild(el("section", { id: "scenario-comparison-summary", className: "paper-section" }));
+  page.appendChild(el("p", { id: "scenario-comparison-status", className: "visually-hidden", role: "status", "aria-live": "polite" }));
   renderScenarioComparisonSummary();
   const reportHost = el("section", { id: "scenario-report-host" });
   page.appendChild(reportHost);
@@ -1876,7 +2654,7 @@ function renderScenario() {
 function renderScenarioPanel(page, scenario, suffix, name) {
   const panel = el("section", { className: "paper-section", "aria-label": `Escenario ${name}` });
   panel.appendChild(el("h2", {}, `Escenario ${name} · controles`));
-  const form = el("form", { className: "scenario-form" });
+  const form = el("form", { className: "scenario-form", novalidate: true });
   const principal = numberField(`scenario-principal${suffix}`, "Capital inicial (€)", "Importe que tú introduces. No es un mínimo contractual.", { min: "0" });
   const rate = numberField(`scenario-rate${suffix}`, "Tasa anual supuesta (%)", "No procede de la biblioteca ni de una oferta. Introduce un supuesto; puede ser negativo.", { min: "-99.9999", max: "1000", step: "0.0001" });
   const years = numberField(`scenario-years${suffix}`, "Horizonte (años)", "Número entero entre 1 y 40.", { min: "1", max: "40", step: "1" });
@@ -1897,7 +2675,8 @@ function renderScenarioPanel(page, scenario, suffix, name) {
   error.id = `scenario-form-error${suffix}`;
   error.setAttribute("role", "alert");
   form.appendChild(error);
-  const submit = button(`Calcular escenario ${name}`, null, "button button-primary", { type: "submit" });
+  const submit = button(`Calcular escenario ${name}`, null, "button button-primary", { type: "submit", disabled: scenario.status === "pending" });
+  submit.id = `scenario-submit${suffix}`;
   form.appendChild(el("div", { className: "button-row full-width" }, submit));
   const edited = () => {
     scenario.form = {
@@ -1909,6 +2688,7 @@ function renderScenarioPanel(page, scenario, suffix, name) {
       method: method.value
     };
     error.textContent = "";
+    clearScenarioFieldErrors(form);
     scenarioChanged(scenario, suffix);
   };
   if (name === "A") {
@@ -1916,13 +2696,13 @@ function renderScenarioPanel(page, scenario, suffix, name) {
     const applyExample = () => {
       principal.input.value = "1000"; rate.input.value = "2"; years.input.value = "5";
       contribution.input.value = "50"; inflation.input.value = "2"; method.value = "compound";
-      confirmation.replaceChildren(); edited();
+      confirmation.replaceChildren(); edited(); example.focus();
     };
     const example = button("Cargar ejemplo ficticio en A", () => {
       const hasInput = [principal.input, rate.input, years.input, contribution.input, inflation.input].some(input => input.value !== "");
       if (!hasInput && scenario.status === "dirty" && !scenario.version) { applyExample(); return; }
       confirmation.replaceChildren(textElement("p", "¿Quieres sustituir el escenario A por el ejemplo ficticio?"),
-        button("Confirmar sustitución", applyExample), button("Cancelar", () => confirmation.replaceChildren()));
+        button("Confirmar sustitución", applyExample), button("Cancelar", () => { confirmation.replaceChildren(); example.focus(); }));
     });
     form.append(example, confirmation);
   }
@@ -1931,22 +2711,26 @@ function renderScenarioPanel(page, scenario, suffix, name) {
     const copy = () => {
       const source = document.querySelectorAll(".scenario-form")[0];
       try { readScenarioForm(source); }
-      catch (failure) { document.getElementById("scenario-form-error").textContent = failure.message; confirmation.replaceChildren(); return; }
+      catch (failure) { document.getElementById("scenario-form-error").textContent = failure.message; confirmation.replaceChildren(); copyButton.focus(); return; }
       document.getElementById("scenario-form-error").textContent = "";
       ["principal", "rate", "years", "contribution", "inflation", "method"].forEach(id => {
         form.querySelector(`#scenario-${id}-b`).value = source.querySelector(`#scenario-${id}`).value;
       });
-      confirmation.replaceChildren(); edited();
+      scenario.source = window.PaideiaScenarioProvenance.copySource(
+        window.PaideiaScenarioProvenance.sourceAfterEdit(state.scenario.source, state.scenario.form)
+      );
+      confirmation.replaceChildren(); edited(); copyButton.focus();
     };
-    form.append(button("Copiar A a B para probar un cambio", () => {
+    const copyButton = button("Copiar A a B para probar un cambio", () => {
       const source = document.querySelectorAll(".scenario-form")[0];
       try { readScenarioForm(source); }
-      catch (failure) { document.getElementById("scenario-form-error").textContent = failure.message; return; }
+      catch (failure) { document.getElementById("scenario-form-error").textContent = failure.message; copyButton.focus(); return; }
       if ([principal.input, rate.input, years.input, contribution.input, inflation.input].some(input => input.value !== "") || scenario.status !== "dirty" || scenario.version) {
         confirmation.replaceChildren(textElement("p", "¿Quieres sustituir el escenario B con los campos actuales de A?"),
-          button("Confirmar sustitución", copy), button("Cancelar", () => confirmation.replaceChildren()));
+          button("Confirmar sustitución", copy), button("Cancelar", () => { confirmation.replaceChildren(); copyButton.focus(); }));
       } else copy();
-    }), confirmation);
+    });
+    form.append(copyButton, confirmation);
   }
   form.addEventListener("input", edited);
   method.addEventListener("change", edited);
@@ -1955,10 +2739,12 @@ function renderScenarioPanel(page, scenario, suffix, name) {
     try {
       const payload = readScenarioForm(form, suffix);
       error.textContent = "";
+      clearScenarioFieldErrors(form);
       submitScenario(payload, scenario, suffix);
     } catch (failure) {
       scenarioChanged(scenario, suffix);
       error.textContent = failure.message;
+      markScenarioFieldError(form, failure.fieldId, error);
     }
   });
   panel.appendChild(form);
@@ -1968,7 +2754,9 @@ function renderScenarioPanel(page, scenario, suffix, name) {
 }
 
 function renderSimulationProgress(page) {
-  const labels = ["Referencia", "Condiciones", "Importe", "Comprensión", "Justificante"];
+  // Guiones suaves: Chrome no dispone de diccionario de partición en español y, sin ellos,
+  // la columna estrecha parte palabras sin guion («Comprensi/ón»). Si la palabra cabe, no se ven.
+  const labels = ["Refe\u00ADrencia", "Condi\u00ADciones", "Impor\u00ADte", "Compren\u00ADsión", "Justifi\u00ADcante"];
   const list = el("ol", { className: "sim-progress", "aria-label": "Pasos del ensayo" });
   labels.forEach((label, index) => {
     const item = el("li", { "aria-current": state.simulation.step === index ? "step" : null });
@@ -1983,6 +2771,7 @@ async function loadSimulationCatalogue() {
   const seq = ++state.simulation.requestId;
   state.simulation.loading = true;
   state.simulation.error = null;
+  announce("Cargando catálogo del ensayo…");
   renderSimulationCandidates();
   try {
     const data = await apiRequest(API.catalogue);
@@ -1997,6 +2786,7 @@ async function loadSimulationCatalogue() {
     if (seq === state.simulation.requestId) {
       state.simulation.loading = false;
       renderSimulationCandidates();
+      announce(state.simulation.error ? "No se pudo cargar el catálogo del ensayo" : "Catálogo del ensayo listo");
     }
   }
 }
@@ -2004,6 +2794,15 @@ async function loadSimulationCatalogue() {
 function renderSimulationCandidates() {
   const holder = document.getElementById("simulation-candidates");
   if (!holder || state.route !== "simulacion" || state.simulation.step !== 0) return;
+  const active = document.activeElement;
+  const hadFocusInside = Boolean(active && holder.contains(active));
+  fillSimulationCandidates(holder);
+  if (!hadFocusInside) return;
+  const preferred = holder.querySelector(".error-note button") || document.getElementById("simulation-product");
+  focusResultsRegion(holder, preferred);
+}
+
+function fillSimulationCandidates(holder) {
   holder.replaceChildren();
   holder.setAttribute("aria-busy", String(state.simulation.loading));
   if (state.simulation.loading) { holder.appendChild(textElement("p", "Cargando candidatos del catálogo local…", "loading-state")); return; }
@@ -2032,17 +2831,106 @@ function renderSimulationCandidates() {
   holder.appendChild(el("div", { className: "button-row" }, chooseButton));
 }
 
+/* Fuente de las condiciones: la de la ficha transcrita (`entry.source`) o, en las
+   condiciones derivadas del snapshot, la URL resuelta por el registro de fuentes
+   (`source_refs` / `source_ids`). Antes solo se miraba `entry.source`, así que un
+   producto con tasa documentada y fuente enlazada se mostraba como «sin condiciones». */
+function conditionSourceRef(entry) {
+  if (entry && entry.source && isSafePrimaryUrl(entry.source.url) && entry.source.retrieved_at) {
+    return { url: entry.source.url, retrieved_at: entry.source.retrieved_at };
+  }
+  const conditions = entry && Array.isArray(entry.conditions) ? entry.conditions : [];
+  for (const condition of conditions) {
+    if (!condition || typeof condition !== "object") continue;
+    const fallbackDate = condition.retrieved_at || (entry && entry.retrieved_at) || null;
+    const refs = Array.isArray(condition.source_refs) ? condition.source_refs : [];
+    for (const ref of refs) {
+      if (ref && isSafePrimaryUrl(ref.url)) {
+        return { url: ref.url, retrieved_at: ref.accessed || fallbackDate };
+      }
+    }
+    const ids = Array.isArray(condition.source_ids) ? condition.source_ids : [];
+    for (const id of ids) {
+      if (typeof id === "string" && isSafePrimaryUrl(id)) {
+        return { url: id, retrieved_at: fallbackDate };
+      }
+    }
+  }
+  return null;
+}
+
+function hasDocumentedConditionsSource(entry) {
+  const ref = conditionSourceRef(entry);
+  return Boolean(ref && ref.url && ref.retrieved_at);
+}
+
+function simulationConditionsLabel(product) {
+  const entry = state.conditions.byId.get(product.id);
+  if (!entry || !Array.isArray(entry.conditions) || !entry.conditions.length || !hasDocumentedConditionsSource(entry)) return "Condiciones no documentadas";
+  const states = new Set(entry.conditions.map((item) => item && item.state));
+  if (states.has("conflict")) return "En conflicto";
+  if (states.has("stale")) return "Obsoleta";
+  if (states.has("unknown")) return "Sin dato";
+  return "Documentada";
+}
+
 function simulationProductReview(parent, product) {
   parent.appendChild(el("h2", {}, productName(product)));
   parent.appendChild(textElement("p", `${familyLabel(product.family)} · ${issuerLabel(product)}`, "muted"));
-  parent.appendChild(el("div", { className: "badge-row" }, [badge(identityLabel(product), identityKind(product)), badge(conditionsLabel(product), "pending")]));
+  const conditionEntry = state.conditions.byId.get(product.id);
+  const conditionStates = conditionEntry && Array.isArray(conditionEntry.conditions)
+    ? conditionEntry.conditions.map((item) => item.state)
+    : [];
+  parent.appendChild(el("div", { className: "badge-row" }, [
+    badge(identityLabel(product), identityKind(product)),
+    badge(simulationConditionsLabel(product), conditionStates.some((state) => state !== "known") || !conditionStates.length ? "pending" : "verified")
+  ]));
   const details = el("dl", { className: "detail-list" });
   details.append(el("dt", {}, "ISIN"), el("dd", {}, product.isin || "No indicado en los metadatos"));
   details.append(el("dt", {}, "Fecha asociada"), el("dd", {}, product.as_of || "No consta una fecha efectiva inequívoca"));
   details.append(el("dt", {}, "Disponibilidad"), el("dd", {}, "No acreditada por la identidad del candidato."));
-  details.append(el("dt", {}, "Condiciones contractuales"), el("dd", {}, "Pendientes; no se simulan tipos, plazos, costes ni garantías."));
+  details.append(el("dt", {}, "Condiciones contractuales"), el("dd", {}, conditionEntry && conditionEntry.conditions && conditionEntry.conditions.length && hasDocumentedConditionsSource(conditionEntry)
+    ? "Documentadas con fuente y fecha. Su estado puede ser vencido, en conflicto o sin dato; no equivalen a una oferta vigente."
+    : "Pendientes; no se simulan tipos, plazos, costes ni garantías."));
   parent.appendChild(details);
   appendPrimarySource(parent, product);
+  if (conditionEntry && Array.isArray(conditionEntry.conditions) && conditionEntry.conditions.length && hasDocumentedConditionsSource(conditionEntry)) {
+    const documented = section("Hechos documentados", "Solo lo que consta en una fuente con fecha; los huecos no se rellenan ni se convierten en oferta vigente.", "data-panel");
+    const list = el("ul", { className: "detail-list" });
+    for (const condition of conditionEntry.conditions) {
+      let text = "";
+      if (condition.metric === "annual_rate_percent") {
+        const value = condition.state === "known" ? `${formatRate(condition.value)} TAE` : "sin cifra utilizable";
+        text = `Tasa anual (TAE): ${value} · ${conditionStateText(condition)}`;
+      } else if (condition.metric === "term_months") {
+        text = `Plazo: ${condition.state === "known" ? `${condition.value} meses` : "no documentado"} · ${conditionStateText(condition)}`;
+      } else {
+        text = `${condition.metric} · ${conditionStateText(condition)}`;
+      }
+      if (condition.effective_to) text += ` · vigencia hasta ${condition.effective_to}`;
+      if (Array.isArray(condition.notes) && condition.notes.length) text += ` · ${condition.notes.join(" ")}`;
+      list.appendChild(el("li", {}, text));
+    }
+    documented.appendChild(list);
+    if (Array.isArray(conditionEntry.rate_tiers) && conditionEntry.rate_tiers.length > 1) {
+      const tiers = el("ul", { className: "detail-list" });
+      for (const tier of conditionEntry.rate_tiers) {
+        tiers.appendChild(el("li", {}, `${formatRate(tier.tae)} TAE / ${formatRate(tier.tin)} TIN · ${tier.condition_label || tier.condition}`));
+      }
+      documented.appendChild(textElement("p", "Tramos de la misma oferta, con su requisito:", "small"));
+      documented.appendChild(tiers);
+    }
+    const conditionRef = conditionSourceRef(conditionEntry);
+    if (conditionRef && conditionRef.url) {
+      const sourceLine = el("p", { className: "source-line" });
+      sourceLine.appendChild(document.createTextNode(`Fuente de las condiciones: ${conditionRef.url}`));
+      if (conditionRef.retrieved_at) sourceLine.appendChild(document.createTextNode(` · consultada el ${conditionRef.retrieved_at}`));
+      documented.appendChild(sourceLine);
+    }
+    parent.appendChild(documented);
+  } else {
+    parent.appendChild(callout("No hay condiciones documentadas para este producto; se mantiene como referencia de identidad. Los hechos vencidos, en conflicto o sin dato no se presentan como oferta vigente.", "info-note"));
+  }
   const unknown = section("Qué queda por comprobar", "El ensayo no completa estos huecos con supuestos.", "data-panel");
   appendList(unknown, product.unknown_fields, "El registro no enumera campos desconocidos.");
   parent.appendChild(unknown);
@@ -2059,6 +2947,8 @@ function renderSimulation() {
   const { page, heading } = pageFrame("Simulación · operación ficticia", "Ensayo de una decisión", "Usa un candidato del catálogo como referencia de identidad. La cantidad y el ejercicio son ficticios; no hay contratación ni solicitud.");
   page.appendChild(callout("ENSAYO FICTICIO · No se enviará nada ni se moverá dinero. No introduzcas identificadores, credenciales, cuenta, tarjeta ni datos de pago.", "warning-note"));
   renderSimulationProgress(page);
+  if (state.conditions.error) page.appendChild(errorBox(apiErrorText(state.conditions.error), () => loadConditions(true)));
+  if (!state.conditions.loaded && !state.conditions.loading && !state.conditions.error) loadConditions();
   if (state.simulation.step === 0) {
     const panel = el("section", { className: "paper-section" });
     panel.appendChild(el("h2", {}, "1. Elige un producto de referencia"));
@@ -2078,7 +2968,7 @@ function renderSimulation() {
   } else if (state.simulation.step === 2) {
     const panel = el("section", { className: "paper-section" });
     panel.appendChild(el("h2", {}, "3. Elige un importe para el ejercicio"));
-    const form = el("form");
+    const form = el("form", { novalidate: true });
     const amount = el("input", { type: "number", id: "simulation-amount", min: "0.01", step: "0.01", required: true, inputmode: "decimal", "aria-describedby": "simulation-amount-help" });
     if (state.simulation.amount) amount.value = state.simulation.amount;
     form.appendChild(field("Importe imaginado (€)", amount, "Solo se conserva en esta pestaña para el justificante. No se transmite al backend.", amount.id));
@@ -2088,12 +2978,24 @@ function renderSimulation() {
     error.id = "simulation-amount-error";
     error.setAttribute("role", "alert");
     form.appendChild(error);
+    const clearAmountError = () => {
+      error.textContent = "";
+      amount.removeAttribute("aria-invalid");
+      amount.setAttribute("aria-describedby", "simulation-amount-help");
+    };
+    amount.addEventListener("input", clearAmountError);
     form.appendChild(el("div", { className: "button-row" }, [button("Volver", simulationBack, "button button-secondary"), button("Continuar", null, "button button-primary", { type: "submit" })]));
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const raw = amount.value.trim();
       const numeric = Number(raw);
-      if (!raw || !Number.isFinite(numeric) || numeric <= 0 || !/^\d{1,10}(?:\.\d{1,2})?$/.test(raw)) { error.textContent = "Introduce un importe mayor que cero, con hasta dos decimales."; amount.focus(); return; }
+      if (!raw || !Number.isFinite(numeric) || numeric <= 0 || !/^\d{1,10}(?:\.\d{1,2})?$/.test(raw)) {
+        error.textContent = "Introduce un importe mayor que cero, con hasta dos decimales.";
+        amount.setAttribute("aria-invalid", "true");
+        amount.setAttribute("aria-describedby", "simulation-amount-help simulation-amount-error");
+        amount.focus();
+        return;
+      }
       state.simulation.amount = raw;
       state.simulation.step = 3;
       render();
@@ -2105,7 +3007,7 @@ function renderSimulation() {
     const panel = el("section", { className: "paper-section" });
     panel.appendChild(el("h2", {}, "4. Confirma que comprendes los límites"));
     const check = el("input", { type: "checkbox", id: "simulation-understood", checked: state.simulation.understood });
-    const confirm = el("label", { className: "choice", htmlFor: "simulation-understood" }, [check, el("span", {}, "Entiendo que esto es un ensayo ficticio: no es una oferta, no se enviará una solicitud, no se abrirá una cuenta ni se moverá dinero. La disponibilidad, los costes, las garantías y la posibilidad de pérdida no quedan resueltos por esta ficha." )]);
+    const confirm = el("label", { className: "choice", htmlFor: "simulation-understood" }, [check, el("span", {}, "Entiendo que esto es un ensayo ficticio: no es una oferta, no se enviará una solicitud, no se abrirá una cuenta ni se moverá dinero. La disponibilidad, los costes, las garantías y la posibilidad de pérdida no quedan resueltos por esta ficha. Los hechos documentados, aunque estén vencidos, en conflicto o sin dato, no son una oferta vigente." )]);
     panel.appendChild(confirm);
     const actions = el("div", { className: "button-row" });
     actions.append(button("Volver", simulationBack, "button button-secondary"), button("Terminar ensayo y crear justificante", () => {
@@ -2130,11 +3032,18 @@ function renderSimulation() {
       receipt.appendChild(el("h3", {}, productName(state.simulation.product)));
       receipt.appendChild(textElement("p", `${familyLabel(state.simulation.product.family)} · ${issuerLabel(state.simulation.product)}`));
       receipt.appendChild(textElement("p", `ISIN: ${state.simulation.product.isin || "no indicado"}`));
+      const conditionEntry = state.conditions.byId.get(state.simulation.product.id);
+      if (conditionEntry && conditionEntry.source && isSafePrimaryUrl(conditionEntry.source.url)) {
+        const sourceLine = el("p", { className: "source-line" });
+        sourceLine.appendChild(document.createTextNode(`Hechos documentados: ${conditionEntry.source.url}`));
+        if (conditionEntry.source.retrieved_at) sourceLine.appendChild(document.createTextNode(` · consultada el ${conditionEntry.source.retrieved_at}`));
+        receipt.appendChild(sourceLine);
+      }
       appendPrimarySource(receipt, state.simulation.product);
     }
     receipt.appendChild(textElement("p", `Importe imaginado: ${formatCurrency(state.simulation.amount)}`));
     receipt.appendChild(el("p", { className: "receipt-warning" }, "No se ha enviado una solicitud, abierto una cuenta ni movido dinero. Esto no es un contrato ni una confirmación de operación."));
-    receipt.appendChild(textElement("p", "La identidad del candidato no acredita disponibilidad ni condiciones vigentes. El ejercicio no contiene fiscalidad, costes de producto ni evaluación de riesgo."));
+    receipt.appendChild(textElement("p", "La identidad del candidato no acredita disponibilidad ni condiciones vigentes. Los hechos documentados pueden estar vencidos, en conflicto o sin dato y no se presentan como oferta vigente. El ejercicio no contiene fiscalidad, costes de producto ni evaluación de riesgo."));
     const actions = el("div", { className: "button-row no-print" });
     actions.append(button("Imprimir justificante HTML", () => window.print(), "button button-primary"), button("Terminar / volver a empezar", () => {
       state.simulation = { step: 0, products: state.simulation.products, loaded: state.simulation.loaded, loading: false, error: null, requestId: state.simulation.requestId, chosenId: "", product: null, amount: "", understood: false, receiptAt: "" };
@@ -2194,17 +3103,17 @@ function renderPrivacy() {
   storage.appendChild(feedback);
   const save = button("Guardar perfil local", saveProfileAfterConsent, "button button-primary", { disabled: !state.profileComplete });
   storage.appendChild(el("div", { className: "button-row" }, [save, button("Revocar y borrar copia", () => {
-    if (!window.confirm("¿Revocar el permiso y borrar todas las copias del mapa de este dispositivo, incluidas las versiones anteriores? Esta acción no se puede deshacer.")) return;
+    if (!window.confirm("¿Revocar el permiso y borrar la copia local del mapa de este dispositivo, incluidas las versiones anteriores? No se borra el historial del chat de esta pestaña ni los mensajes ya enviados al proveedor; el historial se elimina con su propio control. Esta acción no se puede deshacer.")) return;
     toggle.checked = false;
     const result = removeSavedProfile();
     feedback.className = result.ok ? "success-note" : "error-note";
-    feedback.replaceChildren(textElement("p", result.ok ? "Copia local borrada; el mapa permanece solo en memoria." : "No se pudo borrar todo el almacenamiento local."));
+    feedback.replaceChildren(textElement("p", state.storageNotice));
     updateStorageStatusLine();
     renderStorageWarning();
   }, "button button-secondary")]));
   toggle.addEventListener("change", () => {
     if (!toggle.checked) {
-      if (state.profileOptIn && !window.confirm("¿Borrar el perfil guardado en este dispositivo, incluidas las versiones anteriores?")) {
+      if (state.profileOptIn && !window.confirm("¿Borrar el perfil guardado en este dispositivo, incluidas las versiones anteriores? No se borra el historial del chat ni los mensajes ya enviados al proveedor.")) {
         toggle.checked = true;
         return;
       }
@@ -2221,6 +3130,20 @@ function renderPrivacy() {
     renderStorageWarning();
   });
   page.appendChild(storage);
+
+  const transmission = section("Qué sale de este navegador", "El chat es la única función que puede enviar texto a un proveedor externo. La biblioteca, el comparador, los escenarios y el ensayo usan el servicio local.", "paper-section");
+  const transmissionList = el("ul", { className: "text-list" });
+  for (const item of [
+    "Pregunta: se envía solo cuando marcas el consentimiento del chat y pulsas «Enviar pregunta». Si la IA no está configurada, la pregunta no se envía y no se hace ninguna petición de chat al servidor.",
+    "Mapa: no se envía por defecto. Con el consentimiento de contexto se envían únicamente los campos que marques, nunca el mapa completo ni los estados no preguntados.",
+    "Historial: es opcional y separado del mapa. Vive en la memoria de esta pestaña y solo se reenvía con su propia autorización; no se guarda en el almacenamiento local.",
+    "Proveedor: lo ya enviado queda fuera de este navegador y no se puede borrar desde aquí. La retención depende de las condiciones del proveedor configurado.",
+    "Almacenamiento local: guardar el mapa en este dispositivo no autoriza ningún envío remoto."
+  ]) transmissionList.appendChild(el("li", {}, item));
+  transmission.appendChild(transmissionList);
+  page.appendChild(transmission);
+
+  page.appendChild(callout("Alcance del borrado: «Revocar y borrar copia» elimina solo la copia local del mapa y las versiones anteriores. No borra el historial del chat de esta pestaña ni los mensajes o consultas ya enviados al proveedor; el historial se elimina aparte con «Borrar historial de esta pestaña» y lo ya enviado queda fuera de este navegador.", "info-note"));
 
   const preview = section("Vista previa local de contexto", "Elige exactamente qué campos incluirías en una explicación futura. El valor mostrado solo se lee desde la memoria de esta pestaña.", "paper-section");
   preview.appendChild(callout("Sin conexión a IA. Confirmar aquí no envía datos ni activa ningún chat. /api/context-preview se reserva para fixtures sintéticas; esta interfaz no lo llama.", "warning-note"));
@@ -2266,7 +3189,32 @@ function renderPrivacy() {
   return heading;
 }
 
+let statusCheckInFlight = false;
+let statusAutoRetryTimer = null;
+let statusSuccessDuringCheck = false;
+const STATUS_AUTO_RETRY_MS = 1500;
+
+function cancelStatusAutoRetry() {
+  if (statusAutoRetryTimer !== null) {
+    clearTimeout(statusAutoRetryTimer);
+    statusAutoRetryTimer = null;
+  }
+}
+
+function refreshStatusAfterApiSuccess() {
+  if (statusCheckInFlight) {
+    // La comprobación en curso puede fallar aunque la API ya responda: permite un reintento único.
+    statusSuccessDuringCheck = true;
+    return;
+  }
+  if (state.statusError) checkLocalStatus();
+}
+
 async function checkLocalStatus() {
+  if (statusCheckInFlight) return;
+  cancelStatusAutoRetry();
+  statusCheckInFlight = true;
+  statusSuccessDuringCheck = false;
   setStatusChip("Comprobando servicio local…");
   state.statusError = null;
   try {
@@ -2276,14 +3224,7 @@ async function checkLocalStatus() {
     const capabilityNote = document.getElementById("chat-context-capabilities");
     if (capabilityNote) capabilityNote.textContent = `Mapa: ${caps?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}; historial: ${caps?.history === true ? "habilitado" : "desactivado"}.`;
     const providerNote = document.getElementById("chat-provider-note");
-    if (providerNote) {
-      const quota = status.ai?.quota;
-      const quotaText = quota && Number.isInteger(quota.calls_day) && Number.isInteger(quota.calls_per_day)
-        ? ` Llamadas usadas hoy: ${quota.calls_day} de ${quota.calls_per_day}.` : "";
-      providerNote.textContent = (status.ai?.status === "configured_not_verified"
-        ? "Proveedor configurado. Cada envío requiere tu consentimiento; no hay reintentos automáticos."
-        : "Chat IA no configurado: no se envía nada. Los cálculos y la biblioteca funcionan sin IA.") + quotaText;
-    }
+    if (providerNote) providerNote.textContent = chatProviderNote();
     for (const [id, available] of [["chat-context-consent", caps?.context === true], ["chat-history-consent", caps?.history === true]]) {
       const control = document.getElementById(id);
       if (control) { control.disabled = !available; if (!available) control.checked = false; }
@@ -2305,6 +3246,18 @@ async function checkLocalStatus() {
   } catch (error) {
     state.statusError = error;
     setStatusChip("Servicio local sin respuesta", "error");
+    const providerNote = document.getElementById("chat-provider-note");
+    if (providerNote) providerNote.textContent = chatProviderNote();
+    // Una sola comprobación automática: la API ya respondió a otra petición, así que
+    // el fallo puede ser transitorio. Sin bucles: si este reintento también falla, no se repite.
+    if (statusSuccessDuringCheck && statusAutoRetryTimer === null) {
+      statusAutoRetryTimer = setTimeout(() => {
+        statusAutoRetryTimer = null;
+        if (state.statusError && !statusCheckInFlight) checkLocalStatus();
+      }, STATUS_AUTO_RETRY_MS);
+    }
+  } finally {
+    statusCheckInFlight = false;
   }
 }
 
@@ -2312,8 +3265,10 @@ function renderStorageWarning() {
   const main = document.getElementById("main-content");
   const previous = document.getElementById("profile-autosave-warning");
   if (previous) previous.remove();
-  if (!state.storageProblem) return;
-  const warning = el("div", { id: "profile-autosave-warning", className: "error-note", role: "alert" });
+  const crossTabWarning = state.storageRevokedElsewhere || state.storageExternalCopy;
+  if (!state.storageProblem && !crossTabWarning) return;
+  if (crossTabWarning && !state.storageProblem && state.route === "privacidad") return;
+  const warning = el("div", { id: "profile-autosave-warning", className: state.storageProblem ? "error-note" : "warning-note", role: "alert" });
   if (state.profileUnsaved) warning.appendChild(textElement("p", "No se pudo confirmar el guardado automático. El mapa mostrado contiene cambios en memoria; la copia guardada podría ser una versión anterior. Al recargar puedes perder esos cambios."));
   warning.appendChild(textElement("p", state.storageNotice));
   if (state.profileOptIn) warning.appendChild(button("Reintentar guardado local", () => {
@@ -2323,12 +3278,17 @@ function renderStorageWarning() {
   main.prepend(warning);
 }
 
-function render() {
+let lastRenderedRoute = null;
+
+function render(options = {}) {
+  const focusSnapshot = captureFocus();
   const route = routeFromHash();
   if (state.route === "simulacion" && route !== "simulacion") state.simulation.understood = false;
   if (state.route === "comparar" && route !== "comparar" && state.diagnosis.busy) {
     state.diagnosis = { requestId: state.diagnosis.requestId + 1, ids: [], busy: false, error: false, result: null };
   }
+  const routeChanged = lastRenderedRoute !== null && lastRenderedRoute !== route;
+  lastRenderedRoute = route;
   state.route = route;
   updateNavigation(route);
   renderContext(route);
@@ -2344,14 +3304,26 @@ function render() {
   else if (route === "glosario") heading = renderGlossary();
   else heading = renderPrivacy();
   renderStorageWarning();
-  focusHeading(heading);
+  if (routeChanged) {
+    focusHeading(heading);
+  } else if (!options.preserveFocus && focusSnapshot.hadFocus) {
+    const active = document.activeElement;
+    if (!active || active === document.body || active === document.documentElement || !active.isConnected) focusHeading(heading);
+  }
 }
 
 function startApp() {
   initStorage();
+  const skipLink = document.querySelector(".skip-link");
+  if (skipLink) skipLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    const main = document.getElementById("main-content");
+    if (main) main.focus();
+  });
   document.getElementById("status-retry").addEventListener("click", checkLocalStatus);
   document.getElementById("clear-profile").addEventListener("click", clearProfile);
   window.addEventListener("hashchange", render);
+  window.addEventListener("storage", handleStorageEvent);
   render();
   checkLocalStatus();
 }

@@ -87,7 +87,12 @@ class AdapterTests(unittest.TestCase):
         service = LocalChatService(provider=fake, enabled=True, test_only=True, admission=gate,
                                    tools_enabled=True, dispatcher=ToolDispatcher(app.SnapshotRepository(), CatalogueComparisonService()))
         response = service.chat({'message':'SYNTHETIC TEST ONLY: calculate', 'consent':CONSENT})
-        self.assertIn('1030.00', response['answer'])
+        # La prosa numérica del modelo no se publica: el cliente recibe el resultado
+        # determinista y sus supuestos, no la frase que podría atribuirlo mal.
+        self.assertEqual(response['answer'], '')
+        self.assertEqual(response['answer_text_state'], 'withheld_unbacked_claim')
+        self.assertEqual(response['calculation']['summary']['final_balance'], '1030.00')
+        self.assertEqual(response['calculation']['assumptions']['principal'], '1000.00')
         self.assertEqual(response['tool_events'][0]['state'], 'executed')
         self.assertEqual(fake.calls, 2)
         self.assertEqual(gate.status()['calls_day'], 2)

@@ -1,12 +1,34 @@
-"""Vista del catálogo para las herramientas de Pai: identidad + condiciones documentadas.
+"""Vista del catálogo para las herramientas de Pai: identidad + procedencia de condiciones.
 
 No sustituye al repositorio ni a la UI: añade los productos transcritos de fuentes y
-adjunta, cuando existen, las condiciones con su estado y su fuente. Nada se inventa.
+adjunta, cuando existen, las condiciones con su estado, su fuente y sus fechas. Nada
+se inventa y ningún estado desconocido se presenta como documentado.
+
+Este adaptador no decide la clase de una fuente (oficial/secundaria): solo transporta
+`source_ids`, `retrieved_at`, vigencia y tramos tal como los declara el servicio. La
+proyección y validación final vive en `pai_tools`.
 """
 
 from __future__ import annotations
 
+import re
 import unicodedata
+from copy import deepcopy
+from datetime import date
+
+from pai_tools import ConditionsUnavailable, project_rate_tiers
+
+_ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
+
+
+def _valid_reference_date(value):
+    if type(value) is not str or _ISO_DATE.fullmatch(value) is None:
+        return False
+    try:
+        date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
 
 
 class CatalogueWithConditions:
@@ -16,15 +38,78 @@ class CatalogueWithConditions:
 
     def _report(self):
         try:
-            return self._conditions.describe()
+            report = self._conditions.describe()
+        except ConditionsUnavailable:
+            raise
         except Exception:
-            return {"products": []}
+            raise ConditionsUnavailable("El servicio de condiciones no está disponible.") from None
+        if type(report) is not dict or type(report.get("products")) is not list:
+            raise ConditionsUnavailable("El servicio de condiciones devolvió un informe no válido.")
+        seen_ids = set()
+        for entry in report["products"]:
+            if type(entry) is not dict:
+                raise ConditionsUnavailable("El servicio de condiciones devolvió un informe no válido.")
+            product_id = entry.get("product_id")
+            if (type(product_id) is not str or not product_id.strip()
+                    or len(product_id) > 64 or product_id in seen_ids):
+                # Sin un identificador único no se puede vincular la condición a su
+                # producto: presentarlo como ausencia ocultaría un fallo del servicio.
+                raise ConditionsUnavailable(
+                    "El servicio de condiciones devolvió un producto sin identificador válido.")
+            seen_ids.add(product_id)
+            conditions = entry.get("conditions")
+            if (type(conditions) is not list or len(conditions) > 8
+                    or any(type(condition) is not dict for condition in conditions)):
+                # Forma estructural no válida: se falla cerrado, no se descarta en silencio.
+                raise ConditionsUnavailable(
+                    "El servicio de condiciones devolvió condiciones con una forma no válida.")
+        return report
+
+    @staticmethod
+    def _entry_for(product_id, report):
+        for entry in report.get("products", []):
+            if type(entry) is dict and entry.get("product_id") == product_id:
+                return entry
+        return None
 
     def _conditions_for(self, product_id, report):
-        for entry in report["products"]:
-            if entry.get("product_id") == product_id:
-                return [condition for condition in entry.get("conditions", []) if condition.get("state") in {"known", "stale", "conflict", "unknown"}]
-        return []
+        entry = self._entry_for(product_id, report)
+        if entry is None:
+            return []
+        # `_report` ya validó que es una lista de objetos; aquí no se filtra nada:
+        # descartar una condición malformada la convertiría en una ausencia falsa.
+        return [deepcopy(condition) for condition in entry["conditions"]]
+
+    @staticmethod
+    def _conditions_state(conditions, reference_date):
+        """Solo se anuncia `documented` con valor conocido, fuente citada y fecha de referencia."""
+        if reference_date is None:
+            return "pending"
+        for condition in conditions:
+            if (condition.get("state") != "known" or condition.get("value") is None
+                    or not condition.get("source_ids")):
+                continue
+            effective_to = condition.get("effective_to")
+            if effective_to is None:
+                return "documented"
+            if (reference_date is not None and type(effective_to) is str
+                    and _valid_reference_date(effective_to) and effective_to >= reference_date):
+                return "documented"
+        return "pending"
+
+    def _enrich(self, item, report):
+        entry = self._entry_for(item.get("id"), report) or {}
+        conditions = self._conditions_for(item.get("id"), report)
+        tiers, tiers_state = project_rate_tiers(entry.get("rate_tiers"))
+        reference_date = report.get("reference_date") if _valid_reference_date(report.get("reference_date")) else None
+        item["conditions"] = conditions
+        item["rate_tiers"] = tiers
+        item["rate_tiers_state"] = tiers_state
+        item["conditions_state"] = self._conditions_state(conditions, reference_date)
+        item["conditions_reference_date"] = reference_date
+        source = entry.get("source")
+        item["source"] = deepcopy(source) if type(source) is dict else None
+        return item
 
     def list_products(self, q=None, family=None):
         items = [dict(item) for item in self._repository.list_products(q=q, family=family)]
@@ -32,8 +117,12 @@ class CatalogueWithConditions:
         seen = {item.get("id") for item in items}
         try:
             extras = self._conditions.catalogue_extras(q=None, family=family)
+        except ConditionsUnavailable:
+            raise
         except Exception:
-            extras = []
+            raise ConditionsUnavailable("El servicio de condiciones no está disponible.") from None
+        if type(extras) is not list or any(type(extra) is not dict for extra in extras):
+            raise ConditionsUnavailable("El servicio de condiciones devolvió productos no válidos.")
         candidates = []
         for extra in extras:
             if extra.get("id") in seen:
@@ -47,9 +136,7 @@ class CatalogueWithConditions:
         for _, extra in candidates:
             seen.add(extra.get("id"))
             items.append(extra)
-        for item in items:
-            item["conditions"] = self._conditions_for(item.get("id"), report)
-        return items
+        return [self._enrich(item, report) for item in items]
 
     STOPWORDS = frozenset({"a", "al", "de", "del", "el", "la", "las", "los", "con", "en", "por", "para", "que", "y", "o", "un", "una"})
 
@@ -73,29 +160,29 @@ class CatalogueWithConditions:
         product = self._repository.get_product(product_id)
         report = self._report()
         if product is None:
-            for entry in report["products"]:
-                if entry.get("product_id") == product_id:
-                    source = entry.get("source") or {}
-                    product = {
-                        "id": product_id,
-                        "name": entry.get("display_name") or product_id,
-                        "family": entry.get("family"),
-                        "issuer": entry.get("provider"),
-                        "isin": None,
-                        "identity_state": "verified" if entry.get("identity_state") == "verified" else "proposed",
-                        "primary_url": source.get("url"),
-                        "as_of": source.get("retrieved_at"),
-                        "publication_ready": False,
-                        "conditions_state": "documented",
-                        "conflicts": [],
-                        "unknown_fields": [],
-                    }
-                    break
+            entry = self._entry_for(product_id, report)
+            if entry is not None:
+                source = entry.get("source") or {}
+                url = source.get("url")
+                if not isinstance(url, str) or not url:
+                    return None
+                product = {
+                    "id": product_id,
+                    "name": entry.get("display_name") or product_id,
+                    "family": entry.get("family"),
+                    "issuer": entry.get("provider"),
+                    "isin": None,
+                    "identity_state": "verified" if entry.get("identity_state") == "verified" else "proposed",
+                    "primary_url": url,
+                    "as_of": source.get("retrieved_at"),
+                    "publication_ready": False,
+                    "conditions_state": "pending",
+                    "conflicts": [],
+                    "unknown_fields": [],
+                }
         if product is None:
             return None
-        product = dict(product)
-        product["conditions"] = self._conditions_for(product_id, report)
-        return product
+        return self._enrich(dict(product), report)
 
     def __getattr__(self, name):
         return getattr(self._repository, name)

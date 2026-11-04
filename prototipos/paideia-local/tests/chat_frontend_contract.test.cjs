@@ -6,7 +6,12 @@ const vm = require('node:vm');
 const path = require('node:path');
 
 // Execute the actual chat section and request helper with a small targeted element shim.
-function setup(fetch, status) {
+// La puerta de envío aceptada en B8 exige un estado de IA concluyente: sin
+// `ai.status` reconocible la app no envía nada. El valor por defecto refleja un
+// proveedor configurado con mapa e historial disponibles.
+const DEFAULT_STATUS = {ai: {status: 'configured_not_verified', capabilities: {context: true, history: true, structured_education: false}}};
+
+function setup(fetch, status = DEFAULT_STATUS, hooks = {}) {
   const code = fs.readFileSync(path.join(__dirname, '../static/app.js'), 'utf8');
   const byId = {};
   class Node {
@@ -22,7 +27,7 @@ function setup(fetch, status) {
     get textContent() { return this.text + this.children.map(n => n.textContent).join(''); }
   }
   const document = {createElement: tag => new Node(tag), createTextNode: text => { const n = new Node('#text'); n.textContent = text; return n; }, getElementById: id => byId[id]};
-  const ctx = { document, fetch, URL, console, PaideiaChatContext: require('../static/chat_context_model.js'), PaideiaStructuredEducation: require('../static/structured_education_ui.js'), PROFILE_MODEL: require('../static/profile_model.js'), state: {chatMessage:'', chatTicket:null, chatBusy:false, status, profile: require('../static/profile_model.js').createEmptyProfile()}, API: {chat:'/api/chat'} };
+  const ctx = { document, fetch, URL, console, PaideiaChatContext: require('../static/chat_context_model.js'), PaideiaStructuredEducation: require('../static/structured_education_ui.js'), PROFILE_MODEL: require('../static/profile_model.js'), state: {chatMessage:'', chatTicket:null, chatTicketQuery:null, chatBusy:false, chatUncertain:false, chatUncertainQuery:null, chatUncertainTicket:false, status, profile: require('../static/profile_model.js').createEmptyProfile()}, API: {chat:'/api/chat'}, ...hooks };
   vm.createContext(ctx);
   const common = code.slice(code.indexOf('function isSafePrimaryUrl'), code.indexOf('const state =')) + code.slice(code.indexOf('function el('), code.indexOf('function setStatusChip')) + code.slice(code.indexOf('function displayProfileValue'), code.indexOf('function formatCurrency', code.indexOf('function displayProfileValue'))) + code.slice(code.indexOf('function apiErrorText'), code.indexOf('function errorBox'));
   const start = code.indexOf('  const chat = section("Pregunta a Pai"');
@@ -80,9 +85,9 @@ test('synthetic calculation is opt-in, bound to explicit form inputs and sent on
 
 test('structured capability is frozen before fetch even when status changes in flight', async () => {
   let resolve; let calls=0; const ui=setup(()=>{calls++; return new Promise(r=>resolve=r);});
-  ui.state.status={ai:{capabilities:{structured_education:true}}};
+  ui.state.status={ai:{status:'test_only',capabilities:{structured_education:true}}};
   ui.input('Pregunta'); ui.consent.checked=true;
-  const pending=ui.send(); ui.state.status={ai:{capabilities:{structured_education:false}}};
+  const pending=ui.send(); ui.state.status={ai:{status:'test_only',capabilities:{structured_education:false}}};
   resolve(response(200,{provider_mode:'test_only',answer:'INJECTED LEGACY'})); await pending;
   assert.equal(calls,1); assert.doesNotMatch(ui.feedback.textContent,/INJECTED LEGACY/);
   assert.match(ui.feedback.textContent,/estructurada no válida/);
@@ -91,5 +96,165 @@ test('structured capability is frozen before fetch even when status changes in f
 test('202 requires manual resend and 429 is visible without automatic calls', async () => {
   let calls=0; const ui=setup(async()=>{calls++; return calls===1 ? response(202,{status:'queued',queue:{ticket:'b'.repeat(32),position:2,code:'quota_exhausted'},provider_mode:'external'}) : response(429,{error:{code:'CHAT_RATE_LIMITED',message:'Límite alcanzado; no hay reintento automático.'}});});
   ui.input('Pregunta'); ui.consent.checked=true; await ui.send(); assert.equal(calls,1); assert.match(ui.feedback.textContent,/Posición: 2/); assert.match(ui.feedback.textContent,/cupo está agotado/);
-  await ui.send(); assert.equal(calls,2); assert.match(ui.feedback.textContent,/Límite alcanzado/);
+  await ui.send(); assert.equal(calls,2); assert.match(ui.feedback.textContent,/límite de uso \(429\)/i); assert.doesNotMatch(ui.feedback.textContent,/tiempo de espera/i);
+});
+
+test('an uncertain queued resend drops the ticket and warns that it may be consumed', async () => {
+  let calls=0; const posts=[];
+  const ui=setup(async(_url, options)=>{
+    calls+=1; posts.push(JSON.parse(options.body));
+    if (calls===1) return response(202,{status:'queued',queue:{ticket:'c'.repeat(32),position:1,code:'queued'},provider_mode:'external'});
+    if (calls===2) return new Promise((_resolve, reject)=>{
+      options.signal.addEventListener('abort', ()=>{ const error=new Error('aborted'); error.name='AbortError'; reject(error); });
+    });
+    return response(200,{provider_mode:'test_only',answer:'respuesta sintética'});
+  }, DEFAULT_STATUS, {
+    AbortController,
+    setTimeout: (fn, ms)=>setTimeout(fn, Math.min(ms, 25)),
+    clearTimeout: (id)=>clearTimeout(id),
+  });
+  ui.input('Pregunta retenida sin confirmar'); ui.consent.checked=true;
+  await ui.send(); assert.equal(ui.state.chatTicket,'c'.repeat(32));
+  await ui.send();
+  assert.equal(calls,2,'solo hay un POST por envío manual, sin reintentos');
+  assert.equal(posts[1].ticket,'c'.repeat(32),'el intento manual usa el ticket que estaba en cola');
+  assert.equal(ui.state.chatTicket,null,'un ticket tras un intento sin confirmar no se conserva como si siguiera en cola');
+  assert.match(ui.feedback.textContent,/no se reutiliza/i);
+  assert.match(ui.feedback.textContent,/podría duplicar|podrías duplicar/i);
+  assert.match(ui.feedback.textContent,/rechazad/i);
+  assert.doesNotMatch(ui.feedback.textContent,/Se mantiene el turno en cola|mismo ticket/i);
+  assert.equal(ui.message.value,'Pregunta retenida sin confirmar','la pregunta sigue en el campo');
+  assert.equal(ui.feedback.role,'alert');
+  assert.equal(ui.feedback['aria-live'],'assertive');
+  assert.equal(ui.submit.textContent,'Reenviar pregunta');
+  await ui.send();
+  assert.equal(calls,3,'el siguiente envío manual no reintenta solo');
+  assert.equal('ticket' in posts[2],false,'el ticket posiblemente consumido no se adjunta a un envío nuevo');
+  await new Promise(resolve=>setTimeout(resolve,60));
+  assert.equal(calls,3,'no aparece un POST automático tras el timeout');
+});
+
+test('editing after an uncertain timeout does not label the new draft as a resend', async () => {
+  let calls=0;
+  const ui=setup(async(_url, options)=>{
+    calls+=1;
+    return new Promise((_resolve, reject)=>{
+      options.signal.addEventListener('abort', ()=>{ const error=new Error('aborted'); error.name='AbortError'; reject(error); });
+    });
+  }, DEFAULT_STATUS, {
+    AbortController,
+    setTimeout: (fn, ms)=>setTimeout(fn, Math.min(ms, 25)),
+    clearTimeout: (id)=>clearTimeout(id),
+  });
+  ui.input('Pregunta anterior sin confirmar'); ui.consent.checked=true;
+  await ui.send();
+  assert.equal(ui.submit.textContent,'Reenviar pregunta');
+  ui.input('Pregunta nueva todavía sin enviar');
+  assert.equal(ui.state.chatTicket,null);
+  assert.equal(ui.submit.textContent,'Enviar pregunta','la pregunta nueva no se presenta como reenvío');
+  assert.doesNotMatch(ui.feedback.textContent,/La pregunta se conserva|Se mantiene el turno en cola|mismo ticket/i);
+  assert.match(ui.feedback.textContent,/envío anterior|pregunta anterior/i);
+  assert.match(ui.feedback.textContent,/no se ha enviado|todavía no se ha enviado/i);
+  assert.equal(calls,1,'editar no dispara otro POST');
+});
+
+test('editing while a request is in flight does not claim the sent question was kept', async () => {
+  let calls=0;
+  const ui=setup(async(_url, options)=>{
+    calls+=1;
+    return new Promise((_resolve, reject)=>{
+      options.signal.addEventListener('abort', ()=>{ const error=new Error('aborted'); error.name='AbortError'; reject(error); });
+    });
+  }, DEFAULT_STATUS, {
+    AbortController,
+    setTimeout: (fn, ms)=>setTimeout(fn, Math.min(ms, 25)),
+    clearTimeout: (id)=>clearTimeout(id),
+  });
+  ui.input('Pregunta A en vuelo'); ui.consent.checked=true;
+  const pending=ui.send();
+  ui.input('Pregunta B escrita mientras tanto');
+  await pending;
+  assert.equal(calls,1);
+  assert.equal(ui.message.value,'Pregunta B escrita mientras tanto');
+  assert.equal(ui.submit.textContent,'Enviar pregunta','la pregunta nueva no se etiqueta como reenvío');
+  assert.doesNotMatch(ui.feedback.textContent,/La pregunta se conserva/i);
+  assert.match(ui.feedback.textContent,/envío anterior|pregunta enviada/i);
+  assert.match(ui.feedback.textContent,/no se ha enviado|todavía no se ha enviado/i);
+});
+
+test('send_state never proves the whole turn was or was not processed', async () => {
+  for (const sendState of ['not_started','completed']) {
+    const ui=setup(async()=>response(504,{error:{code:'CHAT_TIMEOUT',message:'genérico',send_state:sendState}}));
+    ui.input('Pregunta con timeout'); ui.consent.checked=true; await ui.send();
+    assert.equal(ui.state.chatUncertain,true,`${sendState} deja el turno sin confirmar`);
+    assert.doesNotMatch(ui.feedback.textContent,/no llegó a recibir|no se envió|no se ha enviado/i);
+    assert.doesNotMatch(ui.feedback.textContent,/llegó completa|procesó|procesad[oa]/i);
+    assert.match(ui.feedback.textContent,/no demuestra|no confirma/i);
+  }
+});
+
+test('429 and 504 produce different, explicit messages and never retry by themselves', async () => {
+  let calls429=0;
+  const ui429=setup(async()=>{calls429+=1; return response(429,{error:{code:'CHAT_RATE_LIMITED',message:'No se pudo completar la llamada al proveedor; no hay reintento automático.'}});});
+  ui429.input('Pregunta con límite'); ui429.consent.checked=true; await ui429.send();
+  assert.equal(calls429,1);
+  assert.match(ui429.feedback.textContent,/límite de uso \(429\)/i);
+  assert.match(ui429.feedback.textContent,/no es un timeout/i);
+  assert.doesNotMatch(ui429.feedback.textContent,/tiempo de espera|pudo llegar/i);
+  assert.equal(ui429.message.value,'Pregunta con límite');
+  await new Promise(resolve=>setTimeout(resolve,40));
+  assert.equal(calls429,1,'el 429 no dispara otro POST');
+
+  let calls504=0;
+  const ui504=setup(async()=>{calls504+=1; return response(504,{error:{code:'CHAT_TIMEOUT',message:'No se pudo completar la llamada al proveedor; no hay reintento automático.'}});});
+  ui504.input('Pregunta con timeout'); ui504.consent.checked=true; await ui504.send();
+  assert.equal(calls504,1);
+  assert.match(ui504.feedback.textContent,/tiempo de espera \(504\)/i);
+  assert.match(ui504.feedback.textContent,/pudo llegar al proveedor/i);
+  assert.match(ui504.feedback.textContent,/no está confirmado/i);
+  assert.doesNotMatch(ui504.feedback.textContent,/límite de uso/i);
+  assert.equal(ui504.message.value,'Pregunta con timeout');
+  assert.notEqual(ui429.feedback.textContent,ui504.feedback.textContent,'429 y 504 no comparten mensaje');
+  await new Promise(resolve=>setTimeout(resolve,40));
+  assert.equal(calls504,1,'el 504 no dispara otro POST');
+});
+
+test('a mission stop is explicit: nothing was sent and there is no retry', async () => {
+  let calls=0;
+  const ui=setup(async()=>{calls+=1; return response(429,{error:{code:'CHAT_MISSION_EXHAUSTED',message:'Se agotó el cupo de intentos reales de esta misión.',send_state:'not_started'}});});
+  ui.input('Pregunta con cupo agotado'); ui.consent.checked=true; await ui.send();
+  assert.equal(calls,1);
+  assert.match(ui.feedback.textContent,/No se envió la pregunta al proveedor/i);
+  assert.match(ui.feedback.textContent,/cupo de intentos reales/i);
+  assert.doesNotMatch(ui.feedback.textContent,/pudo llegar|no está confirmado/i);
+  assert.equal(ui.message.value,'Pregunta con cupo agotado');
+  await new Promise(resolve=>setTimeout(resolve,40));
+  assert.equal(calls,1,'el bloqueo por cupo no dispara otro POST');
+});
+
+test('a mission stop with a closed window is not shown as a provider limit', async () => {
+  const ui=setup(async()=>response(503,{error:{code:'CHAT_MISSION_CLOSED',message:'La ventana de la misión ya está cerrada.',send_state:'not_started'}}));
+  ui.input('Pregunta fuera de ventana'); ui.consent.checked=true; await ui.send();
+  assert.match(ui.feedback.textContent,/ventana de esta prueba ya está cerrada/i);
+  assert.doesNotMatch(ui.feedback.textContent,/límite de uso|tiempo de espera/i);
+});
+
+test('a 504 with not_started transport state keeps the turn uncertain', async () => {
+  let calls=0;
+  const ui=setup(async()=>{calls+=1; return response(504,{error:{code:'CHAT_TIMEOUT',message:'genérico',send_state:'not_started'}});});
+  ui.input('Pregunta con timeout parcial'); ui.consent.checked=true; await ui.send();
+  assert.equal(calls,1);
+  assert.match(ui.feedback.textContent,/no iniciado/i);
+  assert.doesNotMatch(ui.feedback.textContent,/no llegó a recibir|no se envió|no se ha enviado|pudo llegar|no está confirmado/i);
+  assert.match(ui.feedback.textContent,/no demuestra/i);
+  assert.equal(ui.state.chatUncertain,true,'un intento de transporte no demuestra que el turno entero no se enviara');
+});
+
+test('unknown server errors keep the backend message and do not invent send state', async () => {
+  let calls=0;
+  const ui=setup(async()=>{calls+=1; return response(500,{error:{code:'CHAT_PROVIDER_UNAVAILABLE',message:'Fallo sintético del proveedor; no hay reintento automático.'}});});
+  ui.input('Pregunta con fallo'); ui.consent.checked=true; await ui.send();
+  assert.equal(calls,1);
+  assert.match(ui.feedback.textContent,/Fallo sintético del proveedor/i);
+  assert.doesNotMatch(ui.feedback.textContent,/pudo llegar|no está confirmado/i);
 });

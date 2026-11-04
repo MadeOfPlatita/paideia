@@ -127,6 +127,8 @@ class ToolDispatcherSearchTests(unittest.TestCase):
             "claim_scope": "product_identity_only",
             "label": "Synthetic candidate 1",
             "url": "https://example.invalid/synthetic/SYN-01",
+            "retrieved_at": None,
+            "date_state": "unknown",
             "not_for_publication": True,
         }])
         self.assertEqual(arguments, original_arguments)
@@ -144,7 +146,7 @@ class ToolDispatcherDetailTests(unittest.TestCase):
         self.assertEqual(result["data"]["product"]["id"], "SYN-02")
         self.assertFalse(result["data"]["product"]["publication_ready"])
         self.assertEqual(result["data"]["product"]["conditions_state"], "identity_only")
-        self.assertEqual(result["data"]["scope"], "identity_and_documented_conditions")
+        self.assertEqual(result["data"]["scope"], "identity_and_condition_provenance")
         self.assertEqual(result["data"]["product"]["conditions"], [])
         self.assertEqual([source["product_id"] for source in result["sources"]], ["SYN-02"])
         self.assertEqual(repository.calls, [("get_product", "SYN-02")])
