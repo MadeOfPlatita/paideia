@@ -166,3 +166,16 @@ Decisión: **no se sube**. El código se revirtió a `HEAD` y el intento queda a
 El motivo no es que falte un conector más: el alcance de la negación no se resuelve con expresiones regulares. Cada lista de excepciones deja fuera la siguiente coordinación, y una regla que *parece* estricta pero deja pasar «no es un banco y el folleto lo publica» es más peligrosa que la retención. Cerrar esto exige extracción de afirmaciones con salida estructurada o verificación frase a frase contra el catálogo: es una decisión de producto y arquitectura para el equipo.
 
 Lo que sí queda: la frontera original intacta y el aviso con el motivo real. Pai **sigue suprimiendo respuestas legítimas**; ahora al menos explica por qué. Suite tras la reversión: **631 aprobadas, 1 omitida**; Node 95/95.
+
+## Nueva fase — repositorio público, capa visual 2 y afirmaciones estructuradas, 4/11/2026 23:50
+
+**Repositorio público** por indicación de Alejandro: `MadeOfPlatita/paideia` pasó a `public` (verificado por API). Antes de abrirlo se escaneó el árbol y **los 1.371 objetos de la historia**: ninguna clave real, solo `apikey=demo` de APIs públicas. La clave viva de Groq sigue solo en `prototipos/paideia-local/.env`, ignorado y nunca versionado.
+
+**Auditorías independientes** (`deleg_0a379b89`): repositorio **apto con condiciones** (sin secretos que rotar) y despliegue **coincidente con `HEAD`**. Hallazgos atendidos:
+- `worker/.wrangler/` estaba versionado con `cf.json` (ciudad, código postal y coordenadas de quien ejecutó wrangler). **Retirado del árbol** y añadido a `.gitignore`; los objetos siguen en la historia pública y purgarlos exigiría reescribirla.
+- Faltaban cabeceras de seguridad: añadidas `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` y `Permissions-Policy`.
+- Quedan como decisión del equipo: 3,5 MB de páginas de terceros copiadas y un PDF con el nombre de una empleada; el correo personal en la autoría de 14 commits; `api/build_core.py` publicado como función.
+
+**Capa visual 2** (commit `3b67737`): la hoja oscura recoloreaba pero mantenía el ritmo original, que es lo que Alejandro vio como «no se parece a las maquetas». Se añadieron superficies de 16 px de radio con borde `#303431`, rellenos de 26-30 px, títulos `clamp(36px,3.4vw,50px)` y cuerpo de 15 px, todo dentro de `@media screen`. Medido: **0 fallos de contraste** en 16 combinaciones ruta × ancho (sonda plantada 0→1→0) y **0 desbordes** a 1440/390/320. Revisión independiente y regresión conductual en curso.
+
+**Afirmaciones estructuradas**: tres documentos listos en `docs/pai-afirmaciones/` — catálogo de **39 afirmaciones** sin cifras ni atribuciones, especificación del canal `paideia-education-v2` (6 ficheros nuevos, 18 modificados, 7 códigos de rechazo) y matriz de aceptación P1-P10 (10/10 verdes contra la referencia v2, 7/7 rechazos adversariales; el código actual da 0/10, como se esperaba). Implementación del núcleo y de la UI en marcha con TDD.
