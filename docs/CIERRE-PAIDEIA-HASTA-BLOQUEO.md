@@ -65,7 +65,7 @@ La evaluación de diez preguntas señaló que Pai suprime respuestas legítimas,
 
 ## 5. GitHub y Vercel
 
-- **GitHub:** `MadeOfPlatita/paideia` verificado `private` antes y después de cada push; `HEAD` local y remoto coinciden en `8533b95`. Ocho commits selectivos con lo revisado (`c051749..8533b95`); historia sin reescribir; `.env` confirmado ausente en el remoto (404 en la API).
+- **GitHub:** `MadeOfPlatita/paideia` verificado `private` antes y después de cada push; `HEAD` local y remoto coinciden en `13cca7c`. Ocho commits selectivos con lo revisado (`c051749..13cca7c`); historia sin reescribir; `.env` confirmado ausente en el remoto (404 en la API).
 - **Vercel:** **desplegado**. El primer intento quedó `BLOCKED` porque el autor del commit era una dirección de ejemplo sin permiso en el proyecto. Se corrigió **sin reescribir historia**: la identidad local del repositorio pasa a `307587994+MadeOfPlatita@users.noreply.github.com` y el despliegue se hizo desde una copia de `api/` + `vercel.json` + `.vercel` sin metadatos de git, que fue lo que permitió publicar.
   - **Aviso para el equipo:** los despliegues lanzados desde el repositorio git siguen bloqueados por esa regla de autoría; mientras no se corrija en Vercel (autor verificado o miembro con asiento), hay que desplegar con esa copia sin `.git`.
   - Leído de vuelta: la URL pública sirve la versión nueva y mantiene el chat apagado.
