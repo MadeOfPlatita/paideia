@@ -68,3 +68,68 @@
     .section-head { flex-direction: column; gap: 6px; }
   }
 }
+
+/* Capa 2: jerarquía, superficies y ritmo de la maqueta aprobada. Solo pantalla:
+   el informe descargado y la impresión conservan su hoja clara. */
+@media screen {
+  body { font-size: 15px; line-height: 1.5; }
+  .app-shell { padding: 0 48px 24px; }
+  .page-heading { margin: 0 0 32px; }
+  .page-heading h1 {
+    max-width: 24ch;
+    margin: 6px 0 12px;
+    font-size: clamp(36px, 3.4vw, 50px);
+    line-height: 1.08;
+    letter-spacing: -.05em;
+    font-weight: 650;
+  }
+  .page-heading .lede { max-width: 610px; margin: 0; font-size: 16px; }
+  .eyebrow { margin: 0 0 11px; font-size: 11px; letter-spacing: .12em; font-weight: 650; }
+  .paper-section, .data-panel, .summary-card, .question-panel, .receipt {
+    padding: 30px;
+    border: 1px solid #303431;
+    border-radius: 16px;
+    background: var(--surface);
+  }
+  .paper-section + .paper-section,
+  .data-panel + .data-panel,
+  .summary-card + .summary-card { margin-top: 16px; }
+  .home-actions { gap: 16px; }
+  .home-actions section {
+    padding: 26px;
+    border: 1px solid #303431;
+    border-top: 1px solid #303431;
+    border-radius: 16px;
+    background: #1d2320;
+  }
+  .route-strip {
+    margin: 20px 0 24px;
+    padding: 22px 24px 0;
+    border: 1px solid #303431;
+    border-top: 1px solid #303431;
+    border-radius: 16px;
+    background: var(--surface);
+  }
+  .route-strip li { min-height: 74px; padding: 0 16px 20px 0; }
+  .route-strip li::before { top: 2px; }
+  .button { padding: 0 15px; border-radius: 9px; font-size: 13px; font-weight: 600; }
+  .button-secondary { border-color: #4a514d; }
+  .chat-panel { padding: 26px; }
+  .section-head { margin-bottom: 16px; }
+  .section-head h2, .context-heading h2 { font-size: 19px; }
+  .section-head h2 + p, .section-head .muted { margin-top: 4px; }
+}
+
+@media screen and (max-width: 900px) {
+  .app-shell { padding: 0 20px 20px; }
+  .paper-section, .data-panel, .summary-card, .question-panel, .receipt { padding: 20px; }
+  .home-actions section { padding: 20px; }
+  .route-strip { padding: 18px 18px 0; }
+  .route-strip li { padding: 0 10px 18px 0; }
+}
+
+@media screen and (max-width: 480px) {
+  .app-shell { padding: 0 16px 18px; }
+  .page-heading h1 { font-size: 32px; }
+  .chat-panel { padding: 18px; }
+}
