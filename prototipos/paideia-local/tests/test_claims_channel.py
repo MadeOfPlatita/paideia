@@ -183,13 +183,11 @@ class ValidateSelectionTests(unittest.TestCase):
         result = claims_channel.validate_selection(selection(claim_ids=list(ALL_IDS[:6])))
         self.assertEqual(len(result["claim_ids"]), 6)
 
-    def test_empty_selection_is_valid_but_has_no_items(self):
-        result = claims_channel.validate_selection(selection(claim_ids=[]))
-        self.assertEqual(result["claim_ids"], [])
-        composed = claims_channel.compose(result)
-        self.assertEqual(composed["answer"], "")
-        self.assertEqual(composed["claims"]["state"], "empty")
-        self.assertEqual(composed["claims"]["count"], 0)
+    def test_empty_selection_is_rejected(self):
+        """Un turno sin ninguna afirmación no es una respuesta del canal."""
+        with self.assertRaises(ValueError) as error:
+            claims_channel.validate_selection(selection(claim_ids=[]))
+        self.assertEqual(str(error.exception), "invalid_shape")
 
     def test_every_catalog_id_is_selectable(self):
         for claim_id in ALL_IDS:

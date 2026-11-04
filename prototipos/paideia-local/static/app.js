@@ -1067,7 +1067,13 @@ function renderHome() {
         if (result.provider_mode === "test_only") feedback.appendChild(textElement("strong", "PRUEBA SINTÉTICA — NO ES UNA IA REAL."));
         if (structured) {
           feedback.appendChild(textElement("p", "Contenido educativo de Paideia; no es redacción libre del modelo."));
-          for (const item of structured.items) feedback.appendChild(textElement("p", item.text));
+          const claimsPayload = result.claims && typeof result.claims === "object" ? result.claims : null;
+          if (claimsPayload && typeof PaideiaClaims !== "undefined" && PaideiaClaims
+              && typeof PaideiaClaims.render === "function") {
+            PaideiaClaims.render(feedback, claimsPayload);
+          } else {
+            for (const item of structured.items) feedback.appendChild(textElement("p", item.text));
+          }
           if (structured.calculation) {
             feedback.appendChild(textElement("p", "Resultado del motor determinista local (escenario hipotético):"));
             const data = structured.calculation.data;

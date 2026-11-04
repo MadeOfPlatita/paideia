@@ -14,6 +14,17 @@ from financial_quality import FINANCIAL_EDUCATION_PROMPT, assess_financial_text
 from structured_education import render_selection
 from structured_provider_adapter import StructuredProviderAdapter, FakeChatProvider, parse_selection
 from structured_session_fixture import StructuredSessionFixture
+from claims_catalog import VERSION as CLAIMS_VERSION
+from claims_channel import REJECTION_REASONS, rejected
+
+
+def _rejected_turn(reason):
+    """Turno válido (200) en el que el modelo no pudo aportar afirmaciones."""
+    payload = rejected(reason)
+    return {'answer': '', 'provider_mode': 'test_only', 'external_sent': False,
+            'claims': payload['claims'], 'calculation': None,
+            'structured_education': {'version': CLAIMS_VERSION, 'kind': 'claims',
+                                     'items': [], 'calculation': None}}
 
 # Pin the closed implementation; never dynamically dispatch an injected method.
 _structured_select = StructuredProviderAdapter.select_education
@@ -665,9 +676,18 @@ class LocalChatService:
                         'Configuración de prueba no válida; no se ha enviado nada.')
                 try:
                     raw = _single_structured(approved_provider, messages)
+                except Exception:
+                    raise ServiceProblem(502, 'CHAT_STRUCTURED_INVALID_RESPONSE',
+                        'No se pudo validar la respuesta estructurada; no hay reintento automático.') from None
+                try:
                     selection = parse_selection(raw)
                     return render_selection(selection, structured_payload.get('scenario'),
                                             scenario_present='scenario' in structured_payload)
+                except ValueError as error:
+                    # El modelo respondió con una forma que el canal no acepta: se
+                    # devuelve un turno rechazado (200), no un error de proveedor.
+                    code = str(error) if str(error) in REJECTION_REASONS else 'invalid_shape'
+                    return _rejected_turn(code)
                 except Exception:
                     raise ServiceProblem(502, 'CHAT_STRUCTURED_INVALID_RESPONSE',
                         'No se pudo validar la respuesta estructurada; no hay reintento automático.') from None

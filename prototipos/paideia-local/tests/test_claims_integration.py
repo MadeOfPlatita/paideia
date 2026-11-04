@@ -22,6 +22,7 @@ sys.path.insert(0, str(TESTS_DIR.parent))
 
 from claims_catalog import VERSION, CLAIM_IDS, CLAIMS, MAX_CLAIMS  # noqa: E402
 from claims_channel import compose, rejected, validate_selection  # noqa: E402
+from backend_services import _rejected_turn  # noqa: E402
 from structured_education import render_selection, VERSION as V1  # noqa: E402
 
 
@@ -99,6 +100,16 @@ class RejectionTests(unittest.TestCase):
     def test_rejected_refuses_free_text_reason(self):
         with self.assertRaises(ValueError):
             rejected("el modelo dijo algo")
+
+    def test_rejected_turn_is_a_valid_response_without_text(self):
+        """Un rechazo del canal es 200 con estado, no un error de proveedor."""
+        turn = _rejected_turn("invalid_claim_id")
+        self.assertEqual(turn["answer"], "")
+        self.assertEqual(turn["claims"]["state"], "rejected")
+        self.assertEqual(turn["claims"]["reason"], "invalid_claim_id")
+        self.assertEqual(turn["structured_education"]["kind"], "claims")
+        self.assertEqual(turn["structured_education"]["items"], [])
+        self.assertFalse(turn["external_sent"])
 
 
 class ScenarioTests(unittest.TestCase):

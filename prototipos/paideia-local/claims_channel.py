@@ -52,7 +52,8 @@ def validate_selection(raw):
     """Normaliza una selección del modelo o lanza ``ValueError`` con un código.
 
     Devuelve siempre ``{version, intent, claim_ids, evidence_refs}`` con listas
-    propias. ``claim_ids`` vacío es válido: el turno se compone sin texto.
+    propias. Una selección vacía se rechaza: el canal existe para mostrar
+    afirmaciones del catálogo, y un turno sin ninguna no es una respuesta.
     """
     if type(raw) is not dict:
         _fail("invalid_shape")
@@ -69,7 +70,7 @@ def validate_selection(raw):
         _fail("invalid_intent")
 
     claim_ids = raw["claim_ids"]
-    if type(claim_ids) is not list:
+    if type(claim_ids) is not list or not claim_ids:
         _fail("invalid_shape")
     seen = set()
     for claim_id in claim_ids:
