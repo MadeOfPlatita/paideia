@@ -82,7 +82,7 @@ class ToolChatRunner:
 
     @staticmethod
     def _answer_limitations(sources, catalogue_used=False, calculation_present=False,
-                            sources_truncated=0, sources_total=None):
+                            sources_truncated=0, sources_total=None, tools_executed=False):
         notes = [_TEXT_LIMITATION]
         if catalogue_used:
             notes.insert(0, _WITHHELD_TEXT_NOTE)
@@ -97,6 +97,11 @@ class ToolChatRunner:
         if sources:
             notes.append("Las condiciones conservan estado, clase de fuente y vigencia; "
                          "no son una oferta publicable.")
+        elif not calculation_present and tools_executed:
+            # La herramienta se ejecutó pero no dejó fuentes citables: no se puede decir
+            # que no hubo herramientas, porque la interfaz muestra que sí se ejecutaron.
+            notes.append("Las herramientas consultadas no aportaron fuentes citables: cualquier "
+                         "cifra del texto no está respaldada por una cita local.")
         elif not calculation_present:
             notes.append("Sin resultados de herramienta en este turno: cualquier cifra "
                          "del texto no está respaldada por una cita local.")
@@ -128,7 +133,8 @@ class ToolChatRunner:
             "calculation": calculation,
             "limitations": cls._answer_limitations(
                 safe_sources, catalogue.get("used") is True, calculation is not None,
-                sources_truncated=truncated, sources_total=total),
+                sources_truncated=truncated, sources_total=total,
+                tools_executed=bool(tool_events)),
         }
 
     @classmethod
