@@ -146,7 +146,7 @@ class CatalogueApiTests(unittest.TestCase):
         for path, content_type in [
             ("/app.js", "javascript"),
             ("/styles.css", "text/css"),
-            ("/assets/pai-neutral.svg", "image/svg+xml"),
+            ("/assets/pai-mark.svg", "image/svg+xml"),
         ]:
             status, asset_headers, asset = self.request(path)
             self.assertEqual(status, 200, path)
