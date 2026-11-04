@@ -1,5 +1,7 @@
 # Paideia — prototipo local
 
+> **4/11/2026 — tema oscuro aplicado a la app real (sin revisión independiente todavía).** La dirección visual aprobada (grafito, acento menta, jerarquía limpia) se aplica con `static/dark_theme.css`, cargada solo en pantalla: el informe HTML descargado y la impresión conservan su hoja clara propia. No se ha sustituido ningún dato ni comportamiento por los de la maqueta. Estado verificado por el coordinador: 615 pruebas Python, 87 comprobaciones Node, recorridos B1/B6/B8/B9 en verde y auditoría de contraste WCAG AA sin fallos en 8 rutas a 1440 y 390 px. **Falta la revisión independiente**; no está publicado. Detalle y límites en `../../docs/CIERRE-PAIDEIA-HASTA-BLOQUEO.md`.
+
 **Prototipo local navegable verificado.** Frontend HTML/CSS/JS y backend Python stdlib conectados. No hay proveedor LLM conectado, PostgreSQL creado ni publicación cloud; el catálogo solo compara metadatos internos, no condiciones financieras pendientes. La aplicación completa de producción sigue sin terminar.
 
 ## IA real — sesión temporal, no producción

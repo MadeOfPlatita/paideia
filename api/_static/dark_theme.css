@@ -1,0 +1,70 @@
+/* Dirección B oscura: solo pantalla. El informe impreso conserva sus estilos claros. */
+@media screen {
+  :root {
+    color-scheme: dark;
+    --paper: #101112;
+    --surface: #1a1c1d;
+    --ink: #f5f6f4;
+    --muted: #b6beba;
+    --blue: #b7e6d5;
+    --blue-hover: #d4eee2;
+    --terracotta: #e8b68e;
+    --sage: #1b2420;
+    --border: #66736c;
+    --line: #343a37;
+    --success: #b8e5ca;
+    --success-bg: #203329;
+    --warning: #f3d2a1;
+    --warning-bg: #352d22;
+    --danger: #ffc4bd;
+    --danger-bg: #3c2928;
+    --info-bg: #24342c;
+    --shadow-line: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .app-shell { max-width: 1392px; }
+  .brand strong, .page-heading h1, h2, .context-heading h2, .comparison-product h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    letter-spacing: -.035em;
+  }
+  .page-heading h1 { font-weight: 650; }
+  :focus-visible { outline-color: #a9d8ff; }
+  .skip-link { color: #15251c; }
+  .skip-link:focus { color: #15251c; }
+  .nav-link:hover { background: #222925; color: var(--ink); }
+  .nav-link[aria-current="page"] { background: var(--info-bg); color: var(--ink); }
+  .nav-link[aria-current="page"] .nav-index { color: var(--blue); }
+  .context-panel { border-color: #3c5145; }
+  .context-panel .context-limit { border-color: #3c5145; }
+  .button { background: #d2eee0; border-color: #d2eee0; color: #173025; }
+  .button:hover, .button:active { background: #edf8f1; border-color: #edf8f1; color: #173025; }
+  .button:disabled { background: #323a35; border-color: #4a544e; color: #b6c3bb; }
+  .button-secondary { background: var(--surface); color: var(--blue); border-color: #53685b; }
+  .button-secondary:hover, .button-quiet:hover { background: #28372e; border-color: #8ab69b; color: #e2f4e8; }
+  .button-quiet { background: transparent; border-color: transparent; color: var(--blue); }
+  .button-clear, .button-clear:hover { color: #ffc4bd; }
+  .button-clear:hover { border-color: #bd7770; background: var(--danger-bg); }
+  .text-button:hover { background: var(--info-bg); }
+  .persistent-notice, .warning-note, .quantitative-flag, .receipt-warning { border-color: #806846; background: var(--warning-bg); color: #f2d9b7; }
+  .error-note { border-color: #9c635d; background: var(--danger-bg); color: #ffd5d0; }
+  .success-note { border-color: #5d8c70; background: var(--success-bg); color: #d2f1dc; }
+  .info-note { border-color: #627b6c; background: var(--info-bg); color: #d7e9dd; }
+  .badge-verified { border-color: #5d8c70; background: var(--success-bg); color: #d2f1dc; }
+  .badge-proposed, .badge-pending { border-color: #806846; background: var(--warning-bg); color: #f2d9b7; }
+  .selection-tray, .selection-tags li { border-color: #4a6654; }
+  .comparison-product { border-radius: var(--radius-lg); }
+  .scenario-report-host { background: var(--surface); border-color: var(--line); }
+  input::placeholder, textarea::placeholder { color: #a9b2ad; opacity: 1; }
+  .scenario-chart text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  @media (min-width: 901px) {
+    .app-layout { grid-template-columns: minmax(0, 1fr) 272px; gap: 24px 28px; }
+    .side-nav { grid-column: 1 / -1; grid-row: auto; position: static; display: flex; flex-direction: row; flex-wrap: wrap; gap: 4px; padding: 0; }
+    .side-nav .nav-label, .side-nav .nav-footnote { display: none; }
+    .nav-link { flex: 0 0 auto; padding-inline: 12px; }
+    .main-content { grid-column: 1; max-width: none; }
+    .context-panel { grid-column: 2; grid-row: 2; position: sticky; }
+  }
+  @media (max-width: 640px) {
+    .section-head { flex-direction: column; gap: 6px; }
+  }
+}
