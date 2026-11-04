@@ -118,6 +118,17 @@
   .section-head { margin-bottom: 16px; }
   .section-head h2, .context-heading h2 { font-size: 19px; }
   .section-head h2 + p, .section-head .muted { margin-top: 4px; }
+  /* Un solo lenguaje de tarjeta: ficha de producto y panel de contexto también. */
+  .product-card, .context-panel {
+    padding: 22px;
+    border: 1px solid #303431;
+    border-radius: 16px;
+    background: var(--surface);
+  }
+  .context-panel .context-limit { border-color: #303431; }
+  h2 { font-weight: 650; letter-spacing: -.03em; }
+  h3 { font-size: 20px; font-weight: 620; letter-spacing: -.02em; }
+  .home-actions h2 { font-size: 26px; line-height: 1.2; letter-spacing: -.04em; }
 }
 
 @media screen and (max-width: 900px) {
