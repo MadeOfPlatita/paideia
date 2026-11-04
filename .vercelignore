@@ -6,3 +6,6 @@ worker
 prototipos
 *.zip
 paideia-security-*.txt
+
+# Secretos locales, por si alguno queda en la raíz
+.env*
