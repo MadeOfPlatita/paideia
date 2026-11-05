@@ -48,7 +48,7 @@ PROVIDERS = {
         "path": "/provider/v1/chat/completions",
         "key_env": "COMMANDCODE_API_KEY",
         # Beam 1.0 gratuito dentro del plan de Command Code (0 % de uso hoy).
-        "default_model": "deepseek/deepseek-v4.1-flash",
+        "default_model": "reflection/beam:free",
         # El catálogo de la suscripción cambia sin aviso: se valida la forma del
         # identificador, no una lista que quedaría obsoleta.
         "models": None,
@@ -358,7 +358,7 @@ class GroqHTTPSJSONTransport:
                 or set(headers) != expected_headers or headers.get("Content-Type") != "application/json"
                 or headers.get("Accept") != "application/json" or not valid_authorization
                 or type(body) is not bytes or len(body) > MAX_REQUEST_BYTES
-                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 20.0):
+                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 60.0):
             raise ValueError("invalid transport request")
         # Cupo global de la misión: se cuenta ANTES de abrir la conexión. Fuera de una
         # ventana de misión provisionada no interviene y la ruta ordinaria usa su cuota.
@@ -520,7 +520,7 @@ class GroqProvider:
     ):
         if (type(opt_in) is not bool or not callable(getattr(transport, "post", None))
                 or not model_is_allowed(model)
-                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 20.0
+                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 60.0
                 or type(max_request_bytes) is not int
                 or not 1 <= max_request_bytes <= MAX_REQUEST_BYTES
                 or type(max_output_tokens) is not int
