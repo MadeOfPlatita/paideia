@@ -2,7 +2,7 @@
 from datetime import datetime, timezone
 import json
 import re
-from providers import ProviderError, GroqProvider
+from providers import PROVIDER_LABEL, ProviderError, GroqProvider
 from secure_groq_session import _SingleFlightProvider, _CountedTransport, Session
 
 _TRUSTED_SINGLE_CHAT = _SingleFlightProvider.chat
@@ -499,7 +499,8 @@ class LocalChatService:
             return {"connected": False, "status": "not_configured",
                     "message": "Chat IA no conectado. No se han enviado datos a proveedores.", "capabilities": capabilities}
         return {"connected": False, "status": "test_only" if self._test_only else "configured_not_verified",
-                "message": "Transporte exclusivo de pruebas." if self._test_only else "Proveedor configurado, sin conectividad verificada.", "capabilities": capabilities}
+                "provider": None if self._test_only else PROVIDER_LABEL,
+                "message": "Transporte exclusivo de pruebas." if self._test_only else f"Proveedor configurado ({PROVIDER_LABEL}), sin conectividad verificada.", "capabilities": capabilities}
 
     def chat(self, payload):
         try:
