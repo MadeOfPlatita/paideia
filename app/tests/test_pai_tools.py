@@ -556,3 +556,95 @@ class ToolDispatcherRunnerContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DocumentedFundProjectionTests(unittest.TestCase):
+    """La busqueda debe admitir las metricas que documentan fondos y ETF."""
+
+    URL = "https://example.invalid/fnd-01"
+
+    def condiciones(self):
+        metricas = [
+            ("annual_rate_percent", "PERCENT", "3.10"),
+            ("isin", "TEXT", "IE00B4K48X80"),
+            ("ter_percent", "PERCENT", "0.12"),
+            ("management_fee_percent", "PERCENT", "0.10"),
+            ("custody_fee_percent", "PERCENT", "0.02"),
+            ("entry_fee_percent", "PERCENT", "0"),
+            ("exit_fee_percent", "PERCENT", "0"),
+            ("performance_fee_percent", "PERCENT", "0"),
+            ("risk_scale", "SCALE", "4/7"),
+            ("minimum_eur", "EUR", "100"),
+            ("base_currency", "TEXT", "EUR"),
+            ("replication", "TEXT", "física"),
+        ]
+        return [{
+            "metric": metric, "state": "known", "value": value, "unit": unit,
+            "reason": "CURATED_DOCUMENTED", "source_ids": [self.URL],
+            "effective_to": None, "notes": [],
+        } for metric, unit, value in metricas]
+
+    def repositorio(self, condiciones):
+        producto = {
+            "id": "FND-01", "name": "Fondo índice global", "family": "fondo_tradicional",
+            "issuer": "Ejemplo Gestión", "isin": "IE00B4K48X80",
+            "identity_state": "verified", "primary_url": self.URL,
+            "as_of": "2026-11-05", "publication_ready": False,
+            "conditions_state": "documented", "conflicts": [], "unknown_fields": [],
+            "conditions": condiciones,
+        }
+
+        class Repositorio:
+            def list_products(self, q=None, family=None):
+                return [__import__("copy").deepcopy(producto)]
+
+            def get_product(self, product_id):
+                return __import__("copy").deepcopy(producto)
+
+        return Repositorio()
+
+    def test_doce_condiciones_documentadas_se_proyectan(self):
+        dispatcher = ToolDispatcher(repository=self.repositorio(self.condiciones()),
+                                     comparison_service=None)
+
+        result = dispatcher.dispatch("search_products", {"query": "Fondo", "limit": 5})
+
+        self.assertEqual(result["status"], "ok", result.get("error"))
+        condiciones = result["data"]["items"][0]["conditions"]
+        self.assertEqual(len(condiciones), 12)
+        metricas = {condicion["metric"] for condicion in condiciones}
+        self.assertIn("ter_percent", metricas)
+        self.assertIn("isin", metricas)
+        self.assertIn("risk_scale", metricas)
+
+    def test_una_metrica_desconocida_sigue_rechazando_el_catalogo(self):
+        condiciones = self.condiciones() + [{
+            "metric": "volatility_percent", "state": "known", "value": "12.5",
+            "unit": "PERCENT", "reason": "CURATED_DOCUMENTED", "source_ids": [self.URL],
+            "effective_to": None, "notes": [],
+        }]
+        dispatcher = ToolDispatcher(repository=self.repositorio(condiciones),
+                                     comparison_service=None)
+
+        result = dispatcher.dispatch("search_products", {"query": "Fondo", "limit": 5})
+
+        self.assertEqual(result["status"], "error")
+        self.assertEqual(result["error"]["code"], "REPOSITORY_ERROR")
+
+    def test_una_escala_fuera_de_rango_se_rechaza(self):
+        condiciones = self.condiciones()[:-2] + [{
+            "metric": "risk_scale", "state": "known", "value": "8/7",
+            "unit": "SCALE", "reason": "CURATED_DOCUMENTED", "source_ids": [self.URL],
+            "effective_to": None, "notes": [],
+        }, {
+            "metric": "base_currency", "state": "known", "value": "EUR",
+            "unit": "TEXT", "reason": "CURATED_DOCUMENTED", "source_ids": [self.URL],
+            "effective_to": None, "notes": [],
+        }]
+        dispatcher = ToolDispatcher(repository=self.repositorio(condiciones),
+                                     comparison_service=None)
+
+        result = dispatcher.dispatch("search_products", {"query": "Fondo", "limit": 5})
+
+        self.assertEqual(result["status"], "error")
+        self.assertEqual(result["error"]["code"], "REPOSITORY_ERROR")

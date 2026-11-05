@@ -19,6 +19,8 @@ from datetime import date
 from pai_tools import ConditionsUnavailable, project_rate_tiers
 
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
+# Tope estructural por producto: por encima se considera un informe invalido.
+MAX_CONDITIONS_PER_PRODUCT = 32
 
 
 def _valid_reference_date(value):
@@ -58,7 +60,11 @@ class CatalogueWithConditions:
                     "El servicio de condiciones devolvió un producto sin identificador válido.")
             seen_ids.add(product_id)
             conditions = entry.get("conditions")
-            if (type(conditions) is not list or len(conditions) > 8
+            # Un fondo o un ETF declara de forma legitima diez o doce metricas
+            # (TER, ISIN, SRI, comisiones, divisa, replica, periodo, depositaria...).
+            # El tope anterior de 8 rechazaba el informe entero y dejaba sin catalogo
+            # a todas las busquedas; se mantiene un limite estructural amplio.
+            if (type(conditions) is not list or len(conditions) > MAX_CONDITIONS_PER_PRODUCT
                     or any(type(condition) is not dict for condition in conditions)):
                 # Forma estructural no válida: se falla cerrado, no se descarta en silencio.
                 raise ConditionsUnavailable(

@@ -1,6 +1,7 @@
 import unittest
 
 from catalogue_adapter import CatalogueWithConditions
+from pai_tools import ConditionsUnavailable
 
 
 class FakeRepository:
@@ -68,6 +69,43 @@ class AdapterTests(unittest.TestCase):
         ebn = [item for item in items if item["id"] == "DEP-EBN-12"][0]
         self.assertEqual([(c["metric"], c["value"]) for c in ebn["conditions"]],
                          [("annual_rate_percent", "3.1")])
+
+    def test_a_fund_with_twelve_conditions_is_accepted(self):
+        # FND-01 y FND-04 declaran doce metricas; el informe debe pasar entero.
+        condiciones = [{
+            "metric": "metric_%d" % index, "state": "known", "value": "1",
+            "unit": "PERCENT", "reason": "CURATED_OFFICIAL", "source_ids": ["1"],
+            "effective_to": None, "notes": [],
+        } for index in range(12)]
+
+        class DoceCondiciones(FakeConditions):
+            def describe(self):
+                return {"products": [{
+                    "product_id": "FND-01", "family": "fondo",
+                    "display_name": "Fondo índice global",
+                    "provider": "Ejemplo Gestión", "identity_state": "verified",
+                    "conditions": condiciones,
+                    "source": {"url": "https://example.test/fnd", "retrieved_at": "2026-11-03"},
+                }]}
+
+        report = CatalogueWithConditions(FakeRepository(), DoceCondiciones())._report()
+        self.assertEqual(len(report["products"][0]["conditions"]), 12)
+
+    def test_an_absurd_number_of_conditions_still_fails_closed(self):
+        demasiadas = [{"metric": "metric_%d" % index} for index in range(33)]
+
+        class Demasiadas(FakeConditions):
+            def describe(self):
+                return {"products": [{
+                    "product_id": "FND-01", "family": "fondo",
+                    "display_name": "Fondo índice global",
+                    "provider": "Ejemplo Gestión", "identity_state": "verified",
+                    "conditions": demasiadas,
+                    "source": {"url": "https://example.test/fnd", "retrieved_at": "2026-11-03"},
+                }]}
+
+        with self.assertRaises(ConditionsUnavailable):
+            CatalogueWithConditions(FakeRepository(), Demasiadas())._report()
 
     def test_detail_falls_back_to_documented_product(self):
         product = self.adapter().get_product("DEP-EBN-12")
