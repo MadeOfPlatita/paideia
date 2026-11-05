@@ -58,7 +58,11 @@ def elegir_python():
 
 def run(command, label):
     print(f"== {label}: {' '.join(command)}", flush=True)
-    completed = subprocess.run(command, cwd=APP_DIR)
+    # El ejecutor puede lanzar el proceso sin el directorio actual en sys.path
+    # (PYTHONSAFEPATH). Las pruebas importan `tests.*`, así que se declara explícito.
+    extra = os.environ.get("PYTHONPATH", "")
+    env = dict(os.environ, PYTHONPATH=str(APP_DIR) + ((os.pathsep + extra) if extra else ""))
+    completed = subprocess.run(command, cwd=APP_DIR, env=env)
     print(f"== {label}: exit {completed.returncode}", flush=True)
     return completed.returncode
 

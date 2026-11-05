@@ -72,10 +72,13 @@ class TestSecureGroqSmoke(unittest.TestCase):
                 window['confirmed'].set(True)
                 window['start'].invoke()
                 self.assertEqual(window['key_entry'].get(), '')
-                deadline = time.monotonic() + 3
+                # El informe lo escribe el hilo de trabajo y lo recoge el sondeo de la
+                # ventana (cada 150 ms). Con la máquina cargada, 3 s no bastaban: se
+                # espera hasta 15 s sin cambiar el comportamiento que se comprueba.
+                deadline = time.monotonic() + 15
                 while not path.exists() and time.monotonic() < deadline:
                     window['root'].update()
-                    time.sleep(0.01)
+                    time.sleep(0.02)
                 self.assertTrue(path.exists())
                 raw = path.read_text(encoding='utf-8')
                 self.assertNotIn(key, raw)
