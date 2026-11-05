@@ -1,18 +1,18 @@
-# Secretos locales: nunca al repositorio
+# Secretos: nunca al repositorio
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
 
 # Python
 __pycache__/
 *.pyc
-
-
-# (clave retirada de este archivo; ahora vive solo en prototipos/paideia-local/.env)
-.vercel
-.env*
-
-# Estado local de wrangler (incluye geolocalización del equipo)
-worker/.wrangler/
 .pytest_cache/
+
+# Estado local de despliegue
+.vercel/
+worker/.wrangler/
+
+# Volcados y empaquetados de evidencias: se quedan en disco, no en git
+*.body
+*.raw
+Paideia-investigacion.zip
