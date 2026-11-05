@@ -60,9 +60,11 @@ class AdapterTests(unittest.TestCase):
         items = self.adapter().list_products(q="deposito nuevo")
         self.assertEqual([item["id"] for item in items], ["DEP-EBN-12"])
 
-    def test_query_lists_both_issuers(self):
+    def test_a_query_with_two_issuers_does_not_invent_a_match(self):
+        # Toda palabra de la consulta debe aparecer: «Self Bank» no esta en la ficha
+        # de EBN, asi que no se devuelve como si lo estuviera.
         items = self.adapter().list_products(q="EBN y Self Bank")
-        self.assertEqual([item["id"] for item in items], ["DEP-EBN-12"])
+        self.assertEqual(items, [])
 
     def test_conditions_are_attached_to_the_product(self):
         items = self.adapter().list_products(family="deposito")
@@ -106,6 +108,43 @@ class AdapterTests(unittest.TestCase):
 
         with self.assertRaises(ConditionsUnavailable):
             CatalogueWithConditions(FakeRepository(), Demasiadas())._report()
+
+    def test_plural_query_matches_even_if_the_repository_would_not(self):
+        class RepositorioEstricto:
+            def list_products(self, q=None, family=None):
+                productos = [{
+                    "id": "DEP-01", "name": "Depósito Tú+", "family": "deposito",
+                    "issuer": "Renault Bank", "isin": None, "identity_state": "verified",
+                    "primary_url": "https://example.test/a", "as_of": None,
+                    "publication_ready": False, "conditions_state": "pending",
+                    "conflicts": [], "unknown_fields": [],
+                }]
+                if q:
+                    return [p for p in productos if q.casefold() in p["name"].casefold()]
+                return productos
+
+            def get_product(self, product_id):
+                return None
+
+        items = CatalogueWithConditions(RepositorioEstricto(), FakeConditions()).list_products(q="depósitos")
+        self.assertIn("DEP-01", [item["id"] for item in items])
+
+    def test_a_family_word_finds_products_that_do_not_name_it(self):
+        class RepositorioSinLaPalabra:
+            def list_products(self, q=None, family=None):
+                return [{
+                    "id": "FND-01", "name": "Vanguard Global Stock", "family": "fondo_tradicional",
+                    "issuer": "Vanguard", "isin": None, "identity_state": "verified",
+                    "primary_url": "https://example.test/f", "as_of": None,
+                    "publication_ready": False, "conditions_state": "pending",
+                    "conflicts": [], "unknown_fields": [],
+                }]
+
+            def get_product(self, product_id):
+                return None
+
+        items = CatalogueWithConditions(RepositorioSinLaPalabra(), FakeConditions()).list_products(q="fondos")
+        self.assertIn("FND-01", [item["id"] for item in items])
 
     def test_detail_falls_back_to_documented_product(self):
         product = self.adapter().get_product("DEP-EBN-12")

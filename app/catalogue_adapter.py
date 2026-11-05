@@ -118,8 +118,12 @@ class CatalogueWithConditions:
         return item
 
     def list_products(self, q=None, family=None):
-        items = [dict(item) for item in self._repository.list_products(q=q, family=family)]
+        # La consulta se resuelve aquí, no en el repositorio: así el catálogo base y
+        # los productos transcritos comparten la misma tolerancia a acentos y plurales.
+        items = [dict(item) for item in self._repository.list_products(q=None, family=family)]
         report = self._report()
+        if q:
+            items = [item for item in items if self._matches(self._haystack(item), q)]
         seen = {item.get("id") for item in items}
         try:
             extras = self._conditions.catalogue_extras(q=None, family=family)
@@ -133,9 +137,9 @@ class CatalogueWithConditions:
         for extra in extras:
             if extra.get("id") in seen:
                 continue
-            haystack = " ".join(str(extra.get(key) or "") for key in ("name", "issuer", "id"))
+            haystack = self._haystack(extra)
             hits = self._score(haystack, q) if q else 1
-            if q and hits == 0:
+            if q and not self._matches(haystack, q):
                 continue
             candidates.append((hits, extra))
         candidates.sort(key=lambda pair: -pair[0])
@@ -144,18 +148,62 @@ class CatalogueWithConditions:
             items.append(extra)
         return [self._enrich(item, report) for item in items]
 
+    FAMILY_WORDS = {
+        "cuenta_remunerada": "cuenta remunerada",
+        "deposito": "deposito plazo fijo",
+        "fondo_tradicional": "fondo inversion",
+        "etf_ucits": "etf fondo cotizado",
+        "letra_deuda_publica": "letra deuda publica",
+    }
+
     STOPWORDS = frozenset({"a", "al", "de", "del", "el", "la", "las", "los", "con", "en", "por", "para", "que", "y", "o", "un", "una"})
+
+    @staticmethod
+    def _stem(token):
+        """Raíz basta para singular y plural («deposito»/«depositos»)."""
+        if len(token) > 4 and token.endswith("es"):
+            return token[:-2]
+        if len(token) > 3 and token.endswith("s"):
+            return token[:-1]
+        return token
+
+    @classmethod
+    def _tokens(cls, query):
+        return [token for token in cls._fold(query).split()
+                if len(token) >= 2 and token not in cls.STOPWORDS]
+
+    @classmethod
+    def _matched(cls, haystack, tokens):
+        if type(haystack) is not str:
+            return 0
+        folded = cls._fold(haystack)
+        words = {cls._stem(word.strip(".,;:()/\"")) for word in folded.split()}
+        return sum(1 for token in tokens if token in folded or cls._stem(token) in words)
 
     @classmethod
     def _score(cls, haystack, query):
         """Cuenta cuántas palabras de la consulta aparecen; sirve para ordenar y descartar."""
         if type(haystack) is not str or type(query) is not str:
             return 0
-        tokens = [token for token in cls._fold(query).split() if len(token) >= 2 and token not in cls.STOPWORDS]
+        tokens = cls._tokens(query)
         if not tokens:
             return 1
-        folded = cls._fold(haystack)
-        return sum(1 for token in tokens if token in folded)
+        return cls._matched(haystack, tokens)
+
+    @classmethod
+    def _matches(cls, haystack, query):
+        """Todas las palabras de la consulta deben aparecer: buscar no es adivinar."""
+        tokens = cls._tokens(query)
+        if not tokens:
+            return True
+        return cls._matched(haystack, tokens) == len(tokens)
+
+    @classmethod
+    def _haystack(cls, item):
+        """Nombre, entidad, id y palabras de la familia: buscar «fondos» debe encontrarlos."""
+        base = " ".join(str(item.get(key) or "") for key in ("name", "issuer", "id"))
+        familia = cls.FAMILY_WORDS.get(item.get("family"), "")
+        return (base + " " + familia).strip()
 
     @staticmethod
     def _fold(text):
