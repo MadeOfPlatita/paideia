@@ -41,18 +41,18 @@ catálogo de la instantánea. No se mantiene en paralelo.
 Sin dependencias externas: Python 3.10 o superior.
 
 ```bash
-cd prototipos/paideia-local
+cd app
 python app.py --port 8765
 ```
 
 Abrir `http://127.0.0.1:8765/`. El chat se activa creando
-`prototipos/paideia-local/.env` a partir de `.env.example` con `GROQ_API_KEY`.
+`app/.env` a partir de `.env.example` con `GROQ_API_KEY`.
 Sin clave, la aplicación funciona igual: biblioteca, comparador, escenarios e
 informe no dependen del modelo.
 
 Pruebas: `python -m pytest tests -q` y `node --test tests/*.test.cjs` desde
-`prototipos/paideia-local`. La puerta completa es
-`python prototipos/paideia-local/tools/quality_gate.py`, que elige un Python con
+`app`. La puerta completa es
+`python app/tools/quality_gate.py`, que elige un Python con
 pytest instalado.
 
 ## Qué es real y qué es simulado
@@ -60,7 +60,7 @@ pytest instalado.
 - Los **cálculos** los hace un motor determinista propio; las cifras del informe
   salen de ese motor.
 - Las **condiciones** proceden de fuentes públicas con URL y fecha, transcritas
-  en `prototipos/paideia-local/data/condiciones.json`. Cuando no hay dato, se
+  en `app/data/condiciones.json`. Cuando no hay dato, se
   dice; no se rellena por inferencia.
 - El **ensayo de contratación** es ficticio: no se envía nada a ninguna entidad.
 - El **texto del modelo no se valida** semánticamente contra las fuentes: solo
@@ -71,17 +71,29 @@ pytest instalado.
 ## Límites conocidos
 
 - El cupo de llamadas vive en memoria: al redesplegar vuelve a cero. Detalle en
-  `docs/CUPO-Y-LIMITES.md`.
+  `docs/producto/CUPO-Y-LIMITES.md`.
 - La comparación evalúa una métrica documentada, no la oferta contractual.
 - No hay PDF generado: el informe se descarga en HTML autónomo.
 
 ## Estructura
 
-- `prototipos/paideia-local/`: aplicación (servidor, interfaz, motor, Pai).
-- `api/`: función de Vercel (escaparate) y copia de estáticos para el despliegue.
-- `docs/`: requisitos, decisiones, evidencias e informes. Índice en
-  `docs/INDICE.md`.
-- `spikes/`: experimentos de apoyo.
+```
+app/                 aplicación: servidor, interfaz, motor, Pai, datos y pruebas
+api/                 función de Vercel (escaparate) y build de estáticos
+docs/                documentación
+  producto/          requisitos, estado, decisiones y límites vigentes
+  operacion/         despliegue, auditorías y seguridad
+  catalogo/          transcripción de condiciones con fuente
+  pai-afirmaciones/  canal cerrado de afirmaciones de Pai
+  planificacion-03/  perfil y esquema v2
+  validacion-04/     instantánea del catálogo y benchmark
+  ia-real-siguiente/ y mision-nocturna-20261104/  manifiestos de misión
+  historico/         bitácoras de misiones anteriores (evidencia, no estado)
+archivo/             intentos descartados: Cloudflare, spikes y pruebas antiguas
+prototipos/          solo el lanzador heredado que Render aún ejecuta
+```
+
+Índice de documentación: `docs/README.md`.
 
 ## Ramas
 

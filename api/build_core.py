@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "docs" / "validacion-04" / "05-catalogo" / "candidatos.json"
-CURATED = ROOT / "prototipos" / "paideia-local" / "data" / "condiciones.json"
+CURATED = ROOT / "app" / "data" / "condiciones.json"
 SOURCES = ROOT / "docs" / "validacion-04" / "05-catalogo" / "evidencia" / "sources-ledger.json"
 TARGET_DIR = Path(__file__).resolve().parent / "_core"
 
@@ -40,13 +40,13 @@ def main() -> None:
         f"SOURCES = {pprint.pformat({'sources': sources}, width=110, sort_dicts=False)}\n"
     )
     (TARGET_DIR / "catalogue_data.py").write_text(body, encoding="utf-8")
-    source_dir = ROOT / "prototipos" / "paideia-local"
+    source_dir = ROOT / "app"
     for name in SHARED:
         text = (source_dir / name).read_text(encoding="utf-8")
-        header = f"# Copia generada por api/build_core.py desde prototipos/paideia-local/{name}. No editar aquí.\n"
+        header = f"# Copia generada por api/build_core.py desde app/{name}. No editar aquí.\n"
         (TARGET_DIR / name).write_text(header + text, encoding="utf-8")
     (TARGET_DIR / "__init__.py").write_text("", encoding="utf-8")
-    static_source = ROOT / "prototipos" / "paideia-local" / "static"
+    static_source = ROOT / "app" / "static"
     static_target = TARGET_DIR.parent / "_static"
     static_target.mkdir(parents=True, exist_ok=True)
     copied = 0

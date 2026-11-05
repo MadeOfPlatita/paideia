@@ -2,13 +2,13 @@
 
 ## Alcance entregado
 
-Se añadió `prototipos/paideia-local/pai_runtime.py` con `ToolChatRunner(provider, dispatcher, max_tool_rounds=2)` y `run(messages)`. El runner consume únicamente el contexto que el servicio ya autorizó; no decide consentimiento ni incorpora perfiles/historial. Usa `definitions()` y `dispatch()` del contrato `local-tools.v1`, una allowlist fija de cinco tools, validación cerrada de argumentos, una tool por respuesta, máximo dos rondas (tres llamadas al modelo), rechazo de IDs/ciclos repetidos y errores sin reintentos.
+Se añadió `app/pai_runtime.py` con `ToolChatRunner(provider, dispatcher, max_tool_rounds=2)` y `run(messages)`. El runner consume únicamente el contexto que el servicio ya autorizó; no decide consentimiento ni incorpora perfiles/historial. Usa `definitions()` y `dispatch()` del contrato `local-tools.v1`, una allowlist fija de cinco tools, validación cerrada de argumentos, una tool por respuesta, máximo dos rondas (tres llamadas al modelo), rechazo de IDs/ciclos repetidos y errores sin reintentos.
 
 El ciclo de cálculo llama al dispatcher con los seis campos vigentes de `domain.calculate_scenario`; el runner no ejecuta el motor ni interpreta texto. Las respuestas de herramientas vuelven como mensajes `assistant.tool_calls` + `tool` con el mismo ID, y resultado JSON marcado como dato no confiable. El razonamiento separado no forma parte del DTO ni de solicitudes posteriores. `sources` se deriva solamente de `sources` en salidas válidas del dispatcher; no se extraen citas del texto del modelo.
 
 ## Verificación aislada
 
-- Comando: `python -m unittest tests.test_pai_runtime -v` (desde `prototipos/paideia-local/`): **14 tests, OK, exit code 0**.
+- Comando: `python -m unittest tests.test_pai_runtime -v` (desde `app/`): **14 tests, OK, exit code 0**.
 - También se reprodujeron en conjunto los tests del runtime y del dispatcher: **32 tests, OK**. Dos pruebas del runtime usan el `ToolDispatcher` real con repository sintético y proveedor fake: una recorre fuentes de identidad y otra el cálculo por el dispatcher/motor; el builder real valida las definiciones/messages antes de cada respuesta fake.
 - Suite completa: `python -m unittest discover -s tests -q`: **135 tests, OK, exit code 0**.
 - Los doubles de proveedor y dispatcher llevan `test_only=True`; el resto de datos de prueba son fixtures sintéticas. No se llamó a red, Groq, una cuenta ni una base de datos.

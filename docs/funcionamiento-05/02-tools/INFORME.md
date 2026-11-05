@@ -2,7 +2,7 @@
 
 ## Entrega
 
-Se implementó `prototipos/paideia-local/pai_tools.py` como `ToolDispatcher(repository, comparison_service)`, sin importar `app.py`. Expone `definitions()` para el builder OpenAI local y `dispatch(name, arguments)` en el contrato `local-tools.v1`. Los nombres aprobados se conservan literalmente: `search_products`, `get_product_detail`, `compare_products`, `calculate_scenario` y `get_sources`.
+Se implementó `app/pai_tools.py` como `ToolDispatcher(repository, comparison_service)`, sin importar `app.py`. Expone `definitions()` para el builder OpenAI local y `dispatch(name, arguments)` en el contrato `local-tools.v1`. Los nombres aprobados se conservan literalmente: `search_products`, `get_product_detail`, `compare_products`, `calculate_scenario` y `get_sources`.
 
 Las entradas son cerradas, con validación de tipos estrictos, campos desconocidos, familias, IDs locales literales, unicidad, cotas, nulos, NaN/Infinity y valores booleanos. Los errores tienen códigos fijos, mensajes sin datos de entrada ni excepción y DTO compatible con el `ToolChatRunner` coordinado (`data: {}` en error). La búsqueda aplica `limit` por respuesta; no fija el tamaño máximo del catálogo.
 

@@ -6,7 +6,7 @@ El límite temporal se comprueba en el punto lógico, no se garantiza físicamen
 
 Pruebas sin proveedor real: `HTTPSConnection` falso determinista cubre revocación y vencimiento durante conexión, respuesta ya iniciada, cierre, 24º intento, fallo de conexión y API anterior. La regresión inicial observada falló porque se realizó `request` después de revocar; tras el cambio pasa. No se verificó transmisión física ni se utilizó IA real.
 
-Desde `C:/Users/aleja/Downloads/App Financiera/prototipos/paideia-local`:
+Desde `C:/Users/aleja/Downloads/App Financiera/app`:
 
 - `python -m unittest discover -s tests -p 'test_session_send_boundary.py' -v` → 6 OK, salida original `target-final.txt`.
 - `python -m unittest discover -s tests -p 'test_*.py' -v` → 191 OK, salida original `python-suite-final.txt`.

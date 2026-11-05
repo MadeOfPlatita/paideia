@@ -12,7 +12,7 @@ Clave solo en memoria del proceso; no se escribe en .env, repositorio, logs ni i
 
 Una petición por apertura, sin reintentos, destino fijo Groq, modelo openai/gpt-oss-20b, salida máxima256, timeout de socket15segundos, límites del adaptador existentes. Pregunta fija ficticia sobre ahorrar/invertir. Sin perfil, historial ni datos del catálogo; no activa todavía el chat web ni sus herramientas.
 
-El resultado seguro se guarda en `prototipos/paideia-local/evidence/REAL-IA-SMOKE.json` solo tras ejecutar. Contiene estado, respuesta sin reasoning, indicadores de truncado/rechazo y conteo de llamadas, nunca la clave. Solo un resultado con test_only:false acredita uso externo; los tests usan transporte sintético identificado y no escriben en ese destino.
+El resultado seguro se guarda en `app/evidence/REAL-IA-SMOKE.json` solo tras ejecutar. Contiene estado, respuesta sin reasoning, indicadores de truncado/rechazo y conteo de llamadas, nunca la clave. Solo un resultado con test_only:false acredita uso externo; los tests usan transporte sintético identificado y no escriben en ese destino.
 
 ## Verificado antes de abrir la ventana real
 

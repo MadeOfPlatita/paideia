@@ -18,7 +18,7 @@ services:
     plan: free
     region: frankfurt
     buildCommand: python --version
-    startCommand: python prototipos/paideia-local/app.py
+    startCommand: python app/app.py
     healthCheckPath: /api/status
     envVars:
       - key: PYTHON_VERSION

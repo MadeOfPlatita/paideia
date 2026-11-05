@@ -1,6 +1,6 @@
 # Matriz de aceptación — las diez preguntas de Pai con afirmaciones cerradas
 
-**Fecha:** 4 de noviembre de 2026 · **Estado:** propuesta de aceptación, no ejecutada contra una implementación v2 · **Ámbito:** `prototipos/paideia-local` · **Datos:** ficticios, sin red, sin Groq.
+**Fecha:** 4 de noviembre de 2026 · **Estado:** propuesta de aceptación, no ejecutada contra una implementación v2 · **Ámbito:** `app` · **Datos:** ficticios, sin red, sin Groq.
 
 > **Qué es este documento.** Convierte las diez preguntas de `docs/pai-calidad/RUBRICA-DIEZ-PREGUNTAS.md`, tal como se midieron en `docs/pai-calidad/ejecucion-4h30/EVALUACION.md`, en diez casos comprobables sin proveedor real. Cada caso fija qué debe ver la persona, qué afirmaciones cerradas lo componen, qué no puede aparecer nunca, qué fixture lo reproduce y qué haría que el caso cuente como regresión. La versión legible por máquina es `docs/pai-afirmaciones/aceptacion.json`; este documento la explica y la justifica.
 
@@ -488,7 +488,7 @@ Búsqueda hecha sobre `tests/` con `withheld`, `structured`, `answer_text_state`
 
 ### 7.1 Fichero propuesto (no creado en esta tarea)
 
-`prototipos/paideia-local/tests/test_pai_afirmaciones_aceptacion.py`, parametrizado sobre `aceptacion.json`:
+`app/tests/test_pai_afirmaciones_aceptacion.py`, parametrizado sobre `aceptacion.json`:
 
 ```python
 import json, re
@@ -570,7 +570,7 @@ def test_caso(case):
 ### 7.3 Comandos
 
 ```bash
-cd prototipos/paideia-local
+cd app
 python -m pytest tests/test_pai_afirmaciones_aceptacion.py -q
 python -m pytest tests/test_structured_education.py tests/test_structured_turn_scenario.py \
   tests/test_b4_cycle3_boundary.py -q          # regresión del modo legado

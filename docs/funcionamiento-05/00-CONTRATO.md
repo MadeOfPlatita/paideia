@@ -6,7 +6,7 @@ Aprobado avanzar en el recorrido funcional completo antes del diseño. PostgreSQ
 
 ## Base y límites
 
-Raíz: C:/Users/aleja/Downloads/App Financiera. App: prototipos/paideia-local/. Python stdlib, Node disponibles. Última verificación: 94 tests, 19 HTTP, JS válido. Backend app.py/backend_services.py; proveedores.py se llama literalmente providers.py. El catálogo real es inventario de 20 candidatos, 0 ofertas cuantitativas publicables cargadas. No confundir con hechos sintéticos.
+Raíz: C:/Users/aleja/Downloads/App Financiera. App: app/. Python stdlib, Node disponibles. Última verificación: 94 tests, 19 HTTP, JS válido. Backend app.py/backend_services.py; proveedores.py se llama literalmente providers.py. El catálogo real es inventario de 20 candidatos, 0 ofertas cuantitativas publicables cargadas. No confundir con hechos sintéticos.
 
 Presupuesto 0 EUR. No cuentas, credenciales, lectura de claves reales, llamadas autenticadas, instalaciones, DB real (ni PostgreSQL ni SQLite), despliegue, pagos, ejecución de código descargado ni perfiles reales. Solo código propio local y red pública de lectura donde se autorice en la tarea. Sin bypass auth/WAF/TLS. Diseño/CSS/mascota fuera de esta fase. Tests positivos sintéticos aislados, no ofertas inventadas en catálogo. No modificar otras sesiones/perfiles Hermes.
 

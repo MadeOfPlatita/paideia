@@ -1,6 +1,6 @@
 # Revisión adversarial del canal de afirmaciones cerradas
 
-**Fecha:** 4 de noviembre de 2026 · **Objeto:** commit `1cf5ab5` («Integra el canal de afirmaciones cerradas (paideia-education-v2)») · **Ámbito:** `prototipos/paideia-local` y su copia desplegada en `api/` · **Modo:** offline, proveedor falso, sin Groq y sin red.
+**Fecha:** 4 de noviembre de 2026 · **Objeto:** commit `1cf5ab5` («Integra el canal de afirmaciones cerradas (paideia-education-v2)») · **Ámbito:** `app` y su copia desplegada en `api/` · **Modo:** offline, proveedor falso, sin Groq y sin red.
 
 **Veredicto: APTO CON SALVEDADES.**
 
@@ -19,17 +19,17 @@ No cumple, en cambio, tres extremos del contrato que el propio commit y la espec
  api/_static/claims_view.js                         | 115 ++++++++
  api/_static/index.html                             |   1 +
  api/_static/structured_education_ui.js             |  14 +
- prototipos/paideia-local/claims_catalog.py         | 233 +++++++++++++
- prototipos/paideia-local/claims_channel.py         | 154 +++++++++
- prototipos/paideia-local/static/app.js             |   4 +
- prototipos/paideia-local/static/claims_view.js     | 115 +++++++
- prototipos/paideia-local/static/index.html         |   1 +
- prototipos/paideia-local/static/structured_education_ui.js | 14 +
- prototipos/paideia-local/structured_education.py   |  50 ++-
- prototipos/paideia-local/structured_provider_adapter.py | 9 +-
- prototipos/paideia-local/tests/claims_view.test.cjs | 224 +++++++++++++
- prototipos/paideia-local/tests/test_claims_channel.py | 373 +++++++++++++++++++++
- prototipos/paideia-local/tests/test_claims_integration.py | 124 +++++++++++++
+ app/claims_catalog.py         | 233 +++++++++++++
+ app/claims_channel.py         | 154 +++++++++
+ app/static/app.js             |   4 +
+ app/static/claims_view.js     | 115 +++++++
+ app/static/index.html         |   1 +
+ app/static/structured_education_ui.js | 14 +
+ app/structured_education.py   |  50 ++-
+ app/structured_provider_adapter.py | 9 +-
+ app/tests/claims_view.test.cjs | 224 +++++++++++++
+ app/tests/test_claims_channel.py | 373 +++++++++++++++++++++
+ app/tests/test_claims_integration.py | 124 +++++++++++++
 ```
 
 Los seis SHA-256 facilitados coinciden exactamente:

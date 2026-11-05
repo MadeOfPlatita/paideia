@@ -12,7 +12,7 @@ Este catálogo es la lista cerrada de lo que el servidor puede afirmar. Cada ent
 
 El catálogo también corrige los dos puntos ciegos que la evaluación observó en respuestas que sí pasaron el filtro: «instrumentos seguros» o «riesgo mínimo» en P1 y «capital protegido en caso de insolvencia» en P4. En ambos casos la solución no es añadir un aviso genérico, sino partir la afirmación y explicar el límite: qué cubre la garantía, qué no cubre y por qué la solvencia no la sustituye.
 
-**Fuentes leídas para redactarlo:** `docs/pai-calidad/ejecucion-4h30/EVALUACION.md` (apartados 2, 3, P2, P5, P7, P8, P9 y 8), `docs/pai-calidad/RUBRICA-DIEZ-PREGUNTAS.md`, el glosario compartido de `prototipos/paideia-local/static/context_help.js` y `static/app.js`, el catálogo `prototipos/paideia-local/data/condiciones.json` con `catalogue_conditions.py` y `docs/catalogo-condiciones-20261103/EVIDENCIA.md`, el precedente `prototipos/paideia-local/structured_education.py` y el contrato `docs/ia-calidad-estructurada/ejecucion/20261030T032529Z/CONTRATO.md`.
+**Fuentes leídas para redactarlo:** `docs/pai-calidad/ejecucion-4h30/EVALUACION.md` (apartados 2, 3, P2, P5, P7, P8, P9 y 8), `docs/pai-calidad/RUBRICA-DIEZ-PREGUNTAS.md`, el glosario compartido de `app/static/context_help.js` y `static/app.js`, el catálogo `app/data/condiciones.json` con `catalogue_conditions.py` y `docs/catalogo-condiciones-20261103/EVIDENCIA.md`, el precedente `app/structured_education.py` y el contrato `docs/ia-calidad-estructurada/ejecucion/20261030T032529Z/CONTRATO.md`.
 
 ## 2. Reglas de redacción
 

@@ -16,7 +16,7 @@ Contrato previo a los despachos: [00-CONTRATO.md](00-CONTRATO.md). Lote real: `d
 | 6. Admisión/cupo/cola | sa-5-4d6e4aff | chat_admission.py, test_chat_admission.py, ADMISION-CHAT.md, 06-admision/ | Invariantes con cien solicitudes sintéticas, cuota explícita y límites de persistencia/réplicas honestos |
 | 7. Alojamiento gratuito | sa-6-04ab7e7a | 07-alojamiento/ | Hasta tres opciones y ocho páginas primarias, runtime/persistencia/cuotas/tarjeta/suspensión; recomendación, no despliegue |
 
-Las rutas de código son relativas a prototipos/paideia-local/ (tests bajo tests/, frontend bajo static/). Las rutas de informe son relativas a esta carpeta. Nadie modifica CSS. Los siete agentes tienen las mismas fronteras de permisos y salidas exclusivas.
+Las rutas de código son relativas a app/ (tests bajo tests/, frontend bajo static/). Las rutas de informe son relativas a esta carpeta. Nadie modifica CSS. Los siete agentes tienen las mismas fronteras de permisos y salidas exclusivas.
 
 ## Dependencias y recepción
 

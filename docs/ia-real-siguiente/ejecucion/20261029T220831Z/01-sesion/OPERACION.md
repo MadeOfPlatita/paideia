@@ -2,7 +2,7 @@
 
 Misión: `paideia-ia-20261029T220831Z`; corte fijo 2026-10-29T23:08:31.985015Z, 24 intentos compartidos. No se ha abierto GUI ni consumido API externa en esta preparación.
 
-Desde `prototipos/paideia-local`, tras revisión y pruebas offline del coordinador:
+Desde `app`, tras revisión y pruebas offline del coordinador:
 
 ```text
 python -B secure_groq_session.py --mission "C:/Users/aleja/Downloads/App Financiera/docs/ia-real-siguiente/ejecucion/20261029T220831Z/MISSION.json"

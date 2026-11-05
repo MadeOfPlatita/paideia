@@ -1,10 +1,10 @@
 # Sesión local acotada — preparación, no ejecución real
 
-El lanzador `prototipos/paideia-local/secure_groq_session.py` no se ha abierto aquí con una clave real ni se ha llamado a Groq. No pega claves en el chat, argumentos, entorno, ficheros, informes ni registros. El usuario introduce personalmente la clave en el campo enmascarado y confirma de nuevo que ha comprobado el plan Free sin facturación. La casilla no verifica el plan ni garantiza coste cero. No crear cuentas, activar pagos ni usar datos personales.
+El lanzador `app/secure_groq_session.py` no se ha abierto aquí con una clave real ni se ha llamado a Groq. No pega claves en el chat, argumentos, entorno, ficheros, informes ni registros. El usuario introduce personalmente la clave en el campo enmascarado y confirma de nuevo que ha comprobado el plan Free sin facturación. La casilla no verifica el plan ni garantiza coste cero. No crear cuentas, activar pagos ni usar datos personales.
 
 ## Uso por el operador, únicamente tras autorización
 
-Desde `prototipos/paideia-local`:
+Desde `app`:
 
 ```text
 python secure_groq_session.py --deadline-utc 2026-10-29T17:40:20Z
@@ -20,7 +20,7 @@ El chat requiere su propio consentimiento de envío y puede enviar lo que escrib
 
 La segunda casilla está desmarcada y requiere autorización independiente. Si se marca antes de iniciar, ejecuta como máximo 18 peticiones A/B/C sintéticas, separadas 21 segundos, con el mismo proveedor, límite compartido de 24 y fecha límite. Un 429 u otro fallo detiene la evaluación, sin reintentos. Revocar interrumpe la espera e impide siguientes llamadas. No hay ganador automático ni evaluación de calidad: los resultados requieren revisión humana y la procedencia de proveedor real se marca `provider_unverified`.
 
-El estado sin claves ni contenidos se escribe en `prototipos/paideia-local/evidence/session-status.json`. Su campo `benchmark` indica `not_started`, `running`, `complete` (informe escrito, no necesariamente 18 éxitos) o `error`. Si se autoriza el benchmark, su informe con respuestas sintéticas se escribe en `prototipos/paideia-local/evidence/session-benchmark.json`; se sustituye al finalizar, por lo que un archivo antiguo no prueba que la ejecución actual haya acabado. Cerrar el proceso mientras hay una petición en curso puede impedir la escritura del informe final. No se guardan datos de conversación ni perfiles reales en esos archivos. Los directorios y archivos deben protegerse con los permisos locales adecuados.
+El estado sin claves ni contenidos se escribe en `app/evidence/session-status.json`. Su campo `benchmark` indica `not_started`, `running`, `complete` (informe escrito, no necesariamente 18 éxitos) o `error`. Si se autoriza el benchmark, su informe con respuestas sintéticas se escribe en `app/evidence/session-benchmark.json`; se sustituye al finalizar, por lo que un archivo antiguo no prueba que la ejecución actual haya acabado. Cerrar el proceso mientras hay una petición en curso puede impedir la escritura del informe final. No se guardan datos de conversación ni perfiles reales en esos archivos. Los directorios y archivos deben protegerse con los permisos locales adecuados.
 
 ## Verificación offline
 

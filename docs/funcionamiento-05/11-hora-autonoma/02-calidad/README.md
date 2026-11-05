@@ -10,7 +10,7 @@ El prompt educativo propuesto vive únicamente en `EDUCATIONAL_PROMPT` del módu
 
 ## API para el padre
 
-Desde `prototipos/paideia-local`, importar `context_quality_benchmark`. `build_requests(model)` devuelve 18 entradas `{case_id, variant, payload, request_bytes, expected_facts, critical_errors}`. `payload` es `{model, messages:[{role,content}], max_tokens:256}`; la función solo lee el dataset fijo, no acepta perfiles o preguntas externos. El adaptador autorizado recibe **únicamente** `payload`, no las expectativas del evaluador. Para conservar el límite, serializar exactamente `json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode('utf-8')` y verificar bytes efectivos después de cualquier transformación; añadir campos o usar otra serialización puede superar el límite. `request_bytes` son bytes UTF-8 del JSON indicado, no tokens ni bytes HTTP totales. Modelo exacto explícito; no añadir herramientas ni retries.
+Desde `app`, importar `context_quality_benchmark`. `build_requests(model)` devuelve 18 entradas `{case_id, variant, payload, request_bytes, expected_facts, critical_errors}`. `payload` es `{model, messages:[{role,content}], max_tokens:256}`; la función solo lee el dataset fijo, no acepta perfiles o preguntas externos. El adaptador autorizado recibe **únicamente** `payload`, no las expectativas del evaluador. Para conservar el límite, serializar exactamente `json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode('utf-8')` y verificar bytes efectivos después de cualquier transformación; añadir campos o usar otra serialización puede superar el límite. `request_bytes` son bytes UTF-8 del JSON indicado, no tokens ni bytes HTTP totales. Modelo exacto explícito; no añadir herramientas ni retries.
 
 `run_benchmark(provider, model, *, max_calls=18, test_only=False)` llama secuencialmente `provider(payload)` y espera `{status: int, text: str, usage?: ..., cost?: ...}`. Adaptar el resultado real externo a ese contrato sin añadir red dentro de este módulo. Se detiene ante excepción, 429, cualquier status distinto de 200, respuesta inválida o presupuesto agotado; incluye intentos y respuestas previas, no reintenta y `winner` permanece `None`. `max_calls` limita a 0–18 **esta ejecución**, no el gasto global: el padre debe restar previamente todas las llamadas de la sesión y hacer cumplir el máximo global y la ventana autorizada, incluso ante reejecuciones o concurrencia. El callback también debe evitar retries ocultos y respetar su propio límite de salida/respuesta; los límites del arnés no controlan su transporte.
 
@@ -29,7 +29,7 @@ Puertas no compensables: términos y privacidad aceptables, presupuesto real aut
 Desde la raíz:
 
 ```sh
-python -m unittest discover -s prototipos/paideia-local/tests -p test_context_quality_benchmark.py -v
+python -m unittest discover -s app/tests -p test_context_quality_benchmark.py -v
 ```
 
 Las fixtures de callback se marcan `test_only` y no representan respuestas LLM. Sin instalaciones, red, claves ni cuentas. La comparación real depende del adaptador y del presupuesto compartido bajo control del padre.

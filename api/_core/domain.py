@@ -1,4 +1,4 @@
-# Copia generada por api/build_core.py desde prototipos/paideia-local/domain.py. No editar aquí.
+# Copia generada por api/build_core.py desde app/domain.py. No editar aquí.
 import re
 from collections.abc import Mapping
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP, localcontext

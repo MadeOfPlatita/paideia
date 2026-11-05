@@ -1,6 +1,6 @@
 # Primera llamada real a Groq — verificada
 
-Evidencia leída directamente: `../../../prototipos/paideia-local/evidence/REAL-IA-SMOKE.json`.
+Evidencia leída directamente: `../../../app/evidence/REAL-IA-SMOKE.json`.
 
 - Fecha UTC: 2026-10-29T16:34:20.977120+00:00.
 - Modelo: openai/gpt-oss-20b.

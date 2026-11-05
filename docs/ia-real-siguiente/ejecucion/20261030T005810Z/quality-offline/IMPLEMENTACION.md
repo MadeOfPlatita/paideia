@@ -10,7 +10,7 @@ La respuesta visible (incluida refusal) se comprueba en el chat simple y en el a
 
 ## Evidencia TDD y regresión
 
-Desde `prototipos/paideia-local`:
+Desde `app`:
 
 - RED `python -m unittest discover -s tests -p test_financial_quality_integration.py -v`: 1 test con tres subcasos falló: HTTP 200 en vez de 502 para el texto real reproducido en simple, admitido y herramientas. Tras implementar: verde.
 - RED `python -m unittest discover -s tests -p test_financial_quality_benchmark.py -v`: 1 fallo `complete` frente a `financial_quality_rejected`. Tras implementar: verde.

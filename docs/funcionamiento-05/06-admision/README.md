@@ -1,6 +1,6 @@
 # 06 — Admisión local de chat
 
-Implementación aislada en `prototipos/paideia-local/chat_admission.py`; contrato ejecutable a integrar por el padre en `api-contract.json`. No toca rutas HTTP ni habilita el proveedor actual.
+Implementación aislada en `app/chat_admission.py`; contrato ejecutable a integrar por el padre en `api-contract.json`. No toca rutas HTTP ni habilita el proveedor actual.
 
 ## Decisiones
 
@@ -14,4 +14,4 @@ Implementación aislada en `prototipos/paideia-local/chat_admission.py`; contrat
 
 El archivo `test-results.json` conserva el resultado local; `tests/test_chat_admission.py` incluye concurrencia sintética de 100 solicitudes. No es un test de carga de chat/proveedor ni certifica 100 sesiones o 100 chats simultáneos.
 
-Documentación de implementación e integración: `prototipos/paideia-local/ADMISION-CHAT.md`.
+Documentación de implementación e integración: `app/ADMISION-CHAT.md`.

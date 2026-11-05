@@ -1,4 +1,4 @@
-# Copia generada por api/build_core.py desde prototipos/paideia-local/catalogue_conditions.py. No editar aquí.
+# Copia generada por api/build_core.py desde app/catalogue_conditions.py. No editar aquí.
 """Deriva condiciones cuantitativas trazables desde el snapshot de candidatos.
 
 Reglas deliberadamente conservadoras:

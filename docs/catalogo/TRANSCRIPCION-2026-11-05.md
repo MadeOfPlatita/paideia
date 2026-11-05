@@ -100,7 +100,7 @@ ACC-02, ACC-04, DEP-04 y los cuatro ETF no publican fecha de vigencia: se regist
 
 ## Qué no se ha tocado
 
-- `prototipos/paideia-local/data/condiciones.json`: intacto.
+- `app/data/condiciones.json`: intacto.
 - Ningún otro fichero de la aplicación, ni configuración, ni endpoints, ni tests.
 - Solo se han escrito `docs/catalogo/transcripcion-2026-11-05.json` y este informe.
 - No se ha usado la API de Groq ni se ha abierto `.env`.

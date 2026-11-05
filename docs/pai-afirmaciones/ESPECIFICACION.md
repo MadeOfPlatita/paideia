@@ -2,7 +2,7 @@
 
 Fecha: 4/11/2026 (UTC+01:00).
 Estado: **propuesta técnica, no implementada**. Este documento no modifica código.
-Ámbito: `prototipos/paideia-local`. Sustituir, en el chat real, la retención léxica de
+Ámbito: `app`. Sustituir, en el chat real, la retención léxica de
 prosa por una **selección cerrada y verificable** de afirmaciones.
 
 Método: cada afirmación sobre el comportamiento actual se apoya en código leído. Las
@@ -472,9 +472,9 @@ verificar localmente».
 
 | Ruta | Contenido | Por qué |
 |---|---|---|
-| `prototipos/paideia-local/claims_catalog.py` | Copia generada del bloque JSON de `CATALOGO.md` §9: `EDITORIAL_V2 = {id: {text, when, never_claim}}`; sin lógica | Una sola fuente editorial, versionable y diffeable |
-| `prototipos/paideia-local/claims_channel.py` | `VERSION = "paideia-education-v2"`, carga de `claims_catalog.EDITORIAL_V2`, `EVIDENCE_CLAIMS`, `CLOSED_IDS`, `MAX_CLAIMS = 6`, `catalog_digest`, `build_index`, `validate_scenario`, `parse_selection`, `compose`, `system_contract`, helpers de invariantes | Una sola fuente del contrato y del texto; puro, sin I/O |
-| `prototipos/paideia-local/static/claims_ui.js` | `PaideiaClaims.project/select`: valida forma e ids, compara `catalog_digest` con la constante compilada, exige que cada texto de evidencia sea exactamente una de las cinco plantillas y que no haya dígitos | El cliente no confía en texto arbitrario del servidor |
+| `app/claims_catalog.py` | Copia generada del bloque JSON de `CATALOGO.md` §9: `EDITORIAL_V2 = {id: {text, when, never_claim}}`; sin lógica | Una sola fuente editorial, versionable y diffeable |
+| `app/claims_channel.py` | `VERSION = "paideia-education-v2"`, carga de `claims_catalog.EDITORIAL_V2`, `EVIDENCE_CLAIMS`, `CLOSED_IDS`, `MAX_CLAIMS = 6`, `catalog_digest`, `build_index`, `validate_scenario`, `parse_selection`, `compose`, `system_contract`, helpers de invariantes | Una sola fuente del contrato y del texto; puro, sin I/O |
+| `app/static/claims_ui.js` | `PaideiaClaims.project/select`: valida forma e ids, compara `catalog_digest` con la constante compilada, exige que cada texto de evidencia sea exactamente una de las cinco plantillas y que no haya dígitos | El cliente no confía en texto arbitrario del servidor |
 | `tests/test_claims_channel.py` | Parseo, rechazos, plantillas, I1–I7, determinismo | Verificación sin red |
 | `tests/test_claims_service.py` | Servicio completo con `FakeChatProvider` guionizado | Integración sin Groq |
 | `tests/claims_ui.test.cjs` | Forma, ids desconocidos, dígitos fuera de lugar, doble render | Contrato de UI |
