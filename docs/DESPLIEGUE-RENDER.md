@@ -34,3 +34,11 @@ en el proceso.
   con contraseña o se limita por IP en una capa delante.
 - El texto del modelo no se valida contra las fuentes; lo que se sostiene son las
   citas de la herramienta y los cálculos locales.
+
+## Vercel queda de escaparate
+
+`https://paideia-mu.vercel.app` no ejecuta la app: es una función que sirve el
+catálogo de la instantánea y los estáticos. No puede sostener el chat con estado
+ni las condiciones transcritas. Desde `api/index.py` se inyecta un aviso en la
+portada que enlaza aquí. No se mantiene en paralelo: cualquier cambio de producto
+va a la app y a esta demo.
