@@ -482,7 +482,11 @@ def _parse_chat_response(response):
     if (type(message) is not dict or message.get("role") != "assistant"
             or finish_reason is not None and type(finish_reason) is not str):
         raise ProviderError("invalid_response")
-    message_fields = {"role", "content", "reasoning", "reasoning_content", "tool_calls", "refusal"}
+    # `reasoning_details` es metadato del proveedor (Command Code lo incluye
+    # siempre); se descarta igual que el resto de campos no usados, pero no debe
+    # invalidar una respuesta correcta.
+    message_fields = {"role", "content", "reasoning", "reasoning_content", "reasoning_details",
+                      "tool_calls", "refusal"}
     if set(message) - message_fields or ("reasoning" in message and "reasoning_content" in message):
         raise ProviderError("invalid_response")
     content = _optional_text(message, "content")

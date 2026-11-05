@@ -300,6 +300,59 @@ class ProviderOptInTests(unittest.TestCase):
         self.assertNotIn(secret, repr(result))
         self.assertNotIn(secret, output.getvalue())
 
+    def test_provider_accepts_reasoning_details_metadata_from_command_code(self):
+        module = importlib.import_module("providers")
+        secret = "OFFLINE_TEST_SECRET_ONLY_reasoning_details"
+        response_body = json.dumps({
+            "id": "gen_test",
+            "object": "chat.completion",
+            "model": "reflection/beam:free",
+            "choices": [{
+                "index": 0,
+                "finish_reason": "stop",
+                "message": {
+                    "role": "assistant",
+                    "content": "Respuesta con metadatos.",
+                    "reasoning_details": [
+                        {"type": "reasoning.text", "text": "interna", "format": "unknown", "index": 0},
+                    ],
+                },
+            }],
+        }).encode("utf-8")
+        transport = TestOnlyFakeTransport(
+            response=SimpleNamespace(status=200, body=response_body),
+        )
+        environment = TrackingEnvironment({"GROQ_API_KEY": secret})
+        provider = module.GroqProvider(transport, opt_in=True, environment=environment)
+
+        result = provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+
+        self.assertEqual(result.answer, "Respuesta con metadatos.")
+        self.assertEqual(result.finish_reason, "stop")
+        self.assertIsNone(result.reasoning)
+        self.assertNotIn("interna", repr(result))
+        self.assertNotIn(secret, repr(result))
+
+    def test_provider_still_rejects_unknown_message_fields(self):
+        module = importlib.import_module("providers")
+        secret = "OFFLINE_TEST_SECRET_ONLY_unknown_field"
+        response_body = json.dumps({
+            "choices": [{
+                "finish_reason": "stop",
+                "message": {"role": "assistant", "content": "x", "campo_inventado": 1},
+            }],
+        }).encode("utf-8")
+        transport = TestOnlyFakeTransport(
+            response=SimpleNamespace(status=200, body=response_body),
+        )
+        environment = TrackingEnvironment({"GROQ_API_KEY": secret})
+        provider = module.GroqProvider(transport, opt_in=True, environment=environment)
+
+        with self.assertRaises(module.ProviderError) as caught:
+            provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+
+        self.assertEqual(caught.exception.code, "invalid_response")
+
     def test_provider_does_not_return_an_api_key_echoed_in_a_success_response(self):
         module = importlib.import_module("providers")
         secret = "OFFLINE_TEST_SECRET_ONLY_echo"
