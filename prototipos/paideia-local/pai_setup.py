@@ -84,6 +84,31 @@ def _tokens():
     return min(value, MAX_OUTPUT_TOKENS)
 
 
+CALLS_PER_MINUTE_ENV = "PAIDEIA_CALLS_PER_MINUTE"
+CALLS_PER_DAY_ENV = "PAIDEIA_CALLS_PER_DAY"
+DEFAULT_CALLS_PER_MINUTE = 6
+DEFAULT_CALLS_PER_DAY = 60
+
+
+def _limit(name, default, ceiling):
+    """Lee un cupo del entorno, acotado: un valor absurdo no abre la puerta."""
+    try:
+        value = int(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+    if value < 1:
+        return default
+    return min(value, ceiling)
+
+
+def _calls_per_minute():
+    return _limit(CALLS_PER_MINUTE_ENV, DEFAULT_CALLS_PER_MINUTE, 60)
+
+
+def _calls_per_day():
+    return _limit(CALLS_PER_DAY_ENV, DEFAULT_CALLS_PER_DAY, 5000)
+
+
 def _current_time(now=None):
     return now if now is not None else datetime.now(timezone.utc)
 
@@ -172,8 +197,8 @@ def _historical_chat_service(repository=None, comparison_service=None):
     policy = AdmissionPolicy(
         max_concurrent=1,
         max_queue=4,
-        calls_per_minute=6,
-        calls_per_day=60,
+        calls_per_minute=_calls_per_minute(),
+        calls_per_day=_calls_per_day(),
         ticket_ttl_seconds=120,
         claim_ttl_seconds=60,
         scope=SCOPE,

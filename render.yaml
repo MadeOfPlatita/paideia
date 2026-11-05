@@ -22,5 +22,9 @@ services:
         value: "1"
       - key: PAIDEIA_GROQ_MODEL
         value: openai/gpt-oss-120b
+      - key: PAIDEIA_CALLS_PER_DAY
+        value: "300"
+      - key: PAIDEIA_CALLS_PER_MINUTE
+        value: "10"
       - key: GROQ_API_KEY
         sync: false
