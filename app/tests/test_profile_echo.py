@@ -61,3 +61,32 @@ class ProfileEchoTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CatalogueNoteTests(unittest.TestCase):
+    """H5: el estado real del catálogo se dice con claridad y sin tasas nuevas."""
+
+    def test_the_note_states_that_no_card_is_approved_for_publication(self):
+        from backend_services import CATALOGUE_WITHHELD_NOTE
+
+        self.assertIn("Ninguna ficha está aprobada para publicación", CATALOGUE_WITHHELD_NOTE)
+        self.assertIn("borradores internos", CATALOGUE_WITHHELD_NOTE)
+        self.assertNotIn("%", CATALOGUE_WITHHELD_NOTE)
+
+    def test_publication_ready_is_a_configuration_rule_not_a_data_field(self):
+        """H5: ningún camino del adaptador publica; es una regla de código, no un dato."""
+        from pathlib import Path
+        import json
+        import re
+
+        base = Path(__file__).resolve().parents[1]
+        datos = json.loads((base / "data" / "condiciones.json").read_text(encoding="utf-8"))
+        claves = set()
+        for registro in datos["records"]:
+            claves.update(registro)
+        self.assertNotIn("publication_ready", claves)
+
+        fuente = (base / "catalogue_adapter.py").read_text(encoding="utf-8")
+        apariciones = re.findall(r'"publication_ready":\s*([A-Za-z]+)', fuente)
+        self.assertTrue(apariciones)
+        self.assertTrue(all(valor == "False" for valor in apariciones), apariciones)

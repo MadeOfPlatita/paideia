@@ -70,7 +70,8 @@ ANSWER_TEXT_WITHHELD_UNBACKED = "withheld_unbacked_claim"
 
 CATALOGUE_WITHHELD_NOTE = (
     "He consultado el catálogo y te dejo sus fuentes locales al lado. No repito cifras en "
-    "prosa: las tasas y comisiones solo valen si salen citadas de la ficha."
+    "prosa: las tasas y comisiones solo valen si salen citadas de la ficha. Ninguna ficha está "
+    "aprobada para publicación: son borradores internos, no una recomendación ni una oferta."
 )
 
 
