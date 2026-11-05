@@ -41,7 +41,7 @@
       options: choiceOptions(enumValues.horizon, ["En menos de 6 meses", "Entre 6 y 12 meses", "Entre 1 y 3 años", "En más de 3 años", "No hay fecha; solo quiero aprender"])
     }),
     Object.freeze({
-      key: "respuestas.liquidez", legacyKey: "liquidity", branch: "core", kind: "choice",
+      key: "respuestas.liquidez", legacyKey: "liquidity", branch: "core", kind: "choice", asked: false,
       label: "Necesidad de liquidez", title: "¿Cuánto te importa poder disponer rápidamente del dinero del ejemplo?",
       help: "Disponibilidad no significa ausencia de pérdidas. Puedes usar solo cifras ficticias.",
       options: choiceOptions(enumValues.liquidity, ["Necesitaría poder disponer de él en cualquier momento", "Podría planificar una fecha para disponer de él", "Solo usaré cifras ficticias; no hay dinero real"])
@@ -83,13 +83,13 @@
       help: "Opcional. No hace falta indicar qué vas a comprar; puedes declarar solo un rango total y un plazo."
     }),
     Object.freeze({
-      key: "riesgo.tolerancia", legacyKey: "risk", branch: "risk", kind: "choice",
+      key: "riesgo.tolerancia", legacyKey: "risk", branch: "risk", kind: "choice", asked: false,
       label: "Tolerancia ante cambios", title: "En este ejemplo ficticio, 1.000 € pasan temporalmente a valer 900 €. ¿Qué crees que harías?",
       help: "Describe una reacción/preferencia declarada; no mide capacidad económica ni predice conducta.",
       options: choiceOptions(enumValues.tolerance, ["Me inquietaría y probablemente querría salir", "Me inquietaría, pero esperaría a entender qué ha pasado", "Podría esperar, sabiendo que el valor puede caer más"])
     }),
     Object.freeze({
-      key: "riesgo.capacidad_perdidas", legacyKey: null, branch: "risk", kind: "capacity",
+      key: "riesgo.capacidad_perdidas", legacyKey: null, branch: "risk", kind: "capacity", asked: false,
       label: "Impacto de una pérdida", title: "En ese mismo ejemplo ficticio, si faltaran 100 €, ¿qué efecto tendría en una necesidad o meta importante?",
       help: "Pregunta por impacto, no por cuánto riesgo te gusta. No se deduce de tus ingresos.",
       options: choiceOptions(enumValues.lossImpact, ["No cambiaría una necesidad ni una meta importante", "Me obligaría a retrasar o reducir una meta", "Afectaría un gasto esencial o un compromiso"])

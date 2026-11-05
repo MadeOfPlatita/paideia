@@ -66,6 +66,16 @@ class ConditionsStateTests(unittest.TestCase):
         self.assertEqual(ficha["conditions_state"], "documented")
         self.assertNotIn("plazos disponibles", ficha["unknown_fields"])
 
+    def test_a_label_without_a_rule_is_never_removed(self):
+        # El recorte empareja por texto y exige todos los campos de la regla: una
+        # etiqueta que no encaja se queda, aunque la ficha documente otras cosas.
+        self.assertFalse(app._unknown_label_is_documented(
+            "divisa explícita", {"rate", "term", "min", "max", "payment", "validity", "documented"}))
+        self.assertFalse(app._unknown_label_is_documented(
+            "saldo máximo remunerado", {"rate", "term"}))
+        self.assertTrue(app._unknown_label_is_documented(
+            "plazos disponibles", {"rate", "term"}))
+
 
 if __name__ == "__main__":
     unittest.main()

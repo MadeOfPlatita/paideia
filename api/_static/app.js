@@ -1309,24 +1309,15 @@ function profileQuestionControl(question) {
       const radio = el("input", { type: "radio", id, name: "profile-answer", value: option.value, checked: selectedLevel === option.value });
       group.appendChild(el("label", { className: "choice", htmlFor: id }, [radio, el("span", {}, option.label)]));
     }
-    if (question.topics) {
-      const topicsHeading = textElement("p", "Temas que te interesan (selección opcional)", "field-label");
-      group.appendChild(topicsHeading);
-      for (const topic of question.topics || []) {
-        const id = `profile-topic-${topic.value}`;
-        const check = el("input", { type: "checkbox", id, value: topic.value, checked: Boolean(value && value.temas_interes.includes(topic.value)) });
-        group.appendChild(el("label", { className: "choice", htmlFor: id }, [check, el("span", {}, topic.label)]));
-      }
-    }
     group.appendChild(textElement("p", question.help, "field-help"));
     return {
       wrapper: group,
       readAnswer() {
         const level = group.querySelector('input[name="profile-answer"]:checked');
         if (!level) return undefined;
-        if (!question.topics) return PROFILE_MODEL.makeAnswer("declarado", { nivel: level.value, temas_interes: [] });
-        const topics = [...group.querySelectorAll("input[type=checkbox]:checked")].map((check) => check.value);
-        return PROFILE_MODEL.makeAnswer("declarado", { nivel: level.value, temas_interes: topics });
+        // Ningún cuestionario pide ya temas de interés: el campo se envía vacío para
+        // conservar la forma guardada sin inventar una selección.
+        return PROFILE_MODEL.makeAnswer("declarado", { nivel: level.value, temas_interes: [] });
       },
       focus: group.querySelector('input[name="profile-answer"]')
     };
@@ -1527,7 +1518,7 @@ function renderProfileSummary(page) {
 }
 
 function renderProfile() {
-  const { page, heading } = pageFrame("Tu mapa · editable", "Tu mapa para explorar", "Un único recorrido: objetivo y conocimientos, situación económica y riesgo. Responde, elige «No lo sé» u «Omitir» para avanzar. Puedes pausar y retomar sin perder lo respondido.");
+  const { page, heading } = pageFrame("Tu mapa · editable", "Tu mapa para explorar", "Cuatro preguntas: qué quieres explorar, tu horizonte, tu experiencia y un importe orientativo. Responde, elige «No lo sé» u «Omitir» para avanzar. Puedes pausar y retomar sin perder lo respondido.");
   if (state.profileMode === "summary" || state.profileComplete) {
     state.profileMode = "summary";
     renderProfileSummary(page);

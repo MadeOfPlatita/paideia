@@ -22,7 +22,7 @@ catálogo de la instantánea. No se mantiene en paralelo.
 
 ## Qué se puede hacer
 
-- **Tu mapa:** 7 preguntas opcionales, con «No lo sé» y «Omitir», guardadas solo
+- **Tu mapa:** 4 preguntas opcionales, con «No lo sé» y «Omitir», guardadas solo
   en el navegador y borrables. Solo viajan al chat los campos que marques.
 - **Biblioteca:** 20 candidatos de investigación y **22 fichas con condiciones
   transcritas** (223 condiciones con URL, título y fecha de consulta). Cada tasa
@@ -70,8 +70,8 @@ pytest instalado.
 
 ## Límites conocidos
 
-- El cupo de llamadas vive en memoria: al redesplegar vuelve a cero. Es un freno
-  de gasto, no una cuota contable.
+- El cupo de llamadas vive en memoria: al redesplegar vuelve a cero. Detalle en
+  `docs/CUPO-Y-LIMITES.md`.
 - La comparación evalúa una métrica documentada, no la oferta contractual.
 - No hay PDF generado: el informe se descarga en HTML autónomo.
 

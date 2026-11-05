@@ -11,6 +11,8 @@ misión concreta: se conservan como evidencia, no como estado vigente.
 | `DESPLIEGUE-RENDER.md` | Cómo está desplegada la demo, variables y comprobaciones |
 | `AUDITORIA-NOCHE-20261105.md` | Lista de defectos abiertos y su prioridad |
 | `CIERRE-PAIDEIA-HASTA-BLOQUEO.md` | Cierre de la misión anterior y bloqueos reales |
+| `INFORME-NOCHE-20261105.md` | Qué se cambió esta noche, con evidencia y límites |
+| `CUPO-Y-LIMITES.md` | Qué protege el contador de llamadas y qué no |
 
 ## Producto
 
