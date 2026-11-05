@@ -42,11 +42,29 @@ class RedactionTests(unittest.TestCase):
         self.assertEqual(texto, "")
         self.assertEqual(resultado["withheld_reason"], "attribution")
 
-    def test_a_calculator_turn_keeps_its_stricter_rule(self):
+    def test_a_calculator_turn_redacts_only_the_figure_sentences(self):
+        # Antes se tiraba la respuesta entera en un turno con calculadora; ahora se
+        # quitan las frases con cifras y la explicación conceptual se conserva.
         texto, estado, resultado = bs._withhold_unbacked_claim(
             {}, CONCEPTO + " " + EJEMPLO, ANSWER_TEXT_SHOWN, calculation={"ok": True})
+        self.assertEqual(estado, ANSWER_TEXT_SHOWN)
+        self.assertIn("El TIN es el tipo de interés nominal", texto)
+        self.assertNotIn("3 %", texto)
+        self.assertNotIn("1.000 euros", texto)
+        self.assertEqual(resultado["redacted_figures"], 1)
+        self.assertTrue(any("calculadora" in nota for nota in resultado["limitations"]))
+
+    def test_a_calculator_turn_without_innocuous_text_is_still_withheld(self):
+        texto, estado, resultado = bs._withhold_unbacked_claim(
+            {}, EJEMPLO + " " + EJEMPLO, ANSWER_TEXT_SHOWN, calculation={"ok": True})
         self.assertEqual(texto, "")
+        self.assertNotEqual(estado, ANSWER_TEXT_SHOWN)
         self.assertEqual(resultado["withheld_reason"], "calculation")
+
+    def test_a_short_but_innocuous_remainder_is_kept(self):
+        texto, estado, _ = self.run_gate("Sí, existe. " + EJEMPLO)
+        self.assertEqual(estado, ANSWER_TEXT_SHOWN)
+        self.assertIn("Sí, existe.", texto)
 
     def test_the_remaining_text_keeps_its_unverified_state(self):
         _, estado, _ = self.run_gate(CONCEPTO + " " + EJEMPLO)

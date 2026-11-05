@@ -182,7 +182,7 @@ def _redact_unbacked_figures(text):
             continue
         kept.append(piece.strip())
     partial = " ".join(kept).strip()
-    if removed == 0 or len(partial.split()) < 6:
+    if removed == 0 or not partial:
         return "", removed
     return partial, removed
 
@@ -196,11 +196,23 @@ def _withhold_unbacked_claim(result, text, text_state, calculation=None):
     if calculation is not None:
         # No se cotejan cifras literalmente contra el motor: una cifra correcta puede
         # estar unida al concepto equivocado (principal como interés, saldo como
-        # aportación, signo invertido). En un turno de calculadora cualquier número o
-        # atribución de la prosa se retiene; la explicación conceptual sin cifras sigue.
-        if not allowed:
-            return _withhold_text(result, "calculation" if reason == "figure" else reason)
-        if _NUMBER.search(text) is not None or _SPELLED_NUMBER.search(text) is not None:
+        # aportación, signo invertido). Por eso se quitan solo las frases con cifras y
+        # se conserva la explicación conceptual; si no queda nada, se retiene entera.
+        if not allowed and reason != "figure":
+            return _withhold_text(result, reason)
+        if not allowed or _NUMBER.search(text) is not None or _SPELLED_NUMBER.search(text) is not None:
+            partial, removed = _redact_unbacked_figures(text)
+            if partial:
+                updated = dict(result)
+                notes = [note for note in (updated.get("limitations") or []) if type(note) is str][:6]
+                note = (f"Se han quitado {removed} frase(s) con cifras en un turno de calculadora: "
+                        "el resultado numérico solo procede del motor determinista local y el "
+                        "resto del texto sigue sin validarse.")
+                if note not in notes:
+                    notes.insert(0, note)
+                updated["limitations"] = notes
+                updated["redacted_figures"] = removed
+                return partial, text_state, updated
             return _withhold_text(result, "calculation")
         return text, text_state, result
     if allowed:
