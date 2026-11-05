@@ -1,0 +1,28 @@
+{
+  "sin_perfil": {
+    "http": 200,
+    "seg": 12.9,
+    "answer": "He consultado el catálogo y te dejo sus fuentes locales al lado. No repito cifras en prosa: las tasas y comisiones solo valen si salen citadas de la ficha.",
+    "error": null
+  },
+  "perfil_corto": {
+    "http": 200,
+    "seg": 6.1,
+    "answer": "Para ese plazo encajan instrumentos líquidos y sin lock-in (cuenta remunerada, depósito a plazo corto o letras a vencimiento próximo), pero recuerda que la disponibilidad total puede tener condiciones y que la inflación erosiona el poder adquisitivo. Dime si quieres que consulte el catálogo sobre algún producto concreto y te indicaré el estado y la fuente de sus condiciones, sin prometer rentabili",
+    "error": null
+  },
+  "perfil_largo": {
+    "http": 200,
+    "seg": 5.5,
+    "answer": "No tengo condiciones verificadas de ningún producto ni tasa porque no has mencionado uno; dime si quieres que consulte el catálogo o calcule un escenario hipotético con tu aportación mensual.",
+    "error": null
+  },
+  "H1_comparacion": {
+    "http": 200,
+    "seg": 10.9,
+    "error": null,
+    "tool_events": 3,
+    "sources": 10,
+    "answer": "He consultado el catálogo y te dejo sus fuentes locales al lado. No repito cifras en prosa: las tasas y comisiones solo valen si salen citadas de la ficha."
+  }
+}
