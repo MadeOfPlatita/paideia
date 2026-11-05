@@ -47,8 +47,8 @@ PROVIDERS = {
         "host": "api.commandcode.ai",
         "path": "/provider/v1/chat/completions",
         "key_env": "COMMANDCODE_API_KEY",
-        # Beam 1.0 gratuito dentro del plan de Command Code (0 % de uso hoy).
-        "default_model": "reflection/beam:free",
+        # Modelo acordado para producción; Beam queda como opcion puntual.
+        "default_model": "deepseek/deepseek-v4.1-flash",
         # El catálogo de la suscripción cambia sin aviso: se valida la forma del
         # identificador, no una lista que quedaría obsoleta.
         "models": None,
