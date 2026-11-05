@@ -162,6 +162,31 @@ def _withhold_text(result, reason):
     return "", ANSWER_TEXT_WITHHELD_UNBACKED, updated
 
 
+def _redact_unbacked_figures(text):
+    """Quita solo las frases con cifras no respaldadas; conserva el resto del texto.
+
+    La frontera es la misma de siempre (superficie, no semántica): no comprueba que
+    una cifra sea cierta, así que la frase que la contiene se descarta entera. El
+    texto que queda sigue siendo prosa no validada y se declara como tal.
+    """
+    pieces = re.split(r"(?<=[.!?])\s+", text.strip())
+    kept, removed = [], 0
+    for piece in pieces:
+        if not piece.strip():
+            continue
+        if (_FIGURE_MARKER.search(piece) is not None
+                or _NUMBER_NEAR_RATE.search(piece) is not None
+                or _NUMBER.search(piece) is not None
+                or _SPELLED_NUMBER.search(piece) is not None):
+            removed += 1
+            continue
+        kept.append(piece.strip())
+    partial = " ".join(kept).strip()
+    if removed == 0 or len(partial.split()) < 6:
+        return "", removed
+    return partial, removed
+
+
 def _withhold_unbacked_claim(result, text, text_state, calculation=None):
     if text_state == ANSWER_TEXT_WITHHELD:
         updated = dict(result)
@@ -180,6 +205,20 @@ def _withhold_unbacked_claim(result, text, text_state, calculation=None):
         return text, text_state, result
     if allowed:
         return text, text_state, result
+    if reason == "figure":
+        # Un número citado como ejemplo no invalida toda la explicación: se
+        # descartan las frases con cifras y se muestra el resto, declarándolo.
+        partial, removed = _redact_unbacked_figures(text)
+        if partial:
+            updated = dict(result)
+            notes = [note for note in (updated.get("limitations") or []) if type(note) is str][:6]
+            note = (f"Se han quitado {removed} frase(s) con cifras, importes o porcentajes sin "
+                    "datos locales que los respalden; el resto del texto sigue sin validarse.")
+            if note not in notes:
+                notes.insert(0, note)
+            updated["limitations"] = notes
+            updated["redacted_figures"] = removed
+            return partial, text_state, updated
     return _withhold_text(result, reason)
 
 
