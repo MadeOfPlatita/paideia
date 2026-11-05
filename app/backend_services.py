@@ -613,9 +613,8 @@ class LocalChatService:
             _upstream = _diag.get("http_status") if isinstance(_diag, dict) else None
             message = MISSION_MESSAGES[mission_code] if mission_code else (
                 "No se pudo obtener una respuesta del proveedor IA; no hay reintento automático.")
-            if code == "CHAT_AUTH_UNAVAILABLE" and type(_upstream) is int:
-                message = ("El proveedor rechazó la credencial (HTTP %d); revisa la clave configurada."
-                           % _upstream)
+            if type(_upstream) is int:
+                message = ("%s (HTTP %d)" % (message.rstrip('.'), _upstream))
             raise ServiceProblem(status, code, message, send_state=mission_state) from None
         if result.tool_calls:
             raise ServiceProblem(502, "CHAT_TOOL_CALL_REJECTED", "El chat de esta fase no permite ejecutar herramientas del modelo.")
@@ -724,6 +723,8 @@ class LocalChatService:
                     if code == "CHAT_AUTH_UNAVAILABLE" and type(_upstream) is int:
                         message = ("El proveedor rechazó la credencial (HTTP %d); revisa la clave configurada."
                                    % _upstream)
+                    elif type(_upstream) is int:
+                        message = ("%s (HTTP %d)" % (message.rstrip('.'), _upstream))
                     self.problem = ServiceProblem(status, code, message,
                                                   send_state=mission_state or _trusted_send_state(service._provider, error))
                     raise self.problem from None

@@ -1,0 +1,152 @@
+{
+  "estado": {
+    "http": 200,
+    "provider": "Command Code",
+    "catalogue": {
+      "candidate_count": 20,
+      "publication_ready": 0
+    },
+    "quota": {
+      "calls_minute": 0,
+      "calls_day": 0,
+      "calls_per_minute": 10,
+      "calls_per_day": 300
+    }
+  },
+  "H2_catalogo_200": {
+    "hito": "H2_catalogo_200",
+    "http": 200,
+    "segundos": 5.6,
+    "texto": "",
+    "claves": [
+      "answer",
+      "answer_provenance",
+      "answer_text_state",
+      "calculation",
+      "catalogue",
+      "external_sent",
+      "provider_mode",
+      "refused",
+      "sources",
+      "sources_total",
+      "sources_truncated",
+      "tool_events"
+    ],
+    "error": null
+  },
+  "H1_varias_herramientas": {
+    "hito": "H1_varias_herramientas",
+    "http": 503,
+    "segundos": 8.5,
+    "texto": "",
+    "claves": [
+      "error"
+    ],
+    "error": {
+      "code": "CHAT_PROVIDER_UNAVAILABLE",
+      "message": "No se pudo completar la llamada al proveedor; no hay reintento automático.",
+      "request_id": "6e954096ae494f02a803878400aaa497",
+      "retryable": false
+    }
+  },
+  "H3_calculo_con_cifras": {
+    "hito": "H3_calculo_con_cifras",
+    "http": 200,
+    "segundos": 6.3,
+    "texto": "Como es un cálculo educativo, el rendimiento real no está garantizado y el poder adquisitivo puede variar con la inflación.",
+    "claves": [
+      "answer",
+      "answer_provenance",
+      "answer_text_state",
+      "calculation",
+      "catalogue",
+      "external_sent",
+      "provider_mode",
+      "refused",
+      "sources",
+      "sources_total",
+      "sources_truncated",
+      "tool_events"
+    ],
+    "error": null
+  },
+  "H4_sin_perfil": {
+    "hito": "H4_sin_perfil",
+    "http": 200,
+    "segundos": 3.5,
+    "texto": "No puedo concretar sin saber tu caso: no recibo perfil personal, así que dime al menos el objetivo y el horizonte temporal, cuánto necesitas disponible y si ese dinero ya está en algún producto concreto. Con esos datos puedo consultar el catálogo y calcular escenarios, pero recuerda que no soy asesor financiero ni ejecuto operaciones. Ahorrar cubre necesidades futuras y puede haber riesgo nominal, de custodia o de entidad, además de pérdida de poder adquisitivo por la inflación; invertir busca rendimiento asumiendo posibles pérdidas.",
+    "claves": [
+      "answer",
+      "answer_provenance",
+      "answer_text_state",
+      "calculation",
+      "catalogue",
+      "external_sent",
+      "provider_mode",
+      "refused",
+      "sources",
+      "sources_total",
+      "sources_truncated",
+      "tool_events"
+    ],
+    "error": null
+  },
+  "H4_perfil_corto": {
+    "hito": "H4_perfil_corto",
+    "http": 200,
+    "segundos": 5.2,
+    "texto": "Si tienes ahorro adicional por encima de ese colchón, ese excedente sí podría ir a objetivos de más largo plazo, pero antes necesitaría saber cuánto puedes apartar al mes y si el colchón actual ya cubre tus gastos previstos; sin productos verificados no puedo prometerte rentabilidad, y recuerda que la inflación puede erosionar el poder adquisitivo aunque el importe nominal se mantenga.",
+    "claves": [
+      "answer",
+      "answer_provenance",
+      "answer_text_state",
+      "calculation",
+      "catalogue",
+      "external_sent",
+      "provider_mode",
+      "refused",
+      "sources",
+      "sources_total",
+      "sources_truncated",
+      "tool_events"
+    ],
+    "error": null
+  },
+  "H4_perfil_largo": {
+    "hito": "H4_perfil_largo",
+    "http": 202,
+    "segundos": 0.2,
+    "texto": "",
+    "claves": [
+      "answer",
+      "external_sent",
+      "provider_mode",
+      "queue",
+      "status"
+    ],
+    "error": null
+  },
+  "H4_negativa_sin_consentimiento": {
+    "hito": "H4_negativa_sin_consentimiento",
+    "http": 403,
+    "segundos": 0.2,
+    "texto": "",
+    "claves": [
+      "error"
+    ],
+    "error": {
+      "code": "CHAT_CONTEXT_NOT_ALLOWED",
+      "message": "Contexto o historial no habilitados o sin consentimiento independiente.",
+      "request_id": "d097eaa8958744e9a9fda3086c46d5d2",
+      "retryable": false
+    }
+  },
+  "H4_comparacion": {
+    "sin_perfil_http": 200,
+    "corto_http": 200,
+    "largo_http": 202,
+    "corto_y_largo_iguales": false,
+    "corto_menciona_horizonte": true,
+    "largo_menciona_horizonte": false
+  }
+}
