@@ -109,11 +109,13 @@ class ComparabilityHttpTests(unittest.TestCase):
         self.assertEqual(diagnosis["basis"], "documented_conditions")
         self.assertTrue(diagnosis["not_for_publication"])
         by_id = {item["product_id"]: item for item in diagnosis["items"]}
-        # DEP-01 no documenta tasa; DEP-02 sí, pero a 6 meses y el criterio exige 12.
-        self.assertIn("METRIC_MISSING", by_id["DEP-01"]["reason_codes"])
+        # DEP-01 documenta 3,24 % TAE a 12 meses desde su página oficial; DEP-02
+        # documenta tasa, pero a 6 meses y el criterio exige 12.
+        self.assertEqual(by_id["DEP-01"]["reason_codes"], [])
+        self.assertTrue(by_id["DEP-01"]["eligible"])
+        self.assertEqual(by_id["DEP-01"]["value"], "3.24")
         self.assertIn("PERIOD_MISMATCH", by_id["DEP-02"]["reason_codes"])
-        for item in diagnosis["items"]:
-            self.assertIsNone(item["value"])
+        self.assertIsNone(by_id["DEP-02"]["value"])
 
 
     def test_criterion_cannot_relabel_repository_family_as_a_deposit(self):
