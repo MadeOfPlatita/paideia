@@ -1,57 +1,57 @@
 # Documentación de Paideia
 
-Qué mirar primero, dónde está cada cosa y qué es histórico. Las carpetas con
-fecha son evidencia de una misión concreta: se conservan, no son estado vigente.
+Índice de lo que se conserva en `docs/`. La regla es simple: aquí solo queda lo
+que la aplicación lee, lo que las pruebas necesitan o lo que hace falta para
+entender y desplegar el producto. Los cuadernos de trabajo y las bitácoras de
+misiones anteriores se retiraron del repositorio; siguen en el historial de git
+si alguien los necesita.
 
-## Vigente
+## Para usar la app
 
-| Documento | Qué contiene |
-| --- | --- |
-| `../README.md` | Qué es Paideia, enlaces, cómo ejecutarla y límites |
-| `operacion/DESPLIEGUE-RENDER.md` | Cómo está desplegada la demo, variables y comprobaciones |
-| `operacion/AUDITORIA-NOCHE-20261105.md` | Defectos detectados y cuáles quedaron corregidos |
-| `producto/CUPO-Y-LIMITES.md` | Qué protege el contador de llamadas y qué no |
-| `producto/ESTADO_Y_PLAN.md` | En qué punto está el producto y qué falta |
-| `producto/REQUISITOS.md` | Requisitos del trabajo |
-| `producto/PAIDEIA-CUESTIONARIO-REVISION.md` | Por qué el perfil pregunta solo cuatro cosas |
+| Carpeta | Qué contiene | Por qué se queda |
+| --- | --- | --- |
+| `producto/` | Requisitos, estado, idea y límites vigentes (`CUPO-Y-LIMITES.md`) | Explica **qué promete** la app y qué no |
+| `operacion/` | Despliegue en Render, auditorías recientes y seguridad | Pasos para publicarla y evidencia de las revisiones |
 
-## Producto y datos
+Empieza por el [`README.md`](../README.md) de la raíz y sigue por
+`producto/REQUISITOS.md`.
 
-| Documento | Qué contiene |
-| --- | --- |
-| `catalogo/TRANSCRIPCION-2026-11-05.md` | Qué se transcribió de cada producto y qué falta |
-| `catalogo/transcripcion-2026-11-05.json` | Condiciones con URL, título y fecha |
-| `pai-afirmaciones/CATALOGO.md` | Afirmaciones cerradas que Pai puede componer |
-| `pai-afirmaciones/ESPECIFICACION.md` | Contrato técnico del canal estructurado |
-| `planificacion-03/05-perfil-conversacion/perfil.schema.json` | Esquema v2 del perfil |
-| `validacion-04/05-catalogo/candidatos.json` | Instantánea del catálogo que lee la app |
-| `operacion/seguridad/AUDITORIA-REPO-PUBLICO.md` | Secretos, rutas y datos retirados del índice |
-| `operacion/seguridad/AUDITORIA-DESPLIEGUE.md` | Cabeceras y diferencias entre despliegues |
+## Datos que la aplicación lee en ejecución
 
-## Misiones y evidencia
+| Carpeta | Qué contiene | Quién la usa |
+| --- | --- | --- |
+| `validacion-04/05-catalogo/` | `candidatos.json` y `evidencia/sources-ledger.json` | El servidor, al construir el catálogo y sus fuentes |
+| `validacion-04/03-benchmark/` | `dataset.json` | El banco de pruebas de calidad de contexto |
+| `catalogo/` | Transcripción de condiciones con URL y fecha | Script de fusión del catálogo (`app/scripts/merge_conditions.py`) |
 
-Todo lo que cuenta *cómo* se llegó hasta aquí está en `historico/`, agrupado por
-misión y con sus capturas y volcados:
+Estos ficheros son **dato de producción**, no documentación: si se mueven, cambian
+las rutas de `app/app.py` y `app/conditions_service.py`. La copia curada que ve
+el usuario está en `app/data/condiciones.json`.
 
-- `historico/mision-4h30/`, `historico/noche-funcional/`, `historico/overnight-ampliado/`
-- `historico/catalogo-condiciones-20261103/`, `historico/catalogo-hasta-bloqueo/`
-- `historico/diseno-ideas/`, `historico/diseno-hasta-bloqueo/` — dirección visual
-- `historico/contador-hasta-bloqueo/` — contador de misión (N2 sigue abierto)
-- `historico/pai-calidad/` — intentos de Pai, incluido el rechazado
-- `historico/GOAL-*.md`, `historico/CIERRE-*.md`, `historico/INFORME-*.md`
+## Material de apoyo y pruebas
 
-Los manifiestos que el código necesita (`mision-nocturna-20261104/`,
-`ia-real-siguiente/`) se quedan en la raíz de `docs/` a propósito: moverlos
-rompería las pruebas.
+| Carpeta | Qué contiene | Por qué se queda |
+| --- | --- | --- |
+| `pai-afirmaciones/` | Catálogo cerrado de afirmaciones y su especificación | Origen literal del canal de afirmaciones (`app/claims_catalog.py`) |
+| `planificacion-03/` | Esquema del perfil de conversación | Fixture de las pruebas del perfil |
+| `ia-real-siguiente/` | Manifiestos de misión usados por el contador | Fixture de las pruebas de misión |
+| `mision-nocturna-20261104/` | Manifiesto de la misión nocturna | Lo lee `app/pai_setup.py` para identificar la misión |
 
-## Qué no se versiona
+## Lo que se retiró
 
-- Claves: viven en `.env` (ignorado) o en el panel del proveedor.
-- Capturas y volcados pesados: solo el informe que los cita.
-- Intentos descartados: `archivo/` (Cloudflare, spikes, pruebas antiguas).
+- Bitácoras de misiones anteriores, informes de calidad y evidencias de sesiones
+  de usuario: eran registro de trabajo, no estado del producto.
+- Investigación de APIs y notas de proveedores que no usa la app.
+- Intentos descartados (Cloudflare Workers, spikes, pruebas antiguas) y capturas
+  de auditoría.
 
-## Reglas
+Todo ello permanece en el historial de git. Si necesitas una pieza concreta,
+búscala con `git log --diff-filter=D -- <ruta>`.
 
-- Un documento nuevo entra en la carpeta que le toca, sin duplicarse.
-- Si un documento deja de ser cierto, se corrige o se mueve a `historico/`.
-- Nada de nombres con fechas en la raíz del repositorio.
+## Convenciones
+
+- Los documentos van en español, con la fecha en el nombre cuando son evidencia
+  (`AUDITORIA-SONDAS-20261105.md`).
+- Lo que describe el producto debe poder comprobarse contra el código o contra
+  una ejecución; si no, se marca como límite o hipótesis.
+- Nada de claves, tokens ni datos personales: solo nombres de variables.

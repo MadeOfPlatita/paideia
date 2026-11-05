@@ -1,4 +1,0 @@
-status=200
-content-type=text/html; charset=utf-8
-url=https://www.cnmv.es/portal/consultas/mostrarlistados?id=26&lang=es&page=1
-bytes_saved=268783

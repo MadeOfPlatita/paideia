@@ -1,3 +1,0 @@
-variant,read_count,concurrent_workers,provider_requests,cache_hits,stale_fallbacks,successful_results,rows_returned,distinct_result_sets,p50_ms_local,p95_ms_local,p99_ms_local,max_ms_local,source_kind
-direct_api_read,100,100,100,0,0,100,300,1,3.603,4.101,4.256,4.387,synthetic_test
-persistent_json_snapshot,100,100,1,99,0,100,300,1,3.993,5.627,5.641,5.66,synthetic_test

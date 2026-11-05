@@ -1,9 +1,0 @@
-{
-  "fixture_url": "http://127.0.0.1:61394",
-  "port_closed": true,
-  "visible_synthetic_label": true,
-  "not_for_publication": true,
-  "fixture_count": 1,
-  "two_product_comparison": "not exercised: fixture includes only one item",
-  "external_calls": 0
-}

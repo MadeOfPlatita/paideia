@@ -1,6 +1,0 @@
-{
- "n": 9,
- "q": "Una fuente secundaria atribuye una tasa a una entidad. ¿Basta para afirmar que la fuente es oficial?",
- "answer_text": "Se ha omitido el texto del modelo porque contenía una afirmación de fuente oficial o vigencia sin respaldo local. No se presenta como dato.\n\nTrazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.\n\nSe ha omitido el texto del modelo: atribuía una fuente, una vigencia o una confirmación sin datos locales que la respalden.\n\nEl texto de la respuesta no se valida semánticamente contra las fuentes ni contra las condiciones; solo las citas de la herramienta son datos locales.\n\nSin resultados de herramienta en este turno: cualquier cifra del texto no está respaldada por una cita local.",
- "elapsed_s": 3.0
-}

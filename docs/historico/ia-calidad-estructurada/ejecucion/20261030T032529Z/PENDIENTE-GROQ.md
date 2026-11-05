@@ -1,9 +1,0 @@
-# Pendiente: validación real con Groq
-
-**No autorizada esta noche.** La modalidad estructurada actual exige un objeto explícitamente `test_only` y un método Python de selección ficticia. La arquitectura no demuestra que Groq cumpla el contrato, ni que el prompt, la selección de IDs o una herramienta real tengan calidad adecuada. Tampoco hay evaluación A/B/C válida ni permisos para perfil o historial remoto.
-
-Antes de cualquier conexión futura: revisión del adaptador para proveedor real y presupuesto persistente, decisión sobre qué contenido enviar, autorización separada del usuario, nuevo plazo vinculante si el anterior ha vencido y entrada voluntaria en ventana local enmascarada con confirmación Free sin facturación. No usar claves de procesos anteriores ni ampliar o borrar diarios. Verificar términos y presupuesto vigentes antes de proceder.
-
-Hipótesis de prueba futura mínima: con una consulta sintética sobre ahorrar e invertir, el proveedor selecciona únicamente IDs válidos y no intenta añadir texto o datos; una mala salida se rechaza sin nueva llamada. Inspeccionar luego que los textos editoriales locales cubren correctamente la pregunta: un DTO válido por sí solo no prueba pertinencia o calidad del modelo. Comparar con la respuesta real histórica que afirmó erróneamente ausencia de riesgo nominal.
-
-Solo si la prueba conceptual es correcta y completa, contrastar el cálculo ficticio de 1000 EUR al 3% simple durante un año con el motor local, registrando llamadas reales y costes/desconocidos. El coste en llamadas de un eventual adaptador aún no está definido: no anticipar una cifra ni reiniciar cuota. A/B/C necesita consentimiento y presupuesto propios y debe detenerse ante fallo, corte o límite; no autoejecutarla. No convertir resultados sintéticos en respuestas de IA.

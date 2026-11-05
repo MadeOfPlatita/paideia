@@ -1,8 +1,0 @@
-SOURCE: https://developers.cloudflare.com/kv/concepts/how-kv-works/
-TITLE: How KV works
-RETRIEVAL TOOL: web_extract, successful page extraction; response did not expose resolved-URL metadata.
-SCOPE: verbatim excerpts, not the full page.
-
-KV achieves high performance by being eventually-consistent. At the Cloudflare global network location at which changes are made, these changes are usually immediately visible. However, this is not guaranteed and therefore it is not advised to rely on this behaviour. In other global network locations changes may take up to 60 seconds or more to be visible as their cached versions of the data time-out.
-
-Workers KV is an eventually-consistent edge key-value store.

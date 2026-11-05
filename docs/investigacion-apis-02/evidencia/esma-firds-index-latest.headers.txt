@@ -1,4 +1,0 @@
-status=200
-content-type=application/json;charset=utf-8
-url=https://registers.esma.europa.eu/solr/esma_registers_firds_files/select?q=%2A&wt=json&indent=true&start=0&rows=3&sort=publication_date+desc
-bytes_saved=1583

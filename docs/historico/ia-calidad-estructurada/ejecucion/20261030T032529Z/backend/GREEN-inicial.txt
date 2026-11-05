@@ -1,6 +1,0 @@
-test_editorial_response_is_rendered_server_side (test_structured_education.StructuredEducationTests.test_editorial_response_is_rendered_server_side) ... ok
-
-----------------------------------------------------------------------
-Ran 1 test in 0.000s
-
-OK

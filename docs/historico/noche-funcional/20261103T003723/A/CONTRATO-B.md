@@ -1,7 +1,0 @@
-# Contrato para B: comparación de escenarios v1
-
-`window.getScenarioComparisonSnapshot()` devuelve una copia JSON independiente: `{schema:"paideia.scenario-comparison", schema_version:1, scenarios:[{id:"A"|"B",status:"dirty"|"pending"|"error"|"current",version:number,inputs:{principal,annual_rate_percent,years,monthly_contribution,inflation_percent,method},result:object|null}]}`. `inputs` son cadenas tal como están en los controles; `result` es la respuesta íntegra del motor, solo disponible cuando status es `current`. `result.assumptions` contiene los supuestos normalizados que realmente usó el servidor y `result.series`/`summary` las cifras decimales. En cualquier otro estado `result` es null; no se conserva un resultado previo exportable.
-
-El evento `scenario-comparison-change` se emite en edición, inicio y conclusión de petición. Tomar snapshot en el momento de imprimir y exigir ambos `current`; no almacenar resultados previamente extraídos para impresión posterior. Las versiones cambian en cada edición o solicitud; una respuesta pendiente con versión anterior se descarta. No contiene perfil ni IA. Las diferencias entre escenarios no están en el motor; no inventarlas ni usar aritmética binaria para importes. Sin persistencia tras recargar.
-
-Interfaz disponible en la ruta existente `#escenarios`. Añadir integración de informe coordinando hook con A; no editar simultáneamente `static/app.js` sin acuerdo.

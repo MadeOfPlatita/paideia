@@ -1,6 +1,0 @@
-test_reports_contract_and_label_relevance_separately_without_winner (test_structured_eval.SyntheticEvalTests.test_reports_contract_and_label_relevance_separately_without_winner) ... ok
-
-----------------------------------------------------------------------
-Ran 1 test in 0.047s
-
-OK

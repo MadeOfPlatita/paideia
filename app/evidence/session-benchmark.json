@@ -1,8 +1,0 @@
-{
-  "attempted_calls": 1,
-  "results": [],
-  "stop_reason": "provider_error",
-  "winner": null,
-  "provenance": "provider_unverified",
-  "real_model_result_count": null
-}

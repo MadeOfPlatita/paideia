@@ -1,8 +1,0 @@
-{"route": "#inicio", "width": 390, "scrollWidth": 390, "title": "Tu ruta, a tu ritmo", "errors": [], "passed": true}
-{"route": "#perfil", "width": 390, "scrollWidth": 390, "title": "Tu mapa para explorar", "errors": [], "passed": true}
-{"route": "#biblioteca", "width": 390, "scrollWidth": 390, "title": "Biblioteca de candidatos", "errors": [], "passed": true}
-{"route": "#comparar", "width": 477, "scrollWidth": 477, "title": "Comparar candidatos", "errors": [], "passed": true}
-{"route": "#escenarios", "width": 390, "scrollWidth": 390, "title": "Prueba otros supuestos", "errors": [], "passed": true}
-{"route": "#simulacion", "width": 390, "scrollWidth": 390, "title": "Ensayo de una decisión", "errors": [], "passed": true}
-{"route": "#glosario", "width": 390, "scrollWidth": 390, "title": "Un glosario para leer con calma", "errors": [], "passed": true}
-{"route": "#privacidad", "width": 390, "scrollWidth": 390, "title": "Tu perfil y tu alcance", "errors": [], "passed": true}

@@ -1,7 +1,0 @@
-# DTO HTTP: prueba sintética de estado de envío
-
-- RED: `python -m pytest tests/test_http_send_state.py -q --tb=short` falló con `KeyError: send_state` para el fallo de conexión.
-- GREEN inicial: 1 prueba superada. Al ampliar, RED: estado `not_started` falsificado mediante método de proveedor sustituido; tras verificar integridad, 5 superadas. Otro RED: estado falsificado desde `Session.status`; tras exigir procedencia del límite Groq, 6 superadas.
-- Regresión dirigida: `python -m pytest tests/test_http_send_state.py tests/test_functional05_http.py tests/test_scoped_service.py tests/test_session_structured_integration.py tests/test_transport_send_state.py -q --tb=short`: 31 superadas, 9 subtests, 2 avisos PytestCollectionWarning por clase con constructor.
-- Ensayo HTTP local: clave y manifiesto ficticios, ledger temporal, admisión real, conexión HTTPS sustituida y socket limitado a loopback. Un intento contabilizado por fallo de transporte, sin reintento; servidor cerrado y thread unido en `finally`. Se simularon fallo antes de request, en request y tras request. No hubo llamada Groq real.
-- Alcance: no se activó la ruta estructurada real; en rutas no confiables y fallos genéricos se omite el estado. `completed` significa que retornó `request`, no que el proveedor procesara o respondiera. Las comprobaciones de identidad/integridad no constituyen sandbox frente a mutación arbitraria del proceso Python. No se ejecutó la suite completa por restricciones de Tk/red/tiempo.

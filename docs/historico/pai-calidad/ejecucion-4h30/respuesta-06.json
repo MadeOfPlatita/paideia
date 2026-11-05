@@ -1,6 +1,0 @@
-{
- "n": 6,
- "q": "Quiero comparar dos depósitos, pero solo conozco el plazo de uno. ¿Qué datos faltan antes de comparar?",
- "answer_text": "Para comparar correctamente los dos depósitos necesitas conocer, al menos, los siguientes datos del depósito cuyo plazo ya tienes: 1. **Tipo de interés (tasa anual)**, indicando si es fija o variable. 2. **Frecuencia de capitalización** (mensual, trimestral, anual, etc.). 3. **Importe del capital inicial** (y cualquier aportación adicional). 4. **Cualquier comisión o cargo** que se aplique. Con estos parámetros podrás estimar el rendimiento y la rentabilidad comparables.\n\nTrazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.\n\nEl texto de la respuesta no se valida semánticamente contra las fuentes ni contra las condiciones; solo las citas de la herramienta son datos locales.\n\nSin resultados de herramienta en este turno: cualquier cifra del texto no está respaldada por una cita local.",
- "elapsed_s": 3.0
-}

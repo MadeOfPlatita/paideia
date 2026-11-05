@@ -1,4 +1,0 @@
-Attempted GET:
-https://data.ecb.europa.eu/data/datasets/csec/download
-
-Observed outcome: terminal tool call timed out after 40 seconds. No HTTP status, Content-Type, response body, or observed fields were captured. Do not treat this as an ECB endpoint failure; the request outcome is unverified.

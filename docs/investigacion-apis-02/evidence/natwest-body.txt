@@ -1,7 +1,0 @@
-
-{
-  "status": 404,
-  "title": "Not Found",
-  "description": "Resource Not Found."
-}
-			

@@ -1,6 +1,0 @@
-{
- "n": 4,
- "q": "¿Qué debo revisar sobre liquidez y cancelación antes de elegir un depósito?",
- "answer_text": "Antes de contratar un depósito debes comprobar su **plazo y tipo de cancelación** (puede ser libre, con penalidad o a vencimiento). Revisa las **tarifas de gestión** y la **tasa de interés** que se aplicará según el tipo de depósito (simple, compuesta, con intereses mensuales o al vencimiento). Consulta también la **garantía del depósito** (p.ej. Fondo de Garantía de Depósitos) y la **solvencia del banco**, para asegurarte de que tu capital está protegido en caso de insolvencia.\n\nTrazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.\n\nEl texto de la respuesta no se valida semánticamente contra las fuentes ni contra las condiciones; solo las citas de la herramienta son datos locales.\n\nSin resultados de herramienta en este turno: cualquier cifra del texto no está respaldada por una cita local.",
- "elapsed_s": 3.0
-}
