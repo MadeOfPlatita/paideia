@@ -93,7 +93,10 @@ class CountedSessionRouteTests(RootCase):
     def test_counted_session_transport_is_blocked_when_exhausted(self):
         import secure_groq_session
 
-        directory = self.provision(cap=1)
+        # La ventana fija caducó el 4/11/2026; el transporte usa el reloj real, así que
+        # esta ruta necesita una ventana que contenga el instante de la prueba.
+        now = datetime.now(UTC)
+        directory = self.provision(cap=1, start=now - timedelta(hours=1), cutoff=now + timedelta(hours=1))
         (directory / "attempts.jsonl").write_text(json.dumps({
             "schema": mission_ledger.JOURNAL_SCHEMA, "n": 1,
             "at": START.isoformat(), "pid": 1, "route": "groq_session"}) + "\n", encoding="utf-8")
