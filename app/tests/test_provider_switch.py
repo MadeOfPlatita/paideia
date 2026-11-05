@@ -44,7 +44,7 @@ class ProviderSelectionTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip().split(), [
             "api.commandcode.ai", "/provider/v1/chat/completions",
-            "COMMANDCODE_API_KEY", "deepseek/deepseek-v4.1-flash", "Command", "Code",
+            "COMMANDCODE_API_KEY", "reflection/beam:free", "Command", "Code",
         ])
 
     def test_an_unknown_name_falls_back_to_groq(self):
@@ -92,7 +92,7 @@ class ModelEnvTests(unittest.TestCase):
     def test_commandcode_ignores_the_legacy_groq_model(self):
         result = run("import pai_setup as s; print(s._model())",
                      PAIDEIA_LLM_PROVIDER="commandcode", PAIDEIA_GROQ_MODEL="openai/gpt-oss-120b")
-        self.assertEqual(result.stdout.strip(), "deepseek/deepseek-v4.1-flash", result.stderr)
+        self.assertEqual(result.stdout.strip(), "reflection/beam:free", result.stderr)
 
     def test_commandcode_takes_its_own_model_variable(self):
         result = run("import pai_setup as s; print(s._model())",

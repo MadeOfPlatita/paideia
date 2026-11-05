@@ -53,7 +53,7 @@ solo a ese host:
 | --- | --- | --- | --- |
 | `groq` (por defecto) | `api.groq.com` | `GROQ_API_KEY` | `openai/gpt-oss-20b` |
 | `vercel` | `ai-gateway.vercel.sh` | `AI_GATEWAY_API_KEY` | `reflection/beam-free` |
-| `commandcode` | `api.commandcode.ai` | `COMMANDCODE_API_KEY` | `deepseek/deepseek-v4.1-flash` |
+| `commandcode` | `api.commandcode.ai` | `COMMANDCODE_API_KEY` | `reflection/beam:free` |
 
 En el panel de Render, en *Environment*:
 
