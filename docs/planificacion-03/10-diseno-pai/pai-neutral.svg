@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc" focusable="false">
-  <title id="title">Pai — estado neutral</title>
-  <desc id="desc">Mascota triangular azul con expresión tranquila y un pequeño pliegue terracota.</desc>
-  <path d="M80 12 148 145H12Z" fill="#3157B7" stroke="#18272D" stroke-width="5" stroke-linejoin="round"/>
-  <path d="m80 30 20 35H60Z" fill="#B74734"/>
-  <circle cx="56" cy="88" r="5" fill="#FFFFFF"/>
-  <circle cx="104" cy="88" r="5" fill="#FFFFFF"/>
-  <path d="M69 112q11 8 22 0" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
-</svg>

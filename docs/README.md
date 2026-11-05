@@ -22,6 +22,7 @@ Empieza por el [`README.md`](../README.md) de la raíz y sigue por
 | --- | --- | --- |
 | `validacion-04/05-catalogo/` | `candidatos.json` y `evidencia/sources-ledger.json` | El servidor, al construir el catálogo y sus fuentes |
 | `validacion-04/03-benchmark/` | `dataset.json` | El banco de pruebas de calidad de contexto |
+| `validacion-04/04-contexto/fixtures/` | Perfiles sintéticos completos | Fixture de las pruebas de contexto |
 | `catalogo/` | Transcripción de condiciones con URL y fecha | Script de fusión del catálogo (`app/scripts/merge_conditions.py`) |
 
 Estos ficheros son **dato de producción**, no documentación: si se mueven, cambian
