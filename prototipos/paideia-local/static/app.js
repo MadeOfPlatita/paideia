@@ -219,6 +219,53 @@ function conditionsLabel(product) {
   return product && product.conditions_state === "pending" ? "Condiciones pendientes" : "Condiciones no validadas para publicar";
 }
 
+// Filas de la ficha: qué métrica se muestra, cómo se llama y cómo se formatea.
+// Solo entran las que la transcripción trae con valor; el resto no genera fila.
+const CONDITION_ROWS = Object.freeze({
+  annual_rate_percent: { label: "Tasa anual (TAE)", format: (v) => `${formatRate(v)}` },
+  term_months: { label: "Plazo", format: (v) => `${v} meses` },
+  isin: { label: "ISIN", format: (v) => v },
+  ter_percent: { label: "TER", format: (v) => `${formatRate(v)} anual` },
+  management_fee_percent: { label: "Comisión de gestión", format: (v) => `${formatRate(v)} anual` },
+  custody_fee_percent: { label: "Comisión de depositario", format: (v) => `${formatRate(v)} anual` },
+  entry_fee_percent: { label: "Comisión de entrada", format: (v) => formatRate(v) },
+  exit_fee_percent: { label: "Comisión de salida", format: (v) => formatRate(v) },
+  performance_fee_percent: { label: "Comisión de éxito", format: (v) => formatRate(v) },
+  risk_scale: { label: "Riesgo (SRI)", format: (v) => v },
+  minimum_eur: { label: "Inversión mínima", format: (v) => `${formatEuros(v)} €` },
+  maximum_eur: { label: "Importe máximo", format: (v) => `${formatEuros(v)} €` },
+  nav_eur: { label: "Valor liquidativo", format: (v) => `${formatEuros(v)} €` },
+  marginal_rate_percent: { label: "Tipo marginal", format: (v) => `${formatRate(v)}` },
+  minimum_price_percent: { label: "Precio mínimo aceptado", format: (v) => `${formatRate(v)} del nominal` },
+  maturity_date: { label: "Vencimiento", format: (v) => v },
+  holding_period_years: { label: "Periodo recomendado", format: (v) => `${v} años` },
+  withholding_percent: { label: "Retención fiscal", format: (v) => `${formatRate(v)}` },
+  category: { label: "Categoría", format: (v) => v },
+  manager: { label: "Gestora", format: (v) => v },
+  depositary: { label: "Depositaria", format: (v) => v },
+  base_currency: { label: "Divisa base", format: (v) => v },
+  replication: { label: "Réplica", format: (v) => v },
+  sfdr_article: { label: "Artículo SFDR", format: (v) => v },
+  ucits: { label: "UCITS", format: (v) => v },
+});
+
+function formatEuros(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return String(value);
+  return number.toLocaleString("es-ES", { maximumFractionDigits: 2 });
+}
+
+function conditionRowText(condition) {
+  if (!condition || typeof condition.metric !== "string") return "";
+  const row = CONDITION_ROWS[condition.metric];
+  if (!row) return "";
+  if (condition.state !== "known" || condition.value === null || condition.value === undefined || condition.value === "") {
+    return `${row.label}: sin dato documentado`;
+  }
+  const formatted = row.format(String(condition.value));
+  return formatted ? `${row.label}: ${formatted}` : `${row.label}: sin dato utilizable`;
+}
+
 function issuerLabel(product) {
   return product && typeof product.issuer === "string" && product.issuer.trim() ? product.issuer : "Emisor no indicado en este registro";
 }
@@ -1991,13 +2038,9 @@ function renderProductDetail() {
       "data-panel");
     const list = el("ul", { className: "detail-list" });
     for (const condition of conditionEntry.conditions) {
-      let text = "";
-      if (condition.metric === "annual_rate_percent") {
-        const value = condition.state === "known" ? `${formatRate(condition.value)} TAE` : "sin cifra utilizable";
-        text = `Tasa anual (TAE): ${value} · ${conditionStateText(condition)}`;
-      } else if (condition.metric === "term_months") {
-        text = `Plazo: ${condition.state === "known" ? `${condition.value} meses` : "no documentado"} · ${conditionStateText(condition)}`;
-      }
+      const rowText = conditionRowText(condition);
+      if (!rowText) continue;
+      let text = `${rowText} · ${conditionStateText(condition)}`;
       if (condition.effective_to) text += ` · vigencia hasta ${condition.effective_to}`;
       if (Array.isArray(condition.notes) && condition.notes.length) {
         text += ` · ${condition.notes.filter((note) => typeof note === "string").join(" ").slice(0, 400)}`;

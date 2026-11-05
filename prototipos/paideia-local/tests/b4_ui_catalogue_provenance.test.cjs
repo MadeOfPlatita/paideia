@@ -51,12 +51,18 @@ function setup() {
     },
   };
   vm.createContext(ctx);
+  // La tabla de filas de la ficha es una constante de módulo, no una función.
+  const tablaInicio = code.indexOf('const CONDITION_ROWS');
+  const tablaFin = code.indexOf('\n});', tablaInicio);
+  if (tablaInicio < 0 || tablaFin < 0) throw new Error('missing CONDITION_ROWS');
+  vm.runInContext(code.slice(tablaInicio, tablaFin + 4), ctx);
   const names = [
     'isSafePrimaryUrl', 'el', 'button', 'textElement', 'badge', 'familyLabel',
     'identityLabel', 'identityKind', 'conditionsLabel', 'issuerLabel', 'productName',
     'section', 'appendPrimarySource', 'appendList', 'conditionOf', 'conditionConsultedAt',
     'conditionValidityText', 'productEffectiveDate', 'formatRate', 'conditionStateText',
     'rateSummary', 'productCard', 'renderProductDetail', 'callout', 'errorBox', 'routeLink',
+    'formatEuros', 'conditionRowText',
   ];
   vm.runInContext(names.map((name) => grab(code, name)).join('\n\n'), ctx);
   return {

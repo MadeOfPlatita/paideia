@@ -34,6 +34,37 @@ RATE_FIELDS = {
 }
 # Campos que solo aportan identidad o plazo.
 TERM_FIELDS = {"deposito": ("term", "official_document_identity", "duration_and_condition")}
+# Métricas transcritas que la ficha puede mostrar tal cual: nombre interno, unidad y
+# cómo se llama. Solo se emiten si la transcripción trae un valor; si falta, no hay fila.
+DOCUMENTED_METRICS = {
+    "isin": ("isin", "TEXT"),
+    "ter": ("ter_percent", "PERCENT"),
+    "comision_gestion": ("management_fee_percent", "PERCENT"),
+    "comision_deposito": ("custody_fee_percent", "PERCENT"),
+    "comision_entrada": ("entry_fee_percent", "PERCENT"),
+    "comision_salida": ("exit_fee_percent", "PERCENT"),
+    "comision_rendimiento": ("performance_fee_percent", "PERCENT"),
+    "riesgo": ("risk_scale", "SCALE"),
+    "importe_minimo": ("minimum_eur", "EUR"),
+    "inversion_minima": ("minimum_eur", "EUR"),
+    "suscripcion_minima": ("minimum_eur", "EUR"),
+    "importe_maximo": ("maximum_eur", "EUR"),
+    "saldo_maximo_remunerado": ("maximum_eur", "EUR"),
+    "vencimiento": ("maturity_date", "DATE"),
+    "nav": ("nav_eur", "EUR"),
+    "tipo_marginal": ("marginal_rate_percent", "PERCENT"),
+    "precio_minimo_aceptado": ("minimum_price_percent", "PERCENT"),
+    "categoria": ("category", "TEXT"),
+    "gestora": ("manager", "TEXT"),
+    "depositaria": ("depositary", "TEXT"),
+    "divisa_base": ("base_currency", "TEXT"),
+    "replica": ("replication", "TEXT"),
+    "replicacion": ("replication", "TEXT"),
+    "periodo_mantenimiento_recomendado": ("holding_period_years", "YEARS"),
+    "retencion_fiscal": ("withholding_percent", "PERCENT"),
+    "sfdr": ("sfdr_article", "TEXT"),
+    "ucits": ("ucits", "TEXT"),
+}
 # Días de gracia por familia cuando el literal no fija fin de vigencia.
 DEFAULT_TTL_DAYS = {"cuenta_remunerada": 7, "deposito": 30}
 
@@ -394,4 +425,37 @@ def _curated_conditions(record: dict, today: date) -> list[Condition]:
         conditions.append(Condition(product_id, family, "term_months", str(term), "MONTHS", "known",
                                     "CURATED_TERM", source_ids=(str(source.get("url")),) if source.get("url") else (),
                                     retrieved_at=retrieved))
+    conditions.extend(_documented_conditions(record, product_id, family))
     return conditions
+
+
+def _documented_conditions(record: dict, product_id: str, family) -> list[Condition]:
+    """Métricas transcritas que no son tasa ni plazo (TER, ISIN, comisiones, SRI...).
+
+    Se emiten solo cuando la transcripción trae un valor; si la fuente no lo publica,
+    no hay fila y la ficha lo sigue diciendo en su lista de desconocidos. Nunca se
+    deduce un valor a partir de otro.
+    """
+    emitted = {"annual_rate_percent", "term_months"}
+    salida = []
+    for item in record.get("documented") or []:
+        if not isinstance(item, dict):
+            continue
+        mapped = DOCUMENTED_METRICS.get(item.get("metric"))
+        if mapped is None:
+            continue
+        metric, unit = mapped
+        if metric in emitted:
+            continue
+        raw = item.get("value")
+        if raw is None or raw == "":
+            continue
+        url = item.get("source_url")
+        salida.append(Condition(
+            product_id, family, metric, str(raw), unit, "known", "CURATED_DOCUMENTED",
+            source_ids=(str(url),) if url else (),
+            source_refs=((str(url), item.get("source_title"), item.get("accessed")),) if url else (),
+            retrieved_at=item.get("accessed"),
+        ))
+        emitted.add(metric)
+    return salida

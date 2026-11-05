@@ -70,6 +70,9 @@ class ConditionsService:
                 fields.add("payment")
             if record.get("valid_to"):
                 fields.add("validity")
+            if any(isinstance(item, dict) and item.get("value") not in (None, "")
+                   for item in record.get("documented") or []):
+                fields.add("documented")
             return fields
         return set()
 
