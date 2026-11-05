@@ -46,7 +46,7 @@ class SnapshotGrowthTests(unittest.TestCase):
         candidates = [{"candidate_id": f"SYN-{i:02d}", "name_literal": f"TEST ONLY candidate {i}",
                        "family": "deposito", "candidate_state": "proposed",
                        "primary_url": "https://example.invalid/test-only"} for i in range(1, 22)]
-        with tempfile.TemporaryDirectory(dir=os.environ["TMPDIR"]) as directory:
+        with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR") or None) as directory:
             snapshot = Path(directory) / "test-only-candidates.json"
             snapshot.write_text(json.dumps({"candidates": candidates}), encoding="utf-8")
             with patch.object(app, "PROJECT_ROOT", Path(directory)), patch.object(app, "SNAPSHOT_PATH", snapshot):
