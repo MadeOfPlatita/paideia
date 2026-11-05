@@ -821,7 +821,7 @@ def main(argv=None):
     args = parse_args(argv)
     load_env()
     port = int(os.environ.get("PORT") or args.port)
-    host = os.environ.get("PAIDEIA_HOST") or ("0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
+    host = os.environ.get("PAIDEIA_HOST") or ("0.0.0.0" if declared_public_origin() else "127.0.0.1")
     server = create_server(host=host, port=port)
     print(f"Paideia listening on http://{host}:{server.server_port}/")
     print("Chat IA: " + ("conectado a Groq; una llamada por turno admitido." if chat_enabled() else "no configurado (sin .env con PAIDEIA_GROQ_ENABLED=1 y GROQ_API_KEY)."))

@@ -88,6 +88,24 @@ class BindRulesTests(unittest.TestCase):
             server = app.create_server(host="0.0.0.0", port=0)
             server.server_close()
 
+    def test_main_binds_loopback_when_only_port_is_set(self):
+        app = importlib.import_module("app")
+        capturado = {}
+
+        class Falso:
+            server_port = 0
+            def serve_forever(self): raise KeyboardInterrupt
+            def server_close(self): pass
+
+        def fake_create(host="127.0.0.1", port=8765, **kwargs):
+            capturado["host"] = host
+            return Falso()
+
+        with mock.patch.dict(os.environ, {"PAIDEIA_PUBLIC_ORIGIN": "", "RENDER_EXTERNAL_URL": "", "PORT": "9001"}):
+            with mock.patch.object(app, "create_server", fake_create):
+                app.main([])
+        self.assertEqual(capturado["host"], "127.0.0.1")
+
     def test_local_request_still_works_without_the_variable(self):
         app = importlib.import_module("app")
         with mock.patch.dict(os.environ, {"PAIDEIA_PUBLIC_ORIGIN": ""}):
