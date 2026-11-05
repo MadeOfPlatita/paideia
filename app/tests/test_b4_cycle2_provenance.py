@@ -25,7 +25,7 @@ TESTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(TESTS_DIR.parent))
 sys.path.insert(0, str(TESTS_DIR))
 
-from backend_services import LocalChatService, ServiceProblem
+from backend_services import CATALOGUE_WITHHELD_NOTE, LocalChatService, ServiceProblem
 from catalogue_adapter import CatalogueWithConditions
 from pai_runtime import ToolChatRunner
 from pai_tools import ConditionsUnavailable, ToolDispatcher
@@ -475,7 +475,8 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
             "message": "TEST ONLY: detalla DEP-PRESS.", "consent": CONSENT,
         })
 
-        self.assertEqual(body["answer"], "")
+        self.assertEqual(body["answer"], CATALOGUE_WITHHELD_NOTE)
+        self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))
         self.assertEqual(body["answer_text_state"], "withheld_catalogue_evidence")
         self.assertEqual(body["answer_provenance"]["text_state"], "withheld_catalogue_evidence")
@@ -501,8 +502,8 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
             status, body = request(server, "/api/chat", {
                 "message": "TEST ONLY: detalla DEP-KNOWN.", "consent": CONSENT})
 
-        self.assertEqual(status, 200)
-        self.assertEqual(body["answer"], "")
+        self.assertEqual(body["answer"], CATALOGUE_WITHHELD_NOTE)
+        self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))
         self.assertEqual(body["answer_text_state"], "withheld_catalogue_evidence")
         condition = body["catalogue"]["products"][0]["conditions"][0]

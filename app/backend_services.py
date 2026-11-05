@@ -68,6 +68,12 @@ _PLAIN_TEXT_LIMITATION = (
 )
 ANSWER_TEXT_WITHHELD_UNBACKED = "withheld_unbacked_claim"
 
+CATALOGUE_WITHHELD_NOTE = (
+    "He consultado el catálogo y te dejo sus fuentes locales al lado. No repito cifras en "
+    "prosa: las tasas y comisiones solo valen si salen citadas de la ficha."
+)
+
+
 # Frontera de superficie, NO verificación semántica. Se retiene el texto libre que
 # contiene los materiales con los que se puede presentar un dato inventado como
 # hecho: cifras financieras, identificadores locales o marcas de fuente/vigencia.
@@ -782,7 +788,12 @@ class LocalChatService:
                 # Defensa en profundidad: si hubo datos de catálogo, la prosa no se entrega.
                 answer_text_state = ANSWER_TEXT_WITHHELD
                 result = {**result, "answer_text_state": ANSWER_TEXT_WITHHELD}
-            answer_text = result["answer"] if answer_text_state != ANSWER_TEXT_WITHHELD else ""
+            if answer_text_state == ANSWER_TEXT_WITHHELD and catalogue.get("used") is True:
+                # La prosa del modelo no se entrega cuando hay datos de catálogo, pero
+                # un hueco tampoco sirve: se responde con una nota fija del servidor.
+                answer_text = CATALOGUE_WITHHELD_NOTE
+            else:
+                answer_text = result["answer"] if answer_text_state != ANSWER_TEXT_WITHHELD else ""
             if answer_text_state != ANSWER_TEXT_WITHHELD:
                 answer_text = answer_text or result["refusal"] or ""
             calculation = result.get("calculation")

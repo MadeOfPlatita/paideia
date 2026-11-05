@@ -20,7 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from backend_services import CHAT_NOTICE_VERSION, LocalChatService
+from backend_services import CHAT_NOTICE_VERSION, LocalChatService, CATALOGUE_WITHHELD_NOTE
 from catalogue_adapter import CatalogueWithConditions
 from chat_admission import AdmissionPolicy, InMemoryBudgetState, InterfazChatAdmission
 from pai_runtime import ToolChatRunner
@@ -597,7 +597,8 @@ class ServiceAnswerProvenanceTests(unittest.TestCase):
         body = service.chat({"message": "TEST ONLY: detalla DEP-KNOWN.", "consent": CONSENT})
 
         # El turno usó el catálogo: el texto libre no se entrega; sí los datos locales.
-        self.assertEqual(body["answer"], "")
+        self.assertEqual(body["answer"], CATALOGUE_WITHHELD_NOTE)
+        self.assertNotIn("TEST ONLY", body["answer"])
         self.assertEqual(body["answer_text_state"], "withheld_catalogue_evidence")
         self.assertEqual(body["catalogue"]["products"][0]["id"], "DEP-KNOWN")
         self.assertEqual(body["answer_provenance"]["text_validation"], "not_performed")
