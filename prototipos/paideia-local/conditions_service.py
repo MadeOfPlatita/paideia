@@ -48,6 +48,31 @@ class ConditionsService:
             return {"sources": []}
         return document
 
+    def documented_fields(self, product_id: str) -> set:
+        """Campos que la ficha transcrita documenta con fuente (rate, term, min...)."""
+        document = self._curated() or {}
+        records = document.get("records") if isinstance(document, dict) else None
+        if not isinstance(records, list):
+            return set()
+        for record in records:
+            if not isinstance(record, dict) or record.get("candidate_id") != product_id:
+                continue
+            fields = set()
+            if record.get("tiers"):
+                fields.add("rate")
+            if record.get("term_months"):
+                fields.add("term")
+            if record.get("minimum_eur") is not None:
+                fields.add("min")
+            if record.get("maximum_eur") is not None:
+                fields.add("max")
+            if record.get("interest_payment"):
+                fields.add("payment")
+            if record.get("valid_to"):
+                fields.add("validity")
+            return fields
+        return set()
+
     def describe(self, today: date | None = None) -> dict:
         snapshot = _read_json(self._snapshot_path)
         if not isinstance(snapshot, dict):

@@ -91,10 +91,12 @@ test('B6 ACC-01 toma la fecha real de la condición, no un as_of ausente', () =>
   const product = productOf('ACC-01');
   const condition = conditionOf('ACC-01', 'annual_rate_percent');
   assert.equal(product.as_of, null); // la API no publica un as_of respaldado para ACC-01
-  assert.equal(condition.retrieved_at, '2026-10-26');
+  assert.equal(condition.retrieved_at, '2026-11-05');
   const source = sourceOf('ACC-01');
-  assert.equal(source.retrieved_at, '2026-10-26');
-  assert.equal(source.url, product.primary_url);
+  assert.equal(source.retrieved_at, '2026-11-05');
+  // La condición viene de la página de la promoción, no del PDF de la ficha.
+  assert.equal(source.url, 'https://renaultbank.es/cuenta-contigo-nuevos-clientes/');
+  assert.notEqual(source.url, product.primary_url);
   assert.equal(source.condition.value, '2.61');
   assert.equal(source.condition.state, 'known');
   assert.equal(source.condition.effective_to, '2026-11-18');

@@ -99,7 +99,10 @@ class CatalogueApiTests(unittest.TestCase):
             "conflicts", "unknown_fields",
         })
         self.assertTrue(all(item["publication_ready"] is False for item in body["items"]))
-        self.assertTrue(all(item["conditions_state"] == "pending" for item in body["items"]))
+        # El estado ya no es siempre «pending»: las fichas transcritas con fuente lo dicen.
+        estados = {item["conditions_state"] for item in body["items"]}
+        self.assertTrue(estados <= {"pending", "documented", "partial"}, estados)
+        self.assertIn("documented", estados)
         self.assertNotIn("available_fields", body_text)
         self.assertNotIn("promo_tae", body_text)
         self.assertNotIn("2,50 %", body_text)

@@ -31,7 +31,7 @@
     Object.freeze({
       key: "respuestas.objetivo", legacyKey: "objective", branch: "core", kind: "choice",
       label: "Objetivo de aprendizaje", title: "¿Qué te gustaría explorar primero?",
-      help: "Organiza el tema que quieres aprender; no se usa para elegir productos.",
+      help: "Orienta la conversación con Pai y el orden de los ejemplos; no elige productos por ti.",
       options: choiceOptions(enumValues.objective, ["Entender un colchón para imprevistos", "Preparar un gasto con fecha", "Aprender sobre ahorro a largo plazo", "Entender el riesgo y las posibles pérdidas", "Comparar familias que yo elija", "Aprender conceptos básicos", "Solo curiosear"])
     }),
     Object.freeze({
@@ -49,9 +49,8 @@
     Object.freeze({
       key: "respuestas.experiencia", legacyKey: "knowledge", branch: "core", kind: "experience",
       label: "Conocimientos y experiencia", title: "¿Qué conoces y qué te gustaría aprender?",
-      help: "La experiencia no demuestra que otro producto sea adecuado. Los temas sin seleccionar no se interpretan como falta de interés.",
-      options: choiceOptions(enumValues.experience, ["Estoy empezando", "He leído o comparado, pero no los he tenido", "He tenido alguno y quiero repasar", "Prefiero no contar mi experiencia"]),
-      topics: choiceOptions(enumValues.topics, ["Cuentas remuneradas", "Depósitos", "Letras o bonos", "Fondos", "ETF"])
+      help: "La experiencia no demuestra que otro producto sea adecuado. Sirve para ajustar el nivel de las explicaciones.",
+      options: choiceOptions(enumValues.experience, ["Estoy empezando", "He leído o comparado, pero no los he tenido", "He tenido alguno y quiero repasar", "Prefiero no contar mi experiencia"])
     }),
     Object.freeze({
       key: "detalle_economico.importe_objetivo", legacyKey: null, branch: "economy", kind: "amount",
@@ -59,27 +58,27 @@
       help: "Opcional. Importe en euros; introduce una cifra orientativa, no hace falta que sea exacta."
     }),
     Object.freeze({
-      key: "detalle_economico.ingresos_netos", legacyKey: "income", branch: "economy", kind: "flow",
+      key: "detalle_economico.ingresos_netos", legacyKey: "income", branch: "economy", kind: "flow", asked: false,
       label: "Ingresos netos mensuales", title: "¿En qué importe mensual aproximado están tus ingresos netos?",
       help: "Opcional. No necesitamos nóminas, empleador ni datos bancarios. La periodicidad se fija en mensual para este campo."
     }),
     Object.freeze({
-      key: "detalle_economico.gastos_esenciales", legacyKey: "expenses", branch: "economy", kind: "flow",
+      key: "detalle_economico.gastos_esenciales", legacyKey: "expenses", branch: "economy", kind: "flow", asked: false,
       label: "Gastos esenciales mensuales", title: "¿En qué importe mensual aproximado están tus gastos esenciales?",
       help: "Opcional. Por ejemplo, vivienda, alimentación y transporte. No se calcula solvencia."
     }),
     Object.freeze({
-      key: "detalle_economico.deuda", legacyKey: null, branch: "economy", kind: "debt",
+      key: "detalle_economico.deuda", legacyKey: null, branch: "economy", kind: "debt", asked: false,
       label: "Deuda", title: "¿Estás pagando alguna deuda ahora?",
       help: "Opcional. Sin deuda declarada, saldo, cuota y coste desconocidos son estados distintos. No se compara deuda con una inversión."
     }),
     Object.freeze({
-      key: "detalle_economico.colchon_liquido", legacyKey: null, branch: "economy", kind: "amount",
+      key: "detalle_economico.colchon_liquido", legacyKey: null, branch: "economy", kind: "amount", asked: false,
       label: "Colchón líquido", title: "¿En qué importe aproximado está el dinero que podrías usar con rapidez?",
       help: "Opcional. No fijamos un colchón obligatorio ni deducimos cuánto deberías tener."
     }),
     Object.freeze({
-      key: "detalle_economico.compromisos_proximos", legacyKey: null, branch: "economy", kind: "commitments",
+      key: "detalle_economico.compromisos_proximos", legacyKey: null, branch: "economy", kind: "commitments", asked: false,
       label: "Compromisos próximos", title: "¿Prevés algún gasto o compromiso importante durante los próximos 12 meses?",
       help: "Opcional. No hace falta indicar qué vas a comprar; puedes declarar solo un rango total y un plazo."
     }),
@@ -100,6 +99,10 @@
   const CORE_QUESTION_KEYS = Object.freeze(QUESTION_DEFS.filter((question) => question.branch === "core").map((question) => question.key));
   const ECONOMIC_QUESTION_KEYS = Object.freeze(QUESTION_DEFS.filter((question) => question.branch === "economy").map((question) => question.key));
   const RISK_QUESTION_KEYS = Object.freeze(QUESTION_DEFS.filter((question) => question.branch === "risk").map((question) => question.key));
+  // Preguntas que se muestran. Las marcadas con asked:false siguen existiendo en el
+  // modelo para no romper perfiles guardados, pero ya no se piden: ningún flujo de la
+  // app usa esas respuestas.
+  const ASKED_QUESTION_KEYS = Object.freeze(QUESTION_DEFS.filter((question) => question.asked !== false).map((question) => question.key));
   const QUESTION_BY_KEY = new Map(QUESTION_DEFS.map((question) => [question.key, question]));
   const PROFILE05_MAPPING = Object.freeze(QUESTION_DEFS.map((question) => Object.freeze({ key: question.key, profile05Path: question.key, legacyKey: question.legacyKey })));
   const AMOUNT_PATHS = new Set(["detalle_economico.importe_objetivo", "detalle_economico.colchon_liquido"]);
@@ -610,6 +613,7 @@
     CORE_QUESTION_KEYS,
     ECONOMIC_QUESTION_KEYS,
     RISK_QUESTION_KEYS,
+    ASKED_QUESTION_KEYS,
     PROFILE05_MAPPING,
     LEGACY_VALUES,
     enumValues,

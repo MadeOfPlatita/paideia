@@ -13,7 +13,7 @@ const PROFILE_MODEL = typeof window !== "undefined" && window.PaideiaProfileMode
   ? window.PaideiaProfileModel
   : (typeof module !== "undefined" && module.exports ? require("./profile_model.js") : null);
 if (!PROFILE_MODEL) throw new Error("No se pudo cargar el modelo local de perfil.");
-const PROFILE_FIELDS = PROFILE_MODEL.PROFILE05_MAPPING.map((mapping) => mapping.key);
+const PROFILE_FIELDS = PROFILE_MODEL.ASKED_QUESTION_KEYS;
 const PROFILE_LABELS = Object.freeze(Object.fromEntries(PROFILE_MODEL.QUESTION_DEFS.map((question) => [question.key, question.label])));
 const PROFILE_QUESTIONS = PROFILE_MODEL.QUESTION_DEFS;
 const CORE_QUESTION_KEYS = PROFILE_MODEL.CORE_QUESTION_KEYS;
@@ -1262,12 +1262,14 @@ function profileQuestionControl(question) {
       const radio = el("input", { type: "radio", id, name: "profile-answer", value: option.value, checked: selectedLevel === option.value });
       group.appendChild(el("label", { className: "choice", htmlFor: id }, [radio, el("span", {}, option.label)]));
     }
-    const topicsHeading = textElement("p", "Temas que te interesan (selección opcional)", "field-label");
-    group.appendChild(topicsHeading);
-    for (const topic of question.topics || []) {
-      const id = `profile-topic-${topic.value}`;
-      const check = el("input", { type: "checkbox", id, value: topic.value, checked: Boolean(value && value.temas_interes.includes(topic.value)) });
-      group.appendChild(el("label", { className: "choice", htmlFor: id }, [check, el("span", {}, topic.label)]));
+    if (question.topics) {
+      const topicsHeading = textElement("p", "Temas que te interesan (selección opcional)", "field-label");
+      group.appendChild(topicsHeading);
+      for (const topic of question.topics || []) {
+        const id = `profile-topic-${topic.value}`;
+        const check = el("input", { type: "checkbox", id, value: topic.value, checked: Boolean(value && value.temas_interes.includes(topic.value)) });
+        group.appendChild(el("label", { className: "choice", htmlFor: id }, [check, el("span", {}, topic.label)]));
+      }
     }
     group.appendChild(textElement("p", question.help, "field-help"));
     return {
@@ -1275,6 +1277,7 @@ function profileQuestionControl(question) {
       readAnswer() {
         const level = group.querySelector('input[name="profile-answer"]:checked');
         if (!level) return undefined;
+        if (!question.topics) return PROFILE_MODEL.makeAnswer("declarado", { nivel: level.value, temas_interes: [] });
         const topics = [...group.querySelectorAll("input[type=checkbox]:checked")].map((check) => check.value);
         return PROFILE_MODEL.makeAnswer("declarado", { nivel: level.value, temas_interes: topics });
       },

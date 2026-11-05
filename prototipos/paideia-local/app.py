@@ -23,6 +23,24 @@ SNAPSHOT_RELATIVE_PATH = Path("docs/validacion-04/05-catalogo/candidatos.json")
 SNAPSHOT_PATH = PROJECT_ROOT / SNAPSHOT_RELATIVE_PATH
 CURATED_RELATIVE_PATH = Path("prototipos/paideia-local/data/condiciones.json")
 CURATED_PATH = PROJECT_ROOT / CURATED_RELATIVE_PATH
+# Etiquetas de la instantánea de investigación que dejan de ser «desconocidas» cuando
+# la ficha transcrita documenta esos campos. Se empareja por texto, no por posición.
+UNKNOWN_FIELD_RULES = (
+    (("tin/tae por plazo", "plazos disponibles", "tasa aplicable por plazo"), ("rate", "term")),
+    (("mínimo/máximo",), ("min", "max")),
+    (("liquidación de intereses", "frecuencia pactada de liquidación"), ("payment",)),
+    (("saldo máximo remunerado",), ("max",)),
+    (("fecha efectiva de cada oferta", "fecha de inicio/fin de la tae"), ("validity",)),
+)
+
+
+def _unknown_label_is_documented(label, fields):
+    """¿La ficha documenta todo lo que esa etiqueta decía desconocer?"""
+    texto = label.casefold()
+    for needles, required in UNKNOWN_FIELD_RULES:
+        if any(needle in texto for needle in needles) and set(required) <= set(fields):
+            return True
+    return False
 STATIC_ROOT = APP_DIR / "static"
 MAX_STATIC_BYTES = 2 * 1024 * 1024
 STATIC_MIME_TYPES = {
@@ -355,6 +373,31 @@ class _Handler(BaseHTTPRequestHandler):
 
     def _not_found(self):
         raise ApiProblem(404, "NOT_FOUND", "Recurso no encontrado.")
+
+    def _with_conditions_state(self, item):
+        """Ajusta el estado de la ficha a lo que la app tiene documentado.
+
+        La instantánea de investigación marca campos desconocidos que después se
+        transcribieron con fuente. Si la ficha los documenta, dejan de listarse como
+        desconocidos; si no, se quedan tal cual.
+        """
+        service = self.server.conditions_service
+        if service is None or not isinstance(item, dict):
+            return item
+        try:
+            fields = service.documented_fields(item.get("id"))
+        except (OSError, ValueError, RuntimeError):
+            return item
+        if not fields:
+            return item
+        unknown = item.get("unknown_fields")
+        unknown = list(unknown) if isinstance(unknown, list) else []
+        remaining = [label for label in unknown
+                     if not (isinstance(label, str) and _unknown_label_is_documented(label, fields))]
+        updated = dict(item)
+        updated["unknown_fields"] = remaining
+        updated["conditions_state"] = "documented" if "rate" in fields else "partial"
+        return updated
 
     def _catalogue_query(self, raw_query):
         if len(raw_query) > 512 or re.search(r"%(?![0-9A-Fa-f]{2})", raw_query):
@@ -718,7 +761,8 @@ class _Handler(BaseHTTPRequestHandler):
                 return
             if path == "/api/catalogue":
                 q, family = self._catalogue_query(request.query)
-                items = self.server.catalogue_repository.list_products(q=q, family=family)
+                items = [self._with_conditions_state(item)
+                         for item in self.server.catalogue_repository.list_products(q=q, family=family)]
                 self._send_json(200, {
                     "items": items,
                     "count": len(items),
@@ -750,6 +794,8 @@ class _Handler(BaseHTTPRequestHandler):
                         conditions = None
                 if product is None and conditions is None:
                     self._not_found()
+                if product is not None:
+                    product = self._with_conditions_state(product)
                 self._send_json(200, {"product": product, "conditions": conditions})
                 return
             if path in {"/api/compare", "/api/calculate", "/api/chat", "/api/chat-status", "/api/context-preview"}:
