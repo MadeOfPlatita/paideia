@@ -32,6 +32,16 @@ PROVIDERS = {
         # Catálogo cerrado: en Groq solo se admiten estos dos modelos.
         "models": frozenset({"openai/gpt-oss-20b", "openai/gpt-oss-120b"}),
     },
+    "vercel": {
+        "label": "Vercel AI Gateway",
+        "host": "ai-gateway.vercel.sh",
+        "path": "/v1/chat/completions",
+        "key_env": "AI_GATEWAY_API_KEY",
+        "default_model": "reflection/beam-free",
+        # Beam 1.0 gratuito durante el lanzamiento; la ruta -free deja de servir
+        # cuando termina la oferta, así que no puede convertirse en factura.
+        "models": None,
+    },
     "commandcode": {
         "label": "Command Code",
         "host": "api.commandcode.ai",

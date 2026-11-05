@@ -30,6 +30,14 @@ class ProviderSelectionTests(unittest.TestCase):
         self.assertEqual(result.stdout.strip().split(),
                          ["api.groq.com", "GROQ_API_KEY", "openai/gpt-oss-20b"])
 
+    def test_vercel_gateway_serves_beam_for_free(self):
+        result = run("import providers as p; print(p.API_HOST, p.API_PATH, p.API_KEY_ENV, p.DEFAULT_MODEL)",
+                     PAIDEIA_LLM_PROVIDER="vercel")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout.strip().split(),
+                         ["ai-gateway.vercel.sh", "/v1/chat/completions",
+                          "AI_GATEWAY_API_KEY", "reflection/beam-free"])
+
     def test_commandcode_switches_host_key_and_model(self):
         result = run("import providers as p; print(p.API_HOST, p.API_PATH, p.API_KEY_ENV, p.DEFAULT_MODEL, p.PROVIDER_LABEL)",
                      PAIDEIA_LLM_PROVIDER="commandcode")
@@ -59,20 +67,19 @@ class TransportGuardTests(unittest.TestCase):
     def test_the_other_provider_host_is_rejected(self):
         code = (
             "import providers as p\n"
-            "class Boom:\n"
-            "    def __call__(self, *a, **k):\n"
-            "        raise AssertionError('no debe abrir conexión')\n"
             "t = p.GroqHTTPSJSONTransport()\n"
             "try:\n"
             "    t.post(host='api.groq.com', path=p.API_PATH, headers={'Authorization':'Bearer x',"
             "'Content-Type':'application/json','Accept':'application/json'}, body=b'{}', timeout=5)\n"
-            "except ValueError as error:\n"
+            "except ValueError:\n"
             "    print('rechazado')\n"
             "except Exception as error:\n"
             "    print(type(error).__name__)\n"
         )
-        result = run(code, PAIDEIA_LLM_PROVIDER="commandcode")
-        self.assertEqual(result.stdout.strip(), "rechazado", result.stderr)
+        for nombre in ("commandcode", "vercel"):
+            with self.subTest(proveedor=nombre):
+                result = run(code, PAIDEIA_LLM_PROVIDER=nombre)
+                self.assertEqual(result.stdout.strip(), "rechazado", result.stderr)
 
 
 class ModelEnvTests(unittest.TestCase):

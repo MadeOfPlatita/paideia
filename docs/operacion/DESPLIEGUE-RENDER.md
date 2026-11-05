@@ -43,18 +43,30 @@ ni las condiciones transcritas. Desde `api/index.py` se inyecta un aviso en la
 portada que enlaza aquí. No se mantiene en paralelo: cualquier cambio de producto
 va a la app y a esta demo.
 
-## Cambiar de proveedor del chat (Groq ↔ Command Code)
+## Cambiar de proveedor del chat
 
-El adaptador admite dos destinos compatibles con OpenAI y los dos están anclados
-en código (`providers.py`): `api.groq.com` y `api.commandcode.ai`. La clave del
-proveedor elegido es la única que puede viajar, y a ese host.
+Tres destinos compatibles con OpenAI, los tres anclados en código
+(`providers.py`). La clave del proveedor elegido es la única que puede viajar, y
+solo a ese host:
+
+| `PAIDEIA_LLM_PROVIDER` | Host | Clave | Modelo por defecto |
+| --- | --- | --- | --- |
+| `groq` (por defecto) | `api.groq.com` | `GROQ_API_KEY` | `openai/gpt-oss-20b` |
+| `vercel` | `ai-gateway.vercel.sh` | `AI_GATEWAY_API_KEY` | `reflection/beam-free` |
+| `commandcode` | `api.commandcode.ai` | `COMMANDCODE_API_KEY` | `deepseek/deepseek-v4.1-flash` |
 
 En el panel de Render, en *Environment*:
 
-1. `PAIDEIA_LLM_PROVIDER` = `commandcode` (o `groq`, que es el valor por defecto).
-2. Pega `COMMANDCODE_API_KEY` (o `GROQ_API_KEY`) como secreto.
-3. `PAIDEIA_LLM_MODEL` es opcional; si falta se usa `deepseek/deepseek-v4.1-flash`.
-   `PAIDEIA_GROQ_MODEL` solo se lee cuando el proveedor es Groq.
+1. `PAIDEIA_LLM_PROVIDER` con el nombre del proveedor.
+2. Pega la clave correspondiente como secreto.
+3. `PAIDEIA_LLM_MODEL` es opcional; si falta se usa el de la tabla. El nombre
+   antiguo `PAIDEIA_GROQ_MODEL` solo se lee cuando el proveedor es Groq.
+
+`reflection/beam-free` es Beam 1.0 por la puerta de Vercel, gratis mientras dure
+la oferta de lanzamiento: la ruta `-free` deja de servir al terminar, así que no
+puede generar factura. Vercel no lo marca como sin retención ni sin
+entrenamiento, de modo que no conviene enviarle datos personales (la app ya lo
+prohíbe).
 
 Guardar las variables reinicia el servicio y aplica el cambio. Si la clave falta,
 la app arranca con el chat apagado en vez de fallar: `/api/status` lo dice con

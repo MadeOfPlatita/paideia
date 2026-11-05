@@ -8,8 +8,8 @@
 # marcadas con `sync: false`.
 #
 # Proveedor del chat: `PAIDEIA_LLM_PROVIDER` vale `groq` (por defecto) o
-# `commandcode`. Para usar la suscripción de Command Code hay que cambiar esa
-# variable a `commandcode` y pegar COMMANDCODE_API_KEY; la app solo puede enviar
+# `commandcode` o `vercel` (Beam 1.0 gratis por la puerta de Vercel). Hay que
+# cambiar esa variable y pegar la clave del proveedor; la app solo puede enviar
 # la clave al host del proveedor elegido.
 services:
   - type: web
@@ -36,4 +36,6 @@ services:
       - key: GROQ_API_KEY
         sync: false
       - key: COMMANDCODE_API_KEY
+        sync: false
+      - key: AI_GATEWAY_API_KEY
         sync: false
