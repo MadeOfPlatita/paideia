@@ -1165,6 +1165,9 @@ function renderHome() {
     } finally {
       state.chatBusy = false;
       submit.disabled = false;
+      // El contador de llamadas del día solo cambia tras enviar: se refresca aquí
+      // para que el aviso no siga diciendo «0 de 60» después de una respuesta.
+      if (typeof checkLocalStatus === "function") checkLocalStatus();
       if (submitHadFocus) {
         const active = document.activeElement;
         if (!active || active === document.body || active === document.documentElement) {
