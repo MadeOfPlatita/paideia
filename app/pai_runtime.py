@@ -1021,107 +1021,113 @@ class ToolChatRunner:
                 return self._answer_dto(result.answer, None, result.finish_reason,
                                         tool_events, sources, catalogue_used, catalogue_products,
                                         calculation=calculation, sources_total=sources_total)
-            if len(result.tool_calls) != 1:
-                self._debug("multiple_tool_calls")
+
+            if tool_rounds >= self._max_tool_rounds:
+                self._debug("round_limit")
                 for call in result.tool_calls:
                     tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
-            call = result.tool_calls[0]
-            if not self._valid_call_id(call.id):
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
+            # El turno se valida entero antes de ejecutar nada: si una llamada no es
+            # admisible, se rechaza el lote y no queda ninguna a medias.
+            rechazo = None
+            for posicion, call in enumerate(result.tool_calls):
+                if not self._valid_call_id(call.id):
+                    rechazo = (posicion, "rejected")
+                elif call.id in seen_call_ids:
+                    rechazo = (posicion, "rejected")
+                elif type(call.name) is not str or call.name not in advertised_names:
+                    rechazo = (posicion, "unadvertised_tool")
+                elif not self._valid_arguments(call.name, call.arguments):
+                    rechazo = (posicion, "invalid_arguments")
+                else:
+                    try:
+                        invocacion = (call.name, self._json_text(call.arguments))
+                    except (TypeError, ValueError, RecursionError, OverflowError):
+                        rechazo = (posicion, "invalid_arguments")
+                    else:
+                        if invocacion in seen_invocations:
+                            rechazo = (posicion, "duplicate_invocation")
+                        else:
+                            seen_call_ids.add(call.id)
+                            seen_invocations.add(invocacion)
+                            continue
+                break
+            if rechazo is not None:
+                posicion, codigo = rechazo
+                self._debug(codigo)
+                # Ninguna llamada del lote se ejecuta: todas constan como rechazadas.
+                for call in result.tool_calls:
+                    tool_events.append(self._event(call, state="rejected", status="rejected"))
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-            if call.id in seen_call_ids:
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-            seen_call_ids.add(call.id)
 
-            if type(call.name) is not str or call.name not in advertised_names:
-                self._debug("unadvertised_tool")
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-            if not self._valid_arguments(call.name, call.arguments):
-                self._debug("invalid_arguments")
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-            if tool_rounds >= self._max_tool_rounds:
-                self._debug("round_limit")
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+            assistant_calls = []
+            tool_messages = []
+            for call in result.tool_calls:
+                try:
+                    dispatched = self._dispatcher.dispatch(call.name, copy.deepcopy(call.arguments))
+                except Exception:
+                    self._debug("dispatch_error")
+                    tool_events.append(self._event(call, state="rejected", status="temporarily_unavailable"))
+                    return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                if not self._valid_dispatch_result(dispatched, call.name):
+                    self._debug("invalid_dispatch_result")
+                    tool_events.append(self._event(call, state="rejected", status="rejected"))
+                    return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
-            try:
-                invocation = (call.name, self._json_text(call.arguments))
-            except (TypeError, ValueError, RecursionError, OverflowError):
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-            if invocation in seen_invocations:
-                self._debug("duplicate_invocation")
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-            seen_invocations.add(invocation)
+                status = dispatched["status"]
+                if status not in _SUCCESS_STATUSES or dispatched["error"] is not None:
+                    self._debug("unsuccessful_status")
+                    tool_events.append(self._event(call, state="rejected", status=status))
+                    return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
-            try:
-                dispatched = self._dispatcher.dispatch(call.name, copy.deepcopy(call.arguments))
-            except Exception:
-                self._debug("dispatch_error")
-                tool_events.append(self._event(call, state="rejected", status="temporarily_unavailable"))
-                return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-            if not self._valid_dispatch_result(dispatched, call.name):
-                self._debug("invalid_dispatch_result")
-                tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                tool_events.append(self._event(call, state="executed", status=status))
+                if call.name == "calculate_scenario":
+                    calculation = self._project_calculation(dispatched["data"])
+                if call.name in CATALOGUE_TOOLS:
+                    # Se deja de confiar en el texto libre cuando la herramienta devolvió
+                    # fichas o un resultado con datos. Si la respuesta es una lista vacía
+                    # explícita (no hay nada que atribuir), no se suprime una explicación
+                    # conceptual: se mantiene el aviso de que el texto no está validado.
+                    projected_items = [self._evidence_product(raw_item)
+                                       for raw_item in self._catalogue_items(dispatched)]
+                    projected_items = [item for item in projected_items if item is not None]
+                    if projected_items:
+                        catalogue_used = True
+                        for projected in projected_items:
+                            catalogue_products[projected["id"]] = projected
+                    elif not self._empty_catalogue_result(call.name, dispatched):
+                        catalogue_used = True
+                for source in dispatched["sources"]:
+                    sources_total += 1
+                    if len(sources) < 20:
+                        sources.append({
+                            "tool_call_id": call.id,
+                            "tool": call.name,
+                            "source": copy.deepcopy(source),
+                        })
 
-            status = dispatched["status"]
-            if status not in _SUCCESS_STATUSES or dispatched["error"] is not None:
-                self._debug("unsuccessful_status")
-                tool_events.append(self._event(call, state="rejected", status=status))
-                return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                assistant_calls.append({
+                    "id": call.id,
+                    "type": "function",
+                    "function": {
+                        "name": call.name,
+                        "arguments": self._json_text(call.arguments),
+                    },
+                })
+                model_result = self._model_tool_result(call.name, dispatched)
+                tool_messages.append({
+                    "role": "tool",
+                    "tool_call_id": call.id,
+                    "name": call.name,
+                    "content": self._json_text(self._model_tool_message(model_result)),
+                })
 
-            tool_events.append(self._event(call, state="executed", status=status))
-            if call.name == "calculate_scenario":
-                calculation = self._project_calculation(dispatched["data"])
-            if call.name in CATALOGUE_TOOLS:
-                # Se deja de confiar en el texto libre cuando la herramienta devolvió
-                # fichas o un resultado con datos. Si la respuesta es una lista vacía
-                # explícita (no hay nada que atribuir), no se suprime una explicación
-                # conceptual: se mantiene el aviso de que el texto no está validado.
-                projected_items = [self._evidence_product(raw_item)
-                                   for raw_item in self._catalogue_items(dispatched)]
-                projected_items = [item for item in projected_items if item is not None]
-                if projected_items:
-                    catalogue_used = True
-                    for projected in projected_items:
-                        catalogue_products[projected["id"]] = projected
-                elif not self._empty_catalogue_result(call.name, dispatched):
-                    catalogue_used = True
-            for source in dispatched["sources"]:
-                sources_total += 1
-                if len(sources) < 20:
-                    sources.append({
-                        "tool_call_id": call.id,
-                        "tool": call.name,
-                        "source": copy.deepcopy(source),
-                    })
-
-            assistant_message = {"role": "assistant"}
+            assistant_message = {"role": "assistant", "tool_calls": assistant_calls}
             if result.answer:
                 assistant_message["content"] = result.answer
-            assistant_message["tool_calls"] = [{
-                "id": call.id,
-                "type": "function",
-                "function": {
-                    "name": call.name,
-                    "arguments": self._json_text(call.arguments),
-                },
-            }]
-            model_result = self._model_tool_result(call.name, dispatched)
-            tool_message = {
-                "role": "tool",
-                "tool_call_id": call.id,
-                "name": call.name,
-                "content": self._json_text(self._model_tool_message(model_result)),
-            }
-            current_messages.extend((assistant_message, tool_message))
+            current_messages.append(assistant_message)
+            current_messages.extend(tool_messages)
             tool_rounds += 1
 
         return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)

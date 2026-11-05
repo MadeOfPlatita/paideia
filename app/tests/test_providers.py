@@ -401,12 +401,10 @@ class ProviderOptInTests(unittest.TestCase):
                     "role": "assistant",
                     "content": None,
                     "tool_calls": [
-                        {"id": "call_a", "type": "function", "function": {
+                        {"id": "call_%d" % index, "type": "function", "function": {
                             "name": "tool_a", "arguments": json.dumps({}),
-                        }},
-                        {"id": "call_b", "type": "function", "function": {
-                            "name": "tool_b", "arguments": json.dumps({}),
-                        }},
+                        }}
+                        for index in range(module.MAX_TOOL_CALLS_PER_TURN + 1)
                     ],
                 },
                 "finish_reason": "tool_calls",

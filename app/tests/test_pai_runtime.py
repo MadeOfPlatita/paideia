@@ -287,18 +287,49 @@ class PaiRuntimeWorkflowTests(unittest.TestCase):
         self.assertIn("https://model.invalid/fabricada", result["answer"])
         self.assertEqual(result["sources"], [])
 
-    def test_multiple_tool_calls_in_one_model_response_are_rejected_as_a_batch(self):
-        dispatcher = TestOnlyDispatcher()
-        provider = TestOnlyFakeProvider([ChatResult("", None, (
-            ToolCall("call_batch_a", "get_product_detail", {"product_id": "DEP-01"}),
-            ToolCall("call_batch_b", "get_sources", {"product_ids": ["DEP-01"]}),
-        ), "tool_calls")])
+    def test_multiple_tool_calls_in_one_model_response_run_in_order_and_end_in_text(self):
+        otro_escenario = dict(scenario_arguments(), principal="2000.00")
+        dispatcher = TestOnlyDispatcher([
+            tool_result("calculate_scenario", data={"hypothetical": True, "summary": {"final_balance": "1030.00"}}),
+            tool_result("calculate_scenario", data={"hypothetical": True, "summary": {"final_balance": "2060.00"}}),
+        ])
+        provider = TestOnlyFakeProvider([
+            ChatResult("", None, (
+                ToolCall("call_batch_a", "calculate_scenario", scenario_arguments()),
+                ToolCall("call_batch_b", "calculate_scenario", otro_escenario),
+            ), "tool_calls"),
+            ChatResult("TEST ONLY: ya tengo los dos cálculos.", None, (), "stop"),
+        ])
 
         result = ToolChatRunner(provider, dispatcher).run([
             {"role": "user", "content": "TEST ONLY: dos herramientas a la vez."},
         ])
 
-        self.assertEqual(len(provider.requests), 1)
+        self.assertEqual(dispatcher.calls, [
+            ("calculate_scenario", scenario_arguments()),
+            ("calculate_scenario", otro_escenario),
+        ])
+        self.assertEqual(len(result["tool_events"]), 2)
+        self.assertTrue(all(event["state"] == "executed" for event in result["tool_events"]))
+        self.assertEqual(result["answer"], "TEST ONLY: ya tengo los dos cálculos.")
+        # El segundo envío lleva las dos llamadas y sus dos resultados, en orden.
+        segundo = provider.requests[1]["messages"]
+        asistente = [m for m in segundo if m["role"] == "assistant" and "tool_calls" in m][-1]
+        self.assertEqual([c["id"] for c in asistente["tool_calls"]], ["call_batch_a", "call_batch_b"])
+        resultados = [m["tool_call_id"] for m in segundo if m["role"] == "tool"]
+        self.assertEqual(resultados, ["call_batch_a", "call_batch_b"])
+
+    def test_a_batch_with_one_invalid_call_executes_none(self):
+        dispatcher = TestOnlyDispatcher([tool_result("get_product_detail")])
+        provider = TestOnlyFakeProvider([ChatResult("", None, (
+            ToolCall("call_ok", "get_product_detail", {"product_id": "DEP-01"}),
+            ToolCall("call_bad", "search_products", {"query": "", "limit": 500}),
+        ), "tool_calls")])
+
+        result = ToolChatRunner(provider, dispatcher).run([
+            {"role": "user", "content": "TEST ONLY: lote con una llamada inválida."},
+        ])
+
         self.assertEqual(dispatcher.calls, [])
         self.assertEqual(len(result["tool_events"]), 2)
         self.assertTrue(all(event["state"] == "rejected" for event in result["tool_events"]))

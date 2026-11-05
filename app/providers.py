@@ -90,6 +90,9 @@ DEFAULT_OUTPUT_TOKENS = 256
 MAX_OUTPUT_TOKENS = 900
 MAX_REQUEST_BYTES = 16 * 1024
 MAX_RESPONSE_BYTES = 64 * 1024
+# Tope de llamadas de herramienta en un mismo turno del modelo: por encima
+# de este numero la respuesta se considera invalida, no se ejecuta nada.
+MAX_TOOL_CALLS_PER_TURN = 8
 DEFAULT_TIMEOUT_SECONDS = 5.0
 OPT_IN_ENV = "PAIDEIA_GROQ_ENABLED"
 
@@ -160,28 +163,31 @@ def _validate_messages(messages):
                     raise ValueError("invalid request")
                 validated.append({"role": role, "content": message["content"]})
                 continue
-            if set(message) - {"role", "content", "tool_calls"} or type(calls) is not list or len(calls) != 1:
+            if (set(message) - {"role", "content", "tool_calls"} or type(calls) is not list
+                    or not 1 <= len(calls) <= MAX_TOOL_CALLS_PER_TURN):
                 raise ValueError("invalid request")
             content = message.get("content")
             if content is not None and type(content) is not str:
                 raise ValueError("invalid request")
-            call = calls[0]
-            if type(call) is not dict or set(call) != {"id", "type", "function"}:
-                raise ValueError("invalid request")
-            call_id = call["id"]
-            function = call["function"]
-            if (type(call_id) is not str or re.fullmatch(r"[A-Za-z0-9_-]{1,128}", call_id) is None
-                    or call_id in pending or call["type"] != "function"
-                    or type(function) is not dict or set(function) != {"name", "arguments"}
-                    or not _valid_name(function["name"])
-                    or not _valid_json_object_text(function["arguments"])):
-                raise ValueError("invalid request")
-            pending[call_id] = function["name"]
-            clean = {"role": role, "tool_calls": [{
-                "id": call_id,
-                "type": "function",
-                "function": {"name": function["name"], "arguments": function["arguments"]},
-            }]}
+            clean_calls = []
+            for call in calls:
+                if type(call) is not dict or set(call) != {"id", "type", "function"}:
+                    raise ValueError("invalid request")
+                call_id = call["id"]
+                function = call["function"]
+                if (type(call_id) is not str or re.fullmatch(r"[A-Za-z0-9_-]{1,128}", call_id) is None
+                        or call_id in pending or call["type"] != "function"
+                        or type(function) is not dict or set(function) != {"name", "arguments"}
+                        or not _valid_name(function["name"])
+                        or not _valid_json_object_text(function["arguments"])):
+                    raise ValueError("invalid request")
+                pending[call_id] = function["name"]
+                clean_calls.append({
+                    "id": call_id,
+                    "type": "function",
+                    "function": {"name": function["name"], "arguments": function["arguments"]},
+                })
+            clean = {"role": role, "tool_calls": clean_calls}
             if "content" in message:
                 clean["content"] = content
             validated.append(clean)
@@ -494,7 +500,7 @@ def _parse_chat_response(response):
     reasoning = _optional_text(message, reasoning_field)
     refusal = _optional_text(message, "refusal")
     calls_value = message.get("tool_calls", [])
-    if type(calls_value) is not list or len(calls_value) > 1:
+    if type(calls_value) is not list or len(calls_value) > MAX_TOOL_CALLS_PER_TURN:
         raise ProviderError("invalid_response")
     tool_calls = tuple(_parse_output_tool_call(call) for call in calls_value)
     if content is None and not tool_calls and refusal is None:
