@@ -3300,7 +3300,7 @@ async function checkLocalStatus() {
       if (!available) control.checked = false;
     });
     const mode = status.mode === "local_prototype" ? "Prototipo local"
-      : status.mode === "public_serverless" ? "Versión pública"
+      : status.mode === "public_demo" || status.mode === "public_serverless" ? "Versión pública"
       : "Servicio local";
     const aiConfigured = status.ai?.status === "configured_not_verified";
     // Sin IA configurada el aviso vive en el panel de Pai, no en la cabecera:

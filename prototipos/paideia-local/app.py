@@ -710,7 +710,7 @@ class _Handler(BaseHTTPRequestHandler):
             if path == "/api/status" and not request.query:
                 repo = self.server.catalogue_repository
                 self._send_json(200, {
-                    "mode": "local_prototype",
+                    "mode": "public_demo" if declared_public_origin() else "local_prototype",
                     "ai": {**self.server.chat_service.status(), "quota": self.server.chat_service.quota()},
                     "catalogue": {"candidate_count": repo.count, "publication_ready": 0},
                     "storage": "local_snapshot_not_postgresql",
