@@ -4,8 +4,13 @@
 # catálogo en memoria), no una función sin estado. Render ejecuta el proceso
 # tal cual, sin reescribir el backend ni exponer la clave en el navegador.
 #
-# La clave de Groq NO se guarda aquí: se pega en el panel de Render y queda
-# marcada con `sync: false`.
+# Las claves NO se guardan aquí: se pegan en el panel de Render y quedan
+# marcadas con `sync: false`.
+#
+# Proveedor del chat: `PAIDEIA_LLM_PROVIDER` vale `groq` (por defecto) o
+# `commandcode`. Para usar la suscripción de Command Code hay que cambiar esa
+# variable a `commandcode` y pegar COMMANDCODE_API_KEY; la app solo puede enviar
+# la clave al host del proveedor elegido.
 services:
   - type: web
     name: paideia
@@ -20,6 +25,8 @@ services:
         value: "3.12.7"
       - key: PAIDEIA_GROQ_ENABLED
         value: "1"
+      - key: PAIDEIA_LLM_PROVIDER
+        value: groq
       - key: PAIDEIA_GROQ_MODEL
         value: openai/gpt-oss-120b
       - key: PAIDEIA_CALLS_PER_DAY
@@ -27,4 +34,6 @@ services:
       - key: PAIDEIA_CALLS_PER_MINUTE
         value: "10"
       - key: GROQ_API_KEY
+        sync: false
+      - key: COMMANDCODE_API_KEY
         sync: false

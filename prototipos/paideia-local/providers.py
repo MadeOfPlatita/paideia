@@ -1,5 +1,12 @@
 
-"""Bounded, opt-in Groq chat adapter. No application route is registered here."""
+"""Adaptador de chat acotado y opt-in. Ninguna ruta de la aplicación se registra aquí.
+
+Hay dos proveedores compatibles con OpenAI y ambos quedan anclados: el host y la
+ruta son constantes de este módulo, no configuración arbitraria, así que la clave
+solo puede viajar a uno de esos dos destinos. Se elige con
+``PAIDEIA_LLM_PROVIDER`` (``groq`` por defecto, ``commandcode`` para la
+suscripción de Command Code).
+"""
 
 from __future__ import annotations
 
@@ -12,17 +19,64 @@ from contextlib import nullcontext
 from dataclasses import dataclass
 from enum import Enum
 
-GROQ_HOST = "api.groq.com"
-GROQ_PATH = "/openai/v1/chat/completions"
-ALLOWED_MODELS = frozenset({"openai/gpt-oss-20b", "openai/gpt-oss-120b"})
-DEFAULT_MODEL = "openai/gpt-oss-20b"
+PROVIDER_ENV = "PAIDEIA_LLM_PROVIDER"
+DEFAULT_PROVIDER = "groq"
+
+PROVIDERS = {
+    "groq": {
+        "label": "Groq",
+        "host": "api.groq.com",
+        "path": "/openai/v1/chat/completions",
+        "key_env": "GROQ_API_KEY",
+        "default_model": "openai/gpt-oss-20b",
+        # Catálogo cerrado: en Groq solo se admiten estos dos modelos.
+        "models": frozenset({"openai/gpt-oss-20b", "openai/gpt-oss-120b"}),
+    },
+    "commandcode": {
+        "label": "Command Code",
+        "host": "api.commandcode.ai",
+        "path": "/provider/v1/chat/completions",
+        "key_env": "COMMANDCODE_API_KEY",
+        "default_model": "deepseek/deepseek-v4.1-flash",
+        # El catálogo de la suscripción cambia sin aviso: se valida la forma del
+        # identificador, no una lista que quedaría obsoleta.
+        "models": None,
+    },
+}
+
+
+def active_provider_name():
+    name = (os.environ.get(PROVIDER_ENV) or DEFAULT_PROVIDER).strip().lower()
+    return name if name in PROVIDERS else DEFAULT_PROVIDER
+
+
+_ACTIVE = PROVIDERS[active_provider_name()]
+PROVIDER_LABEL = _ACTIVE["label"]
+API_HOST = _ACTIVE["host"]
+API_PATH = _ACTIVE["path"]
+API_KEY_ENV = _ACTIVE["key_env"]
+ALLOWED_MODELS = _ACTIVE["models"]
+DEFAULT_MODEL = _ACTIVE["default_model"]
+# Nombres históricos: el resto del proyecto (y sus pruebas) los importan.
+GROQ_HOST = API_HOST
+GROQ_PATH = API_PATH
+
+
+def model_is_allowed(model):
+    """Un modelo de la lista cerrada, o un identificador con forma válida."""
+    if type(model) is not str:
+        return False
+    if ALLOWED_MODELS is not None:
+        return model in ALLOWED_MODELS
+    return re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}(/[A-Za-z0-9._-]{1,64})?", model) is not None
+
+
 DEFAULT_OUTPUT_TOKENS = 256
 MAX_OUTPUT_TOKENS = 900
 MAX_REQUEST_BYTES = 16 * 1024
 MAX_RESPONSE_BYTES = 64 * 1024
 DEFAULT_TIMEOUT_SECONDS = 5.0
 OPT_IN_ENV = "PAIDEIA_GROQ_ENABLED"
-API_KEY_ENV = "GROQ_API_KEY"
 
 
 def _valid_name(value):
@@ -165,7 +219,7 @@ def build_chat_request(
     max_request_bytes=MAX_REQUEST_BYTES,
 ):
     """Purely serialize a bounded Groq/OpenAI-compatible chat-completions body."""
-    if type(model) is not str or model not in ALLOWED_MODELS:
+    if not model_is_allowed(model):
         raise ValueError("invalid request")
     if type(max_output_tokens) is not int or not 1 <= max_output_tokens <= MAX_OUTPUT_TOKENS:
         raise ValueError("invalid request")
@@ -450,7 +504,7 @@ class GroqProvider:
         max_output_tokens=DEFAULT_OUTPUT_TOKENS,
     ):
         if (type(opt_in) is not bool or not callable(getattr(transport, "post", None))
-                or type(model) is not str or model not in ALLOWED_MODELS
+                or not model_is_allowed(model)
                 or type(timeout) not in {int, float} or not 0.1 <= timeout <= 20.0
                 or type(max_request_bytes) is not int
                 or not 1 <= max_request_bytes <= MAX_REQUEST_BYTES

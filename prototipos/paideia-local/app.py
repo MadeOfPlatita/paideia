@@ -870,7 +870,9 @@ def main(argv=None):
     host = os.environ.get("PAIDEIA_HOST") or ("0.0.0.0" if declared_public_origin() else "127.0.0.1")
     server = create_server(host=host, port=port)
     print(f"Paideia listening on http://{host}:{server.server_port}/")
-    print("Chat IA: " + ("conectado a Groq; una llamada por turno admitido." if chat_enabled() else "no configurado (sin .env con PAIDEIA_GROQ_ENABLED=1 y GROQ_API_KEY)."))
+    from providers import PROVIDER_LABEL, API_KEY_ENV as KEY_ENV
+    print("Chat IA: " + (f"conectado a {PROVIDER_LABEL}; una llamada por turno admitido." if chat_enabled()
+                          else f"no configurado (sin .env con PAIDEIA_GROQ_ENABLED=1 y {KEY_ENV})."))
     try:
         server.serve_forever()
     except KeyboardInterrupt:

@@ -31,20 +31,23 @@ from mission_budget import MissionBudget, MissionConfig, load_mission, read_nigh
 import mission_budget
 from pai_tools import ToolDispatcher
 from providers import (
-    ALLOWED_MODELS,
     API_KEY_ENV,
+    active_provider_name,
     DEFAULT_MODEL,
     DEFAULT_TIMEOUT_SECONDS,
     MAX_OUTPUT_TOKENS,
     OPT_IN_ENV,
     GroqHTTPSJSONTransport,
     GroqProvider,
+    model_is_allowed,
 )
 from secure_groq_session import Session
 from structured_session_fixture import StructuredSessionFixture
 
 
 MODEL_ENV = "PAIDEIA_GROQ_MODEL"
+# Modelo para proveedores distintos de Groq; si falta, el predeterminado del proveedor.
+PROVIDER_MODEL_ENV = "PAIDEIA_LLM_MODEL"
 TIMEOUT_ENV = "PAIDEIA_GROQ_TIMEOUT"
 TOKENS_ENV = "PAIDEIA_GROQ_MAX_TOKENS"
 SCOPE = "paideia-chat-local"
@@ -70,8 +73,13 @@ def _timeout():
 
 
 def _model():
-    requested = os.environ.get(MODEL_ENV, DEFAULT_MODEL)
-    return requested if requested in ALLOWED_MODELS else DEFAULT_MODEL
+    # El nombre histórico (PAIDEIA_GROQ_MODEL) solo vale para Groq: al cambiar de
+    # proveedor no debe arrastrar un modelo que allí no existe.
+    if active_provider_name() == "groq":
+        requested = os.environ.get(MODEL_ENV) or DEFAULT_MODEL
+    else:
+        requested = os.environ.get(PROVIDER_MODEL_ENV) or DEFAULT_MODEL
+    return requested if model_is_allowed(requested) else DEFAULT_MODEL
 
 
 def _tokens():

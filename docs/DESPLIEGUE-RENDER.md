@@ -42,3 +42,24 @@ catálogo de la instantánea y los estáticos. No puede sostener el chat con est
 ni las condiciones transcritas. Desde `api/index.py` se inyecta un aviso en la
 portada que enlaza aquí. No se mantiene en paralelo: cualquier cambio de producto
 va a la app y a esta demo.
+
+## Cambiar de proveedor del chat (Groq ↔ Command Code)
+
+El adaptador admite dos destinos compatibles con OpenAI y los dos están anclados
+en código (`providers.py`): `api.groq.com` y `api.commandcode.ai`. La clave del
+proveedor elegido es la única que puede viajar, y a ese host.
+
+En el panel de Render, en *Environment*:
+
+1. `PAIDEIA_LLM_PROVIDER` = `commandcode` (o `groq`, que es el valor por defecto).
+2. Pega `COMMANDCODE_API_KEY` (o `GROQ_API_KEY`) como secreto.
+3. `PAIDEIA_LLM_MODEL` es opcional; si falta se usa `deepseek/deepseek-v4.1-flash`.
+   `PAIDEIA_GROQ_MODEL` solo se lee cuando el proveedor es Groq.
+
+Guardar las variables reinicia el servicio y aplica el cambio. Si la clave falta,
+la app arranca con el chat apagado en vez de fallar: `/api/status` lo dice con
+`ai.status = not_configured`.
+
+Aviso de producto: si el proveedor es una suscripción personal, el cupo del
+plan lo consume cualquiera que use el enlace público. Es una decisión de quién
+paga, no un detalle técnico.
