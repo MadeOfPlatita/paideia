@@ -16,14 +16,16 @@ Diseño
 - ``MISSION.json`` (manifest) se crea a mano, offline, y fija misión, inicio, corte y
   cupo. Mientras exista un manifest activo, **cualquier** proceso del mismo perfil
   que envíe por el transporte real queda contado, sin depender de variables de
-  entorno. Sin manifest activo (o con la ventana cerrada) el contador no interviene
-  y la ruta ordinaria conserva su propia cuota.
+  entorno. Sin manifest, el contador no interviene; con manifest fuera de ventana,
+  los envíos se bloquean. La ruta ordinaria conserva además su propia cuota.
 - ``attempts.jsonl`` es un diario append-only con ``flush`` + ``fsync`` antes de
   devolver el testigo: **se cuenta antes de enviar**, de modo que un cierre brusco
   no regala intentos. Un error de lectura del diario durante la misión bloquea el
   envío (fail closed); nunca se asume cero.
-- Un lock de fichero evita carreras entre procesos; un lock obsoleto (más de 60 s)
-  se puede recuperar, pero nunca se ignora el diario.
+- Un lock de fichero coordina procesos; la recuperación de un lock obsoleto puede
+  romper la exclusión si el poseedor original sigue activo. Una revisión independiente
+  observó 6 reservas para cupo 5. No usar para nuevas llamadas reales sin reparar y
+  revisar este límite y el resto de la frontera.
 
 Cobertura
 ---------
@@ -54,6 +56,9 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+
+import uuid
+
 
 SCHEMA = "paideia-mission-manifest.v1"
 JOURNAL_SCHEMA = "paideia-mission-attempt.v1"
@@ -90,6 +95,11 @@ def mission_dir(mission_id: str) -> Path:
     if not isinstance(mission_id, str) or not mission_id or not mission_id.replace("-", "").replace("_", "").isalnum():
         raise MissionBlocked("MISSION_UNAVAILABLE", "invalid mission id")
     return _state_root() / mission_id
+
+
+def _legacy_root() -> Path:
+    """Ruta del mecanismo nocturno anterior: ``Paideia/missions``."""
+    return _state_root().parent / "missions"
 
 
 def _parse_utc(value: object, field: str) -> datetime:
@@ -160,14 +170,25 @@ def load_manifest(path: str | os.PathLike | None = None) -> MissionConfig | None
 
 
 class _Lock:
-    """Lock entre procesos sobre ``<state>/lock``; nunca bloquea indefinidamente."""
+    """Lock entre procesos sobre ``<state>/lock``; nunca bloquea indefinidamente.
+
+    Conocido y no resuelto: la recuperación de un lock obsoleto de dueño muerto no es
+    atómica. Dos contendientes pueden decidir a la vez que el lock es obsoleto, y el
+    segundo `unlink` borra el lock nuevo del primero: ambos entran en la sección crítica
+    (6 autorizaciones para cupo 5, o diario corrupto). Por eso el mecanismo NO está
+    autorizado para llamadas reales. Ver `docs/PAIDEIA-HASTA-BLOQUEO-SEGUIMIENTO.md`.
+    """
 
     def __init__(self, directory: Path):
         self.path = directory / "lock"
         self.acquired = False
+        self.token = None
 
     def __enter__(self):
         deadline = time.monotonic() + LOCK_TIMEOUT_SECONDS
+        if self.path.is_dir():
+            raise MissionBlocked("MISSION_UNAVAILABLE", "ledger lock path is a directory")
+        token = f"{os.getpid()} {time.time():.6f} {uuid.uuid4().hex}"
         while True:
             try:
                 fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
@@ -178,19 +199,32 @@ class _Lock:
                     raise MissionBlocked("MISSION_UNAVAILABLE", "ledger lock is held")
                 time.sleep(0.02)
                 continue
+            except OSError as error:
+                raise MissionBlocked("MISSION_UNAVAILABLE", f"ledger lock unavailable: {error.errno}") from error
             try:
-                os.write(fd, f"{os.getpid()} {time.time():.3f}".encode("ascii"))
+                os.write(fd, token.encode("ascii"))
             finally:
                 os.close(fd)
+            self.token = token
             self.acquired = True
             return self
 
     def _break_if_stale(self) -> bool:
+        # Solo se mira el mtime mientras el lock está fresco: abrir el fichero en cada
+        # sondeo deja un handle de lectura que impide el `unlink` del poseedor en
+        # Windows (WinError 32).
         try:
-            age = time.time() - self.path.stat().st_mtime
+            stat = self.path.stat()
         except OSError:
-            return True
-        if age <= LOCK_STALE_SECONDS:
+            return False
+        if time.time() - stat.st_mtime <= LOCK_STALE_SECONDS:
+            return False
+        try:
+            raw = self.path.read_text(encoding="ascii", errors="replace")
+        except OSError:
+            return False
+        owner = _owner_pid(raw)
+        if owner is not None and _pid_alive(owner):
             return False
         try:
             self.path.unlink()
@@ -200,12 +234,52 @@ class _Lock:
 
     def __exit__(self, *_exc):
         if self.acquired:
-            try:
-                self.path.unlink()
-            except OSError:
-                pass
+            for _attempt in range(5):
+                try:
+                    if self.path.read_text(encoding="ascii", errors="replace") != self.token:
+                        break
+                    self.path.unlink()
+                    break
+                except FileNotFoundError:
+                    break
+                except OSError:
+                    time.sleep(0.01)
             self.acquired = False
         return False
+
+
+def _pid_alive(pid: int) -> bool:
+    """¿Sigue vivo el proceso? Ante la duda responde ``True`` (no romper el lock)."""
+    if type(pid) is not int or pid <= 0:
+        return False
+    if os.name == "nt":
+        try:
+            import ctypes
+
+            handle = ctypes.windll.kernel32.OpenProcess(0x00100000, False, pid)
+            if handle:
+                ctypes.windll.kernel32.CloseHandle(handle)
+                return True
+            return ctypes.windll.kernel32.GetLastError() == 5
+        except Exception:  # noqa: BLE001
+            return True
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except OSError:
+        return True
+    return True
+
+
+def _owner_pid(raw: str) -> int | None:
+    parts = raw.split()
+    if not parts:
+        return None
+    try:
+        return int(parts[0])
+    except ValueError:
+        return None
 
 
 def read_attempts(directory: Path) -> list[dict]:
@@ -228,6 +302,10 @@ def read_attempts(directory: Path) -> list[dict]:
         if not isinstance(record, dict) or record.get("schema") != JOURNAL_SCHEMA or type(record.get("n")) is not int:
             raise MissionBlocked("MISSION_CORRUPT", f"journal line {number} is not an attempt")
         records.append(record)
+    numbers = [record["n"] for record in records]
+    if len(set(numbers)) != len(numbers):
+        # Diario con números repetidos: dos reservas simultáneas ya superaron el cupo.
+        raise MissionBlocked("MISSION_CORRUPT", "journal has duplicate attempt numbers")
     return records
 
 
@@ -278,6 +356,10 @@ def reserve(config: MissionConfig, route: str, now: datetime | None = None) -> d
                 os.fsync(stream.fileno())
         except OSError as error:
             raise MissionBlocked("MISSION_UNAVAILABLE", f"journal not writable: {error.errno}") from error
+        if len(read_attempts(directory)) != used + 1:
+            # Verificación defensiva: si el diario cambió bajo el lock, no se autoriza el
+            # envío y se deja constancia del estado inconsistente.
+            raise MissionBlocked("MISSION_CORRUPT", "journal changed during reservation")
     return {
         "attempt": record["n"],
         "used": record["n"],
@@ -314,6 +396,39 @@ def active_manifests(now: datetime | None = None) -> list[MissionConfig]:
     return found
 
 
+def _legacy_manifests() -> list[Path]:
+    """Manifests **de este contador** que quedaron en la ruta heredada.
+
+    Solo cuentan los que declaran este esquema: la ruta ``Paideia/missions`` también la
+    usa el mecanismo nocturno con otro esquema, y ese no debe bloquear la app.
+    """
+    root = _legacy_root()
+    try:
+        children = sorted(path for path in root.iterdir() if path.is_dir())
+    except (FileNotFoundError, NotADirectoryError):
+        return []
+    except OSError:
+        return []
+    found = []
+    for child in children:
+        manifest = child / "MISSION.json"
+        try:
+            document = json.loads(manifest.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if isinstance(document, dict) and document.get("schema") == SCHEMA:
+            found.append(manifest)
+    flat = root / "MISSION.json"
+    if flat.is_file():
+        try:
+            document = json.loads(flat.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            document = None
+        if isinstance(document, dict) and document.get("schema") == SCHEMA:
+            found.append(flat)
+    return found
+
+
 def active_mission(now: datetime | None = None) -> MissionConfig | None:
     """La misión vigente en este instante, si hay alguna provisionada."""
     moment = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
@@ -335,6 +450,14 @@ def reserve_for_active_mission(route: str, now: datetime | None = None) -> dict 
     corte no se convierte en «dejar de contar y seguir enviando».
     """
     moment = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    legacy = _legacy_manifests()
+    if legacy:
+        # Un manifest de ESTE contador en la ruta heredada sería invisible para el cupo y
+        # el envío saldría sin contar: se falla cerrado hasta que se mueva.
+        raise MissionBlocked(
+            "MISSION_UNAVAILABLE",
+            "mission manifest in the legacy Paideia/missions path; move it to Paideia/ledger-missions",
+        )
     configs = active_manifests(moment)
     if not configs:
         return None

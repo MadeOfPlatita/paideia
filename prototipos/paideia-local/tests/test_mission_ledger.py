@@ -127,6 +127,16 @@ class ReservationTests(LedgerCase):
 
 
 class TransportBoundaryTests(LedgerCase):
+    def provision_active(self, cap=5):
+        """Ventana que contiene el reloj real: el transporte sella con la hora del sistema.
+
+        La ventana fija de la misión caducó el 4/11/2026 a las 15:21:47Z; con ella, estas
+        pruebas del transporte fallaban por corte y no por el comportamiento que miden.
+        Las pruebas unitarias conservan la ventana histórica con ``now=`` explícito.
+        """
+        now = datetime.now(UTC)
+        return self.provision(cap=cap, start=now - timedelta(hours=1), cutoff=now + timedelta(hours=1))
+
     def _post(self, created):
         class Connection:
             status = 200
@@ -164,27 +174,21 @@ class TransportBoundaryTests(LedgerCase):
         self.assertFalse((self.directory / "attempts.jsonl").exists())
 
     def test_active_mission_counts_the_real_send_before_connecting(self):
-        self.provision(cap=5)
+        self.provision_active(cap=5)
         created = []
-        with patch.object(mission_ledger, "datetime", wraps=mission_ledger.datetime):
-            # La ventana real no cubre hoy: se fuerza el reloj del ledger.
-            with patch.object(mission_ledger, "active_mission",
-                              return_value=mission_ledger.load_manifest(self.manifest)):
-                self._post(created)
+        self._post(created)
         self.assertEqual(created, [True])
         self.assertEqual(len(self.journal_lines()), 1)
 
     def test_exhausted_mission_never_opens_a_connection(self):
-        self.provision(cap=1)
+        self.provision_active(cap=1)
         (self.directory / "attempts.jsonl").write_text(
             json.dumps({"schema": mission_ledger.JOURNAL_SCHEMA, "n": 1,
                         "at": START.isoformat(), "pid": 1, "route": "groq_chat"}) + "\n",
             encoding="utf-8")
         created = []
-        with patch.object(mission_ledger, "active_mission",
-                          return_value=mission_ledger.load_manifest(self.manifest)):
-            with self.assertRaises(providers.ProviderError) as caught:
-                self._post(created)
+        with self.assertRaises(providers.ProviderError) as caught:
+            self._post(created)
         self.assertEqual(caught.exception.code, "mission_exhausted")
         self.assertEqual(caught.exception.send_state, providers.SendState.NOT_STARTED)
         self.assertEqual(created, [])
