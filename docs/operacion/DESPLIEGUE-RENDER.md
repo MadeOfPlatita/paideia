@@ -70,9 +70,9 @@ prohíbe).
 
 La clave del Gateway se crea en el panel de Vercel: *AI Gateway → API Keys →
 Create key* (`https://vercel.com/<equipo>/~/ai-gateway/api-keys`), o desde el
-botón *Get API key* de `https://vercel.com/ai-gateway`. Se ve una sola vez. Para
-usar los créditos gratuitos del Gateway, Vercel pide un método de pago en el
-equipo, aunque los modelos gratuitos cuesten 0.
+botón *Get API key* de `https://vercel.com/ai-gateway`. Se ve una sola vez: si no
+se copia en ese momento, hay que crear otra. En la cuenta Hobby de este proyecto
+la sección aparece como *AI Gateway* dentro del equipo, no dentro del proyecto.
 
 Guardar las variables reinicia el servicio y aplica el cambio. Si la clave falta,
 la app arranca con el chat apagado en vez de fallar: `/api/status` lo dice con
