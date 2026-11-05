@@ -149,6 +149,8 @@ class ApiProblem(Exception):
 
 
 MAX_BODY_BYTES = 16_384
+# Tope de descarte al rechazar: responde limpio sin leer un cuerpo abusivo entero.
+MAX_DRAIN_BYTES = 8_388_608
 
 
 def _unique_object(pairs):
@@ -328,6 +330,8 @@ class _Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(encoded)))
         self.send_header("Cache-Control", "no-store")
+        if self.close_connection:
+            self.send_header("Connection", "close")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header("X-Frame-Options", "DENY")
@@ -419,7 +423,20 @@ class _Handler(BaseHTTPRequestHandler):
             raise ApiProblem(400, "INVALID_QUERY", "Familia no válida.")
         return q, family
 
+    def _drain_request_body(self):
+        """Descarta el cuerpo declarado antes de cerrar: evita el RST en el cliente."""
+        valores = self.headers.get_all("Content-Length", []) if self.headers else []
+        if len(valores) != 1 or not re.fullmatch(r"[0-9]{1,8}", valores[0]):
+            return
+        pendiente = min(int(valores[0]), MAX_DRAIN_BYTES)
+        while pendiente > 0:
+            trozo = self.rfile.read(min(65_536, pendiente))
+            if not trozo:
+                break
+            pendiente -= len(trozo)
+
     def _reject_bad_transport(self, status, code, message):
+        self._drain_request_body()
         self.close_connection = True
         raise ApiProblem(status, code, message)
 
