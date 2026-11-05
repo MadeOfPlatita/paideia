@@ -52,6 +52,13 @@ class ProviderSelectionTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "api.groq.com")
 
+    def test_beam_free_id_with_colon_is_an_accepted_shape(self):
+        # `reflection/beam:free` usa dos puntos; si la forma los rechazara, el
+        # servicio no arrancaría al elegir Command Code.
+        code = "import providers as p; print(p.model_is_allowed('reflection/beam:free'))"
+        result = run(code, PAIDEIA_LLM_PROVIDER="commandcode")
+        self.assertEqual(result.stdout.strip(), "True", result.stderr)
+
     def test_model_names_accepted_per_provider(self):
         code = ("import providers as p; print(p.model_is_allowed('openai/gpt-oss-120b'),"
                 " p.model_is_allowed('deepseek/deepseek-v4.1-flash'), p.model_is_allowed('dos palabras'))")

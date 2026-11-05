@@ -74,12 +74,16 @@ GROQ_PATH = API_PATH
 
 
 def model_is_allowed(model):
-    """Un modelo de la lista cerrada, o un identificador con forma válida."""
+    """Un modelo de la lista cerrada, o un identificador con forma válida.
+
+    El catálogo usa dos puntos para las rutas gratuitas (`reflection/beam:free`),
+    así que la forma admitida los incluye.
+    """
     if type(model) is not str:
         return False
     if ALLOWED_MODELS is not None:
         return model in ALLOWED_MODELS
-    return re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}(/[A-Za-z0-9._-]{1,64})?", model) is not None
+    return re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,63}(/[A-Za-z0-9._:-]{1,64})?", model) is not None
 
 
 DEFAULT_OUTPUT_TOKENS = 256
