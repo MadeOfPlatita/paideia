@@ -121,6 +121,7 @@ const state = {
   conditions: { loaded: false, loading: false, error: null, byId: new Map(), referenceDate: null },
   catalogueCache: new Map(),
   selectedIds: [],
+  onlyDocumented: false,
   compareResult: null,
   compareIds: [],
   compareError: null,
@@ -1888,9 +1889,24 @@ function renderCatalogueResultsBody(results) {
     results.appendChild(empty);
     return;
   }
+  const documented = (id) => ((state.conditions.byId.get(id) || {}).conditions || []).length > 0;
+  const withRate = (id) => {
+    const rate = conditionOf(id, "annual_rate_percent");
+    return Boolean(rate) && rate.state === "known";
+  };
+  const todos = state.library.items.filter((product) => product && typeof product.id === "string");
+  const conDatos = todos.filter((product) => documented(product.id));
+  const conTasa = todos.filter((product) => withRate(product.id));
+  results.appendChild(textElement("p",
+    `${conTasa.length} de ${todos.length} con tasa documentada · ${conDatos.length} con alguna condición documentada. El resto solo aporta metadatos de identidad.`,
+    "small muted"));
+  const visibles = state.library.onlyDocumented === true ? conTasa : todos;
+  if (!visibles.length) {
+    results.appendChild(callout("Ningún candidato de esta búsqueda tiene una tasa documentada. Quita el filtro para ver los metadatos disponibles.", "info-note"));
+    return;
+  }
   const list = el("div", { className: "result-list" });
-  state.library.items.forEach((product) => {
-    if (!product || typeof product.id !== "string") return;
+  visibles.forEach((product) => {
     state.catalogueCache.set(product.id, product);
     list.appendChild(productCard(product));
   });
@@ -2092,6 +2108,13 @@ function renderLibrary() {
   select.appendChild(el("option", { value: "" }, "Todas las familias"));
   Object.entries(FAMILIES).forEach(([value, label]) => select.appendChild(el("option", { value, selected: state.library.family === value }, label)));
   controls.appendChild(field("Familia", select, "Familias del contrato local.", select.id));
+  const onlyDocumented = el("input", { type: "checkbox", id: "catalogue-only-documented", checked: state.library.onlyDocumented === true });
+  const onlyLabel = el("label", { className: "choice", htmlFor: "catalogue-only-documented" }, [onlyDocumented, el("span", {}, "Solo con tasa documentada")]);
+  onlyDocumented.addEventListener("change", () => {
+    state.library.onlyDocumented = onlyDocumented.checked;
+    renderCatalogueResults();
+  });
+  controls.appendChild(onlyLabel);
   page.appendChild(controls);
   const selection = el("div", { id: "library-selection" });
   page.appendChild(selection);
@@ -2250,6 +2273,9 @@ function renderComparisonResultBody(holder) {
 
 function renderComparePage(focus = true) {
   if (state.route !== "comparar") return;
+  if (state.selectedIds.length >= 2 && !state.compareResult && !state.compareBusy && !state.compareError) {
+    loadComparison();
+  }
   const { page, heading } = pageFrame("Compare · condiciones documentadas cuando existen", "Comparar candidatos", "Selecciona entre dos y cuatro candidatos distintos en la biblioteca. Las columnas siguen el mismo orden y muestran los campos que faltan.");
   page.appendChild(callout("Comparación educativa. Solo se muestran cifras documentadas con fuente y fecha; «vencido», «en conflicto» o «sin dato» se enseñan tal cual. No es un ranking financiero.", "warning-note"));
   const selection = el("section", { className: "paper-section" });

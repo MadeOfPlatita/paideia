@@ -5,8 +5,10 @@
 @media print {
   @page { size: A4; margin: 14mm; }
   html, body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; }
-  body > :not(#comparison-report-print) { display: none !important; }
-  #comparison-report-print { display: block; }
+  /* Solo cuando se imprime el informe de comparación; antes ocultaba también
+     el justificante del ensayo y cualquier otra vista. */
+  body.report-printing > :not(#comparison-report-print) { display: none !important; }
+  body.report-printing #comparison-report-print { display: block; }
   .comparison-report { color: #111; font: 9pt/1.35 Arial, sans-serif; max-width: none; overflow: visible; }
   .comparison-report h1 { font-size: 19pt; margin: 0 0 6mm; }
   .comparison-report h2 { font-size: 13pt; margin: 6mm 0 2mm; break-after: avoid; }

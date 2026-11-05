@@ -540,13 +540,23 @@ class _Handler(BaseHTTPRequestHandler):
                 or len(set(product_ids)) != len(product_ids)):
             raise ApiProblem(400, "INVALID_REQUEST", "Se requieren de 2 a 4 IDs distintos.")
         items = []
+        service = self.server.conditions_service
         for product_id in product_ids:
             product = self.server.catalogue_repository.get_product(product_id)
             if product is None:
                 product = self._curated_product(product_id)
                 if product is None:
                     raise ApiProblem(404, "PRODUCT_NOT_FOUND", "Candidato no encontrado.")
-            items.append(product)
+            if service is not None:
+                try:
+                    ficha = service.for_product(product_id)
+                except (OSError, ValueError, RuntimeError):
+                    ficha = None
+                if ficha:
+                    product = dict(product, conditions=ficha.get("conditions") or [],
+                                   rate_tiers=ficha.get("rate_tiers") or [],
+                                   reference_date=ficha.get("reference_date"))
+            items.append(self._with_conditions_state(product))
         reasons = ["Candidatos internos no publicables; solo se comparan metadatos de identidad y fuente."]
         if len({item["family"] for item in items}) > 1:
             reasons.append("Las familias tienen distinta naturaleza; no se ordenan numéricamente.")
