@@ -8,7 +8,7 @@ from secure_groq_session import _SingleFlightProvider, _CountedTransport, Sessio
 _TRUSTED_SINGLE_CHAT = _SingleFlightProvider.chat
 _TRUSTED_GROQ_METHODS = (GroqProvider.chat, GroqProvider._chat, GroqProvider._chat_impl)
 from pai_runtime import ANSWER_TEXT_SHOWN, ANSWER_TEXT_WITHHELD, ToolChatRunner
-from chat_context import NOTICE as CONTEXT_NOTICE, validate_context, validate_history
+from chat_context import NOTICE as CONTEXT_NOTICE, validate_context, validate_history, profile_echo
 from catalogue_facts import RULESET_VERSION, ComparisonSpec, evaluate_comparability
 from financial_quality import FINANCIAL_EDUCATION_PROMPT, assess_financial_text
 from structured_education import render_selection
@@ -154,6 +154,16 @@ def _text_surface_gate(text):
 def _has_unbacked_claim(text):
     """Compatibilidad: indica si la frontera de superficie retendría el texto."""
     return not _text_surface_gate(text)[0]
+
+
+def _profile_applied(body, profile_line):
+    """Antepone la frase del perfil autorizado; es texto del servidor, no del modelo."""
+    if not profile_line:
+        return body
+    answer = body.get("answer") or ""
+    body["answer"] = (profile_line + (" " + answer if answer else "")).strip()
+    body["profile_applied"] = True
+    return body
 
 
 def _withhold_text(result, reason):
@@ -562,6 +572,8 @@ class LocalChatService:
             history = validate_history(payload["history"]) if history_present else []
         except (ValueError, TypeError):
             raise ServiceProblem(400, "INVALID_CHAT_CONTEXT", "Contexto o historial no válidos; no se ha enviado nada.") from None
+        profile_line = (profile_echo(payload["context"]["fields"])
+                        if context_present and type(payload.get("context")) is dict else "")
         system = CHAT_SYSTEM_PROMPT
         if projection is not None:
             system = system.replace(
@@ -579,7 +591,8 @@ class LocalChatService:
             messages = [{'role': 'system', 'content': 'Selecciona exclusivamente version, intent y claim_ids del esquema; no añadas texto ni herramientas.'},
                         {'role': 'user', 'content': payload['message']}]
             return self._tools_chat(messages, payload.get('ticket'), structured_payload=payload,
-                                    approved_provider=approved_provider)
+                                    approved_provider=approved_provider,
+                                    profile_line=profile_line)
         if self._structured_mode:
             provider = self._provider
             fake = getattr(provider, '_provider', None) if type(provider) is StructuredProviderAdapter else None
@@ -595,7 +608,7 @@ class LocalChatService:
             except Exception:
                 raise ServiceProblem(502, "CHAT_STRUCTURED_INVALID_RESPONSE", "No se pudo validar la respuesta estructurada; no se ha mostrado y no hay reintento automático.") from None
         if self._tools_enabled or self._admission is not None or not self._test_only:
-            return self._tools_chat(messages, payload.get("ticket"))
+            return self._tools_chat(messages, payload.get("ticket"), profile_line=profile_line)
         try:
             result = (_fake_chat(self._provider, messages) if type(self._provider) is FakeChatProvider
                       else self._provider.chat(messages))
@@ -628,7 +641,7 @@ class LocalChatService:
         answer_text, answer_text_state, provenance_source = _withhold_unbacked_claim(
             {"answer_text_state": ANSWER_TEXT_SHOWN, "limitations": [], "catalogue": {"used": False}},
             answer_text, ANSWER_TEXT_SHOWN)
-        return {"answer": _financial_checked(answer_text),
+        return _profile_applied({"answer": _financial_checked(answer_text),
                 "refused": bool(result.refusal), "truncated": result.finish_reason == "length",
                 "provider_mode": "test_only" if self._test_only else "external",
                 "external_sent": not self._test_only,
@@ -639,7 +652,7 @@ class LocalChatService:
                     "withheld_reason": provenance_source.get("withheld_reason"),
                     "limitations": provenance_source.get("limitations") or [],
                     "catalogue": {"used": False, "products": []},
-                }, [])}
+                }, [])}, profile_line)
 
     @staticmethod
     def _valid_ticket(ticket):
@@ -652,7 +665,7 @@ class LocalChatService:
             raise ServiceProblem(503, "CHAT_ADMISSION_UNAVAILABLE", "No hay admisión configurada.")
         return {"queue": self._admission.status(payload["ticket"]), "external_sent": False}
 
-    def _tools_chat(self, messages, ticket=None, *, structured_payload=None, approved_provider=None):
+    def _tools_chat(self, messages, ticket=None, *, structured_payload=None, approved_provider=None, profile_line=""):
         if self._tools_enabled and not self._test_only and not self._catalogue_usage_approved and self._tools_scope != "calculator_only":
             raise ServiceProblem(503, "CHAT_TOOLS_NOT_APPROVED", "El uso externo de los datos del catálogo no está aprobado; no se ha enviado la consulta.")
         if (self._tools_enabled and self._dispatcher is None) or self._admission is None:
@@ -801,7 +814,7 @@ class LocalChatService:
                 calculation = None
             answer_text, answer_text_state, provenance_source = _withhold_unbacked_claim(
                 result, answer_text, answer_text_state, calculation)
-            return {"answer": _financial_checked(answer_text),
+            return _profile_applied({"answer": _financial_checked(answer_text),
                     "refused": bool(result["refusal"]), "truncated": result["finish_reason"] == "length",
                     "provider_mode": "test_only" if self._test_only else "external",
                     "external_sent": not self._test_only,
@@ -811,7 +824,7 @@ class LocalChatService:
                     "tool_events": result["tool_events"], "sources": result["sources"],
                     "sources_total": result.get("sources_total", len(result["sources"])),
                     "sources_truncated": result.get("sources_truncated", 0),
-                    "answer_provenance": answer_provenance(provenance_source, result["sources"])}
+                    "answer_provenance": answer_provenance(provenance_source, result["sources"])}, profile_line)
         finally:
             admission.complete(ticket)
 

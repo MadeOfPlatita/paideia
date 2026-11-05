@@ -85,3 +85,32 @@ class ProfileToPromptTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ProfileEchoInAnswerTests(unittest.TestCase):
+    """La respuesta empieza declarando el perfil autorizado (texto del servidor)."""
+
+    def service(self):
+        return LocalChatService(provider=fake(), enabled=True, test_only=True, context_enabled=True)
+
+    def test_the_answer_opens_with_the_authorised_profile(self):
+        body = self.service().chat({"message": "Pregunta ficticia", "consent": CONSENT,
+                                    "context_consent": EXTRA, "context": PERFIL})
+        self.assertTrue(body["answer"].startswith("Según el mapa que tú has autorizado"))
+        self.assertIn("más de 3 años", body["answer"])
+        self.assertIn("20.000–50.000 €", body["answer"])
+        self.assertTrue(body.get("profile_applied"))
+
+    def test_without_context_there_is_no_echo(self):
+        body = self.service().chat({"message": "Pregunta ficticia", "consent": CONSENT})
+        self.assertNotIn("Según el mapa", body["answer"])
+        self.assertFalse(body.get("profile_applied"))
+
+    def test_states_without_data_do_not_invent_a_profile(self):
+        vacio = {"version": CONTEXT_VERSION, "fields": {
+            "respuestas.horizonte": {"estado": "no_se"},
+            "respuestas.objetivo": {"estado": "omitido"},
+        }}
+        body = self.service().chat({"message": "Pregunta ficticia", "consent": CONSENT,
+                                    "context_consent": EXTRA, "context": vacio})
+        self.assertNotIn("Según el mapa", body["answer"])

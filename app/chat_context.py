@@ -46,3 +46,57 @@ def validate_history(history):
             raise ValueError('history message')
     if sum(len(m['content']) for m in history) > 6000: raise ValueError('history characters')
     return [{'role': item['role'], 'content': item['content']} for item in history]
+
+
+HORIZONTE_LABELS = {
+    'menos_6_meses': 'menos de 6 meses',
+    '6_12_meses': 'entre 6 y 12 meses',
+    '1_3_anos': 'entre 1 y 3 años',
+    'mas_3_anos': 'más de 3 años',
+    'sin_fecha': 'sin fecha fijada',
+}
+OBJETIVO_LABELS = {
+    'colchon_imprevistos': 'un colchón para imprevistos',
+    'gasto_previsto': 'un gasto previsto',
+    'ahorro_largo_plazo': 'ahorro a largo plazo',
+    'entender_riesgo': 'entender el riesgo',
+    'comparar_familias': 'comparar familias de producto',
+    'aprender_conceptos': 'aprender conceptos',
+    'curiosear': 'explorar sin objetivo fijo',
+}
+
+
+def _euros(valor):
+    def miles(numero):
+        entero, _, decimales = numero.partition('.')
+        salida = ''
+        while len(entero) > 3:
+            salida = '.' + entero[-3:] + salida
+            entero = entero[:-3]
+        salida = entero + salida
+        return salida + (',' + decimales if decimales else '')
+    return miles(valor['min_eur']) + '–' + miles(valor['max_eur']) + ' €'
+
+
+def profile_echo(fields):
+    """Frase del servidor con los campos declarados del mapa, sin inventar nada.
+
+    Solo viaja lo que la persona marcó como `declarado`; `no_se`, `omitido` y
+    `sin_preguntar` no aparecen. Devuelve "" si no hay ningún dato declarado.
+    """
+    partes = []
+    horizonte = fields.get('respuestas.horizonte') or {}
+    if horizonte.get('estado') == 'declarado' and horizonte.get('valor') in HORIZONTE_LABELS:
+        partes.append('horizonte ' + HORIZONTE_LABELS[horizonte['valor']])
+    objetivo = fields.get('respuestas.objetivo') or {}
+    if objetivo.get('estado') == 'declarado' and objetivo.get('valor') in OBJETIVO_LABELS:
+        partes.append('objetivo ' + OBJETIVO_LABELS[objetivo['valor']])
+    importe = fields.get('detalle_economico.importe_objetivo') or {}
+    if importe.get('estado') == 'declarado' and type(importe.get('valor')) is dict:
+        partes.append('importe objetivo ' + _euros(importe['valor']))
+    colchon = fields.get('detalle_economico.colchon_liquido') or {}
+    if colchon.get('estado') == 'declarado' and type(colchon.get('valor')) is dict:
+        partes.append('colchón disponible ' + _euros(colchon['valor']))
+    if not partes:
+        return ''
+    return 'Según el mapa que tú has autorizado: ' + '; '.join(partes) + '.'
