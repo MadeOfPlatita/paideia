@@ -7,10 +7,11 @@
 # Las claves NO se guardan aquí: se pegan en el panel de Render y quedan
 # marcadas con `sync: false`.
 #
-# Proveedor del chat: `PAIDEIA_LLM_PROVIDER` vale `groq` (por defecto) o
-# `commandcode` o `vercel` (Beam 1.0 gratis por la puerta de Vercel). Hay que
-# cambiar esa variable y pegar la clave del proveedor; la app solo puede enviar
-# la clave al host del proveedor elegido.
+# Proveedor del chat: `PAIDEIA_LLM_PROVIDER` vale `commandcode` (Beam 1.0
+# gratuito del plan), `vercel` (misma familia por la puerta de Vercel) o `groq`.
+# Hay que pegar la clave del proveedor en el panel de Render; la app solo puede
+# enviar la clave al host del proveedor elegido. Para volver a Groq basta con
+# poner `groq` aquí y sincronizar el blueprint.
 services:
   - type: web
     name: paideia
@@ -26,7 +27,7 @@ services:
       - key: PAIDEIA_GROQ_ENABLED
         value: "1"
       - key: PAIDEIA_LLM_PROVIDER
-        value: groq
+        value: commandcode
       - key: PAIDEIA_GROQ_MODEL
         value: openai/gpt-oss-120b
       - key: PAIDEIA_CALLS_PER_DAY
