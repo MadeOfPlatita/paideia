@@ -21,6 +21,6 @@ services:
       - key: PAIDEIA_GROQ_ENABLED
         value: "1"
       - key: PAIDEIA_GROQ_MODEL
-        value: openai/gpt-oss-20b
+        value: openai/gpt-oss-120b
       - key: GROQ_API_KEY
         sync: false
