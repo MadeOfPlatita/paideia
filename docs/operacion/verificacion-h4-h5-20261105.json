@@ -1,0 +1,29 @@
+{
+  "corto": {
+    "http": 200,
+    "seg": 50.2,
+    "answer": "Según el mapa que tú has autorizado: horizonte entre 6 y 12 meses; objetivo un colchón para imprevistos; importe objetivo 500–2.000 €; colchón disponible 500–2.000 €. Para ese fin y plazo lo educativo es priorizar liquidez, asumiendo que cualquier instrumento puede tener riesgo de entidad o custodia y que la inflación erosiona el poder adquisitivo; el ahorro no es \"sin riesgo\" por definición. Si quieres, consulto el catálogo (cuenta remunerada o depósito) para ver condiciones documentadas con su estado y fuente, sin prometer rentabilidades.",
+    "profile_applied": true,
+    "error": null
+  },
+  "largo": {
+    "http": 200,
+    "seg": 4.2,
+    "answer": "Según el mapa que tú has autorizado: horizonte más de 3 años; objetivo ahorro a largo plazo; importe objetivo 20.000–50.000 €; colchón disponible 20.000–50.000 €. No tengo condiciones verificadas de ningún producto para ti, así que no puedo prometer rentabilidad: cualquier instrumento tiene riesgos (nominal, de la entidad o custodia) y la inflación puede reducir el poder adquisitivo.",
+    "profile_applied": true,
+    "error": null
+  },
+  "h5": {
+    "http": 200,
+    "seg": 4.9,
+    "answer": "He consultado el catálogo y te dejo sus fuentes locales al lado. No repito cifras en prosa: las tasas y comisiones solo valen si salen citadas de la ficha. Ninguna ficha está aprobada para publicación: son borradores internos, no una recomendación ni una oferta.",
+    "fuentes": 6
+  },
+  "veredicto": {
+    "eco_en_ambas": true,
+    "respuestas_distintas": true,
+    "corto_cita_su_horizonte": true,
+    "largo_cita_su_horizonte": true,
+    "h5_dice_no_publicable": true
+  }
+}
