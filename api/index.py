@@ -16,6 +16,17 @@ from urllib.parse import parse_qs, unquote
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Vercel es el escaparate estático; la app completa con Pai corre en Render.
+DEMO_BANNER = (
+    '<div role="note" style="margin:0;padding:11px 16px;background:#1a1c1d;color:#f5f6f4;'
+    'font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;text-align:center;'
+    'border-bottom:1px solid #303431">'
+    'Esta página es el escaparate sin IA. La demo con Pai conectada está en '
+    '<a href="https://paideia-jg2n.onrender.com" style="color:#b7e6d5;font-weight:600">'
+    'paideia-jg2n.onrender.com</a>.'
+    "</div>"
+).encode("utf-8")
+
 from _core.catalogue_conditions import derive  # noqa: E402
 from _core.catalogue_data import CANDIDATES, CURATED, SOURCES  # noqa: E402
 from _core.domain import InputValidationError, calculate_scenario  # noqa: E402
@@ -217,6 +228,8 @@ def _static(path):
     content_type = mimetypes.guess_type(candidate)[0] or "application/octet-stream"
     with open(candidate, "rb") as handle:
         body = handle.read()
+    if candidate.endswith("index.html"):
+        body = body.replace(b"<body>", DEMO_BANNER + b"<body>", 1)
     headers = [("Content-Type", content_type), ("Content-Length", str(len(body)))]
     if candidate.endswith(".html"):
         headers.append(("Cache-Control", "no-store"))
