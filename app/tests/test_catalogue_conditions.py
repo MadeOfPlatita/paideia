@@ -176,7 +176,9 @@ class CuratedTests(unittest.TestCase):
                  for p in result["products"]}
         self.assertEqual(rates["DEP-02"]["value"], "2.75")
         self.assertEqual(rates["DEP-EBN-12"]["value"], "3.1")
-        self.assertEqual(rates["DEP-03"]["state"], "stale")
+        # Pibank prorrogó la oferta hasta el 30/11/2026 (misma página de producto).
+        self.assertEqual(rates["DEP-03"]["state"], "known")
+        self.assertEqual(rates["DEP-03"]["effective_to"], "2026-11-30")
 
 
 if __name__ == "__main__":

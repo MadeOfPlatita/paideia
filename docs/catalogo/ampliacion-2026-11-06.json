@@ -1,0 +1,122 @@
+{
+  "products": [
+    {
+      "candidate_id": "FND-02",
+      "conditions": [
+        {
+          "metric": "comision_gestion",
+          "value": 1.4,
+          "value_literal": "Comisión Gestión 1,40 %",
+          "source_url": "https://oleagestion.com/fondo-de-inversion/",
+          "source_title": "Olea Gestión — Olea Neutral Fondo de Inversión (datos del fondo)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "comision_deposito",
+          "value": 0.05,
+          "value_literal": "Comisión Depósito 0,05 %",
+          "source_url": "https://oleagestion.com/fondo-de-inversion/",
+          "source_title": "Olea Gestión — Olea Neutral Fondo de Inversión (datos del fondo)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "cifra_anual_gastos",
+          "value": 1.71,
+          "value_literal": "Comisiones de gestión y otros costes administrativos o de funcionamiento: 1,71% del valor de su inversión por año",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "comision_entrada",
+          "value": 0,
+          "value_literal": "No hay comisión de entrada sobre resultados para este producto. 0 €",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "comision_salida",
+          "value": 0,
+          "value_literal": "No hay comisión de salida sobre resultados para este producto. 0 €",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "periodo_mantenimiento_recomendado",
+          "value": 3,
+          "value_literal": "Período de mantenimiento recomendado: 3 años",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "horizonte_recomendado",
+          "value": "3 años",
+          "value_literal": "Este fondo puede no ser adecuado para inversores que prevean retirar su dinero en un plazo inferior a tres años",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "suscripcion_reembolso",
+          "value": "diaria",
+          "value_literal": "El partícipe podrá suscribir y reembolsar sus participaciones con una frecuencia diaria",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "ucits",
+          "value": "Sí (Directiva 2009/65/CE)",
+          "value_literal": "El Fondo cumple con la Directiva 2009/65/CE (UCITS)",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "sfdr",
+          "value": "Artículo 6",
+          "value_literal": "se acoge al Art.6 SFDR",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "fecha_lanzamiento",
+          "value": "2004-01-01",
+          "value_literal": "Fecha de inicio de gestión: 01/01/2004",
+          "source_url": "https://oleagestion.com/fondo-de-inversion/",
+          "source_title": "Olea Gestión — Olea Neutral Fondo de Inversión (datos del fondo)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        },
+        {
+          "metric": "fecha_documento",
+          "value": "2025-12-31",
+          "value_literal": "Fecha documento: 31 de diciembre de 2025",
+          "source_url": "https://oleagestion.com/wp-content/uploads/DFI_Olea-ESP_31.12.2025.pdf",
+          "source_title": "Olea Neutral — Documento de datos fundamentales (31-12-2025)",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        }
+      ],
+      "missing": [
+        "riesgo: el indicador 1-7 del DFI es una imagen y no se puede leer con fiabilidad; no se estima",
+        "valor liquidativo, partícipes y patrimonio: la web los sirve por JavaScript y llegan vacíos en la consulta estática",
+        "divisa: el folleto no declara la divisa de la clase en el texto consultado"
+      ]
+    }
+  ]
+}

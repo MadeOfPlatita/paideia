@@ -1,0 +1,29 @@
+{
+  "products": [
+    {
+      "candidate_id": "FND-01",
+      "conditions": [
+        {"metric": "riesgo", "value": 4, "value_literal": "Hemos clasificado este producto en la clase de riesgo 4 en una escala de 7, en la que 4 significa un riesgo medio", "source_url": "https://www.bestinver.es/wp-content/uploads/bestinver_bolsa_fi_datos_fundamentales.pdf", "source_title": "Bestinver Bolsa, F.I. — Datos fundamentales (31-12-2025)", "accessed": "2026-11-06"}
+      ]
+    },
+    {
+      "candidate_id": "FND-04",
+      "conditions": [
+        {"metric": "riesgo", "value": 4, "value_literal": "Hemos clasificado este producto en la clase de riesgo 4 en una escala de 7, en la que 4 significa un riesgo medio", "source_url": "https://www.bestinver.es/wp-content/uploads/bestinver_internacional_fi_datos_fundamentales.pdf", "source_title": "Bestinver Internacional, F.I. — Datos fundamentales (31-12-2025)", "accessed": "2026-11-06"}
+      ]
+    },
+    {
+      "candidate_id": "ETF-01",
+      "conditions": [
+        {"metric": "riesgo", "value": 4, "value_literal": "Hemos clasificado este producto en la clase de riesgo 4 en una escala de 7, en la que 4 significa un riesgo medio", "source_url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf", "source_title": "iShares Core MSCI Europe UCITS ETF EUR (Acc) — KID", "accessed": "2026-11-06"}
+      ]
+    },
+    {
+      "candidate_id": "ETF-03",
+      "conditions": [
+        {"metric": "divisa_base", "value": "EUR", "value_literal": "Base Fund Currency | EUR", "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp", "source_title": "SPDR MSCI Europe Industrials UCITS ETF — ficha del producto", "accessed": "2026-11-06"},
+        {"metric": "reparto", "value": "Acumulación", "value_literal": "Income Treatment | Accumulation", "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp", "source_title": "SPDR MSCI Europe Industrials UCITS ETF — ficha del producto", "accessed": "2026-11-06"}
+      ]
+    }
+  ]
+}

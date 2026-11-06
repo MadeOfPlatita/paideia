@@ -1,0 +1,275 @@
+{
+ "products": [
+  {
+   "candidate_id": "DEP-EBN-12",
+   "conditions": [
+    {
+     "metric": "tae",
+     "value": 3.1,
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/",
+     "source_title": "Depósito Nuevo Ahorro | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "3,10% TAE* (A 12 MESES)"
+    },
+    {
+     "metric": "tin",
+     "value": 3.06,
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/",
+     "source_title": "Depósito Nuevo Ahorro | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "3,06% TIN"
+    },
+    {
+     "metric": "plazo_meses",
+     "value": 12,
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/",
+     "source_title": "Depósito Nuevo Ahorro | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "12 meses"
+    },
+    {
+     "metric": "importe_minimo",
+     "value": 5000,
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/",
+     "source_title": "Depósito Nuevo Ahorro | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Min. 5.000€"
+    },
+    {
+     "metric": "importe_maximo",
+     "value": 400000,
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/",
+     "source_title": "Depósito Nuevo Ahorro | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Max. 400.000€"
+    },
+    {
+     "metric": "liquidacion",
+     "value": "trimestral o al vencimiento, a elección del cliente",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "se liquidan, a elección del cliente, trimestralmente o en la Fecha de Vencimiento"
+    },
+    {
+     "metric": "base_calculo_intereses",
+     "value": "(Principal x TIN x Tiempo)/36.000",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "(Principal x TIN x Tiempo)/36.000; un mes = 30 días naturales"
+    },
+    {
+     "metric": "cancelacion_anticipada",
+     "value": "no permitida",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "No cabe cancelación anticipada voluntaria del Depósito por el cliente."
+    },
+    {
+     "metric": "renovacion",
+     "value": "sin renovación tácita",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Este Depósito no se renovará tácitamente a su vencimiento."
+    },
+    {
+     "metric": "comisiones",
+     "value": "sin gastos ni comisiones",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Este Depósito no tiene gastos ni comisiones."
+    },
+    {
+     "metric": "garantia_depositos",
+     "value": "Fondo de Garantía de Depósitos de Entidades de Crédito (España): 100.000 € por depositante y entidad",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Límite de la cobertura: 100.000 euros por depositante y entidad de crédito"
+    },
+    {
+     "metric": "elegibilidad",
+     "value": "nuevos clientes o clientes que incrementen su saldo en depósitos",
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/",
+     "source_title": "Depósito Nuevo Ahorro | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Exclusivo para incremento de saldo en depósitos"
+    },
+    {
+     "metric": "requisito",
+     "value": "disponer de Cuenta Operativa (cuenta corriente) en EBN Banco",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "deberá tener una cuenta corriente (\"Cuenta Operativa\") en EBN Banco"
+    },
+    {
+     "metric": "titularidad",
+     "value": "varios titulares (documento firmado por todos)",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-nuevo-ahorro.pdf",
+     "source_title": "Información precontractual Depósito Nuevo Ahorro",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "En el caso de varios titulares, este documento se entenderá firmado por todos"
+    },
+    {
+     "metric": "fecha_documento",
+     "value": "2026-09-29",
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-nuevo-ahorro/",
+     "source_title": "Depósito Nuevo Ahorro | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "2026.09.29 Inf Precontractual-Depósito NUEVO AHORRO"
+    }
+   ],
+   "missing": [
+    "retencion_fiscal — la información precontractual solo dice que los rendimientos «estarán sujetos a la fiscalidad vigente»; no publica el tipo de retención",
+    "domiciliaciones — ni la ficha ni el PDF indican si el depósito admite domiciliaciones",
+    "divisa — no se declara explícitamente; importes publicados en euros"
+   ]
+  },
+  {
+   "candidate_id": "DEP-01",
+   "conditions": [
+    {
+     "metric": "garantia_depositos",
+     "value": "Fondo de Garantía de Depósitos y Resolución francés (FGDR): 100.000 € por titular y entidad",
+     "source_url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-deposito-publico-RenaultBank.pdf",
+     "source_title": "Información precontractual Depósito «Tú+» - Renault Bank",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Este fondo ofrece una protección de hasta 100.000 euros por titular y entidad de crédito."
+    },
+    {
+     "metric": "titularidad",
+     "value": "un único titular (nominativo e intransferible)",
+     "source_url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-deposito-publico-RenaultBank.pdf",
+     "source_title": "Información precontractual Depósito «Tú+» - Renault Bank",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "El Depósito “Tú+” es nominativo e intransferible, es decir, aparece a nombre de un único cliente"
+    },
+    {
+     "metric": "elegibilidad",
+     "value": "personas físicas mayores de edad con residencia fiscal en España y sin obligaciones fiscales en otros países",
+     "source_url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-deposito-publico-RenaultBank.pdf",
+     "source_title": "Información precontractual Depósito «Tú+» - Renault Bank",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Las personas físicas mayores de edad, con residencia fiscal en España y sin obligaciones fiscales en otros países"
+    },
+    {
+     "metric": "requisito",
+     "value": "tener una cuenta Contigo y una cuenta Depósito «Tú+»",
+     "source_url": "https://doc.renaultbank.es/documentacion-legal/informacion-precontractual-deposito-publico-RenaultBank.pdf",
+     "source_title": "Información precontractual Depósito «Tú+» - Renault Bank",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "debes tener una cuenta Contigo y una cuenta Depósito “Tú+” en la ENTIDAD"
+    },
+    {
+     "metric": "retencion_fiscal",
+     "value": 19,
+     "source_url": "https://renaultbank.es/blog/conceptos-bancarios/irpf-depositos/",
+     "source_title": "IRPF de depósitos: cómo tributan tus ahorros - Renault Bank",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Los bancos están obligados por ley a aplicar una retención del 19 % sobre los intereses"
+    },
+    {
+     "metric": "fecha_datos",
+     "value": "2026-11-18",
+     "source_url": "https://renaultbank.es/productos/",
+     "source_title": "Nuestros productos - Renault Bank",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Condiciones válidas hasta el 18/11/2026"
+    }
+   ],
+   "missing": [
+    "fecha_documento — ninguno de los PDF consultados (ficha comercial y información precontractual) muestra fecha de emisión",
+    "domiciliaciones — el depósito no publica condiciones de domiciliación; la restricción «no admite domiciliación de recibos» corresponde a la Cuenta Contigo, no al depósito"
+   ]
+  },
+  {
+   "candidate_id": "DEP-04",
+   "conditions": [
+    {
+     "metric": "garantia_depositos",
+     "value": "Fondo de Garantía de Depósitos de Entidades de Crédito (España): 100.000 € por depositante y entidad",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-sinycom-plus-sin-firma.pdf",
+     "source_title": "Información precontractual Depósito Sinycon Plus",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Límite de la cobertura: 100.000 euros por depositante y entidad de crédito"
+    },
+    {
+     "metric": "titularidad",
+     "value": "varios titulares (documento firmado por todos)",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-sinycom-plus-sin-firma.pdf",
+     "source_title": "Información precontractual Depósito Sinycon Plus",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "En el caso de varios titulares, este documento se entenderá firmado por todos"
+    },
+    {
+     "metric": "elegibilidad",
+     "value": "particulares (personas físicas) que inmovilizan una cantidad de dinero a plazo fijo",
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-sinycon-plus/",
+     "source_title": "Depósito a plazo fijo | Sinycon Plus | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "Dirigido a particulares que desean inmovilizar una cantidad de dinero"
+    },
+    {
+     "metric": "requisito",
+     "value": "disponer de Cuenta Operativa (cuenta corriente) en EBN Banco",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-sinycom-plus-sin-firma.pdf",
+     "source_title": "Información precontractual Depósito Sinycon Plus",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "deberá tener una cuenta corriente (\"Cuenta Operativa\") en EBN Banco"
+    },
+    {
+     "metric": "retencion_fiscal",
+     "value": 19,
+     "source_url": "https://www.ebnbanco.com/ahorro/deposito-sinycon-plus/",
+     "source_title": "Depósito a plazo fijo | Sinycon Plus | EBN Banco",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "¿Qué retención se aplica a los intereses obtenidos? Se aplicará una retención del 19%."
+    },
+    {
+     "metric": "fecha_documento",
+     "value": "2026-09-29",
+     "source_url": "https://d28luerk5zbkgl.cloudfront.net/wp-content/uploads/2026/09/2026-09-29-inf-precontractual-deposito-sinycom-plus-sin-firma.pdf",
+     "source_title": "Información precontractual Depósito Sinycon Plus",
+     "accessed": "2026-11-06",
+     "kind": "official",
+     "value_literal": "2026-09-29-inf-precontractual-deposito-sinycom-plus-sin-firma.pdf"
+    }
+   ],
+   "missing": [
+    "domiciliaciones — ni la ficha ni el PDF indican si el depósito admite domiciliaciones"
+   ]
+  }
+ ],
+ "notes": "Datos transcritos el 2026-11-06 de las fichas y PDF precontractuales oficiales. DEP-01 y DEP-04: no se repiten tasa, plazo, importes, liquidación, cancelación, renovación ni comisiones ya presentes; solo se añaden garantía, titularidad, elegibilidad, requisito, retención y fechas. DEP-EBN-12: TAE 3,10% / TIN 3,06% a 12 meses, 5.000-400.000 €, sin cancelación anticipada y sin renovación tácita; el PDF admite liquidación trimestral o al vencimiento a elección del cliente, mientras la ficha dice solo «al vencimiento» (se recoge el PDF, más preciso). Documento fechado 2026-09-29. DEP-04: la ficha anuncia «hasta el 2,85% TAE» en el encabezado pero su tabla y el PDF llegan al 3,10% TAE (48 meses); la tabla omite la fila de 12 meses (el pie da 2,75% TAE) y el ejemplo de 48 meses del pie usa TIN 2,97% frente al 3,06% del PDF. No se añade tasa por estar ya transcrita; conviene revisar ese conflicto en la ficha existente. DEP-01: retención del 19% tomada del blog fiscal del propio banco (no de la ficha del depósito, que solo dice «retendrá los impuestos que correspondan»); «Condiciones válidas hasta el 18/11/2026» registrada como fecha_datos. DEP-01 y DEP-EBN-12 no publican el tipo de retención en su documentación contractual: para EBN solo consta «sujetos a la fiscalidad vigente», por eso va a missing. Detalle adicional DEP-EBN-12: el PDF fija el coste de la Cuenta Operativa en 0 € actualmente y con un máximo de 300 € anuales hasta el vencimiento. Detalle adicional DEP-04: la FAQ de la ficha indica que una persona jurídica o un no residente que quiera contratar más de 250.000 € debe llamar al 91 828 09 11."
+}

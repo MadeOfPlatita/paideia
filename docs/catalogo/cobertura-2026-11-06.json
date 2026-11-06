@@ -1,0 +1,283 @@
+[
+  {
+    "candidate_id": "ETF-02",
+    "name": "Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+    "family": "etf_ucits",
+    "documented": 12,
+    "expected": 15,
+    "coverage": 40,
+    "missing": [
+      "comision_entrada",
+      "comision_salida",
+      "patrimonio",
+      "divisa_base",
+      "ucits",
+      "costes_operacion",
+      "mercado_principal",
+      "prestamo_valores",
+      "sfdr"
+    ]
+  },
+  {
+    "candidate_id": "ETF-01",
+    "name": "iShares Core MSCI Europe UCITS ETF EUR (Acc)",
+    "family": "etf_ucits",
+    "documented": 15,
+    "expected": 15,
+    "coverage": 53,
+    "missing": [
+      "nav",
+      "patrimonio",
+      "reparto",
+      "ucits",
+      "mercado_principal",
+      "prestamo_valores",
+      "sfdr"
+    ]
+  },
+  {
+    "candidate_id": "ETF-03",
+    "name": "State Street SPDR MSCI Europe Industrials UCITS ETF",
+    "family": "etf_ucits",
+    "documented": 15,
+    "expected": 15,
+    "coverage": 60,
+    "missing": [
+      "comision_entrada",
+      "comision_salida",
+      "riesgo",
+      "patrimonio",
+      "costes_operacion",
+      "sfdr"
+    ]
+  },
+  {
+    "candidate_id": "ETF-04",
+    "name": "VanEck Semiconductor UCITS ETF",
+    "family": "etf_ucits",
+    "documented": 16,
+    "expected": 15,
+    "coverage": 60,
+    "missing": [
+      "patrimonio",
+      "replica",
+      "ucits",
+      "costes_operacion",
+      "mercado_principal",
+      "prestamo_valores"
+    ]
+  },
+  {
+    "candidate_id": "ACC-03",
+    "name": "Cuenta Remunerada Openbank",
+    "family": "cuenta_remunerada",
+    "documented": 11,
+    "expected": 12,
+    "coverage": 67,
+    "missing": [
+      "titularidad",
+      "base_calculo_intereses",
+      "divisa",
+      "importe_maximo"
+    ]
+  },
+  {
+    "candidate_id": "ACC-04",
+    "name": "Cuenta Remunerada Pibank",
+    "family": "cuenta_remunerada",
+    "documented": 11,
+    "expected": 12,
+    "coverage": 67,
+    "missing": [
+      "titularidad",
+      "promocion_ventana_alta",
+      "divisa",
+      "importe_maximo"
+    ]
+  },
+  {
+    "candidate_id": "ACC-02",
+    "name": "Cuenta corriente remunerada",
+    "family": "cuenta_remunerada",
+    "documented": 11,
+    "expected": 12,
+    "coverage": 75,
+    "missing": [
+      "elegibilidad",
+      "promocion_ventana_alta",
+      "divisa"
+    ]
+  },
+  {
+    "candidate_id": "DEP-02",
+    "name": "Depósito Open 6 meses",
+    "family": "deposito",
+    "documented": 14,
+    "expected": 12,
+    "coverage": 75,
+    "missing": [
+      "renovacion",
+      "retencion_fiscal",
+      "titularidad"
+    ]
+  },
+  {
+    "candidate_id": "DEP-03",
+    "name": "Depósito Pibank 12 meses",
+    "family": "deposito",
+    "documented": 14,
+    "expected": 12,
+    "coverage": 75,
+    "missing": [
+      "comisiones",
+      "retencion_fiscal",
+      "titularidad"
+    ]
+  },
+  {
+    "candidate_id": "FND-01",
+    "name": "Bestinver Bolsa, F.I.",
+    "family": "fondo_tradicional",
+    "documented": 18,
+    "expected": 21,
+    "coverage": 76,
+    "missing": [
+      "patrimonio",
+      "participes",
+      "divisa",
+      "reparto",
+      "sfdr"
+    ]
+  },
+  {
+    "candidate_id": "FND-04",
+    "name": "Bestinver Internacional, F.I.",
+    "family": "fondo_tradicional",
+    "documented": 18,
+    "expected": 21,
+    "coverage": 76,
+    "missing": [
+      "patrimonio",
+      "participes",
+      "divisa",
+      "reparto",
+      "sfdr"
+    ]
+  },
+  {
+    "candidate_id": "ACC-01",
+    "name": "Cuenta Contigo",
+    "family": "cuenta_remunerada",
+    "documented": 12,
+    "expected": 12,
+    "coverage": 83,
+    "missing": [
+      "disponibilidad",
+      "importe_maximo"
+    ]
+  },
+  {
+    "candidate_id": "DEP-04",
+    "name": "Depósito Sinycon Plus",
+    "family": "deposito",
+    "documented": 14,
+    "expected": 12,
+    "coverage": 83,
+    "missing": [
+      "plazo_meses",
+      "renovacion"
+    ]
+  },
+  {
+    "candidate_id": "DEP-SELF-12",
+    "name": "Depósito a 12 meses Self Bank",
+    "family": "deposito",
+    "documented": 13,
+    "expected": 12,
+    "coverage": 83,
+    "missing": [
+      "retencion_fiscal",
+      "titularidad"
+    ]
+  },
+  {
+    "candidate_id": "FND-02",
+    "name": "OLEA NEUTRAL, FI",
+    "family": "fondo_tradicional",
+    "documented": 32,
+    "expected": 21,
+    "coverage": 90,
+    "missing": [
+      "importe_minimo",
+      "participes"
+    ]
+  },
+  {
+    "candidate_id": "FND-03",
+    "name": "Azvalor Internacional FI",
+    "family": "fondo_tradicional",
+    "documented": 34,
+    "expected": 21,
+    "coverage": 90,
+    "missing": [
+      "gestora",
+      "sfdr"
+    ]
+  },
+  {
+    "candidate_id": "DEP-EBN-12",
+    "name": "Depósito Nuevo Ahorro 12 meses",
+    "family": "deposito",
+    "documented": 15,
+    "expected": 12,
+    "coverage": 92,
+    "missing": [
+      "retencion_fiscal"
+    ]
+  },
+  {
+    "candidate_id": "DEBT-01",
+    "name": "Letra del Tesoro — vencimiento 15-01-2027",
+    "family": "letra_deuda_publica",
+    "documented": 10,
+    "expected": 10,
+    "coverage": 100,
+    "missing": []
+  },
+  {
+    "candidate_id": "DEBT-02",
+    "name": "Letra del Tesoro — vencimiento 05-02-2027",
+    "family": "letra_deuda_publica",
+    "documented": 10,
+    "expected": 10,
+    "coverage": 100,
+    "missing": []
+  },
+  {
+    "candidate_id": "DEBT-03",
+    "name": "Letra del Tesoro — vencimiento 05-03-2027",
+    "family": "letra_deuda_publica",
+    "documented": 10,
+    "expected": 10,
+    "coverage": 100,
+    "missing": []
+  },
+  {
+    "candidate_id": "DEBT-04",
+    "name": "Letra del Tesoro — vencimiento 09-04-2027",
+    "family": "letra_deuda_publica",
+    "documented": 10,
+    "expected": 10,
+    "coverage": 100,
+    "missing": []
+  },
+  {
+    "candidate_id": "DEP-01",
+    "name": "Depósito Tú+",
+    "family": "deposito",
+    "documented": 14,
+    "expected": 12,
+    "coverage": 100,
+    "missing": []
+  }
+]

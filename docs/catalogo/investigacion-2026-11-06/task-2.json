@@ -1,0 +1,23 @@
+{
+  "products": [
+    {
+      "candidate_id": "DEBT-02",
+      "isin": "ES0L02602057",
+      "conditions": [
+        {
+          "metric": "fecha_subasta",
+          "value": "2026-10-13",
+          "value_literal": "Subasta 13 de octubre de 2026",
+          "source_url": "https://...",
+          "source_title": "...",
+          "accessed": "2026-11-06",
+          "kind": "official"
+        }
+      ],
+      "missing": [
+        "..."
+      ]
+    }
+  ],
+  "notes": "..."
+}
