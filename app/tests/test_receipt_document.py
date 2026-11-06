@@ -38,9 +38,18 @@ class ReceiptDocumentTests(unittest.TestCase):
             self.assertIn(nombre, js)
         self.assertIn("printReceiptDocument()", js)
         self.assertNotIn('"Imprimir justificante HTML", () => window.print()', js)
-        for seccion in ("Datos del ejercicio", "Producto de referencia", "Condiciones documentadas",
-                        "Importe imaginado", "Lo que este documento no acredita"):
+        for seccion in ("Objeto del documento", "Producto de referencia",
+                        "Condiciones económicas documentadas", "Importe del ejercicio",
+                        "Advertencias y exclusiones", "Firma y trazabilidad"):
             self.assertIn(seccion, js)
+
+    def test_document_keeps_the_simulation_marks(self):
+        js = self.leer("app.js")
+        for marca in ("ENSAYO FICTICIO", "Sin validez contractual", "Sin firma válida"):
+            self.assertIn(marca, js)
+        css = self.leer("receipt_print.css")
+        self.assertIn(".doc-watermark", css)
+        self.assertIn(".doc-barcode", css)
 
 
 if __name__ == "__main__":

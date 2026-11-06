@@ -3110,44 +3110,103 @@ function receiptConditionsTable(productId) {
   return tabla;
 }
 
+function receiptBarcode(reference) {
+  const tira = el("div", { className: "doc-barcode", "aria-hidden": "true" });
+  const limpio = reference.replace(/[^A-Z0-9]/gi, "");
+  for (let i = 0; i < limpio.length; i += 1) {
+    const codigo = limpio.charCodeAt(i);
+    const ancho = 1 + (codigo % 3);
+    const barra = el("i");
+    barra.style.width = `${ancho}px`;
+    tira.appendChild(barra);
+    const hueco = el("i");
+    hueco.style.width = `${1 + ((codigo >> 2) % 2)}px`;
+    hueco.style.background = "transparent";
+    tira.appendChild(hueco);
+  }
+  return tira;
+}
+
+function docBox(titulo, pares) {
+  const caja = el("div", { className: "doc-box" });
+  caja.appendChild(el("h3", {}, titulo));
+  const lista = el("dl");
+  pares.forEach(([clave, valor]) => {
+    lista.appendChild(el("dt", {}, clave));
+    lista.appendChild(el("dd", {}, valor));
+  });
+  caja.appendChild(lista);
+  return caja;
+}
+
+function docSection(numero, titulo) {
+  const cabecera = el("h2");
+  cabecera.appendChild(el("i", {}, `${numero}.`));
+  cabecera.appendChild(document.createTextNode(titulo));
+  return cabecera;
+}
+
 function buildReceiptDocument() {
   const producto = state.simulation.product;
+  const referencia = receiptReference();
+  const emitido = state.simulation.receiptAt || "No consta";
   const doc = el("div", { className: "receipt-doc" });
+
+  const marca = el("div", { className: "doc-watermark", "aria-hidden": "true" });
+  marca.appendChild(el("span", {}, "ENSAYO FICTICIO"));
+  doc.appendChild(marca);
+
   const head = el("div", { className: "doc-head" });
-  const marca = el("div");
-  marca.appendChild(el("div", { className: "doc-brand" }, "Paideia"));
-  marca.appendChild(el("div", { className: "doc-brand-sub" }, "Cuaderno de ruta financiera · Universidad de Málaga"));
-  head.appendChild(marca);
-  head.appendChild(el("div", { className: "doc-seal" }, "Documento de ensayo · sin validez contractual"));
+  const izquierda = el("div");
+  izquierda.appendChild(el("div", { className: "doc-brand" }, "Paideia"));
+  izquierda.appendChild(el("div", { className: "doc-brand-sub" },
+    "Laboratorio de educación financiera · Universidad de Málaga · Documento emitido por el propio interesado"));
+  const derecha = el("div", { className: "doc-head-right" });
+  derecha.appendChild(document.createTextNode("Expediente"));
+  derecha.appendChild(el("strong", {}, referencia));
+  derecha.appendChild(document.createTextNode("Emisión"));
+  derecha.appendChild(el("strong", {}, emitido));
+  derecha.appendChild(document.createTextNode("Serie"));
+  derecha.appendChild(el("strong", {}, "ENS-FIC"));
+  head.appendChild(izquierda);
+  head.appendChild(derecha);
   doc.appendChild(head);
+  doc.appendChild(el("div", { className: "doc-seal" }, "Sin validez contractual · no es una oferta"));
 
-  doc.appendChild(el("h1", {}, "Justificante de ejercicio ficticio"));
-  doc.appendChild(el("p", { className: "doc-ref" }, `Referencia ${receiptReference()} · Emitido ${state.simulation.receiptAt || "sin fecha"}`));
+  const titulo = el("div", { className: "doc-title" });
+  titulo.appendChild(el("h1", {}, "Justificante de ejercicio ficticio"));
+  titulo.appendChild(el("span", {}, "Ejemplar del interesado"));
+  doc.appendChild(titulo);
 
-  doc.appendChild(el("h2", {}, "Datos del ejercicio"));
-  const datos = el("table");
-  const cuerpoDatos = el("tbody");
-  [
-    ["Carácter", "Simulación educativa. No es una oferta ni un contrato."],
-    ["Canal", "Navegador del interesado. Generado en local, sin envío a terceros."],
-    ["Fecha y hora", state.simulation.receiptAt || "No consta"],
-    ["Intervinientes", "Ninguna entidad financiera interviene en este documento."],
-  ].forEach(([clave, valor]) => {
-    const fila = el("tr");
-    fila.appendChild(el("th", {}, clave));
-    fila.appendChild(el("td", {}, valor));
-    cuerpoDatos.appendChild(fila);
-  });
-  datos.appendChild(cuerpoDatos);
-  doc.appendChild(datos);
+  const rejilla = el("div", { className: "doc-grid" });
+  rejilla.appendChild(docBox("Interesado", [
+    ["Titular", "No identificado: el ejercicio se hace en el navegador"],
+    ["Domicilio", "No consta · no se recogen datos personales"],
+    ["Condición", "Consumidor en simulación educativa"],
+  ]));
+  rejilla.appendChild(docBox("Operación", [
+    ["Naturaleza", "Simulación: no hay solicitud ni contratación"],
+    ["Canal", "Navegador del interesado, sin envío a terceros"],
+    ["Fecha de efecto", "Ninguna: el documento no produce efectos"],
+  ]));
+  doc.appendChild(rejilla);
 
-  doc.appendChild(el("h2", {}, "Producto de referencia"));
-  const productoTabla = el("table");
+  doc.appendChild(docSection(1, "Objeto del documento"));
+  doc.appendChild(el("p", {},
+    "Este documento deja constancia de un ejercicio educativo realizado con datos ficticios sobre un producto del catálogo interno. No documenta una contratación, no acredita la disponibilidad del producto y no genera obligación alguna para ninguna de las partes, porque no hay partes intervinientes."));
+
+  doc.appendChild(docSection(2, "Producto de referencia"));
+  const tablaProducto = el("table");
+  const cabeceraProducto = el("thead");
+  const filaCabecera = el("tr");
+  ["Campo", "Contenido"].forEach((texto) => filaCabecera.appendChild(el("th", {}, texto)));
+  cabeceraProducto.appendChild(filaCabecera);
+  tablaProducto.appendChild(cabeceraProducto);
   const cuerpoProducto = el("tbody");
   const filasProducto = producto ? [
     ["Denominación", productName(producto)],
-    ["Familia", familyLabel(producto.family)],
-    ["Entidad", issuerLabel(producto)],
+    ["Familia", familyLabel(producto)],
+    ["Entidad de referencia", issuerLabel(producto)],
     ["ISIN", producto.isin || "No indicado en el metadato"],
     ["Identidad", identityLabel(producto)],
     ["Fuente de identidad", isSafePrimaryUrl(producto.primary_url) ? producto.primary_url : "Sin URL utilizable"],
@@ -3158,37 +3217,56 @@ function buildReceiptDocument() {
     fila.appendChild(el("td", {}, valor));
     cuerpoProducto.appendChild(fila);
   });
-  productoTabla.appendChild(cuerpoProducto);
-  doc.appendChild(productoTabla);
+  tablaProducto.appendChild(cuerpoProducto);
+  doc.appendChild(tablaProducto);
 
-  doc.appendChild(el("h2", {}, "Condiciones documentadas"));
+  doc.appendChild(docSection(3, "Condiciones económicas documentadas"));
   doc.appendChild(receiptConditionsTable(producto ? producto.id : ""));
-  doc.appendChild(el("p", {}, "Solo se transcriben las condiciones publicadas por la fuente. Lo que no publica figura como «sin dato documentado»; no se estima."));
+  doc.appendChild(el("p", { className: "doc-small" },
+    "Solo se transcriben las condiciones publicadas por la fuente, con su estado y su fecha. Lo que la fuente no publica figura como «sin dato documentado»: no se estima ni se completa por inferencia."));
 
-  doc.appendChild(el("h2", {}, "Importe imaginado"));
+  doc.appendChild(docSection(4, "Importe del ejercicio"));
   const importe = el("div", { className: "doc-amount" });
-  importe.appendChild(el("span", {}, "Cantidad objeto del ejercicio"));
-  importe.appendChild(document.createTextNode(formatCurrency(state.simulation.amount)));
+  importe.appendChild(el("span", {}, "Cantidad imaginada"));
+  importe.appendChild(el("strong", {}, formatCurrency(state.simulation.amount)));
   doc.appendChild(importe);
+  doc.appendChild(el("p", { className: "doc-small" },
+    "El importe se conserva solo en esta pestaña para el justificante. No se ha ordenado ningún movimiento, no se ha abierto cuenta y no se ha transmitido a ninguna entidad."));
 
-  doc.appendChild(el("div", { className: "doc-warning" }, "No se ha enviado solicitud alguna, no se ha abierto cuenta ni se ha movido dinero. Este documento no es un contrato, ni una confirmación de operación, ni una recomendación de inversión."));
-
-  doc.appendChild(el("h2", {}, "Lo que este documento no acredita"));
-  const lista = el("ul");
+  doc.appendChild(docSection(5, "Advertencias y exclusiones"));
+  const aviso = el("div", { className: "doc-warning" },
+    "Documento de ensayo. No es un contrato, ni una oferta vinculante, ni una confirmación de operación, ni una recomendación personalizada de inversión.");
+  doc.appendChild(aviso);
+  const exclusiones = el("ul", { className: "doc-exclusions" });
   [
-    "No acredita que el producto esté disponible ni que sus condiciones sigan vigentes.",
-    "No recoge fiscalidad, comisiones aplicadas por terceros ni evaluación de idoneidad.",
+    "No acredita disponibilidad del producto ni vigencia de sus condiciones.",
+    "No recoge fiscalidad, comisiones de terceros, garantías ni evaluación de idoneidad.",
     "No sustituye la información precontractual ni el contrato de la entidad.",
-    "No existe firma válida: las líneas siguientes son parte del formato, no un consentimiento.",
-  ].forEach((texto) => lista.appendChild(el("li", {}, texto)));
-  doc.appendChild(lista);
+    "No existe firma válida: las líneas siguientes son formato, no consentimiento.",
+  ].forEach((texto) => exclusiones.appendChild(el("li", {}, texto)));
+  doc.appendChild(exclusiones);
 
+  doc.appendChild(docSection(6, "Firma y trazabilidad"));
   const firmas = el("div", { className: "doc-signs" });
-  firmas.appendChild(el("div", { className: "doc-sign" }, "Interesado · sin firma válida"));
-  firmas.appendChild(el("div", { className: "doc-sign" }, "Entidad · no interviniente"));
+  const firmaInteresado = el("div", { className: "doc-sign" }, "El interesado");
+  firmaInteresado.appendChild(el("small", {}, "Sin firma válida · ejercicio no contratado"));
+  const firmaEntidad = el("div", { className: "doc-sign" }, "Entidad de referencia");
+  firmaEntidad.appendChild(el("small", {}, "No interviene ni suscribe este documento"));
+  firmas.appendChild(firmaInteresado);
+  firmas.appendChild(firmaEntidad);
   doc.appendChild(firmas);
 
-  doc.appendChild(el("div", { className: "doc-footer" }, "Paideia · documento generado localmente en el navegador. No se ha transmitido a ninguna entidad."));
+  const codigo = el("div", { className: "doc-code" });
+  codigo.appendChild(receiptBarcode(referencia));
+  const textoCodigo = el("div", { className: "doc-code-text" });
+  textoCodigo.appendChild(document.createTextNode(referencia));
+  textoCodigo.appendChild(el("br"));
+  textoCodigo.appendChild(document.createTextNode("Emitido en local · no verificable por terceros"));
+  codigo.appendChild(textoCodigo);
+  doc.appendChild(codigo);
+
+  doc.appendChild(el("div", { className: "doc-footer" },
+    "Paideia · justificante de ejercicio ficticio generado en el navegador. No se ha transmitido a ninguna entidad ni tiene validez contractual."));
   return doc;
 }
 
