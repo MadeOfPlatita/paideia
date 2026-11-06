@@ -7,6 +7,8 @@ del ensayo B5, y no constituye una aprobación del producto completo.
 
 from __future__ import annotations
 
+import unicodedata
+
 import os
 
 from copy import deepcopy
@@ -353,18 +355,43 @@ class ToolDispatcher:
             raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
         return list(arguments["product_ids"])
 
+    # Los modelos escriben la familia en singular, plural, con acento o con el
+    # nombre comercial. Se normaliza a la clave del catálogo; si no se reconoce,
+    # se busca solo por texto en vez de rechazar el turno entero.
+    _FAMILY_ALIASES = {
+        "cuenta": "cuenta_remunerada", "cuentas": "cuenta_remunerada",
+        "cuenta_remunerada": "cuenta_remunerada",
+        "deposito": "deposito", "depositos": "deposito", "plazo_fijo": "deposito",
+        "letra": "letra_deuda_publica", "letras": "letra_deuda_publica",
+        "deuda_publica": "letra_deuda_publica", "tesoro": "letra_deuda_publica",
+        "fondo": "fondo_tradicional", "fondos": "fondo_tradicional",
+        "fondo_tradicional": "fondo_tradicional",
+        "etf": "etf_ucits", "etfs": "etf_ucits", "etf_ucits": "etf_ucits",
+    }
+
     @staticmethod
     def _validate_search(arguments):
-        if type(arguments) is not dict or not set(arguments) <= {"query", "family", "limit"}:
+        if (type(arguments) is not dict or not set(arguments) <= {"query", "family", "limit"}
+                or not {"query", "family"} & set(arguments)):
             raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
-        query = arguments.get("query")
+        # Omitir la consulta es válido (equivale a listar); enviarla nula, no.
+        query = arguments["query"] if "query" in arguments else ""
         family = arguments.get("family")
         limit = arguments.get("limit", 8)
-        if (type(query) is not str or len(query) > 100
-                or (family is not None and (type(family) is not str or family not in FAMILIES))
-                or type(limit) is not int or not 1 <= limit <= 20):
+        if type(query) is not str or len(query) > 100 or type(limit) is not int or not 1 <= limit <= 20:
             raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
-        return query.strip(), family, limit
+        query = query.strip()
+        if query in {"*", "%"}:
+            query = ""
+        if family is not None:
+            if type(family) is not str:
+                raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
+            clave = unicodedata.normalize("NFKD", family).encode("ascii", "ignore").decode().casefold().strip()
+            clave = clave.replace(" ", "_").replace("-", "_")
+            family = ToolDispatcher._FAMILY_ALIASES.get(clave)
+            if family is None:
+                raise _ToolFailure("INVALID_ARGUMENTS", "Los argumentos no cumplen el contrato de la herramienta.")
+        return query, family, limit
 
     @staticmethod
     def _project_product(raw_product):
