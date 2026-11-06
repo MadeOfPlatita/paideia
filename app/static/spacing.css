@@ -1,0 +1,81 @@
+/* Ritmo vertical y separación entre cajas.
+   Un solo contenedor por ruta (.page-shell) con rejilla y hueco uniforme evita
+   los ceros que salían cuando una nota iba pegada a una sección o dos secciones
+   mezcladas no eran hermanas del mismo tipo. Se carga después de styles.css y
+   dark_theme.css para mandar sobre sus márgenes. */
+
+.page-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+/* El hueco lo pone la rejilla: los hijos no suman márgenes propios. */
+.page-shell > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Las reglas «sección + sección» de las hojas anteriores añadían 16-18 px
+   encima del hueco; aquí se anulan para que el ritmo sea uno solo. */
+.page-shell > .paper-section,
+.page-shell > .data-panel,
+.page-shell > .summary-card,
+.page-shell > .question-panel,
+.page-shell > .detail-panel,
+.page-shell > .paper-section + .paper-section {
+  margin-top: 0;
+}
+
+/* El encabezado conserva su aire interno. */
+.page-heading h1 { margin-top: 6px; }
+.page-heading .lede { margin-top: 0; }
+
+/* Rejillas de tarjetas y opciones: nada por debajo de 12 px. */
+.home-actions { gap: 20px; }
+.privacy-field-list { gap: 12px; }
+.choice-list { gap: 10px; }
+.result-list { gap: 14px; }
+.comparison-columns { gap: 14px; }
+.scenario-summary { gap: 12px; }
+.catalogue-controls { gap: 14px; }
+.selection-tags { gap: 8px; }
+
+/* El glosario respira un poco más entre entradas. */
+.glossary-item { padding: 17px 0; }
+
+/* Dentro de una ficha, las tablas y listas no se pegan al borde inferior. */
+.paper-section > table:last-child,
+.paper-section > .detail-list:last-child,
+.data-panel > table:last-child { margin-bottom: 0; }
+
+@media (max-width: 900px) {
+  .page-shell { gap: 18px; }
+}
+
+@media (max-width: 640px) {
+  .page-shell { gap: 16px; }
+  /* Antes las dos acciones de Inicio se tocaban (gap: 2px). */
+  .home-actions { gap: 16px; }
+  .privacy-field-list { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .scenario-summary { gap: 10px; }
+  .comparison-columns { gap: 12px; }
+  .result-list { gap: 12px; }
+}
+
+/* Opciones sueltas que no van dentro de una lista con rejilla propia. */
+.data-panel .choice + .choice,
+.panel .choice + .choice { margin-top: 8px; }
+.info-note + .choice,
+.warning-note + .choice,
+.privacy-preview + .choice,
+.privacy-preview + .choice-list { margin-top: 14px; }
+.choice + .button,
+.choice + .button-row { margin-top: 14px; }
+
+/* El formulario de escenarios tenía 4 px entre campos. */
+.scenario-form { gap: 14px 18px; }
+
+/* Los dos botones del informe de escenarios salían a 4 px. */
+.scenario-report-host button { margin: 0 6px 10px 0; }
+.scenario-report-host button:last-child { margin-bottom: 0; }
