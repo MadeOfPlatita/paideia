@@ -3068,6 +3068,156 @@ function simulationBack() {
   render();
 }
 
+function receiptReference() {
+  const producto = (state.simulation.product && state.simulation.product.id) || "SIN-PRODUCTO";
+  const sello = state.simulation.receiptAt || new Date().toLocaleString("es-ES");
+  const compacto = sello.replace(/[^0-9]/g, "").slice(0, 12);
+  return `ENS-${compacto || "000000000000"}-${producto}`;
+}
+
+function receiptConditionsTable(productId) {
+  const tabla = el("table");
+  const cabecera = el("thead");
+  const fila = el("tr");
+  ["Condición", "Valor", "Estado", "Fuente"].forEach((texto) => fila.appendChild(el("th", {}, texto)));
+  cabecera.appendChild(fila);
+  tabla.appendChild(cabecera);
+  const cuerpo = el("tbody");
+  const entry = state.conditions.byId.get(productId) || {};
+  const condiciones = Array.isArray(entry.conditions) ? entry.conditions : [];
+  const filas = condiciones.length ? condiciones : [null];
+  filas.forEach((condition) => {
+    const filaCuerpo = el("tr");
+    if (!condition) {
+      filaCuerpo.appendChild(el("td", { colspan: "4" }, "Ninguna condición transcrita para este producto."));
+    } else {
+      const row = CONDITION_ROWS[condition.metric];
+      const etiqueta = row ? row.label : condition.metric;
+      const valor = condition.state === "known" && condition.value !== null && condition.value !== undefined
+        ? (row ? row.format(String(condition.value)) : String(condition.value))
+        : "Sin dato documentado";
+      filaCuerpo.appendChild(el("td", {}, etiqueta));
+      filaCuerpo.appendChild(el("td", {}, valor || "Sin dato utilizable"));
+      filaCuerpo.appendChild(el("td", {}, conditionStateText(condition)));
+      const fuente = entry.source && isSafePrimaryUrl(entry.source.url)
+        ? `${entry.source.url}${entry.source.retrieved_at ? ` · ${entry.source.retrieved_at}` : ""}`
+        : "Sin fuente utilizable";
+      filaCuerpo.appendChild(el("td", {}, fuente));
+    }
+    cuerpo.appendChild(filaCuerpo);
+  });
+  tabla.appendChild(cuerpo);
+  return tabla;
+}
+
+function buildReceiptDocument() {
+  const producto = state.simulation.product;
+  const doc = el("div", { className: "receipt-doc" });
+  const head = el("div", { className: "doc-head" });
+  const marca = el("div");
+  marca.appendChild(el("div", { className: "doc-brand" }, "Paideia"));
+  marca.appendChild(el("div", { className: "doc-brand-sub" }, "Cuaderno de ruta financiera · Universidad de Málaga"));
+  head.appendChild(marca);
+  head.appendChild(el("div", { className: "doc-seal" }, "Documento de ensayo · sin validez contractual"));
+  doc.appendChild(head);
+
+  doc.appendChild(el("h1", {}, "Justificante de ejercicio ficticio"));
+  doc.appendChild(el("p", { className: "doc-ref" }, `Referencia ${receiptReference()} · Emitido ${state.simulation.receiptAt || "sin fecha"}`));
+
+  doc.appendChild(el("h2", {}, "Datos del ejercicio"));
+  const datos = el("table");
+  const cuerpoDatos = el("tbody");
+  [
+    ["Carácter", "Simulación educativa. No es una oferta ni un contrato."],
+    ["Canal", "Navegador del interesado. Generado en local, sin envío a terceros."],
+    ["Fecha y hora", state.simulation.receiptAt || "No consta"],
+    ["Intervinientes", "Ninguna entidad financiera interviene en este documento."],
+  ].forEach(([clave, valor]) => {
+    const fila = el("tr");
+    fila.appendChild(el("th", {}, clave));
+    fila.appendChild(el("td", {}, valor));
+    cuerpoDatos.appendChild(fila);
+  });
+  datos.appendChild(cuerpoDatos);
+  doc.appendChild(datos);
+
+  doc.appendChild(el("h2", {}, "Producto de referencia"));
+  const productoTabla = el("table");
+  const cuerpoProducto = el("tbody");
+  const filasProducto = producto ? [
+    ["Denominación", productName(producto)],
+    ["Familia", familyLabel(producto.family)],
+    ["Entidad", issuerLabel(producto)],
+    ["ISIN", producto.isin || "No indicado en el metadato"],
+    ["Identidad", identityLabel(producto)],
+    ["Fuente de identidad", isSafePrimaryUrl(producto.primary_url) ? producto.primary_url : "Sin URL utilizable"],
+  ] : [["Producto", "No consta"]];
+  filasProducto.forEach(([clave, valor]) => {
+    const fila = el("tr");
+    fila.appendChild(el("th", {}, clave));
+    fila.appendChild(el("td", {}, valor));
+    cuerpoProducto.appendChild(fila);
+  });
+  productoTabla.appendChild(cuerpoProducto);
+  doc.appendChild(productoTabla);
+
+  doc.appendChild(el("h2", {}, "Condiciones documentadas"));
+  doc.appendChild(receiptConditionsTable(producto ? producto.id : ""));
+  doc.appendChild(el("p", {}, "Solo se transcriben las condiciones publicadas por la fuente. Lo que no publica figura como «sin dato documentado»; no se estima."));
+
+  doc.appendChild(el("h2", {}, "Importe imaginado"));
+  const importe = el("div", { className: "doc-amount" });
+  importe.appendChild(el("span", {}, "Cantidad objeto del ejercicio"));
+  importe.appendChild(document.createTextNode(formatCurrency(state.simulation.amount)));
+  doc.appendChild(importe);
+
+  doc.appendChild(el("div", { className: "doc-warning" }, "No se ha enviado solicitud alguna, no se ha abierto cuenta ni se ha movido dinero. Este documento no es un contrato, ni una confirmación de operación, ni una recomendación de inversión."));
+
+  doc.appendChild(el("h2", {}, "Lo que este documento no acredita"));
+  const lista = el("ul");
+  [
+    "No acredita que el producto esté disponible ni que sus condiciones sigan vigentes.",
+    "No recoge fiscalidad, comisiones aplicadas por terceros ni evaluación de idoneidad.",
+    "No sustituye la información precontractual ni el contrato de la entidad.",
+    "No existe firma válida: las líneas siguientes son parte del formato, no un consentimiento.",
+  ].forEach((texto) => lista.appendChild(el("li", {}, texto)));
+  doc.appendChild(lista);
+
+  const firmas = el("div", { className: "doc-signs" });
+  firmas.appendChild(el("div", { className: "doc-sign" }, "Interesado · sin firma válida"));
+  firmas.appendChild(el("div", { className: "doc-sign" }, "Entidad · no interviniente"));
+  doc.appendChild(firmas);
+
+  doc.appendChild(el("div", { className: "doc-footer" }, "Paideia · documento generado localmente en el navegador. No se ha transmitido a ninguna entidad."));
+  return doc;
+}
+
+function mountReceiptDocument() {
+  let contenedor = document.getElementById("receipt-print");
+  if (!contenedor) {
+    contenedor = el("section", { id: "receipt-print", "aria-hidden": "true" });
+    document.body.appendChild(contenedor);
+  }
+  contenedor.replaceChildren(buildReceiptDocument());
+}
+
+function clearReceiptDocument() {
+  const contenedor = document.getElementById("receipt-print");
+  if (contenedor) contenedor.remove();
+  document.body.classList.remove("receipt-printing");
+}
+
+function printReceiptDocument() {
+  mountReceiptDocument();
+  document.body.classList.add("receipt-printing");
+  const limpiar = () => {
+    document.body.classList.remove("receipt-printing");
+    window.removeEventListener("afterprint", limpiar);
+  };
+  window.addEventListener("afterprint", limpiar);
+  window.print();
+}
+
 function renderSimulation() {
   const { page, heading } = pageFrame("Simulación · operación ficticia", "Ensayo de una decisión", "Usa un candidato del catálogo como referencia de identidad. La cantidad y el ejercicio son ficticios; no hay contratación ni solicitud.");
   page.appendChild(callout("ENSAYO FICTICIO · No se enviará nada ni se moverá dinero. No introduzcas identificadores, credenciales, cuenta, tarjeta ni datos de pago.", "warning-note"));
@@ -3170,11 +3320,12 @@ function renderSimulation() {
     receipt.appendChild(el("p", { className: "receipt-warning" }, "No se ha enviado una solicitud, abierto una cuenta ni movido dinero. Esto no es un contrato ni una confirmación de operación."));
     receipt.appendChild(textElement("p", "La identidad del candidato no acredita disponibilidad ni condiciones vigentes. Los hechos documentados pueden estar vencidos, en conflicto o sin dato y no se presentan como oferta vigente. El ejercicio no contiene fiscalidad, costes de producto ni evaluación de riesgo."));
     const actions = el("div", { className: "button-row no-print" });
-    actions.append(button("Imprimir justificante HTML", () => window.print(), "button button-primary"), button("Terminar / volver a empezar", () => {
+    actions.append(button("Imprimir justificante HTML", () => printReceiptDocument(), "button button-primary"), button("Terminar / volver a empezar", () => {
       state.simulation = { step: 0, products: state.simulation.products, loaded: state.simulation.loaded, loading: false, error: null, requestId: state.simulation.requestId, chosenId: "", product: null, amount: "", understood: false, receiptAt: "" };
       render();
     }, "button button-secondary"));
     page.append(receipt, actions);
+    mountReceiptDocument();
   }
   return heading;
 }
@@ -3421,6 +3572,7 @@ function renderStorageWarning() {
 let lastRenderedRoute = null;
 
 function render(options = {}) {
+  if (state.route === "simulacion" && routeFromHash() !== "simulacion") clearReceiptDocument();
   const focusSnapshot = captureFocus();
   const route = routeFromHash();
   if (state.route === "simulacion" && route !== "simulacion") state.simulation.understood = false;
