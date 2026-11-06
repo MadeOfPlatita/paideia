@@ -12,6 +12,7 @@ si alguien los necesita.
 | --- | --- | --- |
 | `producto/` | Requisitos, estado, idea y límites vigentes (`CUPO-Y-LIMITES.md`) | Explica **qué promete** la app y qué no |
 | `operacion/` | Despliegue en Render, auditorías recientes y seguridad | Pasos para publicarla y evidencia de las revisiones |
+| `DIARIO-DESARROLLO.md` | Bitácora: encargos, herramientas, APIs, cambios, pruebas y límites | Es el diario de desarrollo que pide la entrega |
 
 Empieza por el [`README.md`](../README.md) de la raíz y sigue por
 `producto/REQUISITOS.md`.

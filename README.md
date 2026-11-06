@@ -73,6 +73,11 @@ las de Node. En esta instantánea: **728 pruebas Python y 108 de Node**.
 Las claves viven solo en el panel del proveedor de despliegue o en `app/.env`.
 El código solo puede enviar la clave al host del proveedor elegido.
 
+## Diario de desarrollo
+
+El recorrido completo —encargos, herramientas, APIs, decisiones, pruebas y
+límites— está en [`docs/DIARIO-DESARROLLO.md`](docs/DIARIO-DESARROLLO.md).
+
 ## Estructura
 
 ```
