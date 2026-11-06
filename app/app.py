@@ -31,6 +31,12 @@ UNKNOWN_FIELD_RULES = (
     (("liquidación de intereses", "frecuencia pactada de liquidación"), ("payment",)),
     (("saldo máximo remunerado",), ("max",)),
     (("fecha efectiva de cada oferta", "fecha de inicio/fin de la tae"), ("validity",)),
+    (("divisa de la cuenta", "divisa base", "moneda"), ("currency",)),
+    (("tipo aplicable después de la promoción", "tipo posterior", "tae posterior"), ("subsequent",)),
+    (("comisiones", "comisión"), ("fees",)),
+    (("garantía de depósitos", "fondo de garantía"), ("deposit_guarantee",)),
+    (("disponibilidad de alta",), ("availability", "eligibility")),
+    (("elegibilidad", "requisitos de contratación"), ("eligibility",)),
 )
 
 
@@ -38,8 +44,11 @@ def _unknown_label_is_documented(label, fields):
     """¿La ficha documenta todo lo que esa etiqueta decía desconocer?"""
     texto = label.casefold()
     for needles, required in UNKNOWN_FIELD_RULES:
-        if any(needle in texto for needle in needles) and set(required) <= set(fields):
-            return True
+        if not any(needle in texto for needle in needles):
+            continue
+        # La primera regla que encaja manda: si exige un campo que la ficha no
+        # documenta, la etiqueta se queda aunque otra regla más laxa la soltaría.
+        return set(required) <= set(fields)
     return False
 STATIC_ROOT = APP_DIR / "static"
 MAX_STATIC_BYTES = 2 * 1024 * 1024

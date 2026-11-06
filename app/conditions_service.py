@@ -62,6 +62,31 @@ class ConditionsService:
                 fields.add("rate")
             if record.get("term_months"):
                 fields.add("term")
+            for item in record.get("documented") or []:
+                if not isinstance(item, dict) or item.get("value") in (None, ""):
+                    continue
+                metric = item.get("metric")
+                if metric in ("tae", "tae_posterior"):
+                    fields.add("rate")
+                if metric == "plazo_meses":
+                    fields.add("term")
+                if metric in ("divisa", "divisa_clase"):
+                    fields.add("currency")
+                if metric in ("tae_posterior", "tin_posterior"):
+                    fields.add("subsequent")
+                if metric == "liquidacion":
+                    fields.add("payment")
+                if metric == "garantia_depositos":
+                    fields.add("deposit_guarantee")
+                if metric in ("comisiones", "comision_gestion", "comision_deposito",
+                              "comision_entrada", "comision_salida", "comision_rendimiento", "ter"):
+                    fields.add("fees")
+                if metric == "elegibilidad":
+                    fields.add("eligibility")
+                if metric == "disponibilidad":
+                    fields.add("availability")
+            if record.get("term_months"):
+                fields.add("term")
             if record.get("minimum_eur") is not None:
                 fields.add("min")
             if record.get("maximum_eur") is not None:

@@ -59,6 +59,34 @@ class DocumentedMetricsTests(unittest.TestCase):
         self.assertNotIn("periodo_mantenimiento_recomendado", etf)
         self.assertIn("holding_period_years", etf)
 
+    def test_account_shows_fees_guarantee_and_conditions(self):
+        # Estos datos estaban transcritos pero se descartaban al mapear métricas.
+        cuenta = conditions_for("ACC-01")
+        self.assertEqual(cuenta["declared_fees"]["value"], "0")
+        self.assertEqual(cuenta["deposit_guarantee_fund"]["value"], "100000")
+        self.assertEqual(cuenta["settlement"]["value"], "mensual")
+        self.assertIn("mayores de 18", cuenta["eligibility"]["value"])
+        self.assertEqual(cuenta["nominal_rate_percent"]["value"], "3.0")
+
+    def test_debt_keeps_its_auction_figures_without_inventing_a_rate(self):
+        deuda = conditions_for("DEBT-01")
+        self.assertEqual(deuda["annual_rate_percent"]["state"], "unknown")
+        self.assertIn("marginal_rate_percent", deuda)
+        self.assertIn("auction_date", deuda)
+        self.assertIn("average_price_percent", deuda)
+
+    def test_the_served_catalogue_keeps_the_transcribed_bulk(self):
+        report = ConditionsService().describe(today=date(2026, 11, 5))
+        total = sum(len(p["conditions"]) for p in report["products"])
+        self.assertGreaterEqual(total, 200)
+
+    def test_no_duplicate_metric_per_product(self):
+        report = ConditionsService().describe(today=date(2026, 11, 5))
+        for product in report["products"]:
+            metricas = [c["metric"] for c in product["conditions"]]
+            with self.subTest(product=product["product_id"]):
+                self.assertEqual(len(metricas), len(set(metricas)))
+
 
 if __name__ == "__main__":
     unittest.main()

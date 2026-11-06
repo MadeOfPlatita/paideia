@@ -76,6 +76,20 @@ class ConditionsStateTests(unittest.TestCase):
         self.assertTrue(app._unknown_label_is_documented(
             "plazos disponibles", {"rate", "term"}))
 
+    def test_documented_currency_and_promotion_end_stop_being_unknown(self):
+        # ACC-01 publica divisa base y tipo posterior: no pueden seguir como huecos.
+        desconocidos = self.item("ACC-01")["unknown_fields"]
+        self.assertNotIn("divisa de la cuenta explícita", desconocidos)
+        self.assertNotIn("tipo aplicable después de la promoción", desconocidos)
+        self.assertIn("saldo máximo remunerado", desconocidos)
+        self.assertIn("derechos de copia/cache/display", desconocidos)
+
+    def test_new_rules_only_fire_with_their_own_field(self):
+        self.assertTrue(app._unknown_label_is_documented("comisiones aplicadas", {"fees"}))
+        self.assertTrue(app._unknown_label_is_documented("garantía de depósitos", {"deposit_guarantee"}))
+        self.assertTrue(app._unknown_label_is_documented("elegibilidad por cliente", {"eligibility"}))
+        self.assertFalse(app._unknown_label_is_documented("comisiones aplicadas", {"rate", "term"}))
+
 
 if __name__ == "__main__":
     unittest.main()

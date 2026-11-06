@@ -64,6 +64,58 @@ DOCUMENTED_METRICS = {
     "retencion_fiscal": ("withholding_percent", "PERCENT"),
     "sfdr": ("sfdr_article", "TEXT"),
     "ucits": ("ucits", "TEXT"),
+    "tae": ("annual_rate_percent", "PERCENT"),
+    "tae_posterior": ("subsequent_rate_percent", "PERCENT"),
+    "tin": ("nominal_rate_percent", "PERCENT"),
+    "tin_posterior": ("subsequent_nominal_rate_percent", "PERCENT"),
+    "plazo_meses": ("term_months", "MONTHS"),
+    "liquidacion": ("settlement", "TEXT"),
+    "comisiones": ("declared_fees", "TEXT"),
+    "garantia_depositos": ("deposit_guarantee_fund", "EUR"),
+    "elegibilidad": ("eligibility", "TEXT"),
+    "disponibilidad": ("availability", "TEXT"),
+    "domicilio": ("account_domicile", "TEXT"),
+    "saldo_vivo": ("outstanding_balance", "TEXT"),
+    "fecha_lanzamiento": ("launch_date", "DATE"),
+    "cancelacion_anticipada": ("early_cancellation", "TEXT"),
+    "base_calculo_intereses": ("interest_basis", "TEXT"),
+    "registro_cnmv": ("cnmv_registry", "TEXT"),
+    "reparto": ("distribution_policy", "TEXT"),
+    "promocion_ventana_alta": ("promotion_window", "TEXT"),
+    "titularidad": ("ownership", "TEXT"),
+    "cifra_anual_gastos": ("annual_cost_figure", "PERCENT"),
+    "incidencia_anual_costes_1a": ("cost_impact_1y_percent", "PERCENT"),
+    "incidencia_anual_costes_5a": ("cost_impact_5y_percent", "PERCENT"),
+    "suscripcion_reembolso": ("subscription_redemption", "TEXT"),
+    "horizonte_recomendado": ("recommended_horizon", "TEXT"),
+    "fecha_documento": ("document_date", "DATE"),
+    "acceso_minorista": ("retail_access", "TEXT"),
+    "divisa": ("base_currency", "TEXT"),
+    "requisito": ("requirement", "TEXT"),
+    "domiciliaciones": ("direct_debits", "TEXT"),
+    "permanencia": ("lock_in", "TEXT"),
+    "renovacion": ("renewal", "TEXT"),
+    "fecha_subasta": ("auction_date", "DATE"),
+    "fecha_liquidacion": ("settlement_date", "DATE"),
+    "precio_medio": ("average_price_percent", "PERCENT"),
+    "tipo_medio": ("average_rate_percent", "PERCENT"),
+    "nominal_adjudicado": ("awarded_nominal_eur", "EUR"),
+    "registro_espana": ("spain_registry", "TEXT"),
+    "paises_registro": ("registry_countries", "TEXT"),
+    "mercado_principal": ("main_market", "TEXT"),
+    "patrimonio": ("fund_assets_eur", "EUR"),
+    "participes": ("fund_investors", "NUMBER"),
+    "prestamo_valores": ("securities_lending", "TEXT"),
+    "costes_operacion": ("operating_costs", "PERCENT"),
+    "tipo_vehiculo": ("vehicle_type", "TEXT"),
+    "fecha_ultimo_folleto": ("last_prospectus_date", "DATE"),
+    "fecha_ultimo_reglamento": ("last_regulation_date", "DATE"),
+    "fecha_datos": ("data_date", "DATE"),
+    "fecha_registro": ("registration_date", "DATE"),
+    "fecha_registro_cnmv": ("cnmv_registration_date", "DATE"),
+    "divisa_clase": ("share_class_currency", "TEXT"),
+    "horizonte_minimo": ("minimum_horizon", "TEXT"),
+    "coste_total_1a": ("total_cost_1y_percent", "PERCENT"),
 }
 # Días de gracia por familia cuando el literal no fija fin de vigencia.
 DEFAULT_TTL_DAYS = {"cuenta_remunerada": 7, "deposito": 30}
@@ -425,18 +477,19 @@ def _curated_conditions(record: dict, today: date) -> list[Condition]:
         conditions.append(Condition(product_id, family, "term_months", str(term), "MONTHS", "known",
                                     "CURATED_TERM", source_ids=(str(source.get("url")),) if source.get("url") else (),
                                     retrieved_at=retrieved))
-    conditions.extend(_documented_conditions(record, product_id, family))
+    resueltos = {c.metric for c in conditions if c.state == "known"}
+    conditions.extend(_documented_conditions(record, product_id, family, already_known=resueltos))
     return conditions
 
 
-def _documented_conditions(record: dict, product_id: str, family) -> list[Condition]:
+def _documented_conditions(record: dict, product_id: str, family, already_known=()) -> list[Condition]:
     """Métricas transcritas que no son tasa ni plazo (TER, ISIN, comisiones, SRI...).
 
     Se emiten solo cuando la transcripción trae un valor; si la fuente no lo publica,
     no hay fila y la ficha lo sigue diciendo en su lista de desconocidos. Nunca se
     deduce un valor a partir de otro.
     """
-    emitted = {"annual_rate_percent", "term_months"}
+    emitted = set(already_known) | {"annual_rate_percent", "term_months"}
     salida = []
     for item in record.get("documented") or []:
         if not isinstance(item, dict):
