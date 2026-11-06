@@ -262,6 +262,11 @@ summary { min-height: 24px; padding: 4px 0; }
 .step-progress span { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
 .profile-summary { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; margin: 0; }
 .profile-summary-row { display: grid; grid-template-columns: minmax(120px, .9fr) minmax(0, 1.6fr) auto; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.profile-confirm-question { margin: 4px 0 14px; font-size: 1.3rem; }
+.profile-answer-box { padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.profile-answer-label { margin: 0; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.profile-answer-value { margin: 6px 0 0; font: 700 1.15rem/1.35 Georgia, "Times New Roman", serif; }
+.profile-confirm .button-row { margin-top: 16px; }
 .profile-summary-row dt { font-weight: 650; }
 .profile-summary-row dd { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
 .profile-summary-row button { min-width: 80px; }

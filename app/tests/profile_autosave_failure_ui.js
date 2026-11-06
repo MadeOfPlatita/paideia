@@ -3,8 +3,8 @@
   const press = t => { const b = [...document.querySelectorAll('button')].find(x => x.textContent.trim() === t); assert(b && !b.disabled, 'button ' + t); b.click(); };
   const wait = () => new Promise(r => setTimeout(r, 100));
   localStorage.clear(); sessionStorage.clear(); location.hash = '#perfil'; await wait();
-  press('No lo sé'); press('Omitir'); press('Omitir'); press('Omitir');
-  const amount = document.querySelector('main input[type=text]'); amount.value = '0'; amount.form.requestSubmit(); press('Pausar y ver el resumen');
+  press('No lo sé'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar');
+  const amount = document.querySelector('main input[type=text]'); amount.value = '0'; amount.form.requestSubmit(); press('Continuar y revisar');
   location.hash = '#privacidad'; await wait(); document.querySelector('#profile-persist-toggle').click(); press('Guardar perfil local');
   const key = PaideiaProfileModel.STORAGE_KEY; const old = localStorage.getItem(key); assert(old, 'initial snapshot missing');
   location.hash = '#perfil'; await wait();

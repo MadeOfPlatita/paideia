@@ -24,8 +24,8 @@
   }
   assert(!localStorage.length && !sessionStorage.length, 'isolated empty origin required');
   location.hash = '#perfil'; await wait();
-  press('No lo sé'); press('Omitir'); press('Omitir'); press('Omitir');
-  const initial = document.querySelector('main input[type=text]'); initial.value = '0'; initial.form.requestSubmit(); press('Pausar y ver el resumen');
+  press('No lo sé'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar');
+  const initial = document.querySelector('main input[type=text]'); initial.value = '0'; initial.form.requestSubmit(); press('Continuar y revisar');
   location.hash = '#privacidad'; await wait(); document.querySelector('#profile-persist-toggle').click(); press('Guardar perfil local');
   const old = localStorage.getItem(key); assert(old, 'initial snapshot absent');
   location.hash = '#perfil'; await wait();

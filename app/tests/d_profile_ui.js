@@ -3,8 +3,8 @@
   const press=t=>{let b=[...document.querySelectorAll('button')].find(x=>x.textContent.trim()===t); assert(b&&!b.disabled,'button '+t); b.click()};
   assert(!localStorage.length && !sessionStorage.length,'start clean');
   location.hash='#perfil'; await new Promise(r=>setTimeout(r,100));
-  press('No lo sé'); press('Omitir'); press('Omitir'); press('Omitir');
-  const i=document.querySelector('main input[type=text]'); assert(i,'amount field'); i.value='0'; i.form.requestSubmit(); press('Pausar y ver el resumen');
+  press('No lo sé'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar');
+  const i=document.querySelector('main input[type=text]'); assert(i,'amount field'); i.value='0'; i.form.requestSubmit(); press('Continuar y revisar');
   const summary=document.querySelector('main').innerText;
   for(const v of ['No lo sé','Omitido','0,00','Aún no preguntado']) assert(summary.includes(v),'summary missing '+v);
   assert(!localStorage.length && !sessionStorage.length,'automatic storage');

@@ -576,7 +576,7 @@
       case "experience": {
         const level = findOptionLabel(question, value.nivel) || value.nivel;
         const topics = value.temas_interes.map((topic) => findOptionLabel(question, topic)).filter(Boolean);
-        return topics.length ? `${level} · Temas: ${topics.join(", ")}` : `${level} · Sin temas seleccionados`;
+        return topics.length ? `${level} · Temas: ${topics.join(", ")}` : level;
       }
       case "amount":
         return formatNestedAmount(answer);

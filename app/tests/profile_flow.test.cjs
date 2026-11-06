@@ -23,3 +23,11 @@ test('Declared debt requires an explicit amount or non-disclosure choice for eac
   assert.equal(model.canContinueAnswer('detalle_economico.deuda', model.makeAnswer('declarado', value)), true);
   assert.equal(model.canContinueAnswer('detalle_economico.deuda', model.makeAnswer('declarado', {situacion:'sin_deuda'})), true);
 });
+
+test('experience without topics shows only the level', () => {
+  const key = 'objetivo.experiencia';
+  const answer = model.makeAnswer('declarado', { nivel: 'principiante', temas_interes: [] });
+  const texto = model.formatAnswer(key, answer);
+  assert.equal(/Sin temas seleccionados/.test(texto), false, texto);
+  assert.ok(texto.length > 0, 'debe mostrar el nivel');
+});

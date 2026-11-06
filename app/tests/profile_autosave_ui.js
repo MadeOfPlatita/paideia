@@ -16,8 +16,8 @@
   }
   assert(!localStorage.length && !sessionStorage.length, 'isolated origin required');
   location.hash = '#perfil'; await wait();
-  press('No lo sé'); press('Omitir'); press('Omitir'); press('Omitir');
-  const input = document.querySelector('main input[type=text]'); assert(input, 'amount'); input.value = '0'; input.form.requestSubmit(); press('Pausar y ver el resumen');
+  press('No lo sé'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar'); press('Omitir'); press('Continuar');
+  const input = document.querySelector('main input[type=text]'); assert(input, 'amount'); input.value = '0'; input.form.requestSubmit(); press('Continuar y revisar');
   assert(!localStorage.length, 'saved before opt-in');
   location.hash = '#privacidad'; await wait();
   const before = document.querySelector('main').innerText;

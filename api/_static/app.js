@@ -108,6 +108,7 @@ const state = {
   profileComplete: false,
   profileMode: "core",
   profileStep: 0,
+  profileConfirmKey: null,
   profileEditKey: null,
   profileOptIn: false,
   storageNotice: "",
@@ -1489,21 +1490,29 @@ function recordProfileAnswer(key, answer) {
     state.profileComplete = true;
     state.profileEditKey = null;
   } else {
-    const keys = profileQuestionKeysForMode();
-    if (state.profileStep < keys.length - 1) state.profileStep += 1;
-    else {
-      state.profileMode = "summary";
-      state.profileComplete = true;
-    }
+    // Se confirma en un box con la pregunta y la respuesta antes de avanzar.
+    state.profileConfirmKey = key;
   }
   render();
   return true;
+}
+
+function profileConfirmAnswered() {
+  const keys = profileQuestionKeysForMode();
+  state.profileConfirmKey = null;
+  if (state.profileStep < keys.length - 1) state.profileStep += 1;
+  else {
+    state.profileMode = "summary";
+    state.profileComplete = true;
+  }
+  render();
 }
 
 function enterProfileMode(mode, resume = false) {
   state.profileMode = mode;
   const firstPending = mode === "core" && resume ? PROFILE_FIELDS.findIndex(key => PROFILE_MODEL.getAnswer(state.profile, key).estado === "sin_preguntar") : 0;
   state.profileStep = Math.max(0, firstPending);
+  state.profileConfirmKey = null;
   state.profileEditKey = null;
   state.profileComplete = false;
   render();
@@ -1567,12 +1576,49 @@ function renderProfileSummary(page) {
   page.appendChild(summary);
 }
 
+function renderProfileConfirmation(page, heading) {
+  const keys = profileQuestionKeysForMode();
+  const key = state.profileConfirmKey;
+  const question = PROFILE_QUESTION_BY_KEY.get(key);
+  const index = Math.max(0, keys.indexOf(key));
+  const answer = PROFILE_MODEL.getAnswer(state.profile, key);
+  const panel = el("section", { className: "question-panel profile-confirm" });
+  panel.appendChild(textElement("p", "PREGUNTA ANTERIOR", "eyebrow"));
+  panel.appendChild(el("div", { className: "step-progress" }, [
+    el("progress", { max: keys.length, value: index + 1, "aria-label": `Pregunta ${index + 1} de ${keys.length} respondida` }),
+    textElement("span", `Pregunta ${index + 1} de ${keys.length} respondida`)
+  ]));
+  panel.appendChild(el("h2", { className: "profile-confirm-question" }, question ? question.title : "Respuesta guardada"));
+  const caja = el("div", { className: "profile-answer-box" });
+  caja.appendChild(el("p", { className: "profile-answer-label" }, "Tu respuesta"));
+  caja.appendChild(el("p", { className: "profile-answer-value" }, displayProfileValue(key, answer)));
+  panel.appendChild(caja);
+  const estado = answer && answer.estado;
+  if (estado === "no_se" || estado === "omitido" || estado === "sin_preguntar") {
+    panel.appendChild(textElement("p", "Puedes cambiarla cuando quieras; no se interpreta como un dato.", "small muted"));
+  }
+  const actions = el("div", { className: "button-row" });
+  const ultima = index >= keys.length - 1;
+  actions.appendChild(button(ultima ? "Continuar y revisar" : "Continuar", () => profileConfirmAnswered(), "button button-primary"));
+  actions.appendChild(button("Cambiar respuesta", () => {
+    state.profileConfirmKey = null;
+    render();
+  }, "button button-secondary"));
+  panel.appendChild(actions);
+  page.appendChild(panel);
+  return heading;
+}
+
 function renderProfile() {
   const { page, heading } = pageFrame("Tu mapa · editable", "Tu mapa para explorar", "Cuatro preguntas: qué quieres explorar, tu horizonte, tu experiencia y un importe orientativo. Responde, elige «No lo sé» u «Omitir» para avanzar. Puedes pausar y retomar sin perder lo respondido.");
   if (state.profileMode === "summary" || state.profileComplete) {
     state.profileMode = "summary";
     renderProfileSummary(page);
     page.appendChild(el("p", { className: "small muted" }, "La biblioteca, el comparador, los escenarios y el ensayo se pueden usar sin responder ni guardar el mapa."));
+    return heading;
+  }
+  if (state.profileConfirmKey && state.profileMode !== "edit") {
+    renderProfileConfirmation(page, heading);
     return heading;
   }
   const question = currentProfileQuestion();
@@ -1656,7 +1702,7 @@ function renderProfile() {
     state.profileEditKey = null;
     render();
   }, "button-link"));
-  else if (index > 0) actionsBelow.appendChild(button("Pregunta anterior", () => { state.profileStep = Math.max(0, state.profileStep - 1); render(); }, "button-link"));
+  else if (index > 0) actionsBelow.appendChild(button("Pregunta anterior", () => { state.profileConfirmKey = null; state.profileStep = Math.max(0, state.profileStep - 1); render(); }, "button-link"));
   actionsBelow.appendChild(routeLink("Volver a explorar sin completar", "#biblioteca", "button-link"));
   page.appendChild(actionsBelow);
   return heading;
@@ -3723,7 +3769,11 @@ function render(options = {}) {
   else if (route === "glosario") heading = renderGlossary();
   else heading = renderPrivacy();
   renderStorageWarning();
-  if (routeChanged) {
+  if (route === "perfil" && state.profileConfirmKey) {
+    // El foco va al botón del box para poder seguir con el teclado.
+    const primary = document.querySelector(".profile-confirm .button-primary");
+    if (primary) primary.focus();
+  } else if (routeChanged) {
     focusHeading(heading);
   } else if (!options.preserveFocus && focusSnapshot.hadFocus) {
     const active = document.activeElement;
