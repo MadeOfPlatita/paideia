@@ -94,7 +94,7 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(len(report["products"][0]["conditions"]), 12)
 
     def test_an_absurd_number_of_conditions_still_fails_closed(self):
-        demasiadas = [{"metric": "metric_%d" % index} for index in range(33)]
+        demasiadas = [{"metric": "metric_%d" % index} for index in range(65)]
 
         class Demasiadas(FakeConditions):
             def describe(self):

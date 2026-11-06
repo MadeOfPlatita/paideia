@@ -25,13 +25,14 @@ def unidad(metric: str) -> str:
 
 
 def normaliza(valor):
-    if isinstance(valor, (int, float)):
-        return valor
-    texto = str(valor).strip()
-    try:
-        return float(texto.replace(".", "").replace(",", ".")) if "," in texto and texto.count(",") == 1 else float(texto)
-    except ValueError:
-        return texto
+    """El catálogo guarda literales de texto: la proyección valida cadenas."""
+    if isinstance(valor, bool):
+        return "sí" if valor else "no"
+    if isinstance(valor, float):
+        return str(valor)
+    if isinstance(valor, int):
+        return str(valor)
+    return str(valor).strip()
 
 
 def main(entrada: Path) -> int:

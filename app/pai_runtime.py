@@ -1077,7 +1077,7 @@ class ToolChatRunner:
 
                 status = dispatched["status"]
                 if status not in _SUCCESS_STATUSES or dispatched["error"] is not None:
-                    self._debug("unsuccessful_status")
+                    self._debug(f"unsuccessful_status:{call.name}:{status}")
                     tool_events.append(self._event(call, state="rejected", status=status))
                     return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 

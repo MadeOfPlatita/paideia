@@ -20,7 +20,9 @@ from pai_tools import ConditionsUnavailable, project_rate_tiers
 
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
 # Tope estructural por producto: por encima se considera un informe invalido.
-MAX_CONDITIONS_PER_PRODUCT = 32
+# Guarda estructural, no un máximo de negocio: un fondo con folleto completo puede
+# declarar más de treinta campos documentados (Olea 33, Azvalor 34).
+MAX_CONDITIONS_PER_PRODUCT = 64
 
 
 def _valid_reference_date(value):

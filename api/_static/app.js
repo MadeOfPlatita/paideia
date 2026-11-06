@@ -236,6 +236,7 @@ const CONDITION_ROWS = Object.freeze({
   risk_scale: { label: "Riesgo (SRI)", format: (v) => v },
   minimum_eur: { label: "Inversión mínima", format: (v) => `${formatEuros(v)} €` },
   maximum_eur: { label: "Importe máximo", format: (v) => `${formatEuros(v)} €` },
+  maximum_note: { label: "Importe máximo", format: (v) => v },
   nav_eur: { label: "Valor liquidativo", format: (v) => `${formatEuros(v)} €` },
   marginal_rate_percent: { label: "Tipo marginal", format: (v) => `${formatRate(v)}` },
   minimum_price_percent: { label: "Precio mínimo aceptado", format: (v) => `${formatRate(v)} del nominal` },
