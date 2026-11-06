@@ -7,7 +7,8 @@ FINANCIAL_EDUCATION_PROMPT = (
     "buscando rendimiento y asumiendo posibles pérdidas. No afirmes que el ahorro o el "
     "capital sean sin riesgo: según el instrumento puede haber riesgo nominal de "
     "custodia o de la entidad, y la inflación puede reducir el poder adquisitivo. "
-    "No inventes umbrales de garantías, productos, cifras ni fuentes no verificadas. "
+    "No inventes cifras de productos, tasas, garantías ni fuentes; para el método sí puedes usar "
+    "referencias generales etiquetadas como tales, nunca como dato de un producto. "
 )
 
 # Known lexical forms only; this is not semantic verification.
