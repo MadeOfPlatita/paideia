@@ -16,6 +16,9 @@
   margin-bottom: 0;
 }
 
+/* Menú lateral con un gutter visible también en escritorio. */
+.side-nav { gap: 8px; }
+
 /* Las reglas «sección + sección» de las hojas anteriores añadían 16-18 px
    encima del hueco; aquí se anulan para que el ritmo sea uno solo. */
 .page-shell > .paper-section,
@@ -79,3 +82,61 @@
 /* Los dos botones del informe de escenarios salían a 4 px. */
 .scenario-report-host button { margin: 0 6px 10px 0; }
 .scenario-report-host button:last-child { margin-bottom: 0; }
+
+/* ——— Segunda pasada: huecos dentro de tarjetas y en el marco ——— */
+
+/* Bandeja de selección, resultados curados y fichas */
+.selection-tray { margin-top: 16px; border-radius: 12px; }
+.selection-tray p + p { margin-top: 6px; }
+#curated-results { margin-top: 24px; }
+#curated-results h2 { margin-top: 0; }
+.result-list { gap: 16px; }
+
+/* Avisos con acción y filas de botones */
+.info-note > button,
+.warning-note > button,
+.error-note > button { margin-top: 12px; }
+.error-actions { gap: 12px; flex-wrap: wrap; }
+.button-row { gap: 12px; }
+.button-link { padding-inline: 8px; }
+
+/* Panel de Pai: la nota del proveedor y el borrado de historial */
+#chat-provider-note { margin-top: 8px; }
+#pai-context .choice + .button { margin-top: 14px; }
+
+/* Resultados de escenarios */
+.scenario-output { margin-bottom: 22px; }
+.data-panel .warning-note + h3 { margin-top: 16px; }
+
+/* Cabecera del justificante */
+.receipt-kicker { margin-bottom: 8px; }
+.receipt-stamp { margin-top: 10px; }
+
+/* Comparador: filas plegables y chips */
+.comparison-product details + details { margin-top: 8px; }
+.comparison-product .button-link { margin-top: 10px; }
+.compare-product-remove { gap: 8px; }
+.compare-selection { row-gap: 12px; }
+
+/* Pasos del ensayo en pantallas estrechas */
+@media (max-width: 460px) {
+  .sim-progress { column-gap: 12px; }
+  .sim-progress li { padding-right: 0; }
+  .sim-progress strong,
+  .sim-progress span { overflow-wrap: normal; }
+}
+
+/* Glosario apilado: término y definición no se tocan */
+@media (max-width: 640px) {
+  .glossary-item { row-gap: 8px; }
+}
+
+/* Marco: acciones, menú y pie con aire y área táctil suficiente */
+@media (max-width: 900px) {
+  .topbar-actions { gap: 10px; }
+  .side-nav { gap: 8px; }
+  .persistent-notice { margin-top: 14px; }
+  .site-footer { gap: 12px; padding: 14px 0 12px; }
+  .site-footer a { display: inline-flex; align-items: center; min-height: 48px; padding: 8px 0; }
+  .brand { min-height: 48px; }
+}

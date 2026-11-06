@@ -49,11 +49,12 @@ class SpacingTests(unittest.TestCase):
 
     def test_mobile_home_actions_are_not_glued(self):
         css = self.leer("spacing.css")
-        movil = css.split("@media (max-width: 640px)")[-1]
-        encontrado = re.search(r"\.home-actions\s*\{([^}]*)\}", movil)
-        self.assertIsNotNone(encontrado)
-        bloque = encontrado.group(1)
-        gap = re.search(r"gap:\s*(\d+)px", bloque)
+        # Busca el bloque de 640 px que contiene .home-actions, sin depender de
+        # que sea el último @media del archivo.
+        bloques = re.findall(r"@media \(max-width: 640px\)\s*\{(.*?)\n\}", css, re.S)
+        candidatos = [b for b in bloques if ".home-actions" in b]
+        self.assertTrue(candidatos, "no hay bloque móvil con .home-actions")
+        gap = re.search(r"\.home-actions\s*\{[^}]*gap:\s*(\d+)px", candidatos[0])
         self.assertIsNotNone(gap)
         self.assertGreaterEqual(int(gap.group(1)), 12)
 
