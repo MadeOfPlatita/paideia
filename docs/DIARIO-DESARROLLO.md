@@ -542,3 +542,41 @@ el teclado.
 ## Registro a mantener al desarrollar
 
 En cada bloque de trabajo se anotarán el prompt o su extracto identificado como tal, herramienta/modelo si se conoce, cambios realizados, decisiones, pruebas ejecutadas con su resultado real y limitaciones pendientes. No se anotarán claves ni información personal de prueba.
+
+## Entrada — 7 de noviembre de 2026: Pai explica la práctica y vuelve a leer el catálogo
+
+Petición del usuario: «le preguntas cómo montar un colchón y no sabe nada… no solo
+hablo de colchones, sino el resto de términos y definiciones».
+
+Cambios:
+
+- El prompt separa dos registros: **dato de catálogo** (máximo tres frases, solo
+  con herramientas) y **explicación práctica** (definición breve, tres a cinco
+  pasos, ejemplo con los datos del mapa, hasta ocho frases, y qué vigilar). Las
+  referencias generales se etiquetan como método y los importes del usuario no se
+  redactan; las tasas de producto sin fuente siguen redactándose.
+- Al ampliar las fichas a 341 condiciones, el turno de herramientas quedó roto:
+  la proyección al modelo solo conocía 25 métricas, exigía valores de texto y
+  cortaba en 32 condiciones por producto. Olea (33) y Azvalor (34) superaban el
+  tope. Ahora las unidades salen del propio catálogo, el tope es 64 y los datos
+  guardan literales de texto.
+- El DTO del chat cortaba en 8 condiciones y marcaba el producto como «condiciones
+  desconocidas»; además contaba como ilegible toda métrica que no fuera tasa o
+  plazo. Ahora publica tasa y plazo (12 como máximo, con nota de recorte) y omite
+  el resto sin desacreditar la ficha.
+- La búsqueda acepta la familia en plural, con acento o sin él («depósitos»,
+  «cuentas», «ETFs») y la consulta omitida equivale a listar; el contrato sigue
+  cerrado a `null` explícito, campos abiertos y familias inventadas.
+- La interfaz espera 45 s en vez de 12 y el proveedor admite 1.600 tokens de
+  salida (1.200 en el chat), para que una respuesta práctica no se corte.
+
+Pruebas y evidencia:
+
+- `771 Python + 109 Node` en la puerta de calidad, exit 0.
+- Nuevas pruebas: contrato de proyección sobre las 341 condiciones servidas,
+  normalización de búsqueda y recorte declarado del DTO.
+- En producción (`https://paideia-jg2n.onrender.com`, commit `fcad01d`): la
+  pregunta por la TAE de la Cuenta Contigo responde «Condiciones documentadas;
+  atribución parcial · TAE 2,61 % documentada, fuente oficial»; la pregunta por el
+  colchón devuelve definición, pasos concretos (objetivo 3-6 meses, calcular la
+  cifra, cuenta separada, automatizar, revisar) y qué dato falta.
