@@ -144,7 +144,16 @@ def _text_surface_gate(text):
     if _IDENTIFIER_SURFACE.search(text) is not None:
         return False, "identifier"
     if _ATTRIBUTION_SURFACE.search(text) is not None:
-        return False, "attribution"
+        consejo = re.compile(
+            r"^\s*(?:consulta|revisa|comprueba|verifica|pregunta|lee|mira|pide|"
+            r"confirma con|aseg[uú]rate)", re.IGNORECASE)
+        for piece in re.split(r"(?<=[.!?])\s+", text):
+            if _ATTRIBUTION_SURFACE.search(piece) is None:
+                continue
+            if _FIGURE_MARKER.search(piece) is not None or _DATE_SURFACE.search(piece) is not None:
+                return False, "attribution"
+            if consejo.search(piece) is None:
+                return False, "attribution"
     if _FIGURE_MARKER.search(text) is not None:
         return False, "figure"
     if _NUMBER_NEAR_RATE.search(text) is not None:
@@ -180,7 +189,8 @@ def _withhold_text(result, reason):
 
 
 _EDUCATIONAL_REFERENCE = re.compile(
-    r"referencia general|regla general|orientativ|como norma|en general",
+    r"referencia general|regla general|orientativ|como norma|en general|"
+    r"ejemplo hipot[eé]tico|supongamos|imaginemos|a modo de ilustraci[oó]n",
     re.IGNORECASE,
 )
 # El perfil son datos del usuario: pueden repetirse citados como suyos.
@@ -189,16 +199,39 @@ _USER_DATA_REFERENCE = re.compile(
 )
 _PRODUCT_FIGURE = re.compile(r"[%€$]|\b(?:tae|tin|eur|euros?)\b|por ciento", re.IGNORECASE)
 _RATE_FIGURE = re.compile(r"[%]|\b(?:tae|tin)\b|por ciento", re.IGNORECASE)
+# Un ejemplo hipotético puede llevar cifras: no afirma un dato de producto.
+_EXAMPLE_REFERENCE = re.compile(
+    r"\b(?:ejemplo|por ejemplo|supongamos|sup[oó]n|imaginemos|imagine|hipot[eé]tic[oa]|"
+    r"a modo de ilustraci[oó]n)\b", re.IGNORECASE)
+_METHOD_DISCLAIMER = re.compile(
+    r"m[eé]todo, no dato|no es un dato de producto|ejemplo hipot[eé]tico|"
+    r"supongamos|imaginemos|a modo de ilustraci[oó]n", re.IGNORECASE)
+_PRODUCT_SUBJECT = re.compile(
+    r"\b(?:esa|esta|el|la|dicho|dicha)\s+"
+    r"(?:cuenta|dep[oó]sito|producto|entidad|oferta|ficha|letra|fondo|etf|banco)\b",
+    re.IGNORECASE)
+_DATE_SURFACE = re.compile(
+    r"\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b|"
+    r"\b(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|"
+    r"noviembre|diciembre)\s+(?:de\s+)?\d{4}\b", re.IGNORECASE)
 
 
 def _is_labelled_reference(piece):
-    """Referencias de método etiquetadas y cifras propias del usuario no se redactan."""
+    """Método etiquetado y datos propios del usuario no se redactan."""
     if _USER_DATA_REFERENCE.search(piece) and _RATE_FIGURE.search(piece) is None:
         return True
-    return bool(_EDUCATIONAL_REFERENCE.search(piece)) and _PRODUCT_FIGURE.search(piece) is None
+    # Una referencia de método puede llevar una cifra de ejemplo si se etiqueta
+    # como tal y no habla de un producto concreto; si lo hace, la cifra se trata
+    # como dato de producto y se redacta.
+    if _EDUCATIONAL_REFERENCE.search(piece) and _ATTRIBUTION_SURFACE.search(piece) is None:
+        if _PRODUCT_FIGURE.search(piece) is None:
+            return True
+        if _METHOD_DISCLAIMER.search(piece) and _PRODUCT_SUBJECT.search(piece) is None:
+            return True
+    return False
 
 
-def _redact_unbacked_figures(text):
+def _redact_unbacked_figures(text, strict=False):
     """Quita solo las frases con cifras no respaldadas; conserva el resto del texto.
 
     La frontera es la misma de siempre (superficie, no semántica): no comprueba que
@@ -210,10 +243,14 @@ def _redact_unbacked_figures(text):
     for piece in pieces:
         if not piece.strip():
             continue
-        if (_FIGURE_MARKER.search(piece) is not None
-                or _NUMBER_NEAR_RATE.search(piece) is not None
-                or _NUMBER.search(piece) is not None
-                or _SPELLED_NUMBER.search(piece) is not None):
+        figura = (_FIGURE_MARKER.search(piece) is not None
+                  or _NUMBER_NEAR_RATE.search(piece) is not None
+                  or _DATE_SURFACE.search(piece) is not None)
+        if strict and not figura:
+            # En un turno de calculadora cualquier cifra puede leerse como el
+            # resultado del motor: se quitan todas las frases numéricas.
+            figura = _NUMBER.search(piece) is not None or _SPELLED_NUMBER.search(piece) is not None
+        if figura:
             if _is_labelled_reference(piece):
                 kept.append(piece.strip())
                 continue
@@ -221,7 +258,12 @@ def _redact_unbacked_figures(text):
             continue
         kept.append(piece.strip())
     partial = " ".join(kept).strip()
-    if removed == 0 or not partial:
+    if removed == 0:
+        # No había nada que quitar: el texto se devuelve íntegro. Devolver "" aquí
+        # hacía que el llamador lo interpretara como «todo redactado» y retuviera
+        # la respuesta entera.
+        return text.strip(), 0
+    if not partial:
         return "", removed
     return partial, removed
 
@@ -240,7 +282,7 @@ def _withhold_unbacked_claim(result, text, text_state, calculation=None):
         if not allowed and reason != "figure":
             return _withhold_text(result, reason)
         if not allowed or _NUMBER.search(text) is not None or _SPELLED_NUMBER.search(text) is not None:
-            partial, removed = _redact_unbacked_figures(text)
+            partial, removed = _redact_unbacked_figures(text, strict=True)
             if partial:
                 updated = dict(result)
                 notes = [note for note in (updated.get("limitations") or []) if type(note) is str][:6]

@@ -206,14 +206,18 @@ class ToolChatRunner:
             return False
 
         if name == "search_products":
-            if not set(arguments) <= {"query", "family", "limit"} or "query" not in arguments:
+            # La familia se normaliza en el dispatcher (plural, acento, alias); aquí
+            # solo se comprueba la forma. Rechazarla antes dejaba inalcanzable esa
+            # tolerancia y convertía «depósitos» en un 502.
+            if (not set(arguments) <= {"query", "family", "limit"}
+                    or not {"query", "family"} & set(arguments)):
                 return False
-            query = arguments["query"]
+            query = arguments.get("query", "")
             family = arguments.get("family")
             limit = arguments.get("limit", 8)
             return (
                 type(query) is str and len(query) <= 100
-                and (family is None or (type(family) is str and family in PRODUCT_FAMILIES))
+                and (family is None or (type(family) is str and len(family) <= 40))
                 and type(limit) is int and 1 <= limit <= 20
             )
 
@@ -534,11 +538,14 @@ class ToolChatRunner:
         # «Documentada» exige una condición conocida con fuente enlazada. La clase
         # (oficial/secundaria) se informa aparte: el registro de fuentes puede no
         # declararla y eso no convierte el dato en desconocido.
+        summary_raw = raw.get("conditions_summary")
+        known_all = summary_raw.get("known") if type(summary_raw) is dict else None
+        known_all = known_all if type(known_all) is int and known_all >= 0 else 0
         if conditions_state == "documented" and not any(
                 condition["state"] == "known"
                 and condition["sources"]
                 and condition["class_state"] != "inconsistent"
-                for condition in conditions):
+                for condition in conditions) and known_all == 0:
             conditions_state = "conditions_unknown" if conditions else "identity_only"
         if (conditions_state == "documented"
                 and any(condition["state"] in {"stale", "conflict"} for condition in conditions)):
@@ -547,9 +554,11 @@ class ToolChatRunner:
             if note not in reasons:
                 reasons.insert(0, note)
                 reasons = reasons[:4]
-        if truncated_conditions:
-            note = (f"Se muestran {MAX_CHAT_CONDITIONS} de {truncated_conditions} condiciones; "
-                    "la ficha completa está en la biblioteca.")
+        if type(raw_conditions) is list and (
+                len(conditions) < min(len(raw_conditions), MAX_CHAT_CONDITIONS) or truncated_conditions):
+            note = ("El chat recibe tasa y plazo; la ficha completa"
+                    + (f" ({truncated_conditions or len(raw_conditions)} condiciones)" if raw_conditions else "")
+                    + " está en la biblioteca.")
             if note not in reasons:
                 reasons.insert(0, note)
                 reasons = reasons[:4]
@@ -567,10 +576,8 @@ class ToolChatRunner:
             attribution_state = "unresolved"
         if any(condition["class_state"] == "inconsistent" for condition in conditions):
             attribution_state = "inconsistent"
-        elif attribution_state == "resolved" and not any(
-                condition["sources"]
-                and condition["class_state"] != "inconsistent"
-                for condition in conditions):
+        elif (attribution_state == "resolved" and known_all == 0
+                and not any(condition["sources"] for condition in conditions)):
             attribution_state = "unresolved"
         rate_tiers_state = raw.get("rate_tiers_state")
         if rate_tiers_state not in {"documented", "absent", "invalid", "inconsistent"}:
@@ -610,7 +617,7 @@ class ToolChatRunner:
         if type(summary) is dict:
             for key in ("known", "stale", "conflict", "unknown"):
                 number = summary.get(key)
-                safe_summary[key] = number if type(number) is int and 0 <= number <= 8 else 0
+                safe_summary[key] = number if type(number) is int and 0 <= number <= 999 else 0
         return {
             "id": product_id,
             "name": cls._safe_text(name, 200),
@@ -619,7 +626,7 @@ class ToolChatRunner:
             "identity_state": raw.get("identity_state") if raw.get("identity_state") in {"verified", "proposed"} else "proposed",
             "conditions_state": conditions_state,
             "conditions_record_state": ("invalid" if invalid_conditions
-                                        else "documented" if conditions else "absent"),
+                                        else "documented" if conditions or known_all else "absent"),
             "conditions_state_reasons": reasons,
             "conditions_summary": safe_summary,
             "conditions_reference_date": reference_date,
@@ -817,7 +824,7 @@ class ToolChatRunner:
         if type(summary) is dict:
             for key in ("known", "stale", "conflict", "unknown"):
                 number = summary.get(key)
-                safe_summary[key] = number if type(number) is int and 0 <= number <= 8 else 0
+                safe_summary[key] = number if type(number) is int and 0 <= number <= 999 else 0
         return {
             "id": product_id,
             "name": cls._safe_text(name, 160),
@@ -1096,7 +1103,12 @@ class ToolChatRunner:
                 if status not in _SUCCESS_STATUSES or dispatched["error"] is not None:
                     self._debug(f"unsuccessful_status:{call.name}:{status}")
                     tool_events.append(self._event(call, state="rejected", status=status))
-                    return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                    # Un contrato de herramienta inválido es un error de herramienta;
+                    # un dato no encontrado es un error del turno, no del contrato.
+                    codigo = (dispatched.get("error") or {}).get("code")
+                    return self._failure(tool_events=tool_events, sources=sources,
+                                         tool_failure=codigo in {"INVALID_ARGUMENTS", "UNKNOWN_TOOL"},
+                                         catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
                 tool_events.append(self._event(call, state="executed", status=status))
                 if call.name == "calculate_scenario":

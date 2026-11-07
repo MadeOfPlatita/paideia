@@ -50,6 +50,8 @@ DOCUMENTED_METRICS = {
     "suscripcion_minima": ("minimum_eur", "EUR"),
     "importe_maximo": ("maximum_eur", "EUR"),
     "importe_maximo_texto": ("maximum_note", "TEXT"),
+    "importe_minimo_texto": ("minimum_note", "TEXT"),
+    "tipo_posterior_nota": ("subsequent_rate_note", "TEXT"),
     "saldo_maximo_remunerado": ("maximum_eur", "EUR"),
     "vencimiento": ("maturity_date", "DATE"),
     "nav": ("nav_eur", "EUR"),
@@ -459,8 +461,12 @@ def _curated_conditions(record: dict, today: date) -> list[Condition]:
     conditions = []
     base = next((tier for tier in tiers if tier.get("condition") == "sin_requisito"), tiers[0] if tiers else None)
     if base is None:
-        conditions.append(Condition(product_id, family, "annual_rate_percent", None, "PERCENT", "unknown",
-                                    "RATE_NOT_DOCUMENTED", retrieved_at=retrieved, notes=tuple(notes)))
+        # La TAE solo aplica a cuenta y depósito. Un fondo, un ETF o una letra no
+        # tienen tasa: añadir una fila «sin dato» los marcaba como incompletos y
+        # contagiaba el estado del chat.
+        if family in {"deposito", "cuenta_remunerada"}:
+            conditions.append(Condition(product_id, family, "annual_rate_percent", None, "PERCENT", "unknown",
+                                        "RATE_NOT_DOCUMENTED", retrieved_at=retrieved, notes=tuple(notes)))
     else:
         value = _decimal(str(base.get("tae", "")))
         state, reason = "known", f"CURATED_{kind.upper()}"
@@ -505,11 +511,13 @@ def _documented_conditions(record: dict, product_id: str, family, already_known=
         if raw is None or raw == "":
             continue
         url = item.get("source_url")
+        note = item.get("note")
         salida.append(Condition(
             product_id, family, metric, str(raw), unit, "known", "CURATED_DOCUMENTED",
             source_ids=(str(url),) if url else (),
             source_refs=((str(url), item.get("source_title"), item.get("accessed")),) if url else (),
             retrieved_at=item.get("accessed"),
+            notes=(str(note),) if note else (),
         ))
         emitted.add(metric)
     return salida

@@ -294,8 +294,7 @@
     color: #444;
   }
   #receipt-print .doc-footer::after {
-    content: "Página " counter(page) " de " counter(pages);
+    content: "Documento informativo · sin validez contractual";
     float: right;
-    font-variant-numeric: tabular-nums;
   }
 }

@@ -18,7 +18,7 @@ class ProfileConfirmationTests(unittest.TestCase):
         self.css = (STATIC / "styles.css").read_text(encoding="utf-8")
 
     def test_box_texts_and_classes_exist(self):
-        for marca in ("PREGUNTA ANTERIOR", "profile-answer-box", "profile-confirm",
+        for marca in ("RESPUESTA GUARDADA", "profile-answer-box", "profile-confirm",
                       "profileConfirmAnswered", "profileConfirmKey"):
             with self.subTest(marca=marca):
                 self.assertIn(marca, self.js)

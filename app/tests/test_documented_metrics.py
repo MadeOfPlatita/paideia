@@ -70,7 +70,8 @@ class DocumentedMetricsTests(unittest.TestCase):
 
     def test_debt_keeps_its_auction_figures_without_inventing_a_rate(self):
         deuda = conditions_for("DEBT-01")
-        self.assertEqual(deuda["annual_rate_percent"]["state"], "unknown")
+        # Una letra no tiene TAE: no se inventa una fila «sin dato».
+        self.assertNotIn("annual_rate_percent", deuda)
         self.assertIn("marginal_rate_percent", deuda)
         self.assertIn("auction_date", deuda)
         self.assertIn("average_price_percent", deuda)

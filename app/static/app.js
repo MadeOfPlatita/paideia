@@ -237,6 +237,8 @@ const CONDITION_ROWS = Object.freeze({
   minimum_eur: { label: "Inversión mínima", format: (v) => `${formatEuros(v)} €` },
   maximum_eur: { label: "Importe máximo", format: (v) => `${formatEuros(v)} €` },
   maximum_note: { label: "Importe máximo", format: (v) => v },
+  minimum_note: { label: "Importe mínimo", format: (v) => v },
+  subsequent_rate_note: { label: "Tipo posterior", format: (v) => v },
   nav_eur: { label: "Valor liquidativo", format: (v) => `${formatEuros(v)} €` },
   marginal_rate_percent: { label: "Tipo marginal", format: (v) => `${formatRate(v)}` },
   minimum_price_percent: { label: "Precio mínimo aceptado", format: (v) => `${formatRate(v)} del nominal` },
@@ -1584,7 +1586,7 @@ function renderProfileConfirmation(page, heading) {
   const index = Math.max(0, keys.indexOf(key));
   const answer = PROFILE_MODEL.getAnswer(state.profile, key);
   const panel = el("section", { className: "question-panel profile-confirm" });
-  panel.appendChild(textElement("p", "PREGUNTA ANTERIOR", "eyebrow"));
+  panel.appendChild(textElement("p", "RESPUESTA GUARDADA", "eyebrow"));
   panel.appendChild(el("div", { className: "step-progress" }, [
     el("progress", { max: keys.length, value: index + 1, "aria-label": `Pregunta ${index + 1} de ${keys.length} respondida` }),
     textElement("span", `Pregunta ${index + 1} de ${keys.length} respondida`)
@@ -2073,7 +2075,7 @@ function loadProductDetail(id) {
       if (target) {
         // El panel vive bajo la lista: si no se trae a la vista, «Ver detalle»
         // parece no hacer nada.
-        target.scrollIntoView({ block: "start", behavior: "smooth" });
+        target.scrollIntoView({ block: "start", behavior: "auto" });
         target.focus({ preventScroll: true });
       }
       announce(state.detail.error ? "No se pudo cargar la ficha" : "Ficha cargada");
@@ -3126,7 +3128,12 @@ function simulationProductReview(parent, product) {
       } else if (condition.metric === "term_months") {
         text = `Plazo: ${condition.state === "known" ? `${condition.value} meses` : "no documentado"} · ${conditionStateText(condition)}`;
       } else {
-        text = `${condition.metric} · ${conditionStateText(condition)}`;
+        const row = CONDITION_ROWS[condition.metric];
+        const etiqueta = row ? row.label : condition.metric;
+        const valor = condition.state === "known" && condition.value !== null && condition.value !== undefined
+          ? (row ? row.format(String(condition.value)) : String(condition.value))
+          : "sin dato utilizable";
+        text = `${etiqueta}: ${valor} · ${conditionStateText(condition)}`;
       }
       if (condition.effective_to) text += ` · vigencia hasta ${condition.effective_to}`;
       if (Array.isArray(condition.notes) && condition.notes.length) text += ` · ${condition.notes.join(" ")}`;
@@ -3301,7 +3308,7 @@ function buildReceiptDocument() {
   const cuerpoProducto = el("tbody");
   const filasProducto = producto ? [
     ["Denominación", productName(producto)],
-    ["Familia", familyLabel(producto)],
+    ["Familia", familyLabel(producto.family)],
     ["Entidad de referencia", issuerLabel(producto)],
     ["ISIN", producto.isin || "No indicado en el metadato"],
     ["Identidad", identityLabel(producto)],
@@ -3378,6 +3385,18 @@ function mountReceiptDocument() {
 function clearReceiptDocument() {
   const contenedor = document.getElementById("receipt-print");
   if (contenedor) contenedor.remove();
+  document.body.classList.remove("receipt-printing");
+}
+
+function beforePrintReceipt() {
+  // Ctrl+P debe imprimir el documento A4, no una copia de la página.
+  if (routeFromHash() !== "simulacion") return;
+  if (!state.simulation || state.simulation.step < 4) return;
+  mountReceiptDocument();
+  document.body.classList.add("receipt-printing");
+}
+
+function afterPrintReceipt() {
   document.body.classList.remove("receipt-printing");
 }
 
@@ -3755,6 +3774,7 @@ function render(options = {}) {
   }
   const routeChanged = lastRenderedRoute !== null && lastRenderedRoute !== route;
   lastRenderedRoute = route;
+  if (routeChanged) window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   state.route = route;
   updateNavigation(route);
   renderContext(route);
@@ -3794,6 +3814,8 @@ function startApp() {
   document.getElementById("clear-profile").addEventListener("click", clearProfile);
   window.addEventListener("hashchange", render);
   window.addEventListener("storage", handleStorageEvent);
+  window.addEventListener("beforeprint", beforePrintReceipt);
+  window.addEventListener("afterprint", afterPrintReceipt);
   render();
   checkLocalStatus();
 }

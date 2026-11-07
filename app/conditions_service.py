@@ -72,8 +72,11 @@ class ConditionsService:
                     fields.add("term")
                 if metric in ("divisa", "divisa_clase"):
                     fields.add("currency")
-                if metric in ("tae_posterior", "tin_posterior"):
+                if metric in ("tae_posterior", "tin_posterior", "tipo_posterior_nota"):
                     fields.add("subsequent")
+                if metric in ("importe_minimo", "importe_maximo", "importe_minimo_texto", "importe_maximo_texto"):
+                    fields.add("min")
+                    fields.add("max")
                 if metric == "liquidacion":
                     fields.add("payment")
                 if metric == "garantia_depositos":

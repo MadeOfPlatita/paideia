@@ -173,12 +173,12 @@ class CuratedTests(unittest.TestCase):
         curated = json.loads(path.read_text(encoding="utf-8"))
         result = derive({"candidates": []}, TODAY, curated)
         rates = {p["product_id"]: next(c for c in p["conditions"] if c["metric"] == "annual_rate_percent")
-                 for p in result["products"]}
+                 for p in result["products"] if any(c["metric"] == "annual_rate_percent" for c in p["conditions"])}
         self.assertEqual(rates["DEP-02"]["value"], "2.75")
         self.assertEqual(rates["DEP-EBN-12"]["value"], "3.1")
-        # Pibank prorrogó la oferta hasta el 30/11/2026 (misma página de producto).
-        self.assertEqual(rates["DEP-03"]["state"], "known")
-        self.assertEqual(rates["DEP-03"]["effective_to"], "2026-11-30")
+        # La página oficial dice «Oferta válida hasta el 31/10/2026»: ya venció.
+        self.assertEqual(rates["DEP-03"]["state"], "stale")
+        self.assertEqual(rates["DEP-03"]["effective_to"], "2026-10-31")
 
 
 if __name__ == "__main__":
