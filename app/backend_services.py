@@ -202,6 +202,9 @@ _USER_DATA_REFERENCE = re.compile(
 )
 _PRODUCT_FIGURE = re.compile(r"[%€$]|\b(?:tae|tin|eur|euros?)\b|por ciento", re.IGNORECASE)
 _RATE_FIGURE = re.compile(r"[%]|\b(?:tae|tin)\b|por ciento", re.IGNORECASE)
+_EXAMPLE_REFERENCE = re.compile(
+    r"\b(?:por ejemplo|ejemplo|supongamos|imaginemos|hipot[eé]tic[oa]|"
+    r"a modo de ilustraci[oó]n)\b", re.IGNORECASE)
 _METHOD_DISCLAIMER = re.compile(
     r"m[eé]todo, no dato|no es un dato de producto|ejemplo hipot[eé]tico|"
     r"supongamos|imaginemos|a modo de ilustraci[oó]n", re.IGNORECASE)
@@ -221,14 +224,13 @@ def _is_labelled_reference(piece):
         # Un importe en euros junto a «tu/tus» es dato del perfil que el servidor
         # ya conoce; una tasa sigue exigiendo fuente.
         return True
-    # Una referencia de método puede llevar una cifra de ejemplo si se etiqueta
-    # como tal y no habla de un producto concreto; si lo hace, la cifra se trata
-    # como dato de producto y se redacta.
-    if _EDUCATIONAL_REFERENCE.search(piece) and _ATTRIBUTION_SURFACE.search(piece) is None:
-        if _PRODUCT_FIGURE.search(piece) is None:
-            return True
-        if _METHOD_DISCLAIMER.search(piece) and _PRODUCT_SUBJECT.search(piece) is None:
-            return True
+    # Un ejemplo numérico genérico («por ejemplo, un 3 % sobre 1.000 €») es
+    # método, no una oferta. Si nombra un producto concreto o atribuye la cifra
+    # a una fuente, se trata como dato de producto y se redacta.
+    if _ATTRIBUTION_SURFACE.search(piece) is not None or _PRODUCT_SUBJECT.search(piece) is not None:
+        return False
+    if _EXAMPLE_REFERENCE.search(piece) or _EDUCATIONAL_REFERENCE.search(piece):
+        return True
     return False
 
 

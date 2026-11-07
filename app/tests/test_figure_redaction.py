@@ -14,7 +14,7 @@ from pai_runtime import ANSWER_TEXT_SHOWN
 CONCEPTO = ("El TIN es el tipo de interés nominal que aplica una entidad a un producto. "
             "No incluye comisiones ni el efecto de la capitalización. "
             "La TAE sí incorpora ambos, por eso suele ser más alta.")
-EJEMPLO = "Por ejemplo, un 3 % anual sobre 1.000 euros."
+EJEMPLO = "Por ejemplo, esa cuenta da un 3 % anual sobre 1.000 euros."
 
 
 class RedactionTests(unittest.TestCase):
@@ -30,6 +30,11 @@ class RedactionTests(unittest.TestCase):
         self.assertIn("La TAE sí incorpora ambos", texto)
         self.assertEqual(resultado["redacted_figures"], 1)
         self.assertTrue(any("cifras" in nota for nota in resultado["limitations"]))
+
+    def test_a_generic_numeric_example_is_kept(self):
+        texto, estado, _ = self.run_gate("Por ejemplo, un 3 % anual sobre 1.000 euros.")
+        self.assertEqual(estado, ANSWER_TEXT_SHOWN)
+        self.assertIn("3 %", texto)
 
     def test_a_fully_numeric_answer_is_still_withheld(self):
         texto, estado, resultado = self.run_gate(EJEMPLO + " " + EJEMPLO)
