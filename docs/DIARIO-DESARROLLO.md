@@ -53,7 +53,7 @@ la decisión de ese día, no la de hoy.
 
 | Proveedor | Endpoint | Modelo usado | Dónde se usa | Estado |
 | --- | --- | --- | --- | --- |
-| Command Code | `https://api.commandcode.ai/v1/chat/completions` | `deepseek/deepseek-v4.1-flash` | Producción (Render) | Activo; clave solo en el panel de Render |
+| Command Code | `https://api.commandcode.ai/provider/v1/chat/completions` | `deepseek/deepseek-v4.1-flash` | Producción (Render) | Activo; clave solo en el panel de Render |
 | Command Code (prueba) | mismo endpoint | `reflection/beam:free` | Evaluación puntual | Probado; se volvió a deepseek por decisión del objetivo |
 | Groq | `https://api.groq.com/openai/v1/chat/completions` | `openai/gpt-oss-20b` (local) y `openai/gpt-oss-120b` (Render) | Desarrollo y alternativa | Configurable; no es el proveedor de producción actual |
 | Vercel AI Gateway | `https://ai-gateway.vercel.sh/v1/chat/completions` | `reflection/beam-free` | Alternativa gratuita | Clave creada y proveedor admitido; no se usa en producción |
