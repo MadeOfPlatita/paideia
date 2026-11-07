@@ -61,6 +61,9 @@ _WITHHELD_TEXT_NOTE = (
 CATALOGUE_TOOLS = frozenset({
     "search_products", "get_product_detail", "compare_products", "get_sources",
 })
+# Condiciones que viajan al modelo por producto; el resto queda en la ficha.
+MAX_CHAT_CONDITIONS = 12
+
 ANSWER_TEXT_SHOWN = "shown_unverified"
 ANSWER_TEXT_WITHHELD = "withheld_catalogue_evidence"
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
@@ -495,16 +498,20 @@ class ToolChatRunner:
             return None
         conditions = []
         invalid_conditions = 0
+        truncated_conditions = 0
         raw_conditions = raw.get("conditions")
         if raw_conditions is None:
             pass
         elif type(raw_conditions) is not list:
             invalid_conditions += 1
         else:
-            if len(raw_conditions) > 8:
-                # No se puede acreditar la lista completa: no se publica como documentada.
-                invalid_conditions += 1
-            for condition in raw_conditions[:8]:
+            # El DTO del chat no lleva la ficha entera: el presupuesto de la petición
+            # es 16 KiB. Se envían las primeras condiciones (la tasa y el plazo van
+            # primero) y se declara el recorte; no se marca el producto como
+            # desconocido por tener una ficha larga.
+            if len(raw_conditions) > MAX_CHAT_CONDITIONS:
+                truncated_conditions = len(raw_conditions)
+            for condition in raw_conditions[:MAX_CHAT_CONDITIONS]:
                 projected = cls._evidence_condition(condition)
                 if projected is None:
                     invalid_conditions += 1
@@ -533,6 +540,12 @@ class ToolChatRunner:
                 and any(condition["state"] in {"stale", "conflict"} for condition in conditions)):
             conditions_state = "documented_not_current"
             note = "Hay condiciones vencidas o en conflicto; no se presentan como vigentes."
+            if note not in reasons:
+                reasons.insert(0, note)
+                reasons = reasons[:4]
+        if truncated_conditions:
+            note = (f"Se muestran {MAX_CHAT_CONDITIONS} de {truncated_conditions} condiciones; "
+                    "la ficha completa está en la biblioteca.")
             if note not in reasons:
                 reasons.insert(0, note)
                 reasons = reasons[:4]
