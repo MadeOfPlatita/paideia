@@ -512,6 +512,10 @@ class ToolChatRunner:
             if len(raw_conditions) > MAX_CHAT_CONDITIONS:
                 truncated_conditions = len(raw_conditions)
             for condition in raw_conditions[:MAX_CHAT_CONDITIONS]:
+                metric = condition.get("metric") if type(condition) is dict else None
+                if metric not in {"annual_rate_percent", "term_months"}:
+                    # El DTO del chat solo publica tasa y plazo; el resto vive en la ficha.
+                    continue
                 projected = cls._evidence_condition(condition)
                 if projected is None:
                     invalid_conditions += 1

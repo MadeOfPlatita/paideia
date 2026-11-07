@@ -49,7 +49,7 @@ class ApiFailure extends Error {
   }
 }
 
-const API_TIMEOUT_MS = 12000;
+const API_TIMEOUT_MS = 45000;
 
 async function apiRequest(path, options = {}) {
   const request = { method: options.method || "GET", headers: { Accept: "application/json" } };
