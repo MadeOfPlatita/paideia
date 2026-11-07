@@ -87,7 +87,7 @@ def model_is_allowed(model):
 
 
 DEFAULT_OUTPUT_TOKENS = 256
-MAX_OUTPUT_TOKENS = 1600
+MAX_OUTPUT_TOKENS = 3000
 MAX_REQUEST_BYTES = 32 * 1024
 MAX_RESPONSE_BYTES = 64 * 1024
 # Tope de llamadas de herramienta en un mismo turno del modelo: por encima

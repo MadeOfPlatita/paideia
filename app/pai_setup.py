@@ -52,7 +52,7 @@ TIMEOUT_ENV = "PAIDEIA_GROQ_TIMEOUT"
 TOKENS_ENV = "PAIDEIA_GROQ_MAX_TOKENS"
 SCOPE = "paideia-chat-local"
 MAX_TIMEOUT_SECONDS = 60.0
-CHAT_OUTPUT_TOKENS = 1600
+CHAT_OUTPUT_TOKENS = 2400
 # Additional, explicit opt-in for the counted mission route.  It is not used by
 # the ordinary application route and does not alter the historical env names.
 NIGHT_OPT_IN_ENV = "PAIDEIA_NIGHT_MISSION_ENABLED"
