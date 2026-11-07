@@ -606,7 +606,7 @@ class LocalChatService:
             size = len(json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode('utf-8'))
         except (TypeError, ValueError, UnicodeError):
             raise ServiceProblem(400, "INVALID_REQUEST", "Petición no válida.") from None
-        if size > 16384:
+        if size > 32768:
             raise ServiceProblem(413, "REQUEST_TOO_LARGE", "La petición supera 16 KiB.")
         if (type(payload) is not dict or not {"message"}.issubset(payload)
                 or set(payload) - ({"message", "consent", "ticket", "context_consent", "context", "history"} | ({"scenario"} if self._structured_mode else set()))

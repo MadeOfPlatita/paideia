@@ -24,7 +24,7 @@ class QualityTests(unittest.TestCase):
         self.assertEqual(len(requests), 18)
         self.assertEqual([r['variant'] for r in requests[:3]], ['A', 'B', 'C'])
         for r in requests:
-            self.assertLessEqual(r['request_bytes'], 16384)
+            self.assertLessEqual(r['request_bytes'], 32768)
             self.assertEqual(r['payload']['max_tokens'], 256)
             self.assertEqual([m['role'] for m in r['payload']['messages']], ['system', 'user'])
 

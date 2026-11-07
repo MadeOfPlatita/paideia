@@ -231,10 +231,13 @@ class ToolDispatcher:
                     raise _ToolFailure("REPOSITORY_ERROR", "No se pudo leer el catálogo local.") from None
                 if type(raw_products) is not list:
                     raise _ToolFailure("REPOSITORY_ERROR", "No se pudo leer el catálogo local.")
-                products = [self._project_product(item) for item in raw_products[:limit]]
+                # La lista es un índice: identidad, estado y recuento. Las condiciones
+                # completas viajan solo al pedir el detalle, o la petición al modelo
+                # supera el presupuesto de 16 KiB con 20 productos.
+                products = [self._project_listing(item) for item in raw_products[:limit]]
                 # La búsqueda mantiene solo citas de identidad: su proyección al modelo
                 # no incluye condiciones y el límite de fuentes del runner es 20.
-                sources = self._sources_for_products(products, include_conditions=False)
+                sources = [self._listing_source(product) for product in products]
                 data = {
                     "items": products,
                     "count": len(products),
@@ -394,7 +397,43 @@ class ToolDispatcher:
         return query, family, limit
 
     @staticmethod
-    def _project_product(raw_product):
+    def _project_listing(raw_product):
+        """Índice de la biblioteca: identidad y estado, sin la ficha entera."""
+        if type(raw_product) is not dict:
+            raise _ToolFailure("REPOSITORY_ERROR", "El catálogo local devolvió metadatos no válidos.")
+        projected = ToolDispatcher._project_product(raw_product, include_conditions=True)
+        claves = ("id", "name", "family", "issuer", "isin", "identity_state",
+                  "primary_url", "as_of", "conditions_state", "conditions_summary",
+                  "conditions_reference_date", "attribution_state", "conflicts",
+                  "unknown_fields", "review_state")
+        salida = {clave: projected[clave] for clave in claves if clave in projected}
+        # En la lista, cada condición viaja sin sus citas ni permisos: el detalle
+        # completo se pide aparte. Con 20 fichas, la proyección entera no cabe.
+        salida["conditions"] = [
+            {"metric": c["metric"], "state": c["state"], "value": c["value"],
+             "unit": c["unit"], "effective_to": c.get("effective_to")}
+            for c in projected.get("conditions") or []
+        ]
+        return salida
+
+    @staticmethod
+    def _listing_source(product):
+        as_of = product.get("as_of")
+        documentada = type(as_of) is str and _valid_moment(as_of)
+        return {
+            "source_ref": {"namespace": "local-tools.v1", "id": f"identity:{product['id']}"},
+            "product_id": product["id"],
+            "kind": "identity",
+            "claim_scope": "product_identity_only",
+            "label": product["name"],
+            "url": product["primary_url"],
+            "retrieved_at": as_of if documentada else None,
+            "date_state": "documented" if documentada else "unknown",
+            "not_for_publication": True,
+        }
+
+    @staticmethod
+    def _project_product(raw_product, include_conditions=True):
         if type(raw_product) is not dict:
             raise _ToolFailure("REPOSITORY_ERROR", "El catálogo local devolvió metadatos no válidos.")
         product_id = raw_product.get("id")
@@ -426,14 +465,22 @@ class ToolDispatcher:
                                             or ISO_DATE.fullmatch(reference_date) is None
                                             or not _valid_moment(reference_date)):
             raise _ToolFailure("REPOSITORY_ERROR", "El catálogo local devolvió una fecha de referencia no válida.")
-        conditions = ToolDispatcher._project_conditions(
+        conditions = (ToolDispatcher._project_conditions(
             raw_product.get("conditions"), ToolDispatcher._condition_hints(raw_product),
-            reference_date)
+            reference_date) if include_conditions else [])
         rate_tiers, rate_tiers_state = project_rate_tiers(raw_product.get("rate_tiers"))
         if rate_tiers_state == "absent" and raw_product.get("rate_tiers_state") in {"invalid", "inconsistent"}:
             # El adaptador ya descartó tramos inválidos; se conserva el aviso sin sus valores.
             rate_tiers_state = raw_product["rate_tiers_state"]
+        resumen_base = (raw_product.get("conditions_summary")
+                        if not include_conditions and type(raw_product.get("conditions_summary")) is dict
+                        else None)
         summary = {"known": 0, "stale": 0, "conflict": 0, "unknown": 0}
+        if resumen_base is not None:
+            for key in summary:
+                number = resumen_base.get(key)
+                if type(number) is int and number >= 0:
+                    summary[key] = number
         for condition in conditions:
             summary[condition["state"]] += 1
         known = [condition for condition in conditions if condition["state"] == "known"]

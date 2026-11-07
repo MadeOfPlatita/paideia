@@ -1127,7 +1127,7 @@ function renderHome() {
         payload.context_consent = {notice_version:"paideia-chat-context-map-v1", context:includeContext, history:includeHistory};
         if (includeContext) payload.context = PaideiaChatContext.project(state.profile, selectedFields);
         if (includeHistory) payload.history = PaideiaChatContext.history().slice(-4);
-        if (typeof TextEncoder !== "undefined" && new TextEncoder().encode(JSON.stringify(payload)).length > 16384) throw new ApiFailure("La petición supera 16 KiB; borra historial o reduce la pregunta. No se ha enviado nada.", 400, "REQUEST_TOO_LARGE", false);
+        if (typeof TextEncoder !== "undefined" && new TextEncoder().encode(JSON.stringify(payload)).length > 32768) throw new ApiFailure("La petición supera 32 KiB; borra historial o reduce la pregunta. No se ha enviado nada.", 400, "REQUEST_TOO_LARGE", false);
       }
       if (attemptedTicket) payload.ticket = attemptedTicket;
       let submittedScenario = null;

@@ -23,9 +23,9 @@ class ContextTests(unittest.TestCase):
     def test_direct_service_rejects_large_utf8_request(self):
         p = Fake()
         s = LocalChatService(provider=p, enabled=True, test_only=True, history_enabled=True)
-        payload = {'message': '🧪' * 2000, 'consent': CONSENT,
+        payload = {'message': '🧪' * 3000, 'consent': CONSENT,
                    'context_consent': {**EXTRA, 'context': False},
-                   'history': [{'role': r, 'content': '🧪' * 1000} for r in ('user','assistant') * 2]}
+                   'history': [{'role': r, 'content': '🧪' * 1500} for r in ('user','assistant') * 2]}
         with self.assertRaises(ServiceProblem): s.chat(payload)
         self.assertEqual(p.requests, [])
 

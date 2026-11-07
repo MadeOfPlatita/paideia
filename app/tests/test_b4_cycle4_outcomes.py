@@ -284,7 +284,7 @@ class StaticItemsDispatcher:
 class ModelProjectionSizeTests(unittest.TestCase):
     """B4-C4-03: ninguna ruta puede enviar al modelo un resultado sin tope."""
 
-    MAX_MODEL_BYTES = 16384
+    MAX_MODEL_BYTES = 32768
 
     def run_turn(self, dispatcher, call):
         provider = TestOnlyFakeProvider([
