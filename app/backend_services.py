@@ -1,6 +1,7 @@
 """Application boundaries. No UI, environment reads, network or catalogue writes."""
 from datetime import datetime, timezone
 import json
+import os
 import re
 from providers import PROVIDER_LABEL, ProviderError, GroqProvider
 from secure_groq_session import _SingleFlightProvider, _CountedTransport, Session
@@ -860,7 +861,11 @@ class LocalChatService:
             if provider.problem is not None:
                 raise provider.problem
             if result["finish_reason"] in {"error", "tool_error"}:
-                raise ServiceProblem(502, "CHAT_TOOL_ERROR", "No se pudo completar el turno de herramientas.")
+                detalle = result.get("failure_detail")
+                mensaje = "No se pudo completar el turno de herramientas."
+                if detalle and os.environ.get("PAIDEIA_TOOL_DEBUG") == "1":
+                    mensaje = f"{mensaje} [{detalle}]"
+                raise ServiceProblem(502, "CHAT_TOOL_ERROR", mensaje)
             catalogue = result.get("catalogue")
             if type(catalogue) is not dict:
                 catalogue = {"used": False, "products": []}

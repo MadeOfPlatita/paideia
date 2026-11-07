@@ -162,7 +162,7 @@ class ToolChatRunner:
             print(f"[tools] {code}", flush=True)
 
     @classmethod
-    def _failure(cls, *, tool_events, sources, tool_failure=False,
+    def _failure(cls, *, tool_events, sources, tool_failure=False, detail=None,
                  catalogue_used=False, catalogue_products=None, sources_total=None):
         return cls._answer_dto(
             "", _TOOL_FAILURE_MESSAGE if tool_failure else _FAILURE_MESSAGE,
@@ -1050,7 +1050,7 @@ class ToolChatRunner:
                 self._debug("round_limit")
                 for call in result.tool_calls:
                     tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, detail="round_limit", catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
             # El turno se valida entero antes de ejecutar nada: si una llamada no es
             # admisible, se rechaza el lote y no queda ninguna a medias.
@@ -1083,7 +1083,7 @@ class ToolChatRunner:
                 # Ninguna llamada del lote se ejecuta: todas constan como rechazadas.
                 for call in result.tool_calls:
                     tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, detail="round_limit", catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
             assistant_calls = []
             tool_messages = []
@@ -1093,11 +1093,13 @@ class ToolChatRunner:
                 except Exception:
                     self._debug("dispatch_error")
                     tool_events.append(self._event(call, state="rejected", status="temporarily_unavailable"))
-                    return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                    return self._failure(tool_events=tool_events, sources=sources, detail="dispatch_error",
+                                         catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
                 if not self._valid_dispatch_result(dispatched, call.name):
                     self._debug("invalid_dispatch_result")
                     tool_events.append(self._event(call, state="rejected", status="rejected"))
-                    return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                    return self._failure(tool_events=tool_events, sources=sources, detail="invalid_dispatch_result",
+                                         catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
                 status = dispatched["status"]
                 if status not in _SUCCESS_STATUSES or dispatched["error"] is not None:
@@ -1108,6 +1110,7 @@ class ToolChatRunner:
                     codigo = (dispatched.get("error") or {}).get("code")
                     return self._failure(tool_events=tool_events, sources=sources,
                                          tool_failure=codigo in {"INVALID_ARGUMENTS", "UNKNOWN_TOOL"},
+                                         detail=f"{status}:{codigo or 'sin_codigo'}",
                                          catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
                 tool_events.append(self._event(call, state="executed", status=status))
@@ -1159,4 +1162,4 @@ class ToolChatRunner:
             current_messages.extend(tool_messages)
             tool_rounds += 1
 
-        return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+        return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, detail="round_limit", catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
