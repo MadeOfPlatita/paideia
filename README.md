@@ -19,9 +19,10 @@ acceso puede tardar cerca de un minuto.
 ## Qué incluye
 
 - **Biblioteca.** 20 candidatos de investigación y **22 fichas con condiciones
-  transcritas**: **341 condiciones servidas** (223 de la transcripción base del
-  5/11 y 141 añadidas el 6/11), cada una con URL y fecha de consulta; el título
-  consta cuando la fuente lo declara. Cada
+  transcritas**: **328 condiciones servidas** (327 documentadas y 1 vencida) a
+  partir de 341 transcritas: se retiraron las tasas que se añadían a familias sin
+  TAE. Cada una con URL y fecha de consulta; el título consta cuando la fuente lo
+  declara. Cada
   tasa aparece con su estado: documentada, vencida, en conflicto o sin dato.
 - **Comparador.** De dos a cuatro productos. Solo compara cifras cuando
   magnitud, plazo y vigencia coinciden; si no, explica por qué no.

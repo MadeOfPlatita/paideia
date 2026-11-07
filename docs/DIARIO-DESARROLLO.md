@@ -21,12 +21,13 @@ la decisión de ese día, no la de hoy.
   `deepseek/deepseek-v4.1-flash`.
 - Escaparate congelado en **https://paideia-mu.vercel.app** (Vercel), con la IA
   apagada; se conserva como enlace secundario.
-- Repositorio privado **MadeOfPlatita/paideia**; `master` solo con lo revisado y
-  desplegado.
-- Catálogo: 20 candidatos y 22 fichas (dos depósitos sintéticos comparables),
-  **341 condiciones servidas**, todas con URL, título y fecha de la fuente o
+- Repositorio **MadeOfPlatita/paideia**, público a 7/11/2026; `master` solo con lo
+  revisado y desplegado. El historial conserva el correo personal en los commits.
+- Catálogo: 20 candidatos y 22 fichas (EBN y Self Bank son productos reales transcritos, no fixtures),
+  **328 condiciones servidas** (327 documentadas y 1 vencida), a partir de 341
+  transcritas; cada una con URL y fecha de la fuente, o
   marcadas como desconocidas.
-- Pruebas: **751 Python** y **109 Node** en verde con `app/tools/quality_gate.py`.
+- Pruebas: **775 Python** y **109 Node** en verde con `app/tools/quality_gate.py`.
 - El justificante del ensayo se imprime como documento A4 independiente, no como
   una copia de la web.
 
@@ -40,9 +41,9 @@ la decisión de ese día, no la de hoy.
 | `pytest` / `unittest` | Suites de backend, catálogo, perfil, privacidad y contraste | Necesita un intérprete con pytest; la puerta de calidad lo busca |
 | `node --test` | Pruebas del modelo de perfil y de la interfaz | No ejecuta el navegador: eso se hace aparte |
 | Servidor Python estándar | App local en `127.0.0.1` para probar sin desplegar | `ThreadingHTTPServer`, sin autenticación de usuarios |
-| Git + GitHub CLI (`gh`) | Historial por hitos, repositorio privado, comprobación de visibilidad y de secretos | El despliegue de Vercel no acepta la autoría de los commits: se publica desde una copia sin `.git` |
+| Git + GitHub CLI (`gh`) | Historial por hitos, visibilidad y comprobación de secretos | El despliegue de Vercel no acepta la autoría de los commits: se publica desde una copia sin `.git` |
 | Render (panel + API REST) | Servicio web, variables de entorno, despliegues y estado | Plan gratuito: el servicio se duerme tras unos 15 minutos sin tráfico |
-| Vercel (CLI + API + AI Gateway) | Escaparate estático y paso a modelos gratuitos | El proyecto no está conectado al repositorio privado: los despliegues son manuales |
+| Vercel (CLI + API + AI Gateway) | Escaparate estático y paso a modelos gratuitos | El proyecto no está conectado al repositorio: los despliegues son manuales |
 | LM Studio local (`minicpm-ocr-1.0`) | Leer capturas de pantalla cuando el modelo no podía verlas | Transcribe, no razona sobre la interfaz |
 | PowerShell, `curl`, `grep` | Tareas del sistema en Windows: parar procesos, comprobar respuestas, buscar en el código | Rutas y comillas de Windows obligan a comprobaciones dobles |
 
@@ -68,7 +69,7 @@ escrito en el repositorio, en capturas ni en el chat.
   imprime.
 - **Vercel**: función WSGI que empaqueta catálogo y estáticos para el escaparate;
   el chat va apagado allí.
-- **GitHub**: repositorio privado, rama `master` con commits en español, un hito
+- **GitHub**: repositorio público, rama `master` con commits en español, un hito
   por commit. Se comprobó por API que no hubiera secretos ni el repositorio
   público antes de la entrega.
 
@@ -614,7 +615,7 @@ Arreglado:
   0 de 0», scroll al detalle y al cambiar de ruta, rótulo «RESPUESTA GUARDADA»,
   etiquetas en castellano en el ensayo, espaciado de ayuda y vista previa, y sin
   asteriscos markdown en el texto del chat.
-- **Documentación.** README con 341 condiciones, 774/109 pruebas, timeout y cupos
+- **Documentación.** README con 328 condiciones, 775/109 pruebas, timeout y cupos
   reales; guía de Render con Command Code y deepseek; documentos del 4/11 marcados
   como históricos; PII de terceros retirada de la auditoría.
 
@@ -635,3 +636,30 @@ tokens (3000 de máximo del proveedor). Verificado en producción: colchón con 
 pasos, letras con 5 pasos, «cómo empiezo a invertir» y «cómo comparo depósitos»
 responden con pasos en vez de quedarse en blanco, y TAE/TIN incluye un ejemplo
 ilustrativo con cifras.
+
+## Full check — 7 de noviembre de 2026
+
+Comprobación completa tras la ronda de subagentes y sus correcciones.
+
+| Comprobación | Resultado |
+|---|---|
+| `git status` | limpio; HEAD `12456c8` |
+| Despliegue Render | `live` en `12456c8` (mismo commit) |
+| Pruebas Python | **775 passed**, 802 subtests, 6 warnings |
+| Pruebas Node | **109 passed**, 0 fallos |
+| `/api/status` | `public_demo`, Command Code, cupo 300/día, 20 candidatos |
+| `/api/conditions` | 22 fichas, **328 condiciones** (327 documentadas, 1 vencida) |
+| `/api/catalogue` | 20 productos |
+| Cabeceras | CSP estricta, `nosniff`, `no-referrer`, `DENY` |
+| Origen ajeno | `403 ORIGIN_REJECTED` |
+| JSON inválido | `400` |
+| Secretos versionados | 0; `app/.env` ignorado y no versionado |
+| UI escritorio 1440 | 8 rutas, sin desbordes ni errores de consola |
+| UI móvil 390 | 5 rutas, sin desbordes, 0 controles por debajo de 40 px |
+| Perfil | «RESPUESTA GUARDADA», foco en Continuar |
+| Chat real | colchón: 1.056 caracteres, pasos numerados, sin herramientas, sin error |
+
+Observaciones: el contador de cupo vuelve a 0 con cada redespliegue (vive en
+memoria); `/api/products/<id>` no adjunta condiciones, la UI las cruza desde
+`/api/conditions`; el repositorio sigue público y el historial conserva el correo
+personal en los commits.
