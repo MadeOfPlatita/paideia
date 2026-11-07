@@ -1001,8 +1001,12 @@ class ToolChatRunner:
                 "error": None,
             }
 
-    def run(self, messages):
-        """Run one bounded turn over messages already authorized by the service."""
+    def run(self, messages, with_tools=True):
+        """Run one bounded turn over messages already authorized by the service.
+
+        `with_tools=False` atiende preguntas de método: no se anuncian herramientas,
+        así el modelo no puede encadenar un turno de catálogo que acabe en error.
+        """
         tool_events = []
         sources = []
         sources_total = 0
@@ -1011,20 +1015,22 @@ class ToolChatRunner:
         calculation = None
         try:
             current_messages = copy.deepcopy(messages)
-            definitions = copy.deepcopy(self._dispatcher.definitions())
+            definitions = copy.deepcopy(self._dispatcher.definitions()) if with_tools else None
         except Exception:
             return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
-        if not self._valid_definitions(definitions):
+        if with_tools and not self._valid_definitions(definitions):
             return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
-        advertised_names = frozenset(item["function"]["name"] for item in definitions)
+        advertised_names = (frozenset(item["function"]["name"] for item in definitions)
+                            if with_tools else frozenset())
         seen_call_ids = set()
         seen_invocations = set()
         tool_rounds = 0
 
         for _model_call in range(self._max_tool_rounds + 1):
             try:
-                result = self._provider.chat(copy.deepcopy(current_messages), tools=copy.deepcopy(definitions))
+                result = self._provider.chat(copy.deepcopy(current_messages),
+                                             tools=copy.deepcopy(definitions) if with_tools else None)
             except Exception:
                 self._debug("provider_error")
                 return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
@@ -1041,6 +1047,11 @@ class ToolChatRunner:
                 return self._answer_dto(result.answer, None, result.finish_reason,
                                         tool_events, sources, catalogue_used, catalogue_products,
                                         calculation=calculation, sources_total=sources_total)
+            if not with_tools and result.tool_calls:
+                # Sin herramientas anunciadas, una llamada es una respuesta inválida.
+                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True,
+                                     detail="tool_call_without_tools", catalogue_used=catalogue_used,
+                                     catalogue_products=catalogue_products, sources_total=sources_total)
             if not result.tool_calls:
                 return self._answer_dto(result.answer, None, result.finish_reason,
                                         tool_events, sources, catalogue_used, catalogue_products,

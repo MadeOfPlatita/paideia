@@ -9,15 +9,16 @@ en el proceso.
 - Servicio `paideia`, plan gratuito, región Fráncfort, definido en `render.yaml`.
 - Arranque: `python app/app.py`; Render inyecta `PORT` y
   `RENDER_EXTERNAL_URL`, que la app usa como origen público exacto.
-- Variables: `PAIDEIA_GROQ_ENABLED=1`, `PAIDEIA_GROQ_MODEL=openai/gpt-oss-120b` y
-  `GROQ_API_KEY` (marcada `sync: false`: se pega en el panel y no está en el repositorio).
+- Variables: `PAIDEIA_LLM_PROVIDER=commandcode`, `PAIDEIA_LLM_MODEL=deepseek/deepseek-v4.1-flash`,
+  `PAIDEIA_GROQ_ENABLED=1` y `COMMANDCODE_API_KEY` / `GROQ_API_KEY` (marcadas `sync: false`:
+  se pegan en el panel y no están en el repositorio).
 - Cada `push` a `master` redespliega automáticamente. Comprobado: el cambio `ef596f7`
   pasó a producción sin intervención manual.
 
 ## Qué se comprobó en el despliegue real
 
 - `GET /api/status` responde `mode: public_demo`, `ai.status: configured_not_verified`
-  y cupo `6/min`, `60/día`.
+  y cupo `10/min`, `300/día` en Render.
 - La cabecera dice «Versión pública · IA configurada»; el pie, «Demostración».
 - El mismo origen (HTTPS del proxy) pasa la comprobación de origen; un `Origin` ajeno
   sigue recibiendo `ORIGIN_REJECTED`.
@@ -53,7 +54,7 @@ solo a ese host:
 | --- | --- | --- | --- |
 | `groq` (por defecto) | `api.groq.com` | `GROQ_API_KEY` | `openai/gpt-oss-20b` |
 | `vercel` | `ai-gateway.vercel.sh` | `AI_GATEWAY_API_KEY` | `reflection/beam-free` |
-| `commandcode` | `api.commandcode.ai` | `COMMANDCODE_API_KEY` | `reflection/beam:free` |
+| `commandcode` | `api.commandcode.ai` | `COMMANDCODE_API_KEY` | `deepseek/deepseek-v4.1-flash` |
 
 En el panel de Render, en *Environment*:
 

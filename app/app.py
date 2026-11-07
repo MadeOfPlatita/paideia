@@ -2,6 +2,7 @@ import argparse
 import copy
 import importlib
 import json
+import traceback
 import os
 import re
 import uuid
@@ -712,6 +713,7 @@ class _Handler(BaseHTTPRequestHandler):
         except (ApiProblem, ServiceProblem) as problem:
             self._send_error(problem)
         except Exception:
+            traceback.print_exc()
             self._send_error(ApiProblem(500, "INTERNAL_ERROR", "Error interno."))
 
     def _serve_static(self, raw_path, query):
@@ -842,6 +844,7 @@ class _Handler(BaseHTTPRequestHandler):
         except ApiProblem as problem:
             self._send_error(problem)
         except Exception:
+            traceback.print_exc()
             self._send_error(ApiProblem(500, "INTERNAL_ERROR", "Error interno."))
 
     def log_message(self, fmt, *args):

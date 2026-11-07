@@ -141,8 +141,8 @@ git log --all --format='%an <%ae>' | sort | uniq -c
 
 | Commits | Autor | Correo |
 |---|---|---|
-| 8 | `Alejandro` | `alejanmarpla0506@gm•••.com` |
-| 6 | `Alejandro M… P…` (nombre y dos apellidos) | `alejanmarpla0506@gm•••.com` |
+| 8 | `Alejandro` | `<correo personal>` |
+| 6 | `Alejandro M… P…` (nombre y dos apellidos) | `<correo personal>` |
 | 7 | `Alejandro M… P…` | `307587994+MadeOfPlatita@users.noreply.github.com` |
 | 4 | `Alejandro` | `alejandro@example.invalid` |
 
@@ -189,7 +189,7 @@ No es la dirección de nadie por sí solo, pero es un dato de localización asoc
 
 ### 4.4 Datos de terceros
 
-- `docs/investigacion-apis-02/evidence/renault-precontractual.pdf`: metadatos `Author = GARCIA Maria-Luisa`. Es el nombre de una empleada del banco en un documento público; no es ilícito, pero es PII de terceros que no hace falta redistribuir.
+- `docs/investigacion-apis-02/evidence/renault-precontractual.pdf`: metadatos con el nombre de una empleada del banco. Es el nombre de una empleada del banco en un documento público; no es ilícito, pero es PII de terceros que no hace falta redistribuir.
 - Los HTML copiados de MyInvestor, Neon, Supabase y Tesoro contienen correos de atención al cliente y nombres de empleados en el marcado. Son datos publicados por esas empresas; el problema no es la PII, es la copia (A4).
 - **No hay** DNI/NIE, IBAN, teléfonos ni direcciones postales en el repositorio. Las coincidencias de los buscadores son hashes de tests y titulares del BOE.
 

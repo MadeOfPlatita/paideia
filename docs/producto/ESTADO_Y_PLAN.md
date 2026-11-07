@@ -1,5 +1,7 @@
 # Paideia — estado integrado y decisiones pendientes
 
+> Documento histórico del 4/11/2026. El estado vigente está en el README y en el diario; no describe el despliegue actual.
+
 > **Misión hasta bloqueo en curso, 4/11/2026:** véase la actualización de las 20:15 justo debajo, que sustituye a este párrafo. Detalle en `PAIDEIA-HASTA-BLOQUEO-SEGUIMIENTO.md`. Los bloques siguientes conservan la evolución histórica y no sustituyen este estado.
 
 > **Actualización 4/11/2026 21:05:** el **tema oscuro está aceptado** y el **delta B6 de trazabilidad también** (`passed: true` en ambos dictámenes independientes sobre la instantánea exacta). El **contador global queda detenido**: B2, B3, B4 y la regresión N1 están cerrados, pero la toma de un lock obsoleto (B1/N2) sigue sin ser atómica y permite 6 autorizaciones para cupo 5; agotados los dos ciclos de corrección, **la puerta de Groq permanece cerrada y la misión termina con 0 intentos reales**. Detalle y decisiones pendientes en `PAIDEIA-HASTA-BLOQUEO-SEGUIMIENTO.md`. Sin publicar.

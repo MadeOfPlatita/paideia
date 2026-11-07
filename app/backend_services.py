@@ -397,6 +397,23 @@ class CatalogueComparisonService:
 
 
 CHAT_NOTICE_VERSION = "paideia-chat-remote-v1"
+_PRACTICAL_QUESTION = re.compile(
+    r"\b(?:c[oó]mo|qu[eé] pasos|pasos para|qu[eé] es|diferencia entre|expl[ií]came|"
+    r"funcionan|montar|empezar a invertir|salir de (?:una|la) deuda)\b", re.IGNORECASE)
+_PRODUCT_SPECIFIC = re.compile(
+    r"(?:cat[aá]logo|ficha|isin|cuenta contigo|del dep[oó]sito|de la cuenta|"
+    r"de las letras|producto concreto|ese producto|"
+    r"(?:qu[eé]|cu[aá]l)\s+(?:tae|tin|tasa)\s+(?:tiene|ofrece|paga|aplica))",
+    re.IGNORECASE)
+
+
+def _is_practical_question(message):
+    """Una pregunta de método se responde sin catálogo; una de producto, con él."""
+    if not isinstance(message, str):
+        return False
+    return bool(_PRACTICAL_QUESTION.search(message)) and not _PRODUCT_SPECIFIC.search(message)
+
+
 CHAT_SYSTEM_PROMPT = (
     "Eres Pai, asistente educativo de Paideia para estudiantes de finanzas en España. "
     "No eres un asesor financiero ni ejecutas operaciones. No recibes ningún perfil personal. "
@@ -607,7 +624,7 @@ class LocalChatService:
         except (TypeError, ValueError, UnicodeError):
             raise ServiceProblem(400, "INVALID_REQUEST", "Petición no válida.") from None
         if size > 32768:
-            raise ServiceProblem(413, "REQUEST_TOO_LARGE", "La petición supera 16 KiB.")
+            raise ServiceProblem(413, "REQUEST_TOO_LARGE", "La petición supera 32 KiB.")
         if (type(payload) is not dict or not {"message"}.issubset(payload)
                 or set(payload) - ({"message", "consent", "ticket", "context_consent", "context", "history"} | ({"scenario"} if self._structured_mode else set()))
                 or not isinstance(payload["message"], str) or not 1 <= len(payload["message"]) <= 2000):
@@ -679,7 +696,8 @@ class LocalChatService:
             except Exception:
                 raise ServiceProblem(502, "CHAT_STRUCTURED_INVALID_RESPONSE", "No se pudo validar la respuesta estructurada; no se ha mostrado y no hay reintento automático.") from None
         if self._tools_enabled or self._admission is not None or not self._test_only:
-            return self._tools_chat(messages, payload.get("ticket"), profile_line=profile_line)
+            return self._tools_chat(messages, payload.get("ticket"), profile_line=profile_line,
+                                    practical=_is_practical_question(payload.get("message")))
         try:
             result = (_fake_chat(self._provider, messages) if type(self._provider) is FakeChatProvider
                       else self._provider.chat(messages))
@@ -736,7 +754,8 @@ class LocalChatService:
             raise ServiceProblem(503, "CHAT_ADMISSION_UNAVAILABLE", "No hay admisión configurada.")
         return {"queue": self._admission.status(payload["ticket"]), "external_sent": False}
 
-    def _tools_chat(self, messages, ticket=None, *, structured_payload=None, approved_provider=None, profile_line=""):
+    def _tools_chat(self, messages, ticket=None, *, structured_payload=None, approved_provider=None,
+                    profile_line="", practical=False):
         if self._tools_enabled and not self._test_only and not self._catalogue_usage_approved and self._tools_scope != "calculator_only":
             raise ServiceProblem(503, "CHAT_TOOLS_NOT_APPROVED", "El uso externo de los datos del catálogo no está aprobado; no se ha enviado la consulta.")
         if (self._tools_enabled and self._dispatcher is None) or self._admission is None:
@@ -851,7 +870,11 @@ class LocalChatService:
                     raise ServiceProblem(502, 'CHAT_STRUCTURED_INVALID_RESPONSE',
                         'No se pudo validar la respuesta estructurada; no hay reintento automático.') from None
             if self._tools_enabled:
-                result = ToolChatRunner(provider, self._dispatcher).run(messages)
+                # Las preguntas de método no abren el catálogo: es la vía que
+                # producía 502 intermitentes por llamadas de herramienta inválidas.
+                con_herramientas = not practical
+                result = ToolChatRunner(provider, self._dispatcher).run(
+                    messages, with_tools=con_herramientas)
             else:
                 plain = provider.chat(messages)
                 if plain.tool_calls:

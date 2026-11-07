@@ -11,7 +11,7 @@ nada en un servidor.
 | Entorno | URL | Qué es |
 | --- | --- | --- |
 | Demo completa | **https://paideia-jg2n.onrender.com** | El servidor real: biblioteca, comparador, escenarios, informe y chat |
-| Escaparate | https://paideia-mu.vercel.app | Versión estática que enlaza a la demo |
+| Escaparate | https://paideia-mu.vercel.app | Build congelado anterior a la app actual; no se actualiza con `master` |
 
 El plan gratuito de Render duerme el servicio tras 15 minutos sin uso: el primer
 acceso puede tardar cerca de un minuto.
@@ -19,8 +19,9 @@ acceso puede tardar cerca de un minuto.
 ## Qué incluye
 
 - **Biblioteca.** 20 candidatos de investigación y **22 fichas con condiciones
-  transcritas**: 113 condiciones visibles en las fichas y 223 registros en la
-  transcripción de origen, cada una con URL, título y fecha de consulta. Cada
+  transcritas**: **341 condiciones servidas** (223 de la transcripción base del
+  5/11 y 141 añadidas el 6/11), cada una con URL y fecha de consulta; el título
+  consta cuando la fuente lo declara. Cada
   tasa aparece con su estado: documentada, vencida, en conflicto o sin dato.
 - **Comparador.** De dos a cuatro productos. Solo compara cifras cuando
   magnitud, plazo y vigencia coinciden; si no, explica por qué no.
@@ -55,19 +56,19 @@ python app/tools/quality_gate.py
 ```
 
 La puerta elige un intérprete con `pytest`, lanza las pruebas Python y después
-las de Node. En esta instantánea: **728 pruebas Python y 108 de Node**.
+las de Node. En esta instantánea: **774 pruebas Python y 109 de Node**.
 
 ## Configuración
 
 | Variable | Para qué | Por defecto |
 | --- | --- | --- |
 | `PAIDEIA_GROQ_ENABLED` | Enciende el chat | `0` |
-| `PAIDEIA_LLM_PROVIDER` | `groq`, `commandcode` o `vercel` | `groq` |
+| `PAIDEIA_LLM_PROVIDER` | `groq`, `commandcode` o `vercel` | `groq` en local; `commandcode` en Render |
 | `GROQ_API_KEY` / `COMMANDCODE_API_KEY` / `AI_GATEWAY_API_KEY` | Credencial del proveedor elegido | — |
-| `PAIDEIA_LLM_MODEL` | Modelo cuando el proveedor no es Groq | el del proveedor |
+| `PAIDEIA_LLM_MODEL` | Modelo cuando el proveedor no es Groq | `deepseek/deepseek-v4.1-flash` en producción |
 | `PAIDEIA_GROQ_MODEL` | Modelo de Groq | `openai/gpt-oss-20b` |
-| `PAIDEIA_GROQ_TIMEOUT` | Segundos de espera por respuesta | `20` |
-| `PAIDEIA_CALLS_PER_DAY` / `PAIDEIA_CALLS_PER_MINUTE` | Tope propio de llamadas | `300` / `10` |
+| `PAIDEIA_GROQ_TIMEOUT` | Segundos de espera por respuesta | `60` (máximo 60) |
+| `PAIDEIA_CALLS_PER_DAY` / `PAIDEIA_CALLS_PER_MINUTE` | Tope propio de llamadas | `60` / `6`; Render `300` / `10` |
 | `PAIDEIA_PUBLIC_ORIGIN` | Origen público declarado (proxy HTTPS) | solo local |
 
 Las claves viven solo en el panel del proveedor de despliegue o en `app/.env`.
