@@ -1216,7 +1216,9 @@ function renderHome() {
             if (catalogueUsed && catalogue) renderChatCatalogue(feedback, catalogue);
             if (calculation) renderChatCalculation(feedback, calculation);
           } else if (typeof result.answer === "string" && result.answer) {
-            feedback.appendChild(textElement("p", result.answer));
+            // El modelo usa **negrita** markdown, pero aquí el texto se inserta
+            // literal: se quitan las marcas para no enseñar asteriscos.
+            feedback.appendChild(textElement("p", result.answer.replace(/\*\*(.+?)\*\*/g, "$1")));
             if (calculation) renderChatCalculation(feedback, calculation);
           }
           if (result.claims && typeof PaideiaClaims !== "undefined" && PaideiaClaims

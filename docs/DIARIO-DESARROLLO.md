@@ -580,3 +580,46 @@ Pruebas y evidencia:
   atribución parcial · TAE 2,61 % documentada, fuente oficial»; la pregunta por el
   colchón devuelve definición, pasos concretos (objetivo 3-6 meses, calcular la
   cifra, cuenta separada, automatizar, revisar) y qué dato falta.
+
+## Entrada — 7 de noviembre de 2026: doce subagentes de prueba y lo que arreglaron
+
+Se lanzaron 12 subagentes en paralelo (práctica, catálogo contra fuentes, contrato
+de herramientas, UI 1440 y 390, comparación y justificante, seguridad,
+accesibilidad, rendimiento, cobertura, consistencia de DTO y documentación). Los
+informes están en el scratch de QA; aquí queda lo que cambió y lo que sigue abierto.
+
+Arreglado:
+
+- **Respuestas prácticas.** El filtro de cifras borraba frases con cualquier
+  número, incluidos los pasos («3 a 6 meses»). Ahora solo retira cifras de
+  producto, tasas y fechas de vigencia; conserva los importes propios citados con
+  «tu/tus» y los ejemplos etiquetados como «referencia general (método, no dato de
+  producto)». La atribución genérica («consulta la ficha y confirma la vigencia»)
+  deja de vaciar la respuesta; solo se retiene la que afirma una fuente con cifra
+  o fecha.
+- **Preguntas de método sin herramientas.** «Cómo funcionan las letras» o
+  «diferencia entre TAE y TIN» se responden en prosa: no se anuncia el catálogo y
+  desaparece el 502 intermitente por llamadas de herramienta inválidas. Las
+  preguntas de producto concreto siguen consultando el catálogo.
+- **DTO del chat.** Fondos, ETF y letras dejan de marcarse «condiciones
+  desconocidas»: no se inventa una TAE inexistente, el resumen conserva el
+  recuento real y el recorte se declara sobre lo que viaja.
+- **Catálogo.** Nominal de las letras en euros (la tabla lo publica en millones),
+  TIN de Openbank del tramo sin nómina, Pibank vencida el 31/10/2026 y sin mínimo,
+  tipo posterior de Renault como ejemplo no fijado, fecha de Azvalor y comisión de
+  salida con su excepción del 3 %.
+- **Presupuesto.** La lista de 20 productos viaja compacta y el límite sube a 32
+  KiB (28,7 KB con las cinco herramientas); antes la petición no cabía.
+- **Documento y UI.** Familia del justificante, Ctrl+P imprime el A4, sin «Página
+  0 de 0», scroll al detalle y al cambiar de ruta, rótulo «RESPUESTA GUARDADA»,
+  etiquetas en castellano en el ensayo, espaciado de ayuda y vista previa, y sin
+  asteriscos markdown en el texto del chat.
+- **Documentación.** README con 341 condiciones, 774/109 pruebas, timeout y cupos
+  reales; guía de Render con Command Code y deepseek; documentos del 4/11 marcados
+  como históricos; PII de terceros retirada de la auditoría.
+
+Abierto y conocido: el proveedor encadena de vez en cuando una respuesta inválida
+(HTTP 200 sin forma esperada) y el turno se rechaza sin reintento; los cuatro ETF
+siguen con cobertura media; `/api/catalogue` relee el catálogo en cada petición;
+el repositorio está público y el historial conserva el correo personal; el
+escaparate de Vercel sigue congelado.
