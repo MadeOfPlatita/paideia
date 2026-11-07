@@ -194,22 +194,20 @@ _EDUCATIONAL_REFERENCE = re.compile(
     r"ejemplo hipot[eé]tico|supongamos|imaginemos|a modo de ilustraci[oó]n",
     re.IGNORECASE,
 )
+_SECOND_PERSON = re.compile(
+    r"(?:^|\W)(?:tu|tus|t[uú]|tuyo|tuya|contigo)(?:\W|$)", re.IGNORECASE)
 # El perfil son datos del usuario: pueden repetirse citados como suyos.
 _USER_DATA_REFERENCE = re.compile(
     r"dato que t[uú] aportaste|t[uú] aportaste|seg[uú]n tu mapa|en tu mapa|tu importe", re.IGNORECASE
 )
 _PRODUCT_FIGURE = re.compile(r"[%€$]|\b(?:tae|tin|eur|euros?)\b|por ciento", re.IGNORECASE)
 _RATE_FIGURE = re.compile(r"[%]|\b(?:tae|tin)\b|por ciento", re.IGNORECASE)
-# Un ejemplo hipotético puede llevar cifras: no afirma un dato de producto.
-_EXAMPLE_REFERENCE = re.compile(
-    r"\b(?:ejemplo|por ejemplo|supongamos|sup[oó]n|imaginemos|imagine|hipot[eé]tic[oa]|"
-    r"a modo de ilustraci[oó]n)\b", re.IGNORECASE)
 _METHOD_DISCLAIMER = re.compile(
     r"m[eé]todo, no dato|no es un dato de producto|ejemplo hipot[eé]tico|"
     r"supongamos|imaginemos|a modo de ilustraci[oó]n", re.IGNORECASE)
 _PRODUCT_SUBJECT = re.compile(
-    r"\b(?:esa|esta|el|la|dicho|dicha)\s+"
-    r"(?:cuenta|dep[oó]sito|producto|entidad|oferta|ficha|letra|fondo|etf|banco)\b",
+    r"(?:^|\W)(?:esa|esta|el|la|dicho|dicha)\s+"
+    r"(?:cuenta|dep[oó]sito|producto|entidad|oferta|ficha|letra|fondo|etf|banco)(?:\W|$)",
     re.IGNORECASE)
 _DATE_SURFACE = re.compile(
     r"\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b|"
@@ -219,7 +217,9 @@ _DATE_SURFACE = re.compile(
 
 def _is_labelled_reference(piece):
     """Método etiquetado y datos propios del usuario no se redactan."""
-    if _USER_DATA_REFERENCE.search(piece) and _RATE_FIGURE.search(piece) is None:
+    if (_USER_DATA_REFERENCE.search(piece) or _SECOND_PERSON.search(piece))             and _RATE_FIGURE.search(piece) is None:
+        # Un importe en euros junto a «tu/tus» es dato del perfil que el servidor
+        # ya conoce; una tasa sigue exigiendo fuente.
         return True
     # Una referencia de método puede llevar una cifra de ejemplo si se etiqueta
     # como tal y no habla de un producto concreto; si lo hace, la cifra se trata
