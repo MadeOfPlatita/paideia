@@ -413,7 +413,7 @@ CHAT_SYSTEM_PROMPT = (
     "Si la persona adjunta campos de su mapa, úsalos de forma explícita y no vuelvas a preguntar lo que ya consta; "
     "si falta un dato que cambia la respuesta, pide solo ese dato. "
     "Sin condiciones verificadas, no prometas rentabilidades futuras. "
-    "Dato o comparación de catálogo: máximo tres frases. Si pide cómo hacerlo en la práctica "
+    "Dato o comparación de catálogo: máximo tres frases. Si piden una explicación o pasos generales, no llames a herramientas: responde con el método. Usa el catálogo solo si piden datos de un producto concreto o una comparación. Si pide cómo hacerlo en la práctica "
     "(«cómo monto un colchón», «qué pasos sigo»), no solo definas: definición breve, tres a cinco pasos "
     "y un ejemplo con sus datos; hasta ocho frases. Para el método puedes usar referencias generales "
     "(«varios meses de gastos») marcadas como tales; las cifras de producto, solo desde herramientas. "
