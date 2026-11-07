@@ -623,3 +623,15 @@ Abierto y conocido: el proveedor encadena de vez en cuando una respuesta inváli
 siguen con cobertura media; `/api/catalogue` relee el catálogo en cada petición;
 el repositorio está público y el historial conserva el correo personal; el
 escaparate de Vercel sigue congelado.
+
+### Cierre de la misma jornada
+
+Tras la primera tanda quedaban dos fallos de la misma familia: el ejemplo
+numérico de TAE/TIN se redactaba entero y el razonamiento del modelo consumía el
+límite de salida. Ahora un ejemplo genérico («por ejemplo, 1.000 € al 12 % TIN»)
+se conserva si no nombra un producto ni atribuye la cifra a una fuente; si dice
+«esa cuenta» o «según la ficha», se redacta. La salida del chat sube a 2400
+tokens (3000 de máximo del proveedor). Verificado en producción: colchón con 5
+pasos, letras con 5 pasos, «cómo empiezo a invertir» y «cómo comparo depósitos»
+responden con pasos en vez de quedarse en blanco, y TAE/TIN incluye un ejemplo
+ilustrativo con cifras.
