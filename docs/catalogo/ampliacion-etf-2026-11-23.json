@@ -443,7 +443,7 @@
       "candidate_id": "ETF-03",
       "name": "State Street SPDR MSCI Europe Industrials UCITS ETF",
       "documented_before": 15,
-      "documented_after": 29,
+      "documented_after": 30,
       "served_conditions": null,
       "added": [
         {
@@ -595,6 +595,16 @@
           "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
           "accessed": "2026-11-23",
           "note": null
+        },
+        {
+          "metric": "importe_minimo_texto",
+          "value": "1 participación",
+          "unit": "texto",
+          "literal": "Minimum Investment | 1 Share",
+          "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+          "source_title": "State Street SPDR — State Street SPDR MSCI Europe Industrials UCITS ETF (STQ FP)",
+          "accessed": "2026-11-23",
+          "note": "La ficha fija el mínimo en una participación, no en un importe en euros."
         }
       ],
       "removed": [
@@ -606,35 +616,25 @@
           "motivo": "Ni la ficha de producto ni el documento de datos fundamentales publican clasificación SFDR."
         },
         {
-          "campo": "inversion_minima",
-          "motivo": "Se retira la fila anterior: «Minimum Investment: 1 Share» son participaciones, no euros, y la métrica «minimum_eur» lo publicaba como importe en euros."
-        },
-        {
           "campo": "importe máximo",
           "motivo": "La ficha no publica importe máximo."
+        },
+        {
+          "campo": "importe mínimo en euros",
+          "motivo": "La ficha fija «Minimum Investment | 1 Share»: el mínimo son participaciones, no euros. Se transcribe como nota de importe mínimo («importe_minimo_texto») en lugar de como cifra en euros."
         }
       ],
       "documented_rows_before": 15,
       "served_conditions_before": 15,
-      "served_conditions_after": 29
+      "served_conditions_after": 30
     },
     {
       "candidate_id": "ETF-04",
       "name": "VanEck Semiconductor UCITS ETF",
       "documented_before": 16,
-      "documented_after": 27,
+      "documented_after": 26,
       "served_conditions": null,
       "added": [
-        {
-          "metric": "fecha_datos",
-          "value": "2026-11-20",
-          "unit": "fecha",
-          "literal": "NAV as of 20 Nov 2026",
-          "source_url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview/?al=en&audience=retail&disclaimer=true",
-          "source_title": "VanEck — VanEck Semiconductor UCITS ETF (SMH)",
-          "accessed": "2026-11-23",
-          "note": "Fecha del valor liquidativo que publica la ficha. El valor liquidativo se publica en USD y la métrica del catálogo está en EUR: no se transcribe para no etiquetar un importe en dólares como euros."
-        },
         {
           "metric": "costes_operacion",
           "value": "0.0",
@@ -765,17 +765,22 @@
         {
           "campo": "riesgo 7/7 del KIID",
           "motivo": "El KIID de 20/03/2026 publicaba 7/7 y el KID PRIIPs de 27/03/2026 (y el de 15/09/2026) clasifican en 6/7. Se transcribe el documento más reciente y la discrepancia queda en la nota de la condición."
+        },
+        {
+          "campo": "fecha_datos",
+          "motivo": "La ficha publica la fecha del valor liquidativo (20/11/2026), pero la cifra está en USD y no se transcribe; una fecha de datos sin el dato al que se refiere no aporta nada a la ficha."
         }
       ],
       "documented_rows_before": 16,
       "served_conditions_before": 16,
-      "served_conditions_after": 27
+      "served_conditions_after": 26
     }
   ],
   "totals": {
     "documented_rows_before": 59,
     "served_conditions_before": 58,
     "served_conditions_after": 112,
-    "catalogue_conditions_served": 382
+    "catalogue_conditions_served": 382,
+    "documented_after": 112
   }
 }

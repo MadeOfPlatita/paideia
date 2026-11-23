@@ -2010,36 +2010,30 @@ function renderCatalogueResultsBody(results) {
   };
   const todos = state.library.items.filter((product) => product && typeof product.id === "string");
   // Sin las condiciones cargadas, un recuento de 0 describiría un fallo de red
-  // como si la API hubiera declarado que no hay tasas. Se omite la cifra.
+  // como si la API hubiera declarado que no hay tasas: se omite la cifra y no
+  // se aplica el filtro, que ocultaría los candidatos por un error ajeno.
   const conditionsReady = state.conditions.loaded === true && !state.conditions.error;
-  if (!conditionsReady) {
-    results.appendChild(textElement("p",
-      `Los recuentos de condiciones no están disponibles: el catálogo devolvió ${todos.length} candidatos, pero no se pudo comprobar cuántos tienen tasa documentada.`,
-      "small muted"));
-  } else {
-    const conDatos = todos.filter((product) => documented(product.id));
-    const conTasa = todos.filter((product) => withRate(product.id));
+  const conDatos = conditionsReady ? todos.filter((product) => documented(product.id)) : [];
+  const conTasa = conditionsReady ? todos.filter((product) => withRate(product.id)) : [];
+  if (conditionsReady) {
     results.appendChild(textElement("p",
       `${conTasa.length} de ${todos.length} con tasa documentada · ${conDatos.length} con alguna condición documentada. El resto solo aporta metadatos de identidad.`,
       "small muted"));
-    const visibles = state.library.onlyDocumented === true ? conTasa : todos;
-    if (!visibles.length) {
-      results.appendChild(callout("Ningún candidato de esta búsqueda tiene una tasa documentada. Quita el filtro para ver los metadatos disponibles.", "info-note"));
-      return;
+  } else {
+    results.appendChild(textElement("p",
+      `Los recuentos de condiciones no están disponibles: el catálogo devolvió ${todos.length} candidatos, pero no se pudo comprobar cuántos tienen tasa documentada.`,
+      "small muted"));
+    if (state.library.onlyDocumented === true) {
+      results.appendChild(callout("El filtro «Solo con tasa documentada» necesita las condiciones cargadas; hasta entonces no se oculta ningún candidato.", "info-note"));
     }
-    const list = el("div", { className: "result-list" });
-    visibles.forEach((product) => {
-      state.catalogueCache.set(product.id, product);
-      list.appendChild(productCard(product));
-    });
-    results.appendChild(list);
+  }
+  const visibles = conditionsReady && state.library.onlyDocumented === true ? conTasa : todos;
+  if (!visibles.length) {
+    results.appendChild(callout("Ningún candidato de esta búsqueda tiene una tasa documentada. Quita el filtro para ver los metadatos disponibles.", "info-note"));
     return;
   }
-  if (state.library.onlyDocumented === true) {
-    results.appendChild(callout("El filtro «Solo con tasa documentada» necesita las condiciones cargadas; hasta entonces no se oculta ningún candidato.", "info-note"));
-  }
   const list = el("div", { className: "result-list" });
-  todos.forEach((product) => {
+  visibles.forEach((product) => {
     state.catalogueCache.set(product.id, product);
     list.appendChild(productCard(product));
   });

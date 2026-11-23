@@ -133,7 +133,7 @@
     "candidate_id": "ETF-04",
     "name": "VanEck Semiconductor UCITS ETF",
     "family": "etf_ucits",
-    "documented": 27,
+    "documented": 26,
     "expected": 15,
     "coverage": 80,
     "missing": [
@@ -227,7 +227,7 @@
     "candidate_id": "ETF-03",
     "name": "State Street SPDR MSCI Europe Industrials UCITS ETF",
     "family": "etf_ucits",
-    "documented": 29,
+    "documented": 30,
     "expected": 15,
     "coverage": 93,
     "missing": [

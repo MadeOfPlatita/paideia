@@ -1,7 +1,7 @@
 {
   "schema": "paideia.conditions/1",
   "retrieved_at": "2026-11-05",
-  "note": "Condiciones transcritas de fuentes públicas con su URL y fecha. Los permisos de publicación siguen sin revisar; no se reutilizan como oferta vigente.",
+  "note": "Condiciones transcritas de fuentes públicas con su URL y fecha. El lote original se transcribió el 2026-11-05; cada fila lleva su propia fecha de consulta en «accessed», que prevalece sobre la de este campo. Los permisos de publicación siguen sin revisar; no se reutilizan como oferta vigente.",
   "records": [
     {
       "candidate_id": "DEP-02",

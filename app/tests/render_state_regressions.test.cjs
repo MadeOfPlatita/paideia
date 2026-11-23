@@ -391,7 +391,8 @@ test('una condición nula en la respuesta no rompe la ficha de producto', () => 
     conditions: [null, { metric: 'annual_rate_percent', state: 'known', value: '2.00', unit: 'PERCENT', notes: [] }],
     rate_tiers: [null, { condition: 'sin_requisito', condition_label: 'Sin requisito', tae: '2.00', tin: '1.98' }],
   });
-  load(ui.ctx, [...LIBRARY_NAMES, 'renderProductDetail']);
+  load(ui.ctx, [...LIBRARY_NAMES, 'renderProductDetail', 'productEffectiveDate', 'conditionConsultedAt',
+    'conditionValidityText', 'appendList'], ['FAMILIES', 'CONDITION_ROWS']);
 
   const holder = new Node('section');
   holder.setAttribute('id', 'product-detail');
