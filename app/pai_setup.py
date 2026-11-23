@@ -211,7 +211,11 @@ def _historical_chat_service(repository=None, comparison_service=None):
         calls_per_minute=_calls_per_minute(),
         calls_per_day=_calls_per_day(),
         ticket_ttl_seconds=120,
-        claim_ttl_seconds=60,
+        # El lease de un turno reclamado debe cubrir la llamada al proveedor.
+        # Con 60 s y respuestas de 45-60 s el hueco se liberaba mientras la
+        # peticion seguia viva, y otro turno entraba en paralelo: dos
+        # llamadas reales donde el cupo admite una.
+        claim_ttl_seconds=180,
         scope=SCOPE,
     )
     admission = InterfazChatAdmission(
@@ -289,7 +293,11 @@ def _night_chat_service(repository=None, comparison_service=None, *, test_only=F
             calls_per_minute=min(6, limit),
             calls_per_day=limit,
             ticket_ttl_seconds=120,
-            claim_ttl_seconds=60,
+            # El lease de un turno reclamado debe cubrir la llamada al proveedor.
+        # Con 60 s y respuestas de 45-60 s el hueco se liberaba mientras la
+        # peticion seguia viva, y otro turno entraba en paralelo: dos
+        # llamadas reales donde el cupo admite una.
+        claim_ttl_seconds=180,
             scope=SCOPE,
         )
         admission = InterfazChatAdmission(
