@@ -530,9 +530,27 @@ def _parse_chat_response(response):
     reasoning = _optional_text(message, reasoning_field)
     refusal = _optional_text(message, "refusal")
     calls_value = message.get("tool_calls", [])
-    if type(calls_value) is not list or len(calls_value) > MAX_TOOL_CALLS_PER_TURN:
+    if type(calls_value) is list and len(calls_value) > MAX_TOOL_CALLS_PER_TURN:
+        # Demasiadas llamadas: se descartan todas. Si el mensaje trae texto, ese
+        # texto sigue siendo la respuesta; si no, es un turno inservible.
+        if content is None and refusal is None:
+            raise _invalid_response("bad_tool_calls")
+        calls_value = []
+    if type(calls_value) is not list:
         raise _invalid_response("bad_tool_calls")
-    tool_calls = tuple(_parse_output_tool_call(call) for call in calls_value)
+    # Algunos proveedores devuelven tool_calls con campos extra o argumentos no
+    # parseables junto a un texto valido. Antes eso tiraba el turno entero aunque
+    # la respuesta util estuviera en el texto: el usuario veia un error y perdia
+    # la contestacion. Ahora, si hay texto o rechazo, se entrega el texto y las
+    # llamadas dudosas se descartan. Nunca se ejecuta una llamada sin parsear.
+    tool_calls = ()
+    if calls_value:
+        try:
+            tool_calls = tuple(_parse_output_tool_call(call) for call in calls_value)
+        except ProviderError:
+            if content is None and refusal is None:
+                raise
+            tool_calls = ()
     if content is None and not tool_calls and refusal is None:
         raise _invalid_response("empty_message")
     return ChatResult(
