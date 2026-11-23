@@ -458,9 +458,17 @@ class CatalogueComparisonService:
 
 
 CHAT_NOTICE_VERSION = "paideia-chat-remote-v1"
+# Una pregunta de decision tambien es «practica»: pide criterio, no una ficha.
+# Antes solo casaban las de definicion y metodo, asi que «donde meto 1.000 EUR a
+# dos anos» recibia herramientas; el modelo intentaba consultar el catalogo, la
+# llamada no era util y acababa contestando «voy a mirar que hay».
 _PRACTICAL_QUESTION = re.compile(
-    r"\b(?:c[oó]mo|qu[eé] pasos|pasos para|qu[eé] es|diferencia entre|expl[ií]came|"
-    r"funcionan|montar|empezar a invertir|salir de (?:una|la) deuda)\b", re.IGNORECASE)
+    r"\b(?:c[oó]mo|qu[eé] pasos|pasos para|qu[eé] es|qu[eé] son|diferencia entre|expl[ií]came|"
+    r"funcionan|montar|empezar a invertir|salir de (?:una|la) deuda|"
+    r"d[oó]nde\s+(?:lo\s+|la\s+)?(?:meto|pongo|invierto|guardo|dejo)|"
+    r"mejor\s+(?:meter|poner|invertir|guardar|opci[oó]n|sitio)|"
+    r"qu[eé]\s+hago\s+con|qu[eé]\s+me\s+recomiendas|me\s+recomiendas|"
+    r"qu[eé]\s+opciones\s+tengo|d[oó]nde\s+invierto)\b", re.IGNORECASE)
 _PRODUCT_SPECIFIC = re.compile(
     r"\b(?:cat[aá]logo|ficha|isin|cuenta contigo|del dep[oó]sito|de la cuenta|"
     r"de las letras|producto concreto|ese producto|"
@@ -484,6 +492,9 @@ CHAT_SYSTEM_PROMPT = (
     "Nunca digas que no puedes ayudar por no ser asesor. Sí puedes explicar, comparar, calcular "
     "con la herramienta y orientar una decisión con criterios. Lo que no puedes es afirmar datos "
     "de un producto sin la ficha local ni prometer rentabilidades. "
+    "Nunca anuncies lo que vas a hacer («voy a mirar el catálogo», «déjame consultar»): "
+    "si tienes que usar una herramienta, úsala en el mismo turno; si no la tienes, responde "
+    "con lo que sabes. Un turno que solo anuncia una consulta deja a la persona sin respuesta. "
     "No recibes ningún perfil personal. Solo trabajas con los campos que la persona adjunte expresamente en su mapa, si decide hacerlo. "
     "Tienes un catálogo consultable: si la pregunta menciona un producto, un banco o una tasa "
     "concreta, usa primero search_products y, si hace falta el detalle, get_product_detail. "
