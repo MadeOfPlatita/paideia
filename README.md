@@ -19,13 +19,14 @@ acceso puede tardar cerca de un minuto.
 ## Qué incluye
 
 - **Biblioteca.** 20 candidatos de investigación y **22 fichas con condiciones
-  transcritas**: **328 condiciones servidas** a partir de 341 transcritas (se
-  retiraron las tasas que se añadían a familias sin TAE). El estado se deriva con
-  la fecha del día: a 23/11/2026 son **324 vigentes y 4 vencidas** (ACC-01,
-  ACC-03, DEP-01 y DEP-03), y la cifra se mueve sola cuando caduca una promoción.
-  Cada una con URL y fecha de consulta; el título consta cuando la fuente lo
-  declara. Cada tasa aparece con su estado: documentada, vencida, en conflicto o
-  sin dato.
+  transcritas**: **382 condiciones servidas** (se retiraron las tasas que se
+  añadían a familias sin TAE). El estado se deriva con la fecha del día: a
+  23/11/2026 son **376 vigentes y 6 vencidas o caducadas**, y la cifra se mueve
+  sola. Cuatro lo están por promoción terminada (ACC-01, ACC-03, DEP-01 y
+  DEP-03) y dos por antigüedad de la consulta con plazo de siete días para
+  cuentas (ACC-02 y ACC-04). Cada una con URL y fecha de consulta; el título
+  consta cuando la fuente lo declara. Cada tasa aparece con su estado:
+  documentada, vencida, en conflicto o sin dato.
 - **Comparador.** De dos a cuatro productos. Solo compara cifras cuando
   magnitud, plazo y vigencia coinciden; si no, explica por qué no.
 - **Escenarios.** Dos hipótesis editables, motor determinista propio (interés

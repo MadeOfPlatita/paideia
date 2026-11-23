@@ -24,10 +24,11 @@ la decisión de ese día, no la de hoy.
 - Repositorio **MadeOfPlatita/paideia**, público a 7/11/2026; `master` solo con lo
   revisado y desplegado. El historial conserva el correo personal en los commits.
 - Catálogo: 20 candidatos y 22 fichas (EBN y Self Bank son productos reales transcritos, no fixtures),
-  **328 condiciones servidas** a partir de 341 transcritas; cada una con URL y
-  fecha de la fuente, o marcada como desconocida. El estado se calcula con la
-  fecha del día: a 23/11/2026 son **324 vigentes y 4 vencidas** (ACC-01, ACC-03,
-  DEP-01 y DEP-03).
+  **382 condiciones servidas**; cada una con URL y fecha de la fuente, o marcada
+  como desconocida. El estado se calcula con la fecha del día: a 23/11/2026 son
+  **376 vigentes y 6 vencidas o caducadas**. Cuatro por promoción terminada
+  (ACC-01, ACC-03, DEP-01 y DEP-03) y dos por antigüedad de la consulta (ACC-02 y
+  ACC-04, cuentas con plazo de siete días).
 - Pruebas: **777 Python** y **113 Node** en verde con `app/tools/quality_gate.py`.
 - El justificante del ensayo se imprime como documento A4 independiente, no como
   una copia de la web.
@@ -689,13 +690,13 @@ defecto de cálculo, sino una prueba atada al calendario.
   cifra y volcaba las referencias como JSON crudo. Ahora muestra `TAE 3,10 %` y
   `TAE 2,75 %`, con la fuente enlazada y los motivos en castellano.
 - **Documentación.** README y diario ya no fijan «327 documentadas y 1 vencida»:
-  a 23/11/2026 son 324 vigentes y 4 vencidas, y la cifra se mueve con el
+  el estado se deriva con la fecha del día y la cifra se mueve con el
   calendario.
 
-Comprobado además contra producción: `/api/conditions` sigue sirviendo 22 fichas
-y 328 condiciones, `/api/compare` devuelve EBN y Self Bank como comparables, y el
-chat responde con el proveedor configurado. Lo que **no** se ha tocado: Render y
-Vercel siguen con la versión anterior hasta el siguiente despliegue.
+Comprobado además contra producción: `/api/compare` devuelve EBN y Self Bank
+como comparables y el chat responde con el proveedor configurado. Lo que **no**
+se ha tocado: Render y Vercel siguen con la versión anterior hasta el siguiente
+despliegue.
 
 ### Nota de mantenimiento — fin de línea en `app.js`
 

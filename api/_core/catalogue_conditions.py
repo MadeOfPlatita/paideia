@@ -21,8 +21,12 @@ import re
 from dataclasses import dataclass, field, replace
 from datetime import date, datetime, timedelta
 
-ISO_DATE = re.compile(r"\b(\d{4})-(\d{2})-(\d{2})\b")
-DMY_DATE = re.compile(r"\b(\d{2})-(\d{2})-(\d{4})\b")
+DATE_ANY = re.compile(r"\b(?:(\d{4})-(\d{2})-(\d{2})|(\d{2})[-/](\d{2})[-/](\d{4}))\b")
+# Marcas con las que la fuente dice qué fecha cierra la vigencia: «hasta el
+# 18/11/2026» y el «al» de «del 21-10-2026 al 18-11-2026». Sin una de ellas, una
+# fecha suelta puede ser la de inicio de la promo o la de la consulta, y tomarla
+# por término daría vencimientos falsos.
+END_MARKER = re.compile(r"\b(?:hasta|al)\b", re.IGNORECASE)
 PERCENT = re.compile(r"(\d+(?:[.,]\d+)?)\s*%\s*(TAE|TIN)", re.IGNORECASE)
 MONTHS = re.compile(r"(\d{1,2})\s*meses?", re.IGNORECASE)
 EUROS = re.compile(r"(\d[\d.]*(?:,\d+)?)\s*€")
@@ -178,11 +182,77 @@ def _decimal(text: str) -> str | None:
     return f"{number:.4f}".rstrip("0").rstrip(".")
 
 
-def _dates(text: str) -> list[str]:
-    found = [f"{a}-{b}-{c}" for a, b, c in ISO_DATE.findall(text)]
-    for day, month, year in DMY_DATE.findall(text):
-        found.append(f"{year}-{month}-{day}")
+def _dates(text: str) -> list[tuple[str, bool]]:
+    """Fechas del literal, en orden, con la marca de si cierran la vigencia.
+
+    Se aceptan las tres formas que usan las fuentes (`2026-11-18`, `18-11-2026` y
+    `18/11/2026`). La marca es lo que separa un término de vigencia de una fecha
+    cualquiera del mismo párrafo: «válida hasta el 18/11/2026» la lleva; «datos a
+    05-11-2026» no, y leerla como término daría un vencimiento inventado.
+    """
+    found = []
+    for match in DATE_ANY.finditer(text):
+        year, month, day, day2, month2, year2 = match.groups()
+        value = f"{year}-{month}-{day}" if year is not None else f"{year2}-{month2}-{day2}"
+        before = text[max(0, match.start() - 12):match.start()]
+        found.append((value, bool(END_MARKER.search(before))))
     return found
+
+
+def _iso_day(text: object) -> str | None:
+    """Fecha en ISO, o `None` si no es una fecha válida.
+
+    Normaliza las tres formas porque el resto del sistema compara y proyecta estas
+    fechas como texto ISO: una fecha en formato español no se compararía con el día
+    de la petición y, además, rompería la proyección al modelo. Una fecha imposible
+    (`2026-02-31`) también devuelve `None`: no se publica un vencimiento que no
+    existe.
+    """
+    match = DATE_ANY.match(str(text).strip())
+    if match is None:
+        return None
+    year, month, day, day2, month2, year2 = match.groups()
+    candidate = f"{year}-{month}-{day}" if year is not None else f"{year2}-{month2}-{day2}"
+    try:
+        return date.fromisoformat(candidate).isoformat()
+    except ValueError:
+        return None
+
+
+def _retrieval_day(retrieved: object) -> date | None:
+    """Día de la consulta, tolerando marca de tiempo; `None` si no es fechable.
+
+    Una fuente puede anotar la consulta con hora (`2026-11-01T09:30:00Z`). Antes
+    eso lanzaba `ValueError` y tumbaba el endpoint entero; la antigüedad solo
+    necesita el día.
+    """
+    if not isinstance(retrieved, str):
+        return None
+    try:
+        return date.fromisoformat(retrieved.strip()[:10])
+    except ValueError:
+        return None
+
+
+def _older_than_family_ttl(family: object, retrieved: object, today: date) -> bool:
+    """Si una tasa sin término declarado supera la antigüedad admitida por familia.
+
+    La cuenta se mueve cada semana y el depósito cada mes; de ahí que el umbral no
+    sea único. Sin fecha de consulta no se puede medir la antigüedad, y entonces no
+    se afirma que el dato sea viejo: la limitación se escribe en la nota.
+    """
+    day = _retrieval_day(retrieved)
+    if day is None:
+        return False
+    return (today - day) > timedelta(days=_family_ttl(family))
+
+
+def _family_ttl(family: object) -> int:
+    return DEFAULT_TTL_DAYS.get(str(family), DEFAULT_TTL_DAYS["deposito"])
+
+
+def _ttl_note(family: object) -> str:
+    return f"Sin fecha de vigencia y con más de {_family_ttl(family)} días desde la consulta."
 
 
 def _rates(text: str) -> list[tuple[str, str]]:
@@ -280,7 +350,7 @@ def annual_rate(candidate: dict, today: date) -> Condition:
                          "IDENTITY_NOT_VERIFIED", retrieved_at=retrieved,
                          notes=("La identidad no está verificada; no se usa su tasa.",))
 
-    collected: list[tuple[str, str, object, list[str]]] = []
+    collected: list[tuple[str, str, object, list[tuple[str, bool]]]] = []
     for name in RATE_FIELDS.get(family, ()):
         if name not in fields:
             continue
@@ -305,21 +375,39 @@ def annual_rate(candidate: dict, today: date) -> Condition:
 
     value, field_name, raw, dates = collected[0]
     start, end = _field_dates(raw)
-    end = end or (dates[0] if dates else None)
-    if end and end < today.isoformat():
+    start = _iso_day(start) if start else None
+    # El término es la última fecha que la fuente marca como tal, no la primera del
+    # literal: en «del 21-10-2026 al 18-11-2026» la primera es el inicio y tomarla
+    # por fin daba la promoción por vencida el mismo día en que empezaba.
+    marked = [day for day, closes in dates if closes]
+    end = _iso_day(end) if end else None
+    end = end or (marked[-1] if marked else None)
+    # La vigencia se cuenta por días completos: el día del término todavía se puede
+    # contratar y la oferta pasa a `stale` al día siguiente. Comparar con `<` deja el
+    # término como vigente; es la lectura literal de «válida hasta el 18/11/2026».
+    if end is not None and end < today.isoformat():
         return Condition(product_id, family, "annual_rate_percent", value, "PERCENT", "stale",
                          "PROMOTION_EXPIRED", source_ids=_source_ids(raw),
                          effective_from=start, effective_to=end, retrieved_at=retrieved,
                          notes=("La vigencia documentada terminó; no se presenta como actual.",))
-    ttl = DEFAULT_TTL_DAYS.get(family, 30)
-    if retrieved and (today - date.fromisoformat(retrieved)) > timedelta(days=ttl) and not end:
+    ttl = _family_ttl(family)
+    # Solo se aplica la antigüedad cuando la fuente no fija término. Con término
+    # declarado manda la vigencia: una consulta vieja de una oferta aún vigente no la
+    # invalida, y una consulta reciente de una oferta vencida no la resucita.
+    if end is None and _older_than_family_ttl(family, retrieved, today):
         return Condition(product_id, family, "annual_rate_percent", value, "PERCENT", "stale",
                          "RETRIEVAL_TOO_OLD", source_ids=_source_ids(raw),
                          effective_from=start, effective_to=end, retrieved_at=retrieved,
-                         notes=(f"Sin fecha de vigencia y con más de {ttl} días desde la consulta.",))
+                         notes=(_ttl_note(family),))
+    # Sin fecha de consulta no se puede medir antigüedad, pero tampoco se afirma que
+    # el dato sea actual: queda `known` con la limitación escrita.
+    notes = () if _retrieval_day(retrieved) is not None or end is not None else (
+        f"Sin fecha de consulta ni de vigencia; no se puede medir su antigüedad frente a "
+        f"los {ttl} días de la familia.",)
     return Condition(product_id, family, "annual_rate_percent", value, "PERCENT", "known",
                      f"DOCUMENTED_{field_name.upper()}", source_ids=_source_ids(raw),
-                     effective_from=start, effective_to=end, retrieved_at=retrieved)
+                     effective_from=start, effective_to=end, retrieved_at=retrieved,
+                     notes=notes)
 
 
 def term_months(candidate: dict) -> Condition:
@@ -471,12 +559,20 @@ def _curated_conditions(record: dict, today: date) -> list[Condition]:
     else:
         value = _decimal(str(base.get("tae", "")))
         state, reason = "known", f"CURATED_{kind.upper()}"
-        valid_to = record.get("valid_to")
+        valid_to = _iso_day(record.get("valid_to")) if record.get("valid_to") else None
         if value is None:
             state, reason = "unknown", "RATE_UNPARSEABLE"
-        elif valid_to and valid_to < today.isoformat():
+        elif valid_to is not None and valid_to < today.isoformat():
+            # Mismo criterio que en el literal del snapshot: el día declarado como
+            # término todavía cuenta y la tasa pasa a vencida al día siguiente.
             state, reason = "stale", "PROMOTION_EXPIRED"
             notes.append("La vigencia declarada ya terminó.")
+        elif valid_to is None and _older_than_family_ttl(family, retrieved, today):
+            # Las tasas del catálogo real entran por aquí, así que sin esta rama la
+            # regla de antigüedad no se aplicaba a ningún dato servido: una cuenta
+            # consultada hacía meses seguía presentándose vigente.
+            state, reason = "stale", "RETRIEVAL_TOO_OLD"
+            notes.append(_ttl_note(family))
         conditions.append(Condition(product_id, family, "annual_rate_percent", value, "PERCENT", state,
                                     reason, source_ids=(str(source.get("url")),) if source.get("url") else (), effective_to=valid_to,
                                     retrieved_at=retrieved, notes=tuple(notes)))

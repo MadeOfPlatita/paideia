@@ -222,6 +222,12 @@ def _static(path):
     if not os.path.isfile(candidate):
         if path.startswith("/api"):
             return _error("404 Not Found", "NOT_FOUND", "Recurso no encontrado.")
+        # Una ruta sin extensión puede ser una vista de la aplicación y se sirve
+        # el índice. Un archivo con extensión que no existe es un error de
+        # despliegue: devolver 200 con el HTML hacía que la hoja de estilos se
+        # descartara en silencio por MIME estricto y el fallo quedara invisible.
+        if os.path.splitext(relative)[1]:
+            return _error("404 Not Found", "NOT_FOUND", "Recurso no encontrado.")
         candidate = os.path.join(STATIC_ROOT, "index.html")
         if not os.path.isfile(candidate):
             return _error("404 Not Found", "NOT_FOUND", "Recurso no encontrado.")
