@@ -4573,6 +4573,17 @@
           "accessed": "2026-11-23",
           "effective_to": null,
           "note": null
+        },
+        {
+          "metric": "importe_minimo_texto",
+          "value": "1 participación",
+          "unit": "texto",
+          "literal": "Minimum Investment | 1 Share",
+          "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+          "source_title": "State Street SPDR — State Street SPDR MSCI Europe Industrials UCITS ETF (STQ FP)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "La ficha fija el mínimo en una participación, no en un importe en euros."
         }
       ]
     },
@@ -4765,17 +4776,6 @@
           "accessed": "2026-11-05",
           "effective_to": null,
           "note": null
-        },
-        {
-          "metric": "fecha_datos",
-          "value": "2026-11-20",
-          "unit": "fecha",
-          "literal": "NAV as of 20 Nov 2026",
-          "source_url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview/?al=en&audience=retail&disclaimer=true",
-          "source_title": "VanEck — VanEck Semiconductor UCITS ETF (SMH)",
-          "accessed": "2026-11-23",
-          "effective_to": null,
-          "note": "Fecha a la que corresponde el valor liquidativo publicado en la ficha."
         },
         {
           "metric": "costes_operacion",
