@@ -11,7 +11,7 @@ nada en un servidor.
 | Entorno | URL | Qué es |
 | --- | --- | --- |
 | Demo completa | **https://paideia-jg2n.onrender.com** | El servidor real: biblioteca, comparador, escenarios, informe y chat |
-| Escaparate | https://paideia-mu.vercel.app | Build congelado anterior a la app actual; no se actualiza con `master` |
+| Escaparate | https://paideia-mu.vercel.app | Misma biblioteca y comparador sin chat; se sincroniza a mano con `python api/build_core.py` y `vercel deploy --prod` |
 
 El plan gratuito de Render duerme el servicio tras 15 minutos sin uso: el primer
 acceso puede tardar cerca de un minuto.

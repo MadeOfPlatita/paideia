@@ -792,3 +792,45 @@ Pruebas: **831 Python** y **127 Node** en verde; 6 saltadas son las de ventana
 Tk. Nuevas baterias: `test_pai_conversation_quality.py` (filtro, prompt y
 presupuesto), `test_practical_question_routing.py` (practica frente a catalogo)
 y `test_provider_tool_call_recovery.py` (respuesta con llamadas invalidas).
+
+### Cierre de la revision paralela - 23 de noviembre de 2026
+
+Cinco frentes en paralelo. Los hallazgos que cambian algo:
+
+**1. La regla de antiguedad no se aplicaba a las tasas reales.** `DEFAULT_TTL_DAYS`
+(7 dias para cuentas, 30 para depositos) solo se consultaba en el literal del
+snapshot, pero **todas las tasas publicadas entran por la transcripcion curada**,
+donde la regla no se miraba nunca: una cuenta consultada meses antes seguia
+presentandose vigente. Se extendio a ese camino con los mismos umbrales. Efecto
+medido a 23/11/2026: ACC-02 y ACC-04 pasan a `RETRIEVAL_TOO_OLD`. El catalogo
+queda en **382 condiciones: 376 vigentes y 6 vencidas o caducadas**.
+
+**2. Cuatro defectos mas en las fechas**, cada uno con prueba que falla contra el
+codigo anterior: un rango se leia por su primera fecha (una oferta figuraba
+vencida el dia que empezaba); cualquier fecha del literal se tomaba por
+vencimiento («datos a 05-11-2026» cerraba una oferta viva); una fecha en formato
+espanol no se comparaba como fecha; y una marca de tiempo en `retrieved_at`
+lanzaba `ValueError` y tumbaba el endpoint.
+
+**3. El escaparate de Vercel llevaba congelado desde el 5/11** y servia **28
+condiciones de 382**. Ademas `_static()` respondia 200 con el HTML para cualquier
+archivo inexistente, asi que las hojas de estilo que faltaban se descartaban en
+silencio por MIME estricto. Ahora un archivo con extension y sin fichero da 404.
+Redesplegado: sirve 382 condiciones y los CSS con su tipo correcto.
+
+**4. Cobertura de los ETF del 40-60 % al 80-93 %**, con fuente y fecha por campo.
+Se corrigieron cuatro datos que estaban mal: un coste en euros etiquetado como
+porcentaje, un NAV en dolares publicado como euros, un minimo en participaciones
+leido como euros y una fila de NAV duplicada.
+
+**5. Seis defectos mas de interfaz**: la lista de transcritos no se repintaba al
+cambiar la seleccion (el boton decia «Anadir a comparar» con el producto ya
+elegido); un fallo de carga se pintaba como «ningun candidato con tasa»; el
+aviso de capacidades tenia dos textos distintos; una serie de calculo vacia
+rompia el resultado; `reasons` como cadena tumbaba el comparador; y
+`source_refs` con entradas nulas rompia el diagnostico. Ademas, un fallo de red
+se afirmaba como «condiciones no documentadas» en el justificante, que se archiva
+fuera de la aplicacion.
+
+Pruebas al cierre: **831 Python** y **127 Node** en verde. Render y Vercel
+desplegados y comprobados sobre la URL publica.
