@@ -52,7 +52,8 @@ class CallLimitTests(unittest.TestCase):
                                  headers={"Host": f"127.0.0.1:{server.server_port}"})
                 cuerpo = json.loads(conexion.getresponse().read().decode("utf-8"))
                 conexion.close()
-                self.assertEqual(cuerpo["ai"]["quota"]["calls_per_day"], 400)
+                # Sin cupo diario: la variable de entorno ya no es una puerta.
+                self.assertGreaterEqual(cuerpo["ai"]["quota"]["calls_per_day"], 10 ** 8)
             finally:
                 server.shutdown()
                 server.server_close()

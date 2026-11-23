@@ -475,7 +475,9 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
             "message": "TEST ONLY: detalla DEP-PRESS.", "consent": CONSENT,
         })
 
-        self.assertEqual(body["answer"], CATALOGUE_WITHHELD_NOTE)
+        # La prosa del modelo no se entrega; la respuesta se compone con el DTO.
+        self.assertIn("Según el catálogo local", body["answer"])
+        self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])
         self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))
         self.assertEqual(body["answer_text_state"], "withheld_catalogue_evidence")
@@ -502,7 +504,9 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
             status, body = request(server, "/api/chat", {
                 "message": "TEST ONLY: detalla DEP-KNOWN.", "consent": CONSENT})
 
-        self.assertEqual(body["answer"], CATALOGUE_WITHHELD_NOTE)
+        # La prosa del modelo no se entrega; la respuesta se compone con el DTO.
+        self.assertIn("Según el catálogo local", body["answer"])
+        self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])
         self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))
         self.assertEqual(body["answer_text_state"], "withheld_catalogue_evidence")

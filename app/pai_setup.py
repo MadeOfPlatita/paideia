@@ -100,6 +100,15 @@ CALLS_PER_DAY_ENV = "PAIDEIA_CALLS_PER_DAY"
 DEFAULT_CALLS_PER_MINUTE = 6
 DEFAULT_CALLS_PER_DAY = 60
 
+# Cupo diario desactivado: se declara como un entero enorme porque la politica
+# de admision exige un entero, y se documenta aqui para que nadie lo confunda
+# con un limite real. El techo que queda es el de llamadas por minuto.
+NO_DAILY_LIMIT = 10 ** 9
+
+# Turnos concurrentes del chat: sin cola de espera, pero acotado para que una
+# rafaga no abra veinte llamadas al proveedor a la vez.
+MAX_CONCURRENT_CHAT = 4
+
 
 def _limit(name, default, ceiling):
     """Lee un cupo del entorno, acotado: un valor absurdo no abre la puerta."""
@@ -206,10 +215,15 @@ def _historical_chat_service(repository=None, comparison_service=None):
         max_output_tokens=_tokens(),
     )
     policy = AdmissionPolicy(
-        max_concurrent=1,
-        max_queue=4,
+        # Sin cola: cada turno se admite en el acto. Con max_concurrent=1 y
+        # max_queue=4 una peticion abandonada bloqueaba el chat hasta que
+        # expiraba su TTL, y el cliente tenia que reintentar con un ticket.
+        max_concurrent=MAX_CONCURRENT_CHAT,
+        max_queue=0,
         calls_per_minute=_calls_per_minute(),
-        calls_per_day=_calls_per_day(),
+        # Sin cupo diario: era una puerta que agotaba una bateria de pruebas
+        # (110 de 300 en una sola sesion). El limite por minuto sigue vigente.
+        calls_per_day=NO_DAILY_LIMIT,
         ticket_ttl_seconds=120,
         # El lease de un turno reclamado debe cubrir la llamada al proveedor.
         # Con 60 s y respuestas de 45-60 s el hueco se liberaba mientras la

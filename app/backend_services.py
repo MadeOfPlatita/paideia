@@ -11,6 +11,7 @@ _TRUSTED_GROQ_METHODS = (GroqProvider.chat, GroqProvider._chat, GroqProvider._ch
 from pai_runtime import ANSWER_TEXT_SHOWN, ANSWER_TEXT_WITHHELD, ToolChatRunner
 from chat_context import NOTICE as CONTEXT_NOTICE, validate_context, validate_history, profile_echo
 from catalogue_facts import RULESET_VERSION, ComparisonSpec, evaluate_comparability
+from catalogue_answer import compose_catalogue_answer
 from financial_quality import FINANCIAL_EDUCATION_PROMPT, assess_financial_text
 from structured_education import render_selection
 from structured_provider_adapter import StructuredProviderAdapter, FakeChatProvider, parse_selection
@@ -1043,9 +1044,13 @@ class LocalChatService:
                 answer_text_state = ANSWER_TEXT_WITHHELD
                 result = {**result, "answer_text_state": ANSWER_TEXT_WITHHELD}
             if answer_text_state == ANSWER_TEXT_WITHHELD and catalogue.get("used") is True:
-                # La prosa del modelo no se entrega cuando hay datos de catálogo, pero
-                # un hueco tampoco sirve: se responde con una nota fija del servidor.
-                answer_text = CATALOGUE_WITHHELD_NOTE
+                # La prosa del modelo no se entrega cuando hay datos de catálogo
+                # (su atribución no se puede validar contra la fuente). Pero un
+                # hueco tampoco sirve, y una nota fija que no contesta la pregunta
+                # menos: se compone la respuesta con las condiciones verificadas
+                # del DTO, cada una con su fuente citada.
+                compuesta = compose_catalogue_answer(catalogue)
+                answer_text = compuesta if compuesta is not None else CATALOGUE_WITHHELD_NOTE
             else:
                 answer_text = result["answer"] if answer_text_state != ANSWER_TEXT_WITHHELD else ""
             if answer_text_state != ANSWER_TEXT_WITHHELD:

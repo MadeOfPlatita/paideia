@@ -596,8 +596,14 @@ class ServiceAnswerProvenanceTests(unittest.TestCase):
 
         body = service.chat({"message": "TEST ONLY: detalla DEP-KNOWN.", "consent": CONSENT})
 
-        # El turno usó el catálogo: el texto libre no se entrega; sí los datos locales.
-        self.assertEqual(body["answer"], CATALOGUE_WITHHELD_NOTE)
+        # El turno usó el catálogo: el texto libre del modelo no se entrega. En su
+        # lugar se compone la respuesta con las condiciones verificadas del DTO,
+        # cada una con su fuente: antes se respondía la nota fija y el usuario
+        # nunca leía el dato aunque el DTO lo llevara.
+        self.assertIn("Según el catálogo local", body["answer"])
+        self.assertIn("3,10 %", body["answer"])
+        self.assertIn("https://example.invalid/synthetic/DEP-KNOWN", body["answer"])
+        self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])
         self.assertNotIn("TEST ONLY", body["answer"])
         self.assertEqual(body["answer_text_state"], "withheld_catalogue_evidence")
         self.assertEqual(body["catalogue"]["products"][0]["id"], "DEP-KNOWN")
