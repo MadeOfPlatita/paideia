@@ -42,9 +42,12 @@ def validate_history(history):
         raise ValueError('history size')
     for i, item in enumerate(history):
         if (type(item) is not dict or set(item) != {'role','content'} or item['role'] != ('user' if i % 2 == 0 else 'assistant')
-                or type(item['content']) is not str or not 1 <= len(item['content']) <= 1000):
+                or type(item['content']) is not str or not 1 <= len(item['content']) <= 4000):
             raise ValueError('history message')
-    if sum(len(m['content']) for m in history) > 6000: raise ValueError('history characters')
+    # 4 mensajes de hasta 4.000 caracteres. El tope por mensaje era 1.000 y las
+    # respuestas reales medidas van de 1.800 a 7.800: cada turno se habria
+    # descartado y el historial nunca se llenaria.
+    if sum(len(m['content']) for m in history) > 16000: raise ValueError('history characters')
     return [{'role': item['role'], 'content': item['content']} for item in history]
 
 

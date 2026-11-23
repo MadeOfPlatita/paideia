@@ -88,7 +88,11 @@ def model_is_allowed(model):
 
 DEFAULT_OUTPUT_TOKENS = 256
 MAX_OUTPUT_TOKENS = 8000
-MAX_REQUEST_BYTES = 32 * 1024
+# El historial conversacional (4 mensajes) mas el system prompt y las
+# definiciones de herramientas se pasaba del techo anterior de 32 KiB: el
+# turno entero se rechazaba con un 502 generico. 64 KiB cubre el peor caso
+# con el scope real de produccion y sigue siendo un techo cerrado.
+MAX_REQUEST_BYTES = 64 * 1024
 MAX_RESPONSE_BYTES = 64 * 1024
 # Tope de llamadas de herramienta en un mismo turno del modelo: por encima
 # de este numero la respuesta se considera invalida, no se ejecuta nada.

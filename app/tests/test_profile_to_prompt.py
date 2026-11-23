@@ -93,12 +93,15 @@ class ProfileEchoInAnswerTests(unittest.TestCase):
     def service(self):
         return LocalChatService(provider=fake(), enabled=True, test_only=True, context_enabled=True)
 
-    def test_the_answer_opens_with_the_authorised_profile(self):
+    def test_the_authorised_profile_does_not_invade_the_answer(self):
+        # Antes el eco del perfil se pegaba delante de cualquier respuesta, asi
+        # que una pregunta conceptual empezaba hablando de horizonte. Ahora el
+        # perfil viaja aparte y el texto del modelo queda limpio.
         body = self.service().chat({"message": "Pregunta ficticia", "consent": CONSENT,
                                     "context_consent": EXTRA, "context": PERFIL})
-        self.assertTrue(body["answer"].startswith("Según el mapa que tú has autorizado"))
-        self.assertIn("más de 3 años", body["answer"])
-        self.assertIn("20.000–50.000 €", body["answer"])
+        self.assertNotIn("Según el mapa", body["answer"])
+        self.assertIn("más de 3 años", body["profile_line"])
+        self.assertIn("20.000–50.000 €", body["profile_line"])
         self.assertTrue(body.get("profile_applied"))
 
     def test_without_context_there_is_no_echo(self):

@@ -218,12 +218,18 @@ def _has_unbacked_claim(text):
 
 
 def _profile_applied(body, profile_line):
-    """Antepone la frase del perfil autorizado; es texto del servidor, no del modelo."""
+    """Marca que el turno llevo perfil, sin anteponerlo a la respuesta.
+
+    Antes la frase del perfil se pegaba delante del texto del modelo, de modo
+    que CUALQUIER respuesta empezaba «Segun el mapa que tu has autorizado: ...»
+    aunque el campo no viniera al caso: ruido del servidor delante de la
+    contestacion. La linea se publica aparte en `profile_line`, para que la
+    interfaz decida donde mostrarla.
+    """
     if not profile_line:
         return body
-    answer = body.get("answer") or ""
-    body["answer"] = (profile_line + (" " + answer if answer else "")).strip()
     body["profile_applied"] = True
+    body["profile_line"] = profile_line
     return body
 
 
@@ -693,9 +699,13 @@ class LocalChatService:
         if type(structured_mode) is not bool:
             raise ValueError("invalid structured mode")
         self._structured_mode = structured_mode or structured_session_test_only
-        if (history_enabled is True
-                and (test_only is not True or getattr(provider, "test_only", None) is not True)):
-            raise ValueError("history requires an explicitly marked synthetic-test-only provider")
+        # El historial es reenvio del cliente (2 turnos, max 4 mensajes), no
+        # memoria del servidor: el servicio sigue siendo stateless. Antes se
+        # exigia proveedor sintetico de prueba, lo que lo hacia imposible en
+        # produccion; la condicion real es la misma que la del contexto: hay
+        # proveedor habilitado y el turno trae su consentimiento explicito.
+        if history_enabled is True and not (enabled is True and provider is not None):
+            raise ValueError("history requires an enabled provider")
         if context_enabled is True and not (enabled is True and provider is not None):
             raise ValueError("context requires an enabled provider")
         self._context_enabled = context_enabled is True
@@ -752,8 +762,10 @@ class LocalChatService:
             size = len(json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode('utf-8'))
         except (TypeError, ValueError, UnicodeError):
             raise ServiceProblem(400, "INVALID_REQUEST", "Petición no válida.") from None
-        if size > 32768:
-            raise ServiceProblem(413, "REQUEST_TOO_LARGE", "La petición supera 32 KiB.")
+        # Alineado con MAX_REQUEST_BYTES del proveedor: el historial (4 mensajes)
+        # mas el system prompt y las herramientas no caben en 32 KiB.
+        if size > 65536:
+            raise ServiceProblem(413, "REQUEST_TOO_LARGE", "La petición supera 64 KiB.")
         if (type(payload) is not dict or not {"message"}.issubset(payload)
                 or set(payload) - ({"message", "consent", "ticket", "context_consent", "context", "history"} | ({"scenario"} if self._structured_mode else set()))
                 or not isinstance(payload["message"], str) or not 1 <= len(payload["message"]) <= 2000):

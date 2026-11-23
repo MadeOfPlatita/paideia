@@ -1255,7 +1255,11 @@ function renderHome() {
           }
           renderChatSources(feedback, result.sources, result.sources_total, result.sources_truncated);
           renderChatProvenance(feedback, provenance);
-          if (!withheld && includeHistory && historyConsent.checked && historyAtSend === historyRevision && result.provider_mode === "test_only" && result.answer) {
+          // Antes exigia provider_mode === "test_only", asi que con el proveedor
+          // real el historial nunca se llenaba: reenviar turnos anteriores era
+          // estructuralmente imposible. Ahora basta el consentimiento de la
+          // casilla y que el turno no venga retenido.
+          if (!withheld && includeHistory && historyConsent.checked && historyAtSend === historyRevision && result.answer) {
             try { PaideiaChatContext.add(query, result.answer); }
             catch (_) { feedback.appendChild(textElement("p", "Este turno no se conservó: excede el límite de historial. Borra el historial para continuar.")); }
           }

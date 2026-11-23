@@ -11,6 +11,18 @@ test('history keeps only two previous turns in tab memory and can be cleared',()
  model.clear(); for(let i=0;i<3;i++) model.add('p'+i,'r'+i);
  assert.equal(model.history().length,4);
  assert.deepEqual(model.history().map(x=>x.content),['p1','r1','p2','r2']);
- assert.throws(()=>model.add('p'.repeat(1001),'r4'),/límite/i);
- assert.equal(model.history().length,4); model.clear(); assert.deepEqual(model.history(),[]);
+
+ // El tope por mensaje era 1.000 y las respuestas reales van de 1.800 a 7.800
+ // caracteres: con el tope viejo cada turno se descartaba y el historial nunca
+ // se llenaba. Ahora es 4.000 y se sigue rechazando lo que lo supera.
+ model.clear();
+ model.add('p'.repeat(3800),'r'.repeat(3800));
+ assert.equal(model.history().length,2);
+ assert.equal(model.history()[1].content.length,3800);
+
+ // Un turno que supera el tope se rechaza y no altera lo ya conservado.
+ assert.throws(()=>model.add('p'.repeat(4001),'r4'),/límite/i);
+ assert.equal(model.history().length,2);
+
+ model.clear(); assert.deepEqual(model.history(),[]);
 });

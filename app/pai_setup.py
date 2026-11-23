@@ -85,6 +85,11 @@ def _model():
     return requested if model_is_allowed(requested) else DEFAULT_MODEL
 
 
+def _chat_history_enabled():
+    """Historial conversacional del chat: activo salvo que se apague a mano."""
+    return os.environ.get(CHAT_HISTORY_ENV, "1").strip() != "0"
+
+
 def _tokens():
     try:
         value = int(os.environ.get(TOKENS_ENV, CHAT_OUTPUT_TOKENS))
@@ -97,6 +102,7 @@ def _tokens():
 
 CALLS_PER_MINUTE_ENV = "PAIDEIA_CALLS_PER_MINUTE"
 CALLS_PER_DAY_ENV = "PAIDEIA_CALLS_PER_DAY"
+CHAT_HISTORY_ENV = "PAIDEIA_CHAT_HISTORY"
 DEFAULT_CALLS_PER_MINUTE = 6
 DEFAULT_CALLS_PER_DAY = 60
 
@@ -252,6 +258,10 @@ def _historical_chat_service(repository=None, comparison_service=None):
         tools_scope="catalogue_read",
         catalogue_usage_approved=True,
         context_enabled=True,
+        # Historia conversacional: el cliente reenvia hasta 2 turnos previos
+        # con su consentimiento explicito. Se puede apagar con
+        # PAIDEIA_CHAT_HISTORY=0 sin tocar codigo.
+        history_enabled=_chat_history_enabled(),
     )
 
 
@@ -335,6 +345,10 @@ def _night_chat_service(repository=None, comparison_service=None, *, test_only=F
             tools_scope="catalogue_read",
             catalogue_usage_approved=True,
             context_enabled=True,
+        # Historia conversacional: el cliente reenvia hasta 2 turnos previos
+        # con su consentimiento explicito. Se puede apagar con
+        # PAIDEIA_CHAT_HISTORY=0 sin tocar codigo.
+        history_enabled=_chat_history_enabled(),
         )
     except Exception:
         # Fail closed: an ambiguous or unsupported mission state must not take

@@ -9,7 +9,7 @@
     return {version:'chat-context-map-v1',fields:result};
   }
   function add(user,assistant){
-    if(typeof user!=='string'||typeof assistant!=='string'||!user.length||!assistant.length||user.length>1000||assistant.length>1000) throw new Error('Límite de historial alcanzado; borra el historial para continuar.');
+    if(typeof user!=='string'||typeof assistant!=='string'||!user.length||!assistant.length||user.length>4000||assistant.length>4000) throw new Error('Límite de historial alcanzado; borra el historial para continuar.');
     turns=turns.concat([{role:'user',content:user},{role:'assistant',content:assistant}]).slice(-4);
   }
   function history(){return turns.map(m=>({...m}));} function clear(){turns=[];}
