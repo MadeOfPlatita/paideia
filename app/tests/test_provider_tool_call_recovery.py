@@ -65,7 +65,7 @@ class MalformedToolCallTests(unittest.TestCase):
     def test_a_tool_call_with_an_extra_field_no_longer_loses_the_answer(self):
         """El caso medido en produccion: forma inesperada y texto aprovechable."""
         body = message(content="Respuesta util que el usuario debe leer.",
-                       tool_calls=[{**valid_call(), "index": 0}])
+                       tool_calls=[{**valid_call(), "peso": 0}])
         result = provider_for(body).chat(MESSAGES)
         self.assertEqual(result.answer, "Respuesta util que el usuario debe leer.")
         self.assertEqual(result.tool_calls, ())
@@ -79,7 +79,7 @@ class MalformedToolCallTests(unittest.TestCase):
         self.assertEqual(result.tool_calls, ())
 
     def test_a_malformed_call_without_text_is_still_rejected(self):
-        body = message(content=None, tool_calls=[{**valid_call(), "index": 0}])
+        body = message(content=None, tool_calls=[{**valid_call(), "peso": 0}])
         with self.assertRaises(ProviderError) as caught:
             provider_for(body).chat(MESSAGES)
         self.assertEqual(caught.exception.code, "invalid_response")
@@ -99,9 +99,34 @@ class MalformedToolCallTests(unittest.TestCase):
 
     def test_the_refusal_branch_also_survives_a_malformed_call(self):
         body = message(content=None, refusal="No puedo ayudar con eso.",
-                       tool_calls=[{**valid_call(), "index": 0}])
+                       tool_calls=[{**valid_call(), "peso": 0}])
         result = provider_for(body).chat(MESSAGES)
         self.assertEqual(result.refusal, "No puedo ayudar con eso.")
+
+
+class ProviderIndexFieldTests(unittest.TestCase):
+    """El proveedor real anade `index` a cada tool_call. Es metadato, no contrato.
+
+    Caso medido en produccion: deepseek-v4.1-flash devolvia
+    `finish_reason: "tool_calls"` con la llamada bien formada mas un campo
+    `index: 0`. El parser exigia el conjunto EXACTO {id, type, function} y las
+    rechazaba todas, asi que TODA pregunta de catalogo acababa en respuesta
+    vacia: el turno gastaba su unica llamada en pedir una herramienta que nunca
+    se ejecutaba.
+    """
+
+    def test_a_call_with_index_is_parsed_like_any_other(self):
+        body = message(content=None, tool_calls=[{**valid_call(), "index": 0}])
+        result = provider_for(body).chat(MESSAGES)
+        self.assertEqual(len(result.tool_calls), 1)
+        self.assertEqual(result.tool_calls[0].name, "search_products")
+        self.assertEqual(result.tool_calls[0].arguments, {"query": "deposito"})
+
+    def test_index_does_not_smuggle_other_fields(self):
+        body = message(content=None, tool_calls=[{**valid_call(), "index": 0, "extra": 1}])
+        with self.assertRaises(ProviderError) as caught:
+            provider_for(body).chat(MESSAGES)
+        self.assertEqual(caught.exception.code, "invalid_response")
 
 
 if __name__ == "__main__":

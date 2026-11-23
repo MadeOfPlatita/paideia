@@ -451,7 +451,14 @@ def _invalid_response(shape):
 
 
 def _parse_output_tool_call(call):
-    if type(call) is not dict or set(call) != {"id", "type", "function"}:
+    # El proveedor real (Command Code, deepseek-v4.1-flash) añade `index` a cada
+    # llamada. Antes se exigía el conjunto EXACTO {id, type, function}, así que
+    # todas las llamadas se rechazaban: el turno llegaba con
+    # finish_reason="tool_calls" y cero llamadas, y como `content` venía como
+    # cadena vacía (no None) el rechazo se tragaba y se entregaba respuesta
+    # vacía. Ese era el fallo de TODAS las preguntas de catálogo. `index` es
+    # metadato posicional del proveedor, no parte del contrato: se ignora.
+    if type(call) is not dict or set(call) - {"index"} != {"id", "type", "function"}:
         raise _invalid_response("bad_tool_calls")
     call_id = call["id"]
     function = call["function"]
