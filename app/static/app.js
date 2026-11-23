@@ -2165,10 +2165,13 @@ function renderProductDetail() {
     holder.appendChild(errorBox(conditionsNotice.message, () => loadConditions(true)));
   }
   const conditionEntry = state.conditions.byId.get(product.id);
-  const conditionStates = conditionEntry && Array.isArray(conditionEntry.conditions)
-    ? conditionEntry.conditions.map((condition) => condition && condition.state) : [];
+  // Mismo filtro que en el ensayo: una entrada nula en `conditions` no puede
+  // tumbar la ficha ni contarse como «condición sin documentar».
+  const conditionList = conditionEntry && Array.isArray(conditionEntry.conditions)
+    ? conditionEntry.conditions.filter((condition) => condition && typeof condition === "object") : [];
+  const conditionStates = conditionList.map((condition) => condition.state);
   const allConditionsDocumented = conditionStates.length > 0 && conditionStates.every((item) => item === "known");
-  if (conditionEntry && Array.isArray(conditionEntry.conditions) && conditionEntry.conditions.length) {
+  if (conditionList.length) {
     const allDocumented = allConditionsDocumented;
     const block = section(
       allDocumented ? "Condiciones documentadas" : "Condiciones declaradas, no todas documentadas",
@@ -2177,7 +2180,7 @@ function renderProductDetail() {
         : "Los estados vencida, en conflicto o sin dato se muestran tal cual; no se presentan como documentados ni como oferta vigente.",
       "data-panel");
     const list = el("ul", { className: "detail-list" });
-    for (const condition of conditionEntry.conditions) {
+    for (const condition of conditionList) {
       const rowText = conditionRowText(condition);
       if (!rowText) continue;
       let text = `${rowText} · ${conditionStateText(condition)}`;
@@ -2192,6 +2195,7 @@ function renderProductDetail() {
     if (Array.isArray(conditionEntry.rate_tiers) && conditionEntry.rate_tiers.length > 1) {
       const tiers = el("ul", { className: "detail-list" });
       for (const tier of conditionEntry.rate_tiers) {
+        if (!tier || typeof tier !== "object") continue;
         tiers.appendChild(el("li", {}, `${formatRate(tier.tae)} TAE / ${formatRate(tier.tin)} TIN · ${tier.condition_label || tier.condition}`));
       }
       block.appendChild(textElement("p", "Tramos de la misma oferta, con su requisito:", "small"));
@@ -3184,6 +3188,10 @@ function hasDocumentedConditionsSource(entry) {
 }
 
 function simulationConditionsLabel(product) {
+  // Un fallo de /api/conditions deja byId vacío: decir «no documentadas» aquí
+  // convierte un error de red en un dato sobre el producto. Se nombra el fallo.
+  if (state.conditions.error) return "No se pudieron cargar las condiciones";
+  if (!state.conditions.loaded) return "Condiciones aún sin consultar";
   const entry = state.conditions.byId.get(product.id);
   if (!entry || !Array.isArray(entry.conditions) || !entry.conditions.length || !hasDocumentedConditionsSource(entry)) return "Condiciones no documentadas";
   const states = new Set(entry.conditions.map((item) => item && item.state));
@@ -3197,9 +3205,12 @@ function simulationProductReview(parent, product) {
   parent.appendChild(el("h2", {}, productName(product)));
   parent.appendChild(textElement("p", `${familyLabel(product.family)} · ${issuerLabel(product)}`, "muted"));
   const conditionEntry = state.conditions.byId.get(product.id);
-  const conditionStates = conditionEntry && Array.isArray(conditionEntry.conditions)
-    ? conditionEntry.conditions.map((item) => item.state)
+  // `conditions` puede traer entradas nulas: mapearlas sin filtrar rompía el
+  // paso 2 del ensayo entero con un TypeError al leer `item.state`.
+  const conditionList = conditionEntry && Array.isArray(conditionEntry.conditions)
+    ? conditionEntry.conditions.filter((item) => item && typeof item === "object")
     : [];
+  const conditionStates = conditionList.map((item) => item.state);
   parent.appendChild(el("div", { className: "badge-row" }, [
     badge(identityLabel(product), identityKind(product)),
     badge(simulationConditionsLabel(product), conditionStates.some((state) => state !== "known") || !conditionStates.length ? "pending" : "verified")
@@ -3208,15 +3219,15 @@ function simulationProductReview(parent, product) {
   details.append(el("dt", {}, "ISIN"), el("dd", {}, product.isin || "No indicado en los metadatos"));
   details.append(el("dt", {}, "Fecha asociada"), el("dd", {}, product.as_of || "No consta una fecha efectiva inequívoca"));
   details.append(el("dt", {}, "Disponibilidad"), el("dd", {}, "No acreditada por la identidad del candidato."));
-  details.append(el("dt", {}, "Condiciones contractuales"), el("dd", {}, conditionEntry && conditionEntry.conditions && conditionEntry.conditions.length && hasDocumentedConditionsSource(conditionEntry)
+  details.append(el("dt", {}, "Condiciones contractuales"), el("dd", {}, conditionList.length && hasDocumentedConditionsSource(conditionEntry)
     ? "Documentadas con fuente y fecha. Su estado puede ser vencido, en conflicto o sin dato; no equivalen a una oferta vigente."
     : "Pendientes; no se simulan tipos, plazos, costes ni garantías."));
   parent.appendChild(details);
   appendPrimarySource(parent, product);
-  if (conditionEntry && Array.isArray(conditionEntry.conditions) && conditionEntry.conditions.length && hasDocumentedConditionsSource(conditionEntry)) {
+  if (conditionList.length && hasDocumentedConditionsSource(conditionEntry)) {
     const documented = section("Hechos documentados", "Solo lo que consta en una fuente con fecha; los huecos no se rellenan ni se convierten en oferta vigente.", "data-panel");
     const list = el("ul", { className: "detail-list" });
-    for (const condition of conditionEntry.conditions) {
+    for (const condition of conditionList) {
       let text = "";
       if (condition.metric === "annual_rate_percent") {
         const value = condition.state === "known" ? `${formatRate(condition.value)} TAE` : "sin cifra utilizable";
@@ -3283,12 +3294,17 @@ function receiptConditionsTable(productId) {
   tabla.appendChild(cabecera);
   const cuerpo = el("tbody");
   const entry = state.conditions.byId.get(productId) || {};
-  const condiciones = Array.isArray(entry.conditions) ? entry.conditions : [];
+  const condiciones = Array.isArray(entry.conditions) ? entry.conditions.filter((item) => item && typeof item === "object") : [];
   const filas = condiciones.length ? condiciones : [null];
   filas.forEach((condition) => {
     const filaCuerpo = el("tr");
     if (!condition) {
-      filaCuerpo.appendChild(el("td", { colspan: "4" }, "Ninguna condición transcrita para este producto."));
+      // El justificante se archiva fuera de la app: no puede afirmar que no hay
+      // condiciones cuando lo que hubo fue un fallo al cargarlas.
+      const motivo = state.conditions.error
+        ? "No se pudieron cargar las condiciones: no consta que este producto carezca de ellas."
+        : "Ninguna condición transcrita para este producto.";
+      filaCuerpo.appendChild(el("td", { colspan: "4" }, motivo));
     } else {
       const row = CONDITION_ROWS[condition.metric];
       const etiqueta = row ? row.label : condition.metric;

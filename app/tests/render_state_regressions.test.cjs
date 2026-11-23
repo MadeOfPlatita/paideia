@@ -383,6 +383,26 @@ test('una condición nula en la respuesta no rompe la revisión del ensayo', () 
   assert.match(plainText(holder), /Depósito uno/);
 });
 
+test('una condición nula en la respuesta no rompe la ficha de producto', () => {
+  const ui = makeContext();
+  ui.ctx.state.conditions.byId.set('DEP-1', {
+    product_id: 'DEP-1', family: 'deposito', display_name: 'Depósito uno',
+    source: { url: 'https://example.invalid/x', retrieved_at: '2026-11-01' },
+    conditions: [null, { metric: 'annual_rate_percent', state: 'known', value: '2.00', unit: 'PERCENT', notes: [] }],
+    rate_tiers: [null, { condition: 'sin_requisito', condition_label: 'Sin requisito', tae: '2.00', tin: '1.98' }],
+  });
+  load(ui.ctx, [...LIBRARY_NAMES, 'renderProductDetail']);
+
+  const holder = new Node('section');
+  holder.setAttribute('id', 'product-detail');
+  ui.byId()['product-detail'] = holder;
+  ui.ctx.state.route = 'biblioteca';
+  ui.ctx.state.detail = { id: 'DEP-1', product: product({ id: 'DEP-1' }), loading: false, error: null };
+
+  assert.doesNotThrow(() => ui.ctx.renderProductDetail());
+  assert.match(plainText(holder), /Tasa anual \(TAE\): 2,00 %/);
+});
+
 test('las razones de la comparación se filtran en lugar de romper el pintado', () => {
   const ui = makeContext();
   ui.ctx.state.selectedIds = ['ACC-01', 'ACC-02'];
