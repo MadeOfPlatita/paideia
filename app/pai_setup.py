@@ -55,7 +55,7 @@ MAX_TIMEOUT_SECONDS = 60.0
 # Presupuesto de salida del chat. Con 2.400 tokens las respuestas largas se
 # cortaban a mitad de frase. El adaptador admite hasta 3.000, que es el
 # máximo del proveedor configurado.
-CHAT_OUTPUT_TOKENS = 3000
+CHAT_OUTPUT_TOKENS = 8000
 # Additional, explicit opt-in for the counted mission route.  It is not used by
 # the ordinary application route and does not alter the historical env names.
 NIGHT_OPT_IN_ENV = "PAIDEIA_NIGHT_MISSION_ENABLED"
