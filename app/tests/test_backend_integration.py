@@ -323,5 +323,203 @@ class ChatHttpTests(unittest.TestCase):
             self.assertEqual(body["ai"]["status"], "test_only")
 
 
+class InvalidResponseMessageTests(unittest.TestCase):
+    """El aviso de forma inválida dice qué faltó, sin cuerpo ni campos internos.
+
+    Transportes sintéticos, sin red. Todas estas rutas pasan por el proveedor
+    real con un transporte cerrado de pruebas, así el error recorre el mismo
+    camino que en producción (copia del error, diagnóstico y ServiceProblem).
+    """
+
+    CONSENT = {"notice_version": "paideia-chat-remote-v1", "accepted_chat_processing": True,
+               "purpose": "free_chat", "approved_fields": []}
+    KEY = "TEST_ONLY_NOT_A_SECRET"
+
+    def _service(self, body, status=200):
+        from backend_services import LocalChatService
+        from providers import GroqProvider, TransportResponse
+        class TestOnlyShapeTransport:
+            test_only = True
+            def __init__(self):
+                self.calls = 0
+            def post(self, **kwargs):
+                self.calls += 1
+                return TransportResponse(status, body)
+        transport = TestOnlyShapeTransport()
+        provider = GroqProvider(transport, opt_in=True, environment={"GROQ_API_KEY": self.KEY})
+        from test_functional05_http import make_gate
+        return LocalChatService(provider=provider, enabled=True, admission=make_gate()), transport
+
+    def _chat(self, body, status=200):
+        service, transport = self._service(body, status)
+        with running_server(chat_service=service) as server:
+            result = request(server, "/api/chat", {"message": "Pregunta sintética", "consent": self.CONSENT})
+        return result, transport
+
+    def test_message_names_what_was_missing_for_each_shape(self):
+        cases = (
+            (b'{"choices": [{"finish_reason": "stop"}]}', "ningún mensaje del asistente"),
+            (json.dumps({"choices": [{"message": {"role": "assistant", "content": None},
+                                      "finish_reason": "stop"}]}).encode(),
+             "vacío, sin texto ni llamadas"),
+            (b'{"choices": []}', "exactamente una opción"),
+            (b"no-json", "JSON válido"),
+        )
+        for body, expected_fragment in cases:
+            with self.subTest(fragment=expected_fragment):
+                (status, payload), transport = self._chat(body)
+                self.assertEqual(status, 502)
+                self.assertEqual(payload["error"]["code"], "CHAT_INVALID_RESPONSE")
+                message = payload["error"]["message"]
+                self.assertIn(expected_fragment, message)
+                self.assertIn("(HTTP 200)", message)
+                self.assertIn("no hay reintento automático", message)
+                self.assertFalse(payload["error"]["retryable"])
+                self.assertEqual(transport.calls, 1)
+
+    def test_message_never_repeats_the_provider_body_or_internal_field_names(self):
+        from backend_services import INVALID_RESPONSE_REASONS
+        private = "PRIVATE_PROVIDER_BODY_MUST_NOT_LEAK"
+        bodies = (
+            b"Error interno del proveedor: " + private.encode(),
+            json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                       "reasoning": private}, "finish_reason": "length"}]}).encode(),
+            json.dumps({"choices": [{"message": {"role": "assistant", "content": "x",
+                       "campo_raro": private}, "finish_reason": "stop"}]}).encode(),
+            json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                       "tool_calls": [{"id": "call_1", "type": "function",
+                                       "function": {"name": "x", "arguments": private}}]},
+                       "finish_reason": "tool_calls"}]}).encode(),
+        )
+        for body in bodies:
+            with self.subTest(body=body[:40]):
+                (status, payload), transport = self._chat(body)
+                self.assertEqual(status, 502)
+                encoded = json.dumps(payload)
+                self.assertNotIn(private, encoded)
+                self.assertNotIn(self.KEY, encoded)
+                for internal in ("response_shape", "choices", "tool_calls", "reasoning_details",
+                                 "finish_reason", "unknown_field", "empty_message"):
+                    self.assertNotIn(internal, payload["error"]["message"])
+                self.assertTrue(payload["error"]["message"].startswith(
+                    "No se pudo usar la respuesta del proveedor IA (HTTP 200):"))
+                self.assertEqual(transport.calls, 1)
+
+    def test_every_declared_shape_has_a_spanish_reason_and_a_fallback_exists(self):
+        from backend_services import INVALID_RESPONSE_REASONS, _invalid_response_message
+        from providers import ProviderError, RESPONSE_SHAPES
+        self.assertEqual(set(INVALID_RESPONSE_REASONS), set(RESPONSE_SHAPES))
+        for shape, reason in INVALID_RESPONSE_REASONS.items():
+            with self.subTest(shape=shape):
+                self.assertTrue(reason.strip())
+                self.assertIs(reason, reason.strip())
+                error = ProviderError("invalid_response")
+                error.response_shape = shape
+                message = _invalid_response_message(error, 200)
+                self.assertIn(reason, message)
+                self.assertIn("(HTTP 200)", message)
+                self.assertIn("no hay reintento automático", message)
+        # Sin forma conocida (o con una inventada) el aviso sigue siendo seguro.
+        for shape in (None, "shape_inventada", 42):
+            error = ProviderError("invalid_response")
+            error.response_shape = shape
+            message = _invalid_response_message(error)
+            self.assertIn("no tenía la forma esperada", message)
+            self.assertIn("no hay reintento automático", message)
+            self.assertNotIn("HTTP", message)
+
+    def test_other_provider_errors_keep_their_own_message(self):
+        # Un 401 no debe recibir el texto de forma inválida.
+        (status, payload), transport = self._chat(b"", status=401)
+        self.assertEqual(status, 503)
+        self.assertEqual(payload["error"]["code"], "CHAT_AUTH_UNAVAILABLE")
+        self.assertNotIn("forma", payload["error"]["message"])
+        self.assertEqual(transport.calls, 1)
+
+    def test_a_healthy_answer_still_returns_200_and_is_not_retried(self):
+        body = json.dumps({"choices": [{"message": {"role": "assistant",
+            "content": "TEST ONLY: respuesta sintética."}, "finish_reason": "stop"}]}).encode()
+        (status, payload), transport = self._chat(body)
+        self.assertEqual(status, 200)
+        self.assertEqual(payload["answer"], "TEST ONLY: respuesta sintética.")
+        self.assertEqual(transport.calls, 1)
+
+    def test_the_counted_transport_path_keeps_the_shape_and_the_safe_notice(self):
+        """Ruta real de producción: `_CountedTransport` + transporte HTTPS, sin red."""
+        import socket
+        import threading
+        from types import SimpleNamespace
+        from unittest.mock import patch
+
+        import providers
+        from backend_services import _invalid_response_message
+        from secure_groq_session import _CountedTransport
+
+        for body, expected_shape in ((b'{"choices": []}', "no_choices"),
+                                     (b'{"choices": [{"finish_reason": "stop"}]}', "no_message"),
+                                     (b"not-json", "not_json")):
+            with self.subTest(shape=expected_shape):
+                class TestOnlyConnection:
+                    status = 200
+                    def __init__(self, *args, **kwargs): pass
+                    def connect(self): pass
+                    def request(self, *args, **kwargs): pass
+                    def getresponse(self): return self
+                    def read(self, limit): return body
+                    def close(self): pass
+
+                session = SimpleNamespace(
+                    _lock=threading.RLock(), _state='active', _calls=0, _mission_budget=None,
+                    _check=lambda **kwargs: True, _stop=threading.Event())
+                transport = _CountedTransport(
+                    session, False, providers.GroqHTTPSJSONTransport())
+                provider = providers.GroqProvider(
+                    transport, opt_in=True, environment={"GROQ_API_KEY": self.KEY})
+                with patch.object(socket, 'socket', side_effect=AssertionError('network forbidden')), \
+                     patch.object(providers.http.client, 'HTTPSConnection', TestOnlyConnection):
+                    with self.assertRaises(providers.ProviderError) as caught:
+                        provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+
+                error = caught.exception
+                self.assertEqual(error.code, "invalid_response")
+                self.assertEqual(error.response_shape, expected_shape)
+                self.assertEqual(error.send_state.value, "completed")
+                message = _invalid_response_message(error)
+                self.assertNotIn(self.KEY, message)
+                self.assertIn("no hay reintento automático", message)
+
+    def test_the_admitted_tools_path_reports_the_same_reason(self):
+        """Producción usa la ruta con herramientas y admisión: mismo aviso, un envío."""
+        import app
+        from backend_services import CatalogueComparisonService, LocalChatService
+        from pai_tools import ToolDispatcher
+        from providers import GroqProvider, TransportResponse
+        from test_functional05_http import make_gate
+
+        class TestOnlyShapeTransport:
+            test_only = True
+            def __init__(self):
+                self.calls = 0
+            def post(self, **kwargs):
+                self.calls += 1
+                return TransportResponse(200, b'{"choices": [{"finish_reason": "stop"}]}')
+
+        transport = TestOnlyShapeTransport()
+        provider = GroqProvider(transport, opt_in=True, environment={"GROQ_API_KEY": self.KEY})
+        service = LocalChatService(
+            provider=provider, enabled=True, admission=make_gate(),
+            dispatcher=ToolDispatcher(app.SnapshotRepository(), CatalogueComparisonService()),
+            tools_enabled=True, catalogue_usage_approved=True)
+        with running_server(chat_service=service) as server:
+            status, payload = request(server, "/api/chat",
+                {"message": "Pregunta sintética", "consent": self.CONSENT})
+        self.assertEqual(status, 502)
+        self.assertEqual(payload["error"]["code"], "CHAT_INVALID_RESPONSE")
+        self.assertIn("ningún mensaje del asistente", payload["error"]["message"])
+        self.assertIn("no hay reintento automático", payload["error"]["message"])
+        self.assertNotIn(self.KEY, json.dumps(payload))
+        self.assertEqual(transport.calls, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -525,5 +525,64 @@ class PaiRuntimeWorkflowTests(unittest.TestCase):
         self.assertNotIn("TEST ONLY internal detail", json.dumps(result))
 
 
+    def test_an_invalid_provider_response_ends_the_turn_without_retrying(self):
+        """Un HTTP 200 con forma inesperada no se reintenta dentro del bucle."""
+        from providers import GroqProvider, TransportResponse
+
+        class TestOnlyShapeTransport:
+            test_only = True
+            def __init__(self, body):
+                self.body, self.calls = body, 0
+            def post(self, **kwargs):
+                self.calls += 1
+                return TransportResponse(200, self.body)
+
+        # El runner convierte el fallo del proveedor en un DTO de error terminal:
+        # no vuelve a llamar. El servicio recupera el código con `provider.problem`.
+        for label, body in (("sin choices", b'{"choices": []}'),
+                            ("sin message", b'{"choices": [{"finish_reason": "stop"}]}'),
+                            ("mensaje vacío", json.dumps({"choices": [{"message": {
+                                "role": "assistant", "content": None}, "finish_reason": "stop"}]}).encode())):
+            with self.subTest(caso=label):
+                transport = TestOnlyShapeTransport(body)
+                provider = GroqProvider(transport, opt_in=True,
+                                        environment={"GROQ_API_KEY": "TEST_ONLY_NOT_A_SECRET"})
+                dispatcher = TestOnlyDispatcher([])
+
+                result = ToolChatRunner(provider, dispatcher).run([
+                    {"role": "user", "content": "TEST ONLY: consulta."},
+                ])
+
+                self.assertEqual(transport.calls, 1)
+                self.assertEqual(dispatcher.calls, [])
+                self.assertEqual(result["finish_reason"], "error")
+                self.assertEqual(result["answer"], "")
+                self.assertEqual(result["refusal"], "No se pudo completar la respuesta solicitada.")
+                self.assertNotIn("TEST_ONLY_NOT_A_SECRET", json.dumps(result))
+
+    def test_a_single_provider_error_surfaces_with_its_shape_through_the_runner(self):
+        """El error real del proveedor conserva la variante al cruzar el runner."""
+        from providers import GroqProvider, ProviderError, SendState, TransportResponse
+
+        class TestOnlyShapeTransport:
+            test_only = True
+            def __init__(self):
+                self.calls = 0
+            def post(self, **kwargs):
+                self.calls += 1
+                return TransportResponse(200, b'{"choices": [{"message": {"role": "assistant",'
+                                               b' "content": "x", "campo_raro": 1}}]}')
+
+        transport = TestOnlyShapeTransport()
+        provider = GroqProvider(transport, opt_in=True,
+                                environment={"GROQ_API_KEY": "TEST_ONLY_NOT_A_SECRET"})
+        with self.assertRaises(ProviderError) as caught:
+            provider.chat([{"role": "user", "content": "TEST ONLY: consulta."}])
+        self.assertEqual(caught.exception.code, "invalid_response")
+        self.assertEqual(caught.exception.response_shape, "unknown_field")
+        self.assertIs(caught.exception.send_state, SendState.UNKNOWN)
+        self.assertEqual(transport.calls, 1)
+
+
 if __name__ == "__main__":
     unittest.main()

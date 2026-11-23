@@ -283,7 +283,7 @@ _ERROR_MESSAGES = {
     "rate_limited": "El proveedor IA indicó un límite temporal.",
     "provider_unavailable": "El proveedor IA no está disponible.",
     "provider_rejected": "El proveedor IA rechazó la solicitud.",
-    "invalid_response": "La respuesta del proveedor IA no cumple el contrato.",
+    "invalid_response": "La respuesta del proveedor IA no tiene la forma esperada.",
     # Cupo global de la misión: el envío no llegó a producirse.
     "mission_exhausted": "Se agotó el cupo de intentos reales de esta misión.",
     "mission_closed": "La ventana de la misión ya está cerrada.",
@@ -301,6 +301,12 @@ class SendState(str, Enum):
 
 class ProviderError(RuntimeError):
     """A fixed, content-free error code safe to pass to an application boundary."""
+
+    # Metadatos acotados que solo rellenan los caminos que los conocen. Nunca
+    # contienen texto del proveedor: `diagnostic` es un enum/booleano/recuento y
+    # `response_shape` una de las formas de RESPONSE_SHAPES.
+    diagnostic: dict | None
+    response_shape: str | None
 
     def __init__(self, code, *, send_state=SendState.UNKNOWN):
         if type(code) is not str or code not in _ERROR_MESSAGES:
@@ -420,18 +426,42 @@ def _real_transport_intact(transport):
             and not ({"post", "_post"} & object.__getattribute__(transport, "__dict__").keys()))
 
 
+# Formas de un HTTP 200 que el contrato no admite. El conjunto es cerrado y
+# nunca contiene texto del proveedor: sirve para que el aviso al usuario diga
+# qué faltó sin reenviar el cuerpo recibido.
+RESPONSE_SHAPES = frozenset({
+    "too_large",       # el cuerpo supera MAX_RESPONSE_BYTES
+    "not_json",        # no es UTF-8 + JSON (texto plano, HTML, SSE)
+    "not_object",      # es JSON, pero no un objeto
+    "no_choices",      # falta `choices`, viene vacío, con más de uno o mal tipado
+    "no_message",      # falta `message` o su `role` no es `assistant`
+    "empty_message",   # el mensaje no trae texto, ni rechazo, ni herramientas
+    "unknown_field",   # el mensaje trae campos fuera del contrato
+    "bad_content",     # content/reasoning/refusal no son texto ni null
+    "bad_tool_calls",  # tool_calls mal formadas o por encima del tope
+    "unsafe_echo",     # la respuesta devolvía la propia credencial
+})
+
+
+def _invalid_response(shape):
+    """ProviderError de forma inválida con la variante acotada que la produjo."""
+    error = ProviderError("invalid_response")
+    error.response_shape = shape if shape in RESPONSE_SHAPES else None
+    return error
+
+
 def _parse_output_tool_call(call):
     if type(call) is not dict or set(call) != {"id", "type", "function"}:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("bad_tool_calls")
     call_id = call["id"]
     function = call["function"]
     if (type(function) is not dict or set(function) != {"name", "arguments"}
             or type(call_id) is not str or re.fullmatch(r"[A-Za-z0-9_-]{1,128}", call_id) is None
             or call["type"] != "function" or not _valid_name(function["name"])):
-        raise ProviderError("invalid_response")
+        raise _invalid_response("bad_tool_calls")
     arguments = _decode_json_object_text(function["arguments"])
     if arguments is None:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("bad_tool_calls")
     return ToolCall(id=call_id, name=function["name"], arguments=arguments)
 
 
@@ -440,7 +470,7 @@ def _optional_text(document, key):
         return None
     value = document[key]
     if value is not None and type(value) is not str:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("bad_content")
     return value
 
 
@@ -454,7 +484,7 @@ def _parse_chat_response(response):
         body = None
         invalid_response_object = True
     if invalid_response_object or type(status) is not int or type(body) is not bytes:
-        raise ProviderError("invalid_response")
+        raise _invalid_response(None)
     if status == 401:
         raise ProviderError("unauthorized")
     if status == 429:
@@ -464,7 +494,7 @@ def _parse_chat_response(response):
     if not 200 <= status <= 299:
         raise ProviderError("provider_rejected")
     if len(body) > MAX_RESPONSE_BYTES:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("too_large")
     invalid_json = False
     try:
         document = json.loads(
@@ -476,35 +506,35 @@ def _parse_chat_response(response):
         document = None
         invalid_json = True
     if invalid_json:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("not_json")
     if type(document) is not dict:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("not_object")
     choices = document.get("choices")
     if type(choices) is not list or len(choices) != 1 or type(choices[0]) is not dict:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("no_choices")
     choice = choices[0]
     message = choice.get("message")
     finish_reason = choice.get("finish_reason")
     if (type(message) is not dict or message.get("role") != "assistant"
             or finish_reason is not None and type(finish_reason) is not str):
-        raise ProviderError("invalid_response")
+        raise _invalid_response("no_message")
     # `reasoning_details` es metadato del proveedor (Command Code lo incluye
     # siempre); se descarta igual que el resto de campos no usados, pero no debe
     # invalidar una respuesta correcta.
     message_fields = {"role", "content", "reasoning", "reasoning_content", "reasoning_details",
                       "tool_calls", "refusal"}
     if set(message) - message_fields or ("reasoning" in message and "reasoning_content" in message):
-        raise ProviderError("invalid_response")
+        raise _invalid_response("unknown_field")
     content = _optional_text(message, "content")
     reasoning_field = "reasoning" if "reasoning" in message else "reasoning_content"
     reasoning = _optional_text(message, reasoning_field)
     refusal = _optional_text(message, "refusal")
     calls_value = message.get("tool_calls", [])
     if type(calls_value) is not list or len(calls_value) > MAX_TOOL_CALLS_PER_TURN:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("bad_tool_calls")
     tool_calls = tuple(_parse_output_tool_call(call) for call in calls_value)
     if content is None and not tool_calls and refusal is None:
-        raise ProviderError("invalid_response")
+        raise _invalid_response("empty_message")
     return ChatResult(
         answer=content or "",
         reasoning=reasoning,
@@ -565,8 +595,12 @@ class GroqProvider:
             result = self._chat_impl(messages, tools=tools, structured=structured)
         except ProviderError as error:
             failure = ProviderError(error.code, send_state=error.send_state)
-            if hasattr(error, 'diagnostic'):
-                failure.diagnostic = error.diagnostic
+            diagnostic = getattr(error, 'diagnostic', None)
+            if diagnostic is not None:
+                failure.diagnostic = diagnostic
+            response_shape = getattr(error, 'response_shape', None)
+            if response_shape is not None:
+                failure.response_shape = response_shape
         finally:
             messages = tools = None
         if failure is not None:
@@ -658,10 +692,14 @@ class GroqProvider:
             response_status = None
             invalid_response_object = True
         if invalid_response_object:
-            raise ProviderError("invalid_response", send_state=send_state)
+            error = _invalid_response(None)
+            error.send_state = send_state
+            raise error
         if (type(response_status) is int and 200 <= response_status <= 299
                 and type(raw_response) is bytes and api_key.encode("ascii") in raw_response):
-            raise ProviderError("invalid_response", send_state=send_state)
+            error = _invalid_response("unsafe_echo")
+            error.send_state = send_state
+            raise error
         try:
             result = _parse_chat_response(TransportResponse(status=response_status, body=raw_response))
         except ProviderError as error:
@@ -695,7 +733,9 @@ class GroqProvider:
         while pending:
             value = pending.pop()
             if isinstance(value, str) and api_key in value:
-                raise ProviderError("invalid_response", send_state=send_state)
+                error = _invalid_response("unsafe_echo")
+                error.send_state = send_state
+                raise error
             if isinstance(value, dict):
                 pending.extend(value.keys())
                 pending.extend(value.values())

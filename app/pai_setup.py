@@ -52,7 +52,10 @@ TIMEOUT_ENV = "PAIDEIA_GROQ_TIMEOUT"
 TOKENS_ENV = "PAIDEIA_GROQ_MAX_TOKENS"
 SCOPE = "paideia-chat-local"
 MAX_TIMEOUT_SECONDS = 60.0
-CHAT_OUTPUT_TOKENS = 2400
+# Presupuesto de salida del chat. Con 2.400 tokens las respuestas largas se
+# cortaban a mitad de frase. El adaptador admite hasta 3.000, que es el
+# máximo del proveedor configurado.
+CHAT_OUTPUT_TOKENS = 3000
 # Additional, explicit opt-in for the counted mission route.  It is not used by
 # the ordinary application route and does not alter the historical env names.
 NIGHT_OPT_IN_ENV = "PAIDEIA_NIGHT_MISSION_ENABLED"

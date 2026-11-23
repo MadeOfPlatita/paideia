@@ -51,7 +51,7 @@ function setup(result, ids) {
     getElementById: (id) => byId[id] || null,
   };
   const ctx = {
-    document, console, Map, JSON, Number, String, Array, Object,
+    document, console, Map, JSON, Number, String, Array, Object, URL,
     state: {
       selectedIds: ids,
       catalogueCache: new Map([
@@ -63,8 +63,8 @@ function setup(result, ids) {
   };
   vm.createContext(ctx);
   vm.runInContext([grabConsts(['RATE_VALUE', 'ratePercent', 'DIAGNOSIS_REASONS']),
-    grab('el'), grab('textElement'), grab('button'), grab('productName'), grab('callout'),
-    grab('diagnosisApplicable'), grab('renderDiagnosis')].join('\n'),
+    grab('isSafePrimaryUrl'), grab('el'), grab('textElement'), grab('button'), grab('productName'),
+    grab('callout'), grab('diagnosisApplicable'), grab('renderDiagnosis')].join('\n'),
     ctx);
   const holder = new Node('section');
   holder.setAttribute('id', 'compare-diagnosis');

@@ -531,5 +531,211 @@ class ProviderOptInTests(unittest.TestCase):
         self.assertEqual(len(TestOnlyHTTPSConnection.instances), 1)
 
 
+class InvalidResponseShapeTests(unittest.TestCase):
+    """Qué variantes de un HTTP 200 rompen el contrato de respuesta.
+
+    Todos los transportes son sintéticos: no hay red, ni claves reales, ni
+    llamadas al proveedor. Ninguna prueba reintenta: se comprueba que el envío
+    es único y que la variante queda acotada a `response_shape`.
+    """
+
+    SECRET = "OFFLINE_TEST_SECRET_ONLY_shape"
+
+    def _provider(self, status, body):
+        module = importlib.import_module("providers")
+        transport = TestOnlyFakeTransport(
+            response=SimpleNamespace(status=status, body=body),
+        )
+        return module, transport, module.GroqProvider(
+            transport, opt_in=True,
+            environment=TrackingEnvironment({"GROQ_API_KEY": self.SECRET}),
+        )
+
+    def _assert_shape(self, body, expected_shape, *, label, status=200):
+        module, transport, provider = self._provider(status, body)
+        with self.assertRaises(module.ProviderError) as caught:
+            provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+        error = caught.exception
+        self.assertEqual(error.code, "invalid_response", label)
+        self.assertEqual(error.response_shape, expected_shape, label)
+        self.assertFalse(error.retryable, label)
+        # Un solo envío: la forma inválida no se reintenta ni se reenvía.
+        self.assertEqual(len(transport.calls), 1, label)
+        self.assertNotIn(self.SECRET, str(error), label)
+
+    def test_shape_variants_are_classified_without_echoing_the_body(self):
+        module = importlib.import_module("providers")
+        marker = "PRIVATE_UPSTREAM_TEXT_MARKER"
+        message_ok = {"role": "assistant", "content": "Respuesta sintética."}
+        cases = (
+            ("cuerpo no UTF-8",
+             b"\xff\xfe" + marker.encode("utf-8"), "not_json"),
+            ("texto plano creíble pero no JSON",
+             ("Error interno del proveedor: " + marker).encode("utf-8"), "not_json"),
+            ("evento SSE en vez de JSON",
+             b"data: {\"choices\": []}\n\ndata: [DONE]\n", "not_json"),
+            ("JSON truncado a mitad",
+             b'{"choices":[{"message":{"role":"assistant","content":"' + marker.encode('utf-8'),
+             "not_json"),
+            ("HTML de una puerta de enlace",
+             b"<!doctype html><html><body>" + marker.encode() + b"</body></html>", "not_json"),
+            ("JSON escalar",
+             b"\"solo una cadena\"", "not_object"),
+            ("JSON nulo",
+             b"null", "not_object"),
+            ("JSON array",
+             b'[{"role":"assistant","content":"x"}]', "not_object"),
+            ("objeto sin choices",
+             json.dumps({"id": "x", "model": "m"}).encode(), "no_choices"),
+            ("choices vacío",
+             b'{"choices": []}', "no_choices"),
+            ("dos choices",
+             json.dumps({"choices": [{"message": message_ok, "finish_reason": "stop"},
+                                     {"message": message_ok, "finish_reason": "stop"}]}).encode(),
+             "no_choices"),
+            ("choices no es lista",
+             b'{"choices": {"message": {"role": "assistant", "content": "x"}}}', "no_choices"),
+            ("choice no es objeto",
+             b'{"choices": ["texto"]}', "no_choices"),
+            ("falta message",
+             b'{"choices": [{"finish_reason": "stop"}]}', "no_message"),
+            ("role distinto de assistant",
+             json.dumps({"choices": [{"message": {"role": "user", "content": "x"},
+                                      "finish_reason": "stop"}]}).encode(), "no_message"),
+            ("finish_reason no textual",
+             json.dumps({"choices": [{"message": message_ok, "finish_reason": 0}]}).encode(),
+             "no_message"),
+            ("mensaje sin content, sin rechazo y sin herramientas",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None},
+                                      "finish_reason": "stop"}]}).encode(), "empty_message"),
+            ("mensaje vacío sin la clave content",
+             json.dumps({"choices": [{"message": {"role": "assistant"},
+                                      "finish_reason": "stop"}]}).encode(), "empty_message"),
+            ("solo razonamiento, sin respuesta",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                                                  "reasoning": marker},
+                                      "finish_reason": "length"}]}).encode(), "empty_message"),
+            ("campo de mensaje fuera del contrato",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": "x",
+                                                  "campo_inventado": marker},
+                                      "finish_reason": "stop"}]}).encode(), "unknown_field"),
+            ("reasoning y reasoning_content a la vez",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": "x",
+                                                  "reasoning": "a", "reasoning_content": "b"},
+                                      "finish_reason": "stop"}]}).encode(), "unknown_field"),
+            ("content no textual",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": 42},
+                                      "finish_reason": "stop"}]}).encode(), "bad_content"),
+            ("refusal no textual",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                                                  "refusal": {"texto": marker}},
+                                      "finish_reason": "stop"}]}).encode(), "bad_content"),
+            ("tool_calls no es lista",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                                                  "tool_calls": {"id": "x"}},
+                                      "finish_reason": "tool_calls"}]}).encode(), "bad_tool_calls"),
+            ("tool_call sin arguments",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                    "tool_calls": [{"id": "call_1", "type": "function",
+                                    "function": {"name": "buscar"}}]},
+                    "finish_reason": "tool_calls"}]}).encode(), "bad_tool_calls"),
+            ("tool_call con id con caracteres fuera del contrato",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                    "tool_calls": [{"id": "call 1/../x", "type": "function",
+                                    "function": {"name": "buscar", "arguments": "{}"}}]},
+                    "finish_reason": "tool_calls"}]}).encode(), "bad_tool_calls"),
+            ("tool_call con arguments que no son un objeto JSON",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                    "tool_calls": [{"id": "call_1", "type": "function",
+                                    "function": {"name": "buscar", "arguments": "[1,2]"}}]},
+                    "finish_reason": "tool_calls"}]}).encode(), "bad_tool_calls"),
+            ("más llamadas que el tope por turno",
+             json.dumps({"choices": [{"message": {"role": "assistant", "content": None,
+                    "tool_calls": [{"id": "call_%d" % index, "type": "function",
+                                    "function": {"name": "buscar", "arguments": "{}"}}
+                                   for index in range(module.MAX_TOOL_CALLS_PER_TURN + 1)]},
+                    "finish_reason": "tool_calls"}]}).encode(), "bad_tool_calls"),
+            ("cuerpo por encima del máximo admitido",
+             b"{" + b" " * (module.MAX_RESPONSE_BYTES + 1) + b"}", "too_large"),
+            ("clave JSON duplicada",
+             b'{"choices": [], "choices": []}', "not_json"),
+            ("NaN como constante JSON",
+             b'{"choices": NaN}', "not_json"),
+        )
+        for label, body, expected in cases:
+            with self.subTest(caso=label):
+                self._assert_shape(body, expected, label=label)
+
+    def test_every_shape_is_a_declared_value_and_never_leaks_the_body(self):
+        module = importlib.import_module("providers")
+        marker = "PRIVATE_UPSTREAM_TEXT_MARKER"
+        # Recorre todas las variantes declaradas por el parser.
+        bodies = (b"no-json " + marker.encode(), b"null", b'{"choices": []}',
+                  b'{"choices": [{"finish_reason": "stop"}]}',
+                  b'{"choices": [{"message": {"role": "assistant", "content": null}}]}',
+                  b'{"choices": [{"message": {"role": "assistant", "content": "x",'
+                  b' "extra": "y"}}]}',
+                  b'{"choices": [{"message": {"role": "assistant", "content": 1}}]}',
+                  b'{"choices": [{"message": {"role": "assistant", "content": null,'
+                  b' "tool_calls": [{}]}}]}',
+                  b"{" + b" " * (module.MAX_RESPONSE_BYTES + 1) + b"}")
+        seen = set()
+        for body in bodies:
+            module_i, transport, provider = self._provider(200, body)
+            with self.assertRaises(module.ProviderError) as caught:
+                provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+            error = caught.exception
+            self.assertIn(error.response_shape, module.RESPONSE_SHAPES)
+            seen.add(error.response_shape)
+            self.assertNotIn(marker, str(error))
+            self.assertNotIn(marker, json.dumps(getattr(error, "diagnostic", None), default=str))
+        # La credencial devuelta por el proveedor también es una forma inválida.
+        echoed, transport, provider = self._provider(
+            200, json.dumps({"echo": self.SECRET}).encode())
+        with self.assertRaises(module.ProviderError) as caught:
+            provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+        self.assertEqual(caught.exception.response_shape, "unsafe_echo")
+        self.assertNotIn(self.SECRET, str(caught.exception))
+        self.assertEqual(len(transport.calls), 1)
+        seen.add("unsafe_echo")
+        self.assertEqual(seen, set(module.RESPONSE_SHAPES))
+
+    def test_shape_metadata_survives_the_provider_boundary_copy(self):
+        """`GroqProvider._chat` copia el error: la variante debe viajar con él."""
+        module = importlib.import_module("providers")
+        _, _, provider = self._provider(200, b'{"choices": []}')
+        with self.assertRaises(module.ProviderError) as caught:
+            provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+        self.assertEqual(caught.exception.response_shape, "no_choices")
+        self.assertIsNone(caught.exception.__context__)
+
+    def test_a_well_formed_answer_is_still_accepted_and_never_retried(self):
+        module = importlib.import_module("providers")
+        body = json.dumps({"choices": [{
+            "message": {"role": "assistant", "content": "Respuesta sintética.",
+                        "reasoning_details": [{"type": "reasoning.text", "text": "interna"}]},
+            "finish_reason": "stop"}]}).encode()
+        _, transport, provider = self._provider(200, body)
+        result = provider.chat([{"role": "user", "content": "Pregunta sintética."}])
+        self.assertEqual(result.answer, "Respuesta sintética.")
+        self.assertEqual(len(transport.calls), 1)
+
+    def test_a_correct_refusal_or_tool_call_is_not_an_empty_message(self):
+        module = importlib.import_module("providers")
+        refusal = json.dumps({"choices": [{
+            "message": {"role": "assistant", "content": None, "refusal": "No puedo."},
+            "finish_reason": "stop"}]}).encode()
+        _, _, provider = self._provider(200, refusal)
+        self.assertEqual(provider.chat([{"role": "user", "content": "x"}]).refusal, "No puedo.")
+
+        tool = json.dumps({"choices": [{
+            "message": {"role": "assistant", "content": None, "tool_calls": [{
+                "id": "call_1", "type": "function",
+                "function": {"name": "buscar", "arguments": "{}"}}]},
+            "finish_reason": "tool_calls"}]}).encode()
+        _, _, provider = self._provider(200, tool)
+        self.assertEqual(len(provider.chat([{"role": "user", "content": "x"}]).tool_calls), 1)
+
+
 if __name__ == "__main__":
     unittest.main()

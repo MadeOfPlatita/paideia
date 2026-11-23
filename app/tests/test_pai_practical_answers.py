@@ -16,9 +16,17 @@ from financial_quality import FINANCIAL_EDUCATION_PROMPT
 class PromptTests(unittest.TestCase):
     def test_prompt_asks_for_steps_when_the_question_is_practical(self):
         prompt = servicio.CHAT_SYSTEM_PROMPT
-        self.assertIn("no solo definas", prompt)
-        self.assertIn("tres a cinco pasos", prompt)
-        self.assertIn("hasta ocho frases", prompt)
+        # Contrato vigente: la respuesta práctica incluye definición breve, pasos
+        # numerados y un ejemplo con los datos de la persona.
+        self.assertIn("Pasos o cómo hacerlo", prompt)
+        self.assertIn("tres a cinco pasos numerados", prompt)
+        self.assertIn("un ejemplo con sus datos", prompt)
+
+    def test_prompt_asks_for_a_concrete_decision_when_the_question_is_practical(self):
+        prompt = servicio.CHAT_SYSTEM_PROMPT
+        self.assertIn("Decisión práctica", prompt)
+        self.assertIn("no te quedes en el método abstracto", prompt)
+        self.assertIn("qué harías tú con ese dinero", prompt)
 
     def test_catalogue_answers_keep_the_short_budget(self):
         self.assertIn("máximo tres frases", servicio.CHAT_SYSTEM_PROMPT)

@@ -101,6 +101,17 @@ function chatProviderNote() {
   return "Chat IA no configurado: no se envía nada; el botón no hará ninguna petición de chat al servidor. Los cálculos y la biblioteca funcionan sin IA." + quotaText;
 }
 
+/* Un único texto para el aviso de capacidades. checkLocalStatus() lo reescribe
+   cuando llega /api/status; si las dos versiones no coinciden, el mismo bloque
+   cambia de contenido según haya habido un re-render y el usuario lee dos
+   descripciones distintas de lo mismo. */
+function chatCapabilitiesText(capabilities) {
+  const caps = capabilities && typeof capabilities === "object" ? capabilities : null;
+  return `Mapa: ${caps?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}`
+    + `; catálogo: ${caps?.catalogue === true ? "puede consultar fichas documentadas" : "no disponible"}`
+    + `; historial: ${caps?.history === true ? "habilitado" : "desactivado"}.`;
+}
+
 const state = {
   route: "inicio",
   profile: PROFILE_MODEL.createEmptyProfile(),
@@ -1025,7 +1036,7 @@ function renderHome() {
   scenarioInputs.method=el("select", {id:"chat-scenario-method"}, [el("option",{value:""},"Selecciona un método"),el("option",{value:"simple"},"Simple"),el("option",{value:"compound"},"Compuesto")]);
   scenarioFields.appendChild(field("Método",scenarioInputs.method,"Selecciona el método ficticio.","chat-scenario-method"));
   testOptions.appendChild(scenarioFields);
-  const capabilitiesNote = callout(`Mapa: ${chatCapabilities?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}; catálogo: ${chatCapabilities?.catalogue === true ? "puede consultar fichas documentadas" : "no disponible"}; historial: ${chatCapabilities?.history === true ? "habilitado" : "desactivado"}.`, "warning-note");
+  const capabilitiesNote = callout(chatCapabilitiesText(chatCapabilities), "warning-note");
   capabilitiesNote.setAttribute("id", "chat-context-capabilities");
   chatOptions.appendChild(capabilitiesNote);
   const CONTEXT_LABELS = {"respuestas.objetivo":"Objetivo","respuestas.horizonte":"Horizonte","detalle_economico.importe_objetivo":"Importe objetivo","detalle_economico.colchon_liquido":"Colchón líquido"};
@@ -1233,7 +1244,7 @@ function renderHome() {
           }
         }
         if (!structured && result.refused) feedback.appendChild(textElement("p", "El proveedor ha rechazado esta consulta."));
-        if (!structured && result.truncated) feedback.appendChild(textElement("p", "Respuesta incompleta: se alcanzó el límite de salida."));
+        if (!structured && result.truncated) feedback.appendChild(textElement("p", "Respuesta incompleta: se alcanzó el límite de longitud. Pide que continúe o concreta la pregunta."));
         if (!structured && Array.isArray(result.tool_events) && result.tool_events.length) {
           feedback.appendChild(textElement("p", "Herramientas: " + result.tool_events.map(item => `${item.name || "rechazada"} (${item.state})`).join("; ")));
         }
@@ -1754,6 +1765,9 @@ function toggleSelection(id) {
   if (state.route === "biblioteca") {
     renderLibrarySelection();
     renderCatalogueResults();
+    // La lista transcrita usa las mismas tarjetas: sin este repintado, su botón
+    // seguía diciendo «Añadir a comparar» con el producto ya seleccionado.
+    renderCuratedCatalogue();
   } else if (state.route === "comparar") {
     renderComparePage(false);
   }
@@ -1995,18 +2009,37 @@ function renderCatalogueResultsBody(results) {
     return Boolean(rate) && rate.state === "known";
   };
   const todos = state.library.items.filter((product) => product && typeof product.id === "string");
-  const conDatos = todos.filter((product) => documented(product.id));
-  const conTasa = todos.filter((product) => withRate(product.id));
-  results.appendChild(textElement("p",
-    `${conTasa.length} de ${todos.length} con tasa documentada · ${conDatos.length} con alguna condición documentada. El resto solo aporta metadatos de identidad.`,
-    "small muted"));
-  const visibles = state.library.onlyDocumented === true ? conTasa : todos;
-  if (!visibles.length) {
-    results.appendChild(callout("Ningún candidato de esta búsqueda tiene una tasa documentada. Quita el filtro para ver los metadatos disponibles.", "info-note"));
+  // Sin las condiciones cargadas, un recuento de 0 describiría un fallo de red
+  // como si la API hubiera declarado que no hay tasas. Se omite la cifra.
+  const conditionsReady = state.conditions.loaded === true && !state.conditions.error;
+  if (!conditionsReady) {
+    results.appendChild(textElement("p",
+      `Los recuentos de condiciones no están disponibles: el catálogo devolvió ${todos.length} candidatos, pero no se pudo comprobar cuántos tienen tasa documentada.`,
+      "small muted"));
+  } else {
+    const conDatos = todos.filter((product) => documented(product.id));
+    const conTasa = todos.filter((product) => withRate(product.id));
+    results.appendChild(textElement("p",
+      `${conTasa.length} de ${todos.length} con tasa documentada · ${conDatos.length} con alguna condición documentada. El resto solo aporta metadatos de identidad.`,
+      "small muted"));
+    const visibles = state.library.onlyDocumented === true ? conTasa : todos;
+    if (!visibles.length) {
+      results.appendChild(callout("Ningún candidato de esta búsqueda tiene una tasa documentada. Quita el filtro para ver los metadatos disponibles.", "info-note"));
+      return;
+    }
+    const list = el("div", { className: "result-list" });
+    visibles.forEach((product) => {
+      state.catalogueCache.set(product.id, product);
+      list.appendChild(productCard(product));
+    });
+    results.appendChild(list);
     return;
   }
+  if (state.library.onlyDocumented === true) {
+    results.appendChild(callout("El filtro «Solo con tasa documentada» necesita las condiciones cargadas; hasta entonces no se oculta ningún candidato.", "info-note"));
+  }
   const list = el("div", { className: "result-list" });
-  visibles.forEach((product) => {
+  todos.forEach((product) => {
     state.catalogueCache.set(product.id, product);
     list.appendChild(productCard(product));
   });
@@ -2358,7 +2391,9 @@ function renderComparisonResultBody(holder) {
   const columns = el("div", { className: "comparison-columns" });
   result.items.filter(safeComparisonProduct).forEach((product) => columns.appendChild(comparisonCard(product)));
   holder.appendChild(columns);
-  const message = result.reasons && result.reasons.length ? result.reasons.join(" ") : "Solo se comparan metadatos educativos.";
+  const message = Array.isArray(result.reasons) && result.reasons.length
+    ? result.reasons.filter((reason) => typeof reason === "string").join(" ")
+    : "Solo se comparan metadatos educativos.";
   holder.appendChild(callout(`${message} No se ordenan candidatos ni se calcula una recomendación.`, "info-note"));
   const documentedRates = result.items.filter(safeComparisonProduct).filter((product) => rateSummary(product.id).kind === "verified").length;
   let comparisonNote;
@@ -2459,7 +2494,7 @@ function renderDiagnosis() {
       const reasons = el("ul", { className: "text-list" });
       for (const code of item.reason_codes) reasons.appendChild(el("li", {}, `${DIAGNOSIS_REASONS[code] || "Motivo no reconocido; consulta el servicio local."}`));
       group.appendChild(reasons);
-      const refs = item.source_refs.flatMap(ref => Array.isArray(ref.source_ids) ? ref.source_ids : []).filter(url => typeof url === "string");
+      const refs = item.source_refs.flatMap(ref => ref && Array.isArray(ref.source_ids) ? ref.source_ids : []).filter(url => typeof url === "string" && isSafePrimaryUrl(url));
       if (refs.length) {
         const line = el("p", { className: "small" }, ["Fuente del dato: "]);
         refs.forEach((url, index) => {
@@ -2614,7 +2649,17 @@ function fillScenarioOutput(holder, scenario, suffix) {
   if (scenario.status !== "current") { holder.appendChild(textElement("p", "Introduce los supuestos y calcula este escenario.", "small muted")); return; }
   const data = scenario.result;
   if (!data) return;
-  if (!data.summary || !Array.isArray(data.series)) { holder.appendChild(callout("La respuesta del cálculo no contiene el resumen y la serie esperados.", "error-note")); return; }
+  // Una serie vacía o con puntos incompletos hacía que fillScenarioOutput
+  // lanzara TypeError a mitad de pintado y el bloque quedara en blanco: el
+  // usuario veía el resultado desaparecer sin ningún mensaje. Se valida la
+  // forma mínima antes de tocar el DOM.
+  const series = Array.isArray(data.series) ? data.series : null;
+  const seriesUsable = Array.isArray(series) && series.length > 0
+    && series.every((point) => point && typeof point === "object" && Number.isFinite(Number(point.month)));
+  if (!data.summary || typeof data.summary !== "object" || !seriesUsable) {
+    holder.appendChild(callout("La respuesta del cálculo no contiene el resumen y la serie esperados.", "error-note"));
+    return;
+  }
   const wrap = el("section", { className: "data-panel" });
   wrap.appendChild(el("h2", {}, "Resultado del supuesto"));
   wrap.appendChild(callout("Hipótesis introducida por ti · no es predicción · bruto, sin fiscalidad ni costes de producto.", "warning-note"));
@@ -2648,7 +2693,11 @@ function fillScenarioOutput(holder, scenario, suffix) {
   });
   wrap.appendChild(stats);
   const interest = Number(data.summary.interest);
-  if (Number(data.assumptions.annual_rate_percent) === 0) wrap.appendChild(callout("Tasa supuesta cero: no se genera interés nominal; la inflación introducida puede cambiar el valor real.", "info-note"));
+  // `data.assumptions` no se validaba en submitScenario y aquí se leía directo:
+  // una respuesta sin ese bloque rompía el pintado igual que la serie vacía.
+  const responseRate = data.assumptions && typeof data.assumptions === "object"
+    ? data.assumptions.annual_rate_percent : null;
+  if (Number(responseRate) === 0) wrap.appendChild(callout("Tasa supuesta cero: no se genera interés nominal; la inflación introducida puede cambiar el valor real.", "info-note"));
   const loss = Number(data.summary.final_balance) < Number(data.summary.contributions) || (Number.isFinite(interest) && interest < 0);
   if (loss) wrap.appendChild(callout("Con estos supuestos, el saldo final queda por debajo de lo aportado. La pérdida posible no se oculta.", "error-note"));
   const figure = el("figure", { className: "chart-wrap" });
@@ -2811,6 +2860,26 @@ function scenarioChanged(scenario, suffix) {
   buildScenarioOutput(scenario, suffix);
   window.dispatchEvent(new CustomEvent("scenario-comparison-change"));
 }
+/* Forma mínima que necesita el pintado del resultado: las cuatro cifras del
+   resumen y una serie con meses numéricos. Antes solo se comprobaba que
+   `series` fuera un array, así que una serie vacía o un punto sin `month`
+   pasaban la puerta y rompían fillScenarioOutput a mitad de pintado. */
+function calculationResponseUsable(data) {
+  if (!data || typeof data !== "object") return false;
+  if (data.hypothetical !== true || data.not_prediction !== true) return false;
+  const summary = data.summary;
+  if (!summary || typeof summary !== "object") return false;
+  for (const key of ["contributions", "final_balance", "interest", "inflation_adjusted"]) {
+    if (summary[key] === null || summary[key] === undefined) return false;
+  }
+  if (!Array.isArray(data.series) || !data.series.length) return false;
+  return data.series.every((point) => point && typeof point === "object"
+    && Number.isFinite(Number(point.month))
+    && point.contributions !== null && point.contributions !== undefined
+    && point.balance !== null && point.balance !== undefined
+    && point.real_balance !== null && point.real_balance !== undefined);
+}
+
 async function submitScenario(payload, scenario = state.scenario, suffix = "") {
   if (!payload) return;
   if (scenario.status === "pending") return;
@@ -2830,7 +2899,7 @@ async function submitScenario(payload, scenario = state.scenario, suffix = "") {
   try {
     const data = await apiRequest(API.calculate, { method: "POST", body: payload });
     if (version !== scenario.version) return;
-    if (data.hypothetical !== true || data.not_prediction !== true || !data.summary || !Array.isArray(data.series)) throw new ApiFailure("La respuesta no declara el resultado como hipotético y no predictivo, o no incluye la serie esperada.", 200, "INVALID_CALCULATION", false);
+    if (!calculationResponseUsable(data)) throw new ApiFailure("La respuesta no declara el resultado como hipotético y no predictivo, o no incluye la serie esperada.", 200, "INVALID_CALCULATION", false);
     scenario.result = data;
     scenario.status = "current";
   } catch (error) {
@@ -3718,7 +3787,7 @@ async function checkLocalStatus() {
     state.status = status;
     const caps = status.ai?.capabilities;
     const capabilityNote = document.getElementById("chat-context-capabilities");
-    if (capabilityNote) capabilityNote.textContent = `Mapa: ${caps?.context === true ? "puedes adjuntar los campos que marques" : "no disponible"}; historial: ${caps?.history === true ? "habilitado" : "desactivado"}.`;
+    if (capabilityNote) capabilityNote.textContent = chatCapabilitiesText(caps);
     const providerNote = document.getElementById("chat-provider-note");
     if (providerNote) providerNote.textContent = chatProviderNote();
     for (const [id, available] of [["chat-context-consent", caps?.context === true], ["chat-history-consent", caps?.history === true]]) {
