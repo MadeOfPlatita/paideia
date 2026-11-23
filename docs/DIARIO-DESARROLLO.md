@@ -978,3 +978,65 @@ anterior.
   hasta 4 llamadas al proveedor por turno, todas facturando el historial.
 
 Pruebas al cierre: **840 Python** y **128 Node** en verde.
+
+## Entrada — 24 de noviembre de 2026, madrugada: el bug de `index`, el historial y el eco
+
+### 1. La causa raíz del fallo de catálogo, encontrada y arreglada
+
+El síntoma: toda pregunta de catálogo devolvía vacío en ~1,5 s mientras una
+definición tardaba 20 s y respondía. El patrón (rápido = roto) apuntaba a que la
+petición al modelo se completaba con una sola vuelta y sin resultado.
+
+Se instrumentó el proveedor real desde local leyendo la clave de la API de Render
+(sin imprimirla) y envolviendo `_post` para capturar el cuerpo. La respuesta era:
+
+```
+answer='' finish='tool_calls' tool_calls=0
+tool_calls (crudo): {"index": 0, "function": {"arguments": "...", "name": "search_products"},
+                     "id": "call_a08bd5fa...", "type": "function"}
+```
+
+**El proveedor añade `index: 0` a cada `tool_call`.** `_parse_output_tool_call`
+exigía el conjunto **exacto** `{id, type, function}`, así que rechazaba todas las
+llamadas. Y el rechazo se tragaba en silencio: `content` llega como cadena vacía
+(no `None`), de modo que la excepción se capturaba y se entregaba una respuesta
+vacía con `finish_reason: tool_calls`. El modelo gastaba su única llamada en
+pedir una herramienta que nunca se ejecutaba.
+
+Arreglado en `providers.py`: `index` es metadato posicional y se ignora; el resto
+de campos se sigue validando (una prueba comprueba que no abre la puerta a otros).
+Medido después: `tool_calls=1` y el turno entero responde con el TAE del 3,1 %.
+
+No se podía ver antes porque `api.commandcode.ai` responde 403 de Cloudflare
+(error 1010) desde este equipo: hubo que usar el cliente del propio repo con la
+clave leída de la API de Render.
+
+### 2. Historial conversacional activo
+
+La única razón por la que Pai no recordaba era el veto del constructor. Seis
+eslabones, todos abiertos:
+
+| Eslabón | Antes | Ahora |
+| --- | --- | --- |
+| `backend_services.py:696` | exigía proveedor sintético | exige proveedor habilitado |
+| `pai_setup.py` | nunca pasaba `history_enabled` | lo pasa; apagable con `PAIDEIA_CHAT_HISTORY=0` |
+| `app.js:1258` | solo acumulaba con `provider_mode === "test_only"` | acumula con consentimiento |
+| tope por mensaje | 1.000 caracteres | 4.000 (16.000 en total) |
+| tope de petición | 32 KiB en dos sitios | 64 KiB |
+| `validate_history` | 1.000 / 6.000 | 4.000 / 16.000 |
+
+El tope de 1.000 era letal por sí solo: las respuestas reales van de 1.800 a
+7.800 caracteres, así que **cada turno se habría descartado** y el historial
+nunca se habría llenado.
+
+Medido con el proveedor real y en producción: el turno 2 («¿y para 24 meses?»)
+devuelve ambos depósitos de EBN con sus TAE sin que se repitan en la pregunta.
+
+### 3. Fuera el eco del perfil
+
+Con el mapa marcado, cualquier respuesta empezaba «Según el mapa que tú has
+autorizado: horizonte más de 3 años», aunque el campo no viniera al caso. Ahora
+la línea viaja aparte, en `profile_line`: el perfil sigue llegando al prompt pero
+no invade el texto del modelo. Tres pruebas nuevas lo fijan.
+
+Pruebas al cierre: **845 Python** y **128 Node** en verde.
