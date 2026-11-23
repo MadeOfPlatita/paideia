@@ -11,8 +11,8 @@ Aquí no hay claves, tokens ni datos personales.
 | Hermes Agent | Orquestar el trabajo: leer y editar el repositorio, ejecutar pruebas, desplegar y verificar |
 | Subagentes de Hermes (`delegate_task`) | 12 pruebas en paralelo: práctica, catálogo, contrato, UI, seguridad, accesibilidad, rendimiento, cobertura, DTO y documentación |
 | Python 3.11 / 3.14 | Aplicación, herramientas de catálogo y suites de prueba |
-| `pytest` / `unittest` | 777 pruebas de backend, catálogo, perfil, privacidad y redacción |
-| Node.js (`node --test`) | 113 pruebas del modelo de perfil y de la interfaz |
+| `pytest` / `unittest` | 831 pruebas de backend, catálogo, perfil, privacidad y redacción |
+| Node.js (`node --test`) | 127 pruebas del modelo de perfil y de la interfaz |
 | Chromium por CDP (Browser Use) | Recorridos reales, medidas en píxeles, capturas y generación de PDF |
 | Git + GitHub CLI (`gh`) | Historial por hitos, rama `master`, visibilidad y búsqueda de secretos |
 | `curl`, PowerShell, `grep` | Comprobar respuestas HTTP, detener procesos y buscar en el código |

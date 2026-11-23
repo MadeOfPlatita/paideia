@@ -728,3 +728,66 @@ defecto con un motivo escrito; se ejecutan con `PAIDEIA_GUI_TESTS=1`. Resultado
 estable: **771 pasan, 6 saltan** (802 subtests). La puerta mide ya el código y no
 el entorno.
 
+## Pai util: el filtro, el prompt y el techo de salida - 23 de noviembre de 2026
+
+Tres sintomas reportados por el usuario, reproducidos con llamadas reales a
+produccion antes de tocar nada.
+
+### 1. «que es el TAE» devolvia una respuesta vacia
+
+Medido: `que es el TAE` -> 0 caracteres, `answer_text_state:
+withheld_unbacked_claim`, motivo `attribution`. La variante `¿Que es el tanto
+anual equivalente?` respondia 451 caracteres. El filtro de superficie trataba
+cualquier mencion de oficial/vigente/folleto/publicado como si atribuyera un dato
+del catalogo, y retenia la respuesta entera. Frases de manual como «La TAE
+vigente puede cambiar» o «se calcula conforme al folleto» se tiraban.
+
+Regla nueva: una atribucion solo se retiene si la frase **ademas** aporta un dato
+material (cifra, importe, fecha, URL o un producto concreto con demostrativo).
+El vocabulario de manual sin dato pasa. Y cuando hay una frase que si adjudica,
+se quita **esa frase** y se conserva el resto, en vez de tirar la respuesta
+completa; si no queda nada, se retiene entera.
+
+### 2. La pregunta practica se quedaba sin guia
+
+«Voy a tener un gasto de 1000 euros en 2 anos, donde lo pongo» devolvia 73
+caracteres: «Voy a mirar que hay en el catalogo». El modelo recibia
+herramientas (la pregunta no se detectaba como practica), intentaba una llamada
+que se descartaba por invalida y cerraba el turno con el anuncio.
+
+Dos cambios: la deteccion de pregunta practica cubre ahora donde meto/pongo/
+invierto, que me recomiendas y que opciones tengo, asi que esas preguntas no
+abren el catalogo; y el prompt prohibe anunciar una herramienta sin usarla en el
+mismo turno.
+
+### 3. La respuesta buena se rechazaba o se cortaba
+
+- El proveedor devolvia HTTP 200 con `tool_calls` fuera de contrato y el turno
+  se rechazaba con 502 aunque el texto estuviera bien. Ahora, si hay texto o
+  rechazo, se entrega el texto y las llamadas dudosas se descartan; jamas se
+  ejecuta una llamada sin parsear.
+- El techo de salida era 2400 y luego 3000 tokens: una explicacion exhaustiva se
+  cortaba a mitad de una enumeracion. Sube a 8000, que es lo que admite el
+  adaptador.
+
+### 4. El papel de «no soy asesor» pasa a ser la razon de ser concreto
+
+El prompt declaraba el limite sin decir que se puede hacer. Ahora dice que, por
+no ser un asesor registrado, puede y debe explicar el criterio, aplicar las
+cifras de la persona y decir que miraria, sin vender producto. Cuatro modos:
+definicion exhaustiva con sinonimos, decision practica con las cifras del
+usuario, pasos numerados, y dato de catalogo breve.
+
+### Verificacion en produccion (cada caso, el mismo dia)
+
+| Pregunta | Antes | Ahora |
+|---|---|---|
+| `que es el TAE` | 0 caracteres, retenida | 3.028 caracteres, completa |
+| `tanto anual equivalente` | 451 caracteres | 5.032 caracteres |
+| `1000 EUR en 2 anos, donde lo meto` | 73 caracteres o 502 | 2.842-3.063 caracteres con criterio |
+| «explicame un deposito, se exhaustivo» | cortada (`truncated: true`) | 7.831 caracteres sin corte |
+
+Pruebas: **831 Python** y **127 Node** en verde; 6 saltadas son las de ventana
+Tk. Nuevas baterias: `test_pai_conversation_quality.py` (filtro, prompt y
+presupuesto), `test_practical_question_routing.py` (practica frente a catalogo)
+y `test_provider_tool_call_recovery.py` (respuesta con llamadas invalidas).

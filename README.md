@@ -59,7 +59,7 @@ python app/tools/quality_gate.py
 ```
 
 La puerta elige un intérprete con `pytest`, lanza las pruebas Python y después
-las de Node. En esta instantánea: **777 pruebas Python y 113 de Node**.
+las de Node. En esta instantánea: **831 pruebas Python y 127 de Node**.
 
 ## Configuración
 
