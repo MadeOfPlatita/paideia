@@ -112,6 +112,20 @@ function chatCapabilitiesText(capabilities) {
     + `; historial: ${caps?.history === true ? "habilitado" : "desactivado"}.`;
 }
 
+// Texto de la casilla de historial segun la capacidad real del servicio. Antes
+// prometia siempre "hasta dos turnos anteriores" aunque la capacidad estuviera
+// apagada, que es el caso de produccion: el usuario leia una promesa y
+// encontraba un control muerto.
+function chatHistoryConsentText() {
+  if (chatCapabilities?.history !== true) {
+    return "Historial no disponible: este servicio no reenvía preguntas anteriores, "
+      + "así que Pai responde solo con lo que diga tu mensaje actual.";
+  }
+  return "Autorizo reenviar con esta pregunta hasta dos turnos anteriores de esta "
+    + "pestaña (cuatro mensajes como máximo, 1.000 caracteres cada uno); sin "
+    + "guardado en el servidor.";
+}
+
 const state = {
   route: "inicio",
   profile: PROFILE_MODEL.createEmptyProfile(),
@@ -1052,9 +1066,12 @@ function renderHome() {
   const contextConsent = el("input", {type:"checkbox", id:"chat-context-consent", disabled:chatCapabilities?.context !== true});
   const historyConsent = el("input", {type:"checkbox", id:"chat-history-consent", disabled:chatCapabilities?.history !== true});
   chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-context-consent"}, [contextConsent, el("span", {}, "Autorizo adjuntar a esta pregunta solo los campos de mi mapa que he marcado.")]));
-  chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, "Autorizo conservar en esta pestaña, solo durante esta prueba con contenido ficticio, mis preguntas y las respuestas de Pai de hasta dos turnos anteriores (cuatro mensajes como máximo) y reenviarlos con la pregunta siguiente; sin guardado automático.")]));
+  chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, chatHistoryConsentText())]));
   let historyRevision = 0;
   const historyClear = button("Borrar historial de esta pestaña", () => { historyRevision += 1; PaideiaChatContext.clear(); feedback.textContent = "Historial borrado de esta pestaña. Los mensajes ya enviados al proveedor no se borran."; }, "button button-quiet", {id:"chat-history-clear", type:"button"});
+  // Sin la capacidad de historial no hay nada que borrar: ofrecer el boton
+  // confirmaba una operacion imposible ("Historial borrado" sin historial).
+  if (chatCapabilities?.history !== true) historyClear.disabled = true;
   historyClear.setAttribute("id", "chat-history-clear");
   chatOptions.appendChild(historyClear);
   historyConsent.addEventListener("change", () => {

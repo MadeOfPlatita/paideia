@@ -892,3 +892,89 @@ fallo en paralelo respondio 1.917 caracteres en serie. Las mediciones de cola
 deben hacerse en serie.
 
 Pruebas al cierre: **840 Python** en verde, 6 saltadas (ventanas Tk).
+
+## Entrada — 23 de noviembre de 2026: la memoria del chat, medida con cinco auditorías
+
+Pregunta recibida: **«¿el chatbot mantiene memoria / contexto, es decir, recuerda el
+mensaje anterior?»**. Se lanzaron cinco auditorías en paralelo (código, servicio
+desplegado, mecanismo aislado, interfaz y perfil) para responderla con evidencia.
+
+### Respuesta: no. Y no por un fallo, sino porque está prohibido por diseño
+
+Medido en producción. El turno 1 fija importe, producto y plazo; el turno 2
+pregunta «¿y para 24 meses?» y la respuesta es literal:
+
+> «No tengo delante el caso anterior —en esta conversación solo me llega tu
+> pregunta—, así que no sé a qué cálculo te refieres con «24 meses». No quiero
+> darte una cifra inventada.»
+
+La cadena se corta **seis veces**, y cualquiera basta:
+
+| # | Eslabón | Fichero:línea |
+| --- | --- | --- |
+| 1 | La casilla nace deshabilitada | `app/static/app.js:1069` |
+| 2 | El historial solo se acumula con `provider_mode === "test_only"` | `app/static/app.js:1244` |
+| 3 | El tope de 1.000 caracteres vaciaría turnos de 2.842–7.831 | `app/static/chat_context_model.js:12` |
+| 4 | El constructor prohíbe el historial salvo proveedor sintético | `app/backend_services.py:696` |
+| 5 | La fábrica de producción nunca lo pide | `app/pai_setup.py:246`, `:328` |
+| 6 | `/api/status` publica `false` y cierra el círculo | `app/backend_services.py:739` |
+
+En la variante de Vercel hay un séptimo: `api/index.py:207` lo fija a mano y no
+existe ruta `/api/chat` (devuelve 405). Allí Pai no tiene chat.
+
+**El mecanismo no es código muerto.** Parcheando `_history_enabled=True` con un
+proveedor sintético, los mensajes previos llegan al proveedor en orden
+(`['system','user','assistant','user']`), sobreviven al serializador HTTP real y
+los rechazos ocurren **antes** de tocar al proveedor (0 peticiones). Es reenvío
+del cliente: el servidor es stateless y no guarda nada entre turnos.
+
+**`context` no es memoria.** Es la proyección del mapa (objetivo, horizonte,
+importe) que el cliente reconstruye en cada envío. Cuatro rutas, ninguna de
+riesgo. Verificado: un turno posterior sin `context` no lleva rastro alguno del
+anterior.
+
+### Tres defectos arreglados
+
+1. **La interfaz prometía memoria inexistente.** El texto de la casilla detallaba
+   «hasta dos turnos anteriores (cuatro mensajes)» con la capacidad apagada, y el
+   botón «Borrar historial» siempre confirmaba «Historial borrado» sin haber nada
+   que borrar. Ahora el texto depende de la capacidad real y el botón nace
+   deshabilitado.
+2. **Hueco de cobertura.** Ningún test comprobaba que la casilla naciese
+   deshabilitada ni que el payload no lleve `history`. Añadido a
+   `chat_frontend_contract.test.cjs`: se podía romper el apagado del historial
+   sin que la suite se enterase.
+3. **Cliente de pruebas mal formado.** Anidaba `context_consent` dentro de
+   `consent`, lo que daba 403 `CHAT_CONSENT_REQUIRED` y hacía concluir «no
+   recuerda» por el motivo equivocado. El código real es
+   `CHAT_CONTEXT_NOT_ALLOWED`.
+
+### Dos defectos detectados y NO arreglados (decisión de producto)
+
+1. **El eco del perfil se antepone a cualquier respuesta.** Preguntando «¿qué es
+   el interés compuesto?» con el mapa marcado, la respuesta empieza «Según el
+   mapa que tú has autorizado: horizonte más de 3 años» — ruido sobre un campo
+   que no viene al caso. Hay seis tests que fijan ese eco (`test_profile_echo.py`,
+   `test_profile_to_prompt.py`), así que cambiarlo es decisión de producto.
+2. **La tolerancia al riesgo no puede viajar.** Existe en `profile_model.js:86`
+   pero no está en `FIELDS` (`chat_context.py:8-13`): `validate_context` la
+   rechaza. Solo viajan cuatro rutas.
+
+### Riesgos anotados si algún día se enciende el historial
+
+- **Presupuesto de 32 KiB** (`providers.py:91`): el caso máximo legal (4×1.000
+  caracteres + pregunta + herramientas) pesa 32.382 bytes → rechazado en la
+  primera llamada con un 502 genérico. Con el scope real, 946 bytes de margen.
+- **Tope de 32 mensajes** (`providers.py:249`): 4 de historial + 2 + 3 rondas de
+  herramientas = 33 → falla a mitad del turno.
+- **Contaminación**: `_profile_applied` (`backend_services.py:220`) antepone los
+  campos del mapa al `answer`, el cliente lo guarda y lo reenvía como turno
+  `assistant`: los datos del mapa vuelven a viajar como texto libre, saltándose
+  `validate_context`.
+- **Inyección**: `validate_history` valida forma, no contenido. El cliente
+  controla el array entero y puede falsificar turnos `assistant`. La única
+  defensa es una frase del system prompt (`backend_services.py:804`).
+- **Coste**: un turno con historial pasa de 7.897 a 12.023 bytes (+52 %) y hay
+  hasta 4 llamadas al proveedor por turno, todas facturando el historial.
+
+Pruebas al cierre: **840 Python** y **128 Node** en verde.

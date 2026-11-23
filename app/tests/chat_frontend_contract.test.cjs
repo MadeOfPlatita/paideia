@@ -37,6 +37,27 @@ function setup(fetch, status = DEFAULT_STATUS, hooks = {}) {
 }
 function response(status, body) { return {ok:status >= 200 && status < 300, status, async json(){return body;}}; }
 
+test('sin capacidad de historial la casilla nace deshabilitada y no se envia nada', async () => {
+  // Produccion publica `history: false`. La salvaguarda principal del producto
+  // no estaba cubierta: se podia romper el apagado del historial sin que ningun
+  // test se enterase, y el usuario leeria una promesa que el codigo no cumple.
+  const sinHistorial = {ai: {status: 'configured_not_verified',
+    capabilities: {context: true, history: false, structured_education: false}}};
+  const calls = [];
+  const ui = setup(async (...args) => { calls.push(JSON.parse(args[1].body)); return response(200, {provider_mode: 'external', answer: 'Respuesta real'}); }, sinHistorial);
+  ui.PaideiaChatContext.clear();
+
+  // La casilla esta deshabilitada y el boton de borrar tambien: no hay historial.
+  assert.equal(ui.byId['chat-history-consent'].disabled, true);
+  assert.equal(ui.byId['chat-history-clear'].disabled, true);
+
+  ui.input('¿Y para 24 meses?'); ui.consent.checked = true; await ui.send();
+  assert.equal(calls.length, 1);
+  assert.equal('history' in calls[0], false, 'no debe enviarse historial sin capacidad');
+  assert.equal('context_consent' in calls[0], false, 'sin contexto ni historial no va el bloque extra');
+  assert.equal(ui.PaideiaChatContext.history().length, 0, 'un proveedor externo nunca alimenta el historial');
+});
+
 test('synthetic context and history require independent opt ins', async () => {
   const calls=[]; const ui=setup(async(_url,options)=>{calls.push(JSON.parse(options.body)); return response(200,{provider_mode:'test_only',answer:'respuesta sintética'});});
   ui.PaideiaChatContext.clear(); ui.input('pregunta ficticia'); ui.consent.checked=true;
