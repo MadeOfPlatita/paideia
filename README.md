@@ -19,11 +19,13 @@ acceso puede tardar cerca de un minuto.
 ## Qué incluye
 
 - **Biblioteca.** 20 candidatos de investigación y **22 fichas con condiciones
-  transcritas**: **328 condiciones servidas** (327 documentadas y 1 vencida) a
-  partir de 341 transcritas: se retiraron las tasas que se añadían a familias sin
-  TAE. Cada una con URL y fecha de consulta; el título consta cuando la fuente lo
-  declara. Cada
-  tasa aparece con su estado: documentada, vencida, en conflicto o sin dato.
+  transcritas**: **328 condiciones servidas** a partir de 341 transcritas (se
+  retiraron las tasas que se añadían a familias sin TAE). El estado se deriva con
+  la fecha del día: a 23/11/2026 son **324 vigentes y 4 vencidas** (ACC-01,
+  ACC-03, DEP-01 y DEP-03), y la cifra se mueve sola cuando caduca una promoción.
+  Cada una con URL y fecha de consulta; el título consta cuando la fuente lo
+  declara. Cada tasa aparece con su estado: documentada, vencida, en conflicto o
+  sin dato.
 - **Comparador.** De dos a cuatro productos. Solo compara cifras cuando
   magnitud, plazo y vigencia coinciden; si no, explica por qué no.
 - **Escenarios.** Dos hipótesis editables, motor determinista propio (interés
@@ -57,7 +59,7 @@ python app/tools/quality_gate.py
 ```
 
 La puerta elige un intérprete con `pytest`, lanza las pruebas Python y después
-las de Node. En esta instantánea: **774 pruebas Python y 109 de Node**.
+las de Node. En esta instantánea: **777 pruebas Python y 113 de Node**.
 
 ## Configuración
 

@@ -1,0 +1,15 @@
+# Normalización de fin de línea del repositorio.
+#
+# Los otros documentos (Markdown, Python del servidor) se guardan en CRLF en
+# Windows y funcionan igual. `app/static/app.js` y las pruebas de Node NO: varios
+# tests localizan funciones con `code.indexOf('\n}\n')` y, con CRLF, ese patrón
+# nunca aparece — los tests fallan con «unterminated function». Se fija LF para
+# esos ficheros y así el resultado no depende de `core.autocrlf` de cada máquina.
+app/static/*.js text eol=lf
+app/static/*.css text eol=lf
+app/static/*.html text eol=lf
+app/tests/*.cjs text eol=lf
+app/tests/*.js text eol=lf
+api/_static/*.js text eol=lf
+api/_static/*.css text eol=lf
+api/_static/*.html text eol=lf

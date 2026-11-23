@@ -24,10 +24,11 @@ la decisión de ese día, no la de hoy.
 - Repositorio **MadeOfPlatita/paideia**, público a 7/11/2026; `master` solo con lo
   revisado y desplegado. El historial conserva el correo personal en los commits.
 - Catálogo: 20 candidatos y 22 fichas (EBN y Self Bank son productos reales transcritos, no fixtures),
-  **328 condiciones servidas** (327 documentadas y 1 vencida), a partir de 341
-  transcritas; cada una con URL y fecha de la fuente, o
-  marcadas como desconocidas.
-- Pruebas: **775 Python** y **109 Node** en verde con `app/tools/quality_gate.py`.
+  **328 condiciones servidas** a partir de 341 transcritas; cada una con URL y
+  fecha de la fuente, o marcada como desconocida. El estado se calcula con la
+  fecha del día: a 23/11/2026 son **324 vigentes y 4 vencidas** (ACC-01, ACC-03,
+  DEP-01 y DEP-03).
+- Pruebas: **777 Python** y **113 Node** en verde con `app/tools/quality_gate.py`.
 - El justificante del ensayo se imprime como documento A4 independiente, no como
   una copia de la web.
 
@@ -663,3 +664,50 @@ Observaciones: el contador de cupo vuelve a 0 con cada redespliegue (vive en
 memoria); `/api/products/<id>` no adjunta condiciones, la UI las cruza desde
 `/api/conditions`; el repositorio sigue público y el historial conserva el correo
 personal en los commits.
+## Revisión del 23 de noviembre de 2026 — caducidades y dos fallos de interfaz
+
+Vuelta al proyecto tras dos semanas. La puerta de calidad estaba en rojo por una
+razón que importa: el test del comparador daba por vigente una promoción que ya
+había caducado, y la app —correctamente— la marcaba como vencida. No era un
+defecto de cálculo, sino una prueba atada al calendario.
+
+- **Fechas en las pruebas.** `ConditionsService` acepta ahora `reference_date`
+  (y `create_server(..., conditions_service=...)`) para fijar el día en las
+  pruebas. El servicio real sigue derivando el estado con la fecha de hoy, que es
+  lo que hace que una oferta caduque sola.
+- **Dos pruebas nuevas.** Una fija el 5/11/2026 y comprueba que DEP-01 es
+  comparable; otra fija el 23/11/2026 y comprueba que la misma pareja deja de
+  serlo con `DATA_STALE`. El comportamiento queda documentado por los dos lados.
+- **Biblioteca.** La sección «Productos con condiciones transcritas» se pintaba
+  solo desde `loadConditions()`; al recargar la ruta con las condiciones ya
+  cargadas, esa función salía antes y la sección quedaba vacía. Se pinta también
+  al construir la página. Verificado en navegador: 22 tarjetas, no 20.
+- **Enlaces compartidos.** Cualquier `/?utm_source=…` o `?v=2` devolvía un JSON
+  de error en vez de la app. La portada acepta ahora parámetros de consulta; los
+  archivos estáticos siguen rechazándolos. Con prueba.
+- **Diagnóstico TAE.** Decía «el servicio marca el dato elegible» sin enseñar la
+  cifra y volcaba las referencias como JSON crudo. Ahora muestra `TAE 3,10 %` y
+  `TAE 2,75 %`, con la fuente enlazada y los motivos en castellano.
+- **Documentación.** README y diario ya no fijan «327 documentadas y 1 vencida»:
+  a 23/11/2026 son 324 vigentes y 4 vencidas, y la cifra se mueve con el
+  calendario.
+
+Comprobado además contra producción: `/api/conditions` sigue sirviendo 22 fichas
+y 328 condiciones, `/api/compare` devuelve EBN y Self Bank como comparables, y el
+chat responde con el proveedor configurado. Lo que **no** se ha tocado: Render y
+Vercel siguen con la versión anterior hasta el siguiente despliegue.
+### Nota de mantenimiento — fin de línea en `app.js`
+
+Este repositorio se trabaja en Windows con `core.autocrlf=true`, así que git
+convierte a CRLF cualquier archivo al hacer `checkout`, `stash pop` o `restore`.
+`app/static/app.js` no lo soporta: varias pruebas de Node localizan funciones con
+`code.indexOf('
+}
+')` y ese patrón no existe en un archivo CRLF, de modo que
+fallan con «unterminated function» sin que el código haya cambiado. Se añadió
+`.gitattributes` fijando `eol=lf` para `app/static`, `app/tests` y `api/_static`.
+Si alguna vez vuelve a pasar, la comprobación es
+`node -e "console.log(require('fs').readFileSync('app/static/app.js','utf8').includes('
+'))"`
+y debe imprimir `false`.
+

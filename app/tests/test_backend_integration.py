@@ -4,8 +4,10 @@ import json
 import threading
 import unittest
 from contextlib import contextmanager
+from datetime import date
 
 import app
+from conditions_service import ConditionsService
 
 
 @contextmanager
@@ -97,7 +99,10 @@ class ComparabilityHttpTests(unittest.TestCase):
             self.assertNotIn("METRIC_MISSING", item["reason_codes"])
 
     def test_default_compare_exposes_missing_facts_without_approving_freshness_policy(self):
-        with running_server() as server:
+        # Fecha fija: la TAE de DEP-01 es promocional y caduca sola. Con la fecha
+        # real del día la prueba cambiaría de resultado sin que cambie el código.
+        service = ConditionsService(reference_date=date(2026, 11, 5))
+        with running_server(conditions_service=service) as server:
             status, body = request(server, "/api/compare", {
                 "product_ids": ["DEP-01", "DEP-02"], "criterion": "deposit_tae_12m_eur"})
         self.assertEqual(status, 200)
@@ -116,6 +121,23 @@ class ComparabilityHttpTests(unittest.TestCase):
         self.assertEqual(by_id["DEP-01"]["value"], "3.24")
         self.assertIn("PERIOD_MISMATCH", by_id["DEP-02"]["reason_codes"])
         self.assertIsNone(by_id["DEP-02"]["value"])
+
+    def test_expired_promotion_stops_being_comparable(self):
+        """La misma pareja, pasada la vigencia, deja de ser comparable por sí sola.
+
+        Es el comportamiento que se quiere: la app no presenta una tasa caducada
+        como actual, y el motivo viaja en el diagnóstico.
+        """
+        service = ConditionsService(reference_date=date(2026, 11, 23))
+        with running_server(conditions_service=service) as server:
+            status, body = request(server, "/api/compare", {
+                "product_ids": ["DEP-01", "DEP-02"], "criterion": "deposit_tae_12m_eur"})
+        self.assertEqual(status, 200)
+        self.assertFalse(body["quantitative_ready"])
+        by_id = {item["product_id"]: item for item in body["comparability"]["items"]}
+        self.assertIn("DATA_STALE", by_id["DEP-01"]["reason_codes"])
+        self.assertFalse(by_id["DEP-01"]["eligible"])
+        self.assertIsNone(by_id["DEP-01"]["value"])
 
 
     def test_criterion_cannot_relabel_repository_family_as_a_deposit(self):

@@ -2242,6 +2242,10 @@ function renderLibrary() {
   renderLibrarySelection();
   renderCatalogueResults();
   renderProductDetail();
+  // La sección de transcritos se pinta también aquí: al recargar o volver a la
+  // ruta con las condiciones ya cargadas, loadConditions() sale antes y la
+  // sección quedaba vacía aunque la API sí devolviera esos productos.
+  renderCuratedCatalogue();
   if (Array.from(state.library.query).length > 100 || !state.library.loaded || state.library.error) loadCatalogueForLibrary();
   loadConditions();
   return heading;
@@ -2400,6 +2404,9 @@ function renderComparePage(focus = true) {
   return null;
 }
 
+const RATE_VALUE = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
+const ratePercent = (value) => `${Number(value).toFixed(2).replace(".", ",")} %`;
+
 const DIAGNOSIS_REASONS = Object.freeze({
   FRESHNESS_POLICY_NOT_CONFIGURED: "No hay política de actualidad configurada.", FRESHNESS_BOUNDS_UNCONFIGURED: "No hay límites de actualidad configurados.",
   METRIC_MISSING: "Falta el dato para este criterio.", METRIC_NOT_APPLICABLE: "El dato no es aplicable.",
@@ -2433,16 +2440,34 @@ function renderDiagnosis() {
   if (d.busy) holder.appendChild(textElement("p", "Consultando el diagnóstico local…", "loading-state"));
   else if (d.error) holder.appendChild(callout("No se pudo obtener un diagnóstico válido. Puedes volver a solicitarlo manualmente.", "error-note"));
   else if (d.result && JSON.stringify(d.ids) === JSON.stringify(state.selectedIds)) {
+    const eligible = d.result.items.filter(item => item.eligible && typeof item.value === "string" && RATE_VALUE.test(item.value));
+    if (eligible.length) {
+      const list = el("ul", { className: "text-list" });
+      for (const item of eligible) {
+        list.appendChild(el("li", {}, `${productName(state.catalogueCache.get(item.product_id))}: TAE ${ratePercent(item.value)}`));
+      }
+      holder.appendChild(list);
+    }
     for (const item of d.result.items) {
       const group = el("section");
       group.appendChild(el("h3", {}, `${item.product_id} · ${productName(state.catalogueCache.get(item.product_id))}`));
-      group.appendChild(textElement("p", item.eligible ? "El servicio marca el dato elegible para este criterio; no se muestra como oferta." : "No elegible para comparación cuantitativa con este criterio."));
+      const rate = typeof item.value === "string" && RATE_VALUE.test(item.value) ? ratePercent(item.value) : null;
+      group.appendChild(textElement("p", item.eligible
+        ? `Elegible para este criterio${rate ? ` con TAE ${rate}` : ""}; el dato se cita de la ficha, no como oferta.`
+        : "No elegible para comparación cuantitativa con este criterio."));
       if (!item.reason_codes.length) group.appendChild(textElement("p", "El servicio no indicó motivos de exclusión."));
       const reasons = el("ul", { className: "text-list" });
-      for (const code of item.reason_codes) reasons.appendChild(el("li", {}, `${code}: ${DIAGNOSIS_REASONS[code] || "Motivo no reconocido; consulta el servicio local."}`));
+      for (const code of item.reason_codes) reasons.appendChild(el("li", {}, `${DIAGNOSIS_REASONS[code] || "Motivo no reconocido; consulta el servicio local."}`));
       group.appendChild(reasons);
-      if (item.source_refs.length) group.appendChild(textElement("p", `Referencias del diagnóstico: ${JSON.stringify(item.source_refs)}`, "small"));
-      else group.appendChild(textElement("p", "El diagnóstico no aporta referencias de fuente para este dato.", "small muted"));
+      const refs = item.source_refs.flatMap(ref => Array.isArray(ref.source_ids) ? ref.source_ids : []).filter(url => typeof url === "string");
+      if (refs.length) {
+        const line = el("p", { className: "small" }, ["Fuente del dato: "]);
+        refs.forEach((url, index) => {
+          if (index) line.appendChild(document.createTextNode(" · "));
+          line.appendChild(el("a", { href: url, target: "_blank", rel: "noopener noreferrer" }, url));
+        });
+        group.appendChild(line);
+      } else group.appendChild(textElement("p", "El diagnóstico no aporta referencias de fuente para este dato.", "small muted"));
       holder.appendChild(group);
     }
   }

@@ -25,10 +25,17 @@ class ConditionsService:
     """Deriva condiciones con la fecha del día; nunca inventa ni cachea estados."""
 
     def __init__(self, snapshot_path: Path | None = None, curated_path: Path | None = None,
-                 sources_path: Path | None = None):
+                 sources_path: Path | None = None, reference_date: date | None = None):
         self._snapshot_path = snapshot_path or (PROJECT_ROOT / SNAPSHOT_RELATIVE)
         self._curated_path = curated_path or (PROJECT_ROOT / CURATED_RELATIVE)
         self._sources_path = sources_path or (PROJECT_ROOT / SOURCES_RELATIVE)
+        # Sin fecha fija el estado se deriva con la fecha del día: una tasa
+        # promocional caduca sola y la ficha deja de presentarse como vigente.
+        # Las pruebas fijan una fecha para no depender del calendario.
+        self._reference_date = reference_date
+
+    def _day(self, today: date | None) -> date:
+        return today or self._reference_date or date.today()
 
     def _curated(self) -> dict | None:
         try:
@@ -108,7 +115,7 @@ class ConditionsService:
         snapshot = _read_json(self._snapshot_path)
         if not isinstance(snapshot, dict):
             raise RuntimeError("snapshot is not an object")
-        return derive(snapshot, today=today, curated=self._curated(), sources=self._sources())
+        return derive(snapshot, today=self._day(today), curated=self._curated(), sources=self._sources())
 
     def for_product(self, product_id: str, today: date | None = None) -> dict | None:
         report = self.describe(today)

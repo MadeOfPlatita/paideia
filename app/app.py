@@ -717,10 +717,13 @@ class _Handler(BaseHTTPRequestHandler):
             self._send_error(ApiProblem(500, "INTERNAL_ERROR", "Error interno."))
 
     def _serve_static(self, raw_path, query):
-        if query:
-            self._not_found()
+        # La portada admite parámetros de consulta (utm, cache-buster de un enlace
+        # compartido): `/?v=2` debe servir la app, no un JSON 404. Los archivos
+        # estáticos sí los rechazan para no servir variantes.
         if raw_path == "/" or raw_path in {"/static", "/static/"}:
             relative = "index.html"
+        elif query:
+            self._not_found()
         elif raw_path.startswith("/static/"):
             relative = raw_path[len("/static/"):]
         else:
@@ -860,7 +863,8 @@ def declared_public_origin():
     return ""
 
 
-def create_server(host="127.0.0.1", port=8765, repository=None, *, comparison_service=None, chat_service=None):
+def create_server(host="127.0.0.1", port=8765, repository=None, *,
+                  comparison_service=None, chat_service=None, conditions_service=None):
     allowed_hosts = {"127.0.0.1"}
     # Un despliegue público declara su origen exacto; solo entonces se permite
     # escuchar fuera del bucle local. Sin esa variable todo sigue siendo local.
@@ -879,7 +883,8 @@ def create_server(host="127.0.0.1", port=8765, repository=None, *, comparison_se
         httpd.comparison_service = comparison
         httpd.chat_service = (chat_service if chat_service is not None
                               else build_chat_service(catalogue, comparison))
-        httpd.conditions_service = ConditionsService() if repository is None else None
+        httpd.conditions_service = (conditions_service if conditions_service is not None
+                                    else ConditionsService() if repository is None else None)
     except Exception:
         httpd.server_close()
         raise

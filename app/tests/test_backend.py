@@ -167,6 +167,19 @@ class CatalogueApiTests(unittest.TestCase):
                 self.assertNotIn(b"Contrato local", payload)
                 self.assertNotIn("Access-Control-Allow-Origin", headers)
 
+    def test_landing_accepts_shared_links_with_query_parameters(self):
+        """Un enlace compartido con `?utm_source=…` o `?v=2` debe abrir la app.
+
+        Sin esto, la portada respondía un JSON de error y el enlace parecía roto.
+        Los estáticos sí siguen rechazando la consulta.
+        """
+        status, headers, payload = self.request("/?utm_source=whatsapp&v=2")
+        self.assertEqual(status, 200)
+        self.assertIn("text/html", headers["Content-Type"])
+        self.assertIn(b"<!doctype html>", payload[:200].lower())
+        status, headers, payload = self.request("/static/app.js?v=2")
+        self.assertEqual(status, 404)
+
 
 class PostApiTests(unittest.TestCase):
     @classmethod
