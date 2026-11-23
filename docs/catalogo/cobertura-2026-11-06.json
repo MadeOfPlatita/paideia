@@ -1,80 +1,29 @@
 [
   {
-    "candidate_id": "ETF-02",
-    "name": "Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
-    "family": "etf_ucits",
-    "documented": 12,
-    "expected": 15,
-    "coverage": 40,
+    "candidate_id": "DEP-03",
+    "name": "Depósito Pibank 12 meses",
+    "family": "deposito",
+    "documented": 13,
+    "expected": 12,
+    "coverage": 50,
     "missing": [
-      "comision_entrada",
-      "comision_salida",
-      "patrimonio",
-      "divisa_base",
-      "ucits",
-      "costes_operacion",
-      "mercado_principal",
-      "prestamo_valores",
-      "sfdr"
-    ]
-  },
-  {
-    "candidate_id": "ETF-01",
-    "name": "iShares Core MSCI Europe UCITS ETF EUR (Acc)",
-    "family": "etf_ucits",
-    "documented": 15,
-    "expected": 15,
-    "coverage": 53,
-    "missing": [
-      "nav",
-      "patrimonio",
-      "reparto",
-      "ucits",
-      "mercado_principal",
-      "prestamo_valores",
-      "sfdr"
-    ]
-  },
-  {
-    "candidate_id": "ETF-03",
-    "name": "State Street SPDR MSCI Europe Industrials UCITS ETF",
-    "family": "etf_ucits",
-    "documented": 15,
-    "expected": 15,
-    "coverage": 60,
-    "missing": [
-      "comision_entrada",
-      "comision_salida",
-      "riesgo",
-      "patrimonio",
-      "costes_operacion",
-      "sfdr"
-    ]
-  },
-  {
-    "candidate_id": "ETF-04",
-    "name": "VanEck Semiconductor UCITS ETF",
-    "family": "etf_ucits",
-    "documented": 16,
-    "expected": 15,
-    "coverage": 60,
-    "missing": [
-      "patrimonio",
-      "replica",
-      "ucits",
-      "costes_operacion",
-      "mercado_principal",
-      "prestamo_valores"
+      "tae",
+      "importe_minimo",
+      "importe_maximo",
+      "comisiones",
+      "retencion_fiscal",
+      "titularidad"
     ]
   },
   {
     "candidate_id": "ACC-03",
     "name": "Cuenta Remunerada Openbank",
     "family": "cuenta_remunerada",
-    "documented": 11,
+    "documented": 10,
     "expected": 12,
-    "coverage": 67,
+    "coverage": 58,
     "missing": [
+      "tae",
       "titularidad",
       "base_calculo_intereses",
       "divisa",
@@ -85,10 +34,11 @@
     "candidate_id": "ACC-04",
     "name": "Cuenta Remunerada Pibank",
     "family": "cuenta_remunerada",
-    "documented": 11,
+    "documented": 10,
     "expected": 12,
-    "coverage": 67,
+    "coverage": 58,
     "missing": [
+      "tae",
       "titularidad",
       "promocion_ventana_alta",
       "divisa",
@@ -99,10 +49,11 @@
     "candidate_id": "ACC-02",
     "name": "Cuenta corriente remunerada",
     "family": "cuenta_remunerada",
-    "documented": 11,
+    "documented": 10,
     "expected": 12,
-    "coverage": 75,
+    "coverage": 67,
     "missing": [
+      "tae",
       "elegibilidad",
       "promocion_ventana_alta",
       "divisa"
@@ -114,24 +65,25 @@
     "family": "deposito",
     "documented": 14,
     "expected": 12,
-    "coverage": 75,
+    "coverage": 67,
     "missing": [
+      "importe_maximo",
       "renovacion",
       "retencion_fiscal",
       "titularidad"
     ]
   },
   {
-    "candidate_id": "DEP-03",
-    "name": "Depósito Pibank 12 meses",
-    "family": "deposito",
-    "documented": 14,
+    "candidate_id": "ACC-01",
+    "name": "Cuenta Contigo",
+    "family": "cuenta_remunerada",
+    "documented": 10,
     "expected": 12,
     "coverage": 75,
     "missing": [
-      "comisiones",
-      "retencion_fiscal",
-      "titularidad"
+      "tae",
+      "disponibilidad",
+      "importe_maximo"
     ]
   },
   {
@@ -165,15 +117,29 @@
     ]
   },
   {
-    "candidate_id": "ACC-01",
-    "name": "Cuenta Contigo",
-    "family": "cuenta_remunerada",
-    "documented": 12,
-    "expected": 12,
-    "coverage": 83,
+    "candidate_id": "ETF-02",
+    "name": "Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+    "family": "etf_ucits",
+    "documented": 28,
+    "expected": 15,
+    "coverage": 80,
     "missing": [
-      "disponibilidad",
-      "importe_maximo"
+      "mercado_principal",
+      "prestamo_valores",
+      "sfdr"
+    ]
+  },
+  {
+    "candidate_id": "ETF-04",
+    "name": "VanEck Semiconductor UCITS ETF",
+    "family": "etf_ucits",
+    "documented": 27,
+    "expected": 15,
+    "coverage": 80,
+    "missing": [
+      "nav",
+      "patrimonio",
+      "mercado_principal"
     ]
   },
   {
@@ -225,6 +191,17 @@
     ]
   },
   {
+    "candidate_id": "DEP-01",
+    "name": "Depósito Tú+",
+    "family": "deposito",
+    "documented": 13,
+    "expected": 12,
+    "coverage": 92,
+    "missing": [
+      "tae"
+    ]
+  },
+  {
     "candidate_id": "DEP-EBN-12",
     "name": "Depósito Nuevo Ahorro 12 meses",
     "family": "deposito",
@@ -233,6 +210,28 @@
     "coverage": 92,
     "missing": [
       "retencion_fiscal"
+    ]
+  },
+  {
+    "candidate_id": "ETF-01",
+    "name": "iShares Core MSCI Europe UCITS ETF EUR (Acc)",
+    "family": "etf_ucits",
+    "documented": 28,
+    "expected": 15,
+    "coverage": 93,
+    "missing": [
+      "mercado_principal"
+    ]
+  },
+  {
+    "candidate_id": "ETF-03",
+    "name": "State Street SPDR MSCI Europe Industrials UCITS ETF",
+    "family": "etf_ucits",
+    "documented": 29,
+    "expected": 15,
+    "coverage": 93,
+    "missing": [
+      "sfdr"
     ]
   },
   {
@@ -268,15 +267,6 @@
     "family": "letra_deuda_publica",
     "documented": 10,
     "expected": 10,
-    "coverage": 100,
-    "missing": []
-  },
-  {
-    "candidate_id": "DEP-01",
-    "name": "Depósito Tú+",
-    "family": "deposito",
-    "documented": 14,
-    "expected": 12,
     "coverage": 100,
     "missing": []
   }

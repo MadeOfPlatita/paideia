@@ -3619,17 +3619,6 @@
           "note": null
         },
         {
-          "metric": "coste_total_1a",
-          "value": "13.0",
-          "unit": "EUR",
-          "literal": "Costes totales 13 EUR",
-          "source_url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
-          "source_title": "iShares — Documento de datos fundamentales IE00B4K48X80 (03/09/2026)",
-          "accessed": "2026-11-05",
-          "effective_to": null,
-          "note": "Sobre una inversión de 10.000 EUR a 1 año."
-        },
-        {
           "metric": "comision_entrada",
           "value": "0.0",
           "unit": "%",
@@ -3749,6 +3738,160 @@
           "accessed": "2026-11-05",
           "effective_to": null,
           "note": null
+        },
+        {
+          "metric": "nav",
+          "value": "101.82",
+          "unit": "EUR",
+          "literal": "Valor liquidativo a 20 nov 2026: EUR 101,82",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "fecha_datos",
+          "value": "2026-11-20",
+          "unit": "fecha",
+          "literal": "Valor liquidativo a 20 nov 2026",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Fecha a la que corresponde el valor liquidativo publicado en la ficha."
+        },
+        {
+          "metric": "patrimonio",
+          "value": "15579975154",
+          "unit": "EUR",
+          "literal": "Activos Netos a 20 nov 2026: EUR 15.579.975.154",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Activos netos de la clase y del fondo coinciden en la ficha."
+        },
+        {
+          "metric": "reparto",
+          "value": "Acumulación",
+          "unit": "texto",
+          "literal": "Uso de los ingresos: Acumulación",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "ucits",
+          "value": "Sí",
+          "unit": "texto",
+          "literal": "UCITS: Sí",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "sfdr",
+          "value": "No es artículo 8 ni 9",
+          "unit": "texto",
+          "literal": "Clasificación SFDR: No es artículo 8 o 9",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "La versión inglesa de la misma ficha lo publica como «Other»."
+        },
+        {
+          "metric": "gestora",
+          "value": "BlackRock Asset Management Ireland Limited",
+          "unit": "texto",
+          "literal": "Gestora del fondo: BlackRock Asset Management Ireland Limited",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "fecha_lanzamiento",
+          "value": "2009-09-25",
+          "unit": "fecha",
+          "literal": "Fecha de lanzamiento del fondo: 25 sept 2009",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "La fecha de lanzamiento de la serie coincide con la del fondo."
+        },
+        {
+          "metric": "tipo_vehiculo",
+          "value": "ETF OICVM (subfondo de iShares III plc)",
+          "unit": "texto",
+          "literal": "El Fondo es un subfondo de iShares III plc (...) El Fondo es un OICVM de tipo fondo cotizado, un «ETF OICVM».",
+          "source_url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+          "source_title": "iShares — Documento de datos fundamentales IE00B4K48X80 (03/09/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "prestamo_valores",
+          "value": "sí (devolución del 0,02 % a 30/09/2026)",
+          "unit": "texto",
+          "literal": "Devolución de préstamo de valores a 30 sept 2026: 0,02 %",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "El documento de datos fundamentales confirma que el Fondo puede prestar valores; la ficha publica la devolución obtenida."
+        },
+        {
+          "metric": "registro_espana",
+          "value": "España",
+          "unit": "texto",
+          "literal": "Localizaciones registrados: ... España ...",
+          "source_url": "https://www.blackrock.com/es/profesionales/productos/251861/ishares-msci-europe-ucits-etf-acc-fund",
+          "source_title": "iShares — iShares Core MSCI Europe UCITS ETF EUR (Acc) (ficha del producto, es)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "España figura en la lista de países de registro de la ficha."
+        },
+        {
+          "metric": "suscripcion_reembolso",
+          "value": "suscripción y reembolso directos solo para participantes autorizados; el resto, por mercado secundario",
+          "unit": "texto",
+          "literal": "En circunstancias normales, solo los participantes autorizados pueden comprar y vender acciones directamente con el Fondo. Por lo general, los inversores que no sean participantes autorizados (...) solo pueden comprar y vender acciones en el mercado secundario",
+          "source_url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+          "source_title": "iShares — Documento de datos fundamentales IE00B4K48X80 (03/09/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "incidencia_anual_costes_1a",
+          "value": "0.1",
+          "unit": "% anual",
+          "literal": "Impacto anual en los costes (*): 0.1 % (si sale después de 1 año)",
+          "source_url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+          "source_title": "iShares — Documento de datos fundamentales IE00B4K48X80 (03/09/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Costes totales 13 EUR sobre 10.000 EUR a 1 año."
+        },
+        {
+          "metric": "incidencia_anual_costes_5a",
+          "value": "0.1",
+          "unit": "% anual",
+          "literal": "Impacto anual en los costes (*): 0.1 % (si sale después de 5 años)",
+          "source_url": "https://www.blackrock.com/es/profesionales/literature/kiid/eu-priips-ishares-core-msci-europe-ucits-etf-eur-acc-ie00b4k48x80-es.pdf",
+          "source_title": "iShares — Documento de datos fundamentales IE00B4K48X80 (03/09/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Costes totales 97 EUR sobre 10.000 EUR a 5 años."
         }
       ]
     },
@@ -3778,6 +3921,17 @@
       "tiers": [],
       "documented": [
         {
+          "metric": "nav",
+          "value": "90.80",
+          "unit": "EUR",
+          "literal": "NAV, As of 20.11.2026: 90.80 EUR",
+          "source_url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+          "source_title": "Xtrackers (DWS) — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Valor liquidativo en euros; la misma ficha publica 99.72 USD para la clase."
+        },
+        {
           "metric": "isin",
           "value": "IE000CXLGK86",
           "unit": "ISIN",
@@ -3798,28 +3952,6 @@
           "accessed": "2026-11-05",
           "effective_to": null,
           "note": "Desglose publicado: 0.05% comisión de la gestora + 0.10% cuota fija."
-        },
-        {
-          "metric": "nav",
-          "value": "105.76",
-          "unit": "USD",
-          "literal": "NAV (03.11.2026): 105.76 USD",
-          "source_url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
-          "source_title": "Xtrackers (DWS) — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
-          "accessed": "2026-11-05",
-          "effective_to": null,
-          "note": null
-        },
-        {
-          "metric": "nav",
-          "value": "94.48",
-          "unit": "EUR",
-          "literal": "94.48 EUR",
-          "source_url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
-          "source_title": "Xtrackers (DWS) — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
-          "accessed": "2026-11-05",
-          "effective_to": null,
-          "note": "Celda NAV de 'Fund facts'; la celda contigua 'NAV date' dice 03.11.2026."
         },
         {
           "metric": "divisa_clase",
@@ -3919,6 +4051,182 @@
           "accessed": "2026-11-05",
           "effective_to": null,
           "note": null
+        },
+        {
+          "metric": "fecha_datos",
+          "value": "2026-11-20",
+          "unit": "fecha",
+          "literal": "NAV, As of 20.11.2026",
+          "source_url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+          "source_title": "Xtrackers (DWS) — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Fecha a la que corresponden los valores liquidativos publicados."
+        },
+        {
+          "metric": "patrimonio",
+          "value": "14330000000",
+          "unit": "EUR",
+          "literal": "Total AUM of fund, As of 20.11.2026: 14.33 B EUR",
+          "source_url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+          "source_title": "Xtrackers (DWS) — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "La ficha publica 14,33 B EUR (miles de millones): 14.330 millones EUR."
+        },
+        {
+          "metric": "divisa_base",
+          "value": "USD",
+          "unit": "texto",
+          "literal": "The currency of the fund is USD.",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "El fondo y la clase 2D comparten divisa USD."
+        },
+        {
+          "metric": "ucits",
+          "value": "Sí",
+          "unit": "texto",
+          "literal": "a sub-fund of Xtrackers (IE) plc. The fund is an Irish based UCITS (...). The fund is a UCITS ETF.",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "comision_entrada",
+          "value": "0.0",
+          "unit": "%",
+          "literal": "Entry costs: We do not charge an entry fee. 0 USD",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "comision_salida",
+          "value": "0.0",
+          "unit": "%",
+          "literal": "Exit costs: We do not charge an exit fee. 0 USD",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "comision_rendimiento",
+          "value": "0.0",
+          "unit": "%",
+          "literal": "Performance fees: We do not charge a performance fee. 0 USD",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "La ficha MiFID II de la gestora publica «incidental costs (performance fee) 0.000% p.a.»."
+        },
+        {
+          "metric": "incidencia_anual_costes_1a",
+          "value": "0.2",
+          "unit": "% anual",
+          "literal": "Annual cost impact (*): 0.2 % (si sale después de 1 año)",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Costes totales 15 USD sobre 10.000 USD a 1 año."
+        },
+        {
+          "metric": "incidencia_anual_costes_5a",
+          "value": "0.2",
+          "unit": "% anual",
+          "literal": "Annual cost impact (*): 0.2 % each year (si sale después de 5 años)",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Costes totales 101 USD sobre 10.000 USD a 5 años."
+        },
+        {
+          "metric": "paises_registro",
+          "value": "Austria, France, Germany, Ireland, Italy, Luxembourg, Spain, United Kingdom",
+          "unit": "texto",
+          "literal": "Registered countries: Austria, France, Germany, Ireland, Italy, Luxembourg, Spain, United Kingdom",
+          "source_url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+          "source_title": "Xtrackers (DWS) — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Ocho países en el acordeón «Registered countries» de la ficha."
+        },
+        {
+          "metric": "periodo_mantenimiento_recomendado",
+          "value": "5",
+          "unit": "años",
+          "literal": "Recommended holding period: 5 years",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "fecha_documento",
+          "value": "2026-02-16",
+          "unit": "fecha",
+          "literal": "This key information is accurate as at 16.02.2026.",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "fecha_lanzamiento",
+          "value": "2023-03-08",
+          "unit": "fecha",
+          "literal": "Share class launch date: 08.03.2023",
+          "source_url": "https://etf.dws.com/en-lu/IE000CXLGK86-s-p-500-equal-weight-ucits-etf-2d",
+          "source_title": "Xtrackers (DWS) — Xtrackers S&P 500 Equal Weight UCITS ETF 2D",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "El subfondo se lanzó el 10.06.2014; la clase 2D, el 08.03.2023."
+        },
+        {
+          "metric": "suscripcion_reembolso",
+          "value": "reembolso en cada fecha de valoración",
+          "unit": "texto",
+          "literal": "You may request the redemption of shares generally on each valuation date.",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "acceso_minorista",
+          "value": "sí (clientes minoristas con conocimientos y experiencia básicos)",
+          "unit": "texto",
+          "literal": "The fund is designed for: (i) retail clients with (ii) basic knowledge and experience and (iii) are prepared to accept the level of risk indicated below",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "costes_operacion",
+          "value": "0.0",
+          "unit": "% anual",
+          "literal": "Transaction costs: 0.00 % of the value of your investment per year (...). USD 0",
+          "source_url": "https://etf.dws.com/Download/KID/IE000CXLGK86/IE/EN",
+          "source_title": "Xtrackers (DWS) — Key Information Document IE000CXLGK86 (16/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Costes de compra y venta de las inversiones subyacentes que publica el documento de datos fundamentales."
         }
       ]
     },
@@ -3937,7 +4245,7 @@
       "interest_payment": "DD+2",
       "early_cancellation": null,
       "guarantee": null,
-      "risk_indicator": null,
+      "risk_indicator": "4/7",
       "source": {
         "url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
         "kind": "official",
@@ -3971,14 +4279,14 @@
         },
         {
           "metric": "nav",
-          "value": "429.98",
+          "value": "408.78",
           "unit": "EUR",
-          "literal": "NAV EUR (Official NAV) €429,98 as of 04 Nov 2026",
+          "literal": "NAV EUR (Official NAV) €408,78 as of 20 Nov 2026",
           "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
           "source_title": "State Street SPDR — State Street SPDR MSCI Europe Industrials UCITS ETF (STQ FP)",
-          "accessed": "2026-11-05",
+          "accessed": "2026-11-23",
           "effective_to": null,
-          "note": null
+          "note": "Valor liquidativo oficial en euros de la ficha."
         },
         {
           "metric": "divisa_base",
@@ -4018,17 +4326,6 @@
           "value": "sí",
           "unit": "texto",
           "literal": "UCITS Compliant | Yes",
-          "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
-          "source_title": "State Street SPDR — State Street SPDR MSCI Europe Industrials UCITS ETF (STQ FP)",
-          "accessed": "2026-11-05",
-          "effective_to": null,
-          "note": null
-        },
-        {
-          "metric": "inversion_minima",
-          "value": "1",
-          "unit": "participaciones",
-          "literal": "Minimum Investment | 1 Share",
           "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
           "source_title": "State Street SPDR — State Street SPDR MSCI Europe Industrials UCITS ETF (STQ FP)",
           "accessed": "2026-11-05",
@@ -4111,6 +4408,171 @@
           "accessed": "2026-11-05",
           "effective_to": null,
           "note": null
+        },
+        {
+          "metric": "fecha_datos",
+          "value": "2026-11-20",
+          "unit": "fecha",
+          "literal": "NAV EUR (Official NAV) as of 20 Nov 2026",
+          "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+          "source_title": "State Street SPDR — State Street SPDR MSCI Europe Industrials UCITS ETF (STQ FP)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Fecha a la que corresponde el valor liquidativo publicado en la ficha."
+        },
+        {
+          "metric": "riesgo",
+          "value": "4/7",
+          "unit": "escala SRI",
+          "literal": "We have classified this product as 4 out of 7, which is a medium risk category.",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "patrimonio",
+          "value": "1187680000",
+          "unit": "EUR",
+          "literal": "Assets Under Management: €1 187,68 M as of 20 Nov 2026",
+          "source_url": "https://www.ssga.com/se/en_gb/intermediary/etfs/state-street-spdr-msci-europe-industrials-ucits-etf-stq-fp",
+          "source_title": "State Street SPDR — State Street SPDR MSCI Europe Industrials UCITS ETF (STQ FP)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "La ficha lo publica en millones: 1.187,68 M EUR."
+        },
+        {
+          "metric": "costes_operacion",
+          "value": "0.02",
+          "unit": "% anual",
+          "literal": "Transaction costs: 0.02 %",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "comision_entrada",
+          "value": "0.0",
+          "unit": "%",
+          "literal": "Entry costs: 0.00 %. The impact of the costs you pay when entering your investment. 0 EUR",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "comision_salida",
+          "value": "0.0",
+          "unit": "%",
+          "literal": "Exit costs: 0.00 %. The impact of the costs of exiting your investment when it matures. 0 EUR",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "comision_rendimiento",
+          "value": "0.0",
+          "unit": "%",
+          "literal": "Performance fees: There is no performance fee for this Fund. 0 EUR",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "incidencia_anual_costes_1a",
+          "value": "0.2",
+          "unit": "% anual",
+          "literal": "Annual cost impact (*): 0.2 % (si sale después de 1 año)",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Costes totales 20 EUR sobre 10.000 EUR a 1 año."
+        },
+        {
+          "metric": "incidencia_anual_costes_5a",
+          "value": "0.2",
+          "unit": "% anual",
+          "literal": "Annual cost impact (*): 0.2 % each year (si sale después de 5 años)",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Costes totales 167 EUR sobre 10.000 EUR a 5 años."
+        },
+        {
+          "metric": "depositaria",
+          "value": "State Street Custodial Services (Ireland) Limited",
+          "unit": "texto",
+          "literal": "Depositary: The Fund depositary is State Street Custodial Services (Ireland) Limited.",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "fecha_documento",
+          "value": "2026-02-19",
+          "unit": "fecha",
+          "literal": "Accurate as of: 19 February 2026",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "periodo_mantenimiento_recomendado",
+          "value": "5",
+          "unit": "años",
+          "literal": "Recommended holding period: 5 years",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "suscripcion_reembolso",
+          "value": "reembolso posible cada día hábil",
+          "unit": "texto",
+          "literal": "Redemptions are possible on every working day (...). Shareholders may redeem shares on any UK business day",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "acceso_minorista",
+          "value": "mercado secundario; emisión y reembolso reservados a inversores institucionales",
+          "unit": "texto",
+          "literal": "Save in exceptional circumstances, the Fund will generally only issue and redeem shares to certain institutional investors. However, shares of the Fund may be purchased or sold through brokers on one or more stock exchanges.",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "tipo_vehiculo",
+          "value": "OICVM (subfondo de SSGA SPDR ETFs Europe II plc)",
+          "unit": "texto",
+          "literal": "a sub-fund of SSGA SPDR ETFs Europe II plc (...) authorised by the Central Bank of Ireland as a UCITS",
+          "source_url": "https://www.ssga.com/library-content/kids?isin=IE00BKWQ0J47&documentType=kid&country=se&language=en&ticker=stq-fp",
+          "source_title": "SPDR — Key Information Document IE00BKWQ0J47 (19/02/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
         }
       ]
     },
@@ -4129,7 +4591,7 @@
       "interest_payment": null,
       "early_cancellation": null,
       "guarantee": null,
-      "risk_indicator": "7/7",
+      "risk_indicator": "6/7",
       "source": {
         "url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
         "kind": "official",
@@ -4196,25 +4658,14 @@
         },
         {
           "metric": "riesgo",
-          "value": "7/7",
+          "value": "6/7",
           "unit": "escala SRI",
-          "literal": "This Fund is ranked at 7 because funds of this type have experienced very high rises and falls in value in the past.",
-          "source_url": "https://www.vaneck.com/globalassets/home/ucits/documents/kids/KIID_VanEck-Semiconductor-UCITS-ETF_en-UK.pdf",
-          "source_title": "VanEck — Key Investor Information IE00BMC38736 (20/03/2026)",
-          "accessed": "2026-11-05",
+          "literal": "We have classified this Product as 6 out of 7, which is the second-highest risk class.",
+          "source_url": "https://vaneck.com/globalassets/home/ucits/documents/kids/priip_vaneck-semiconductor-ucits-etf_en-es.pdf",
+          "source_title": "VanEck — Key Information Document IE00BMC38736 (27/03/2026)",
+          "accessed": "2026-11-23",
           "effective_to": null,
-          "note": null
-        },
-        {
-          "metric": "nav",
-          "value": "92.34",
-          "unit": "USD",
-          "literal": "NAV $92.34 as of 04 Nov 2026",
-          "source_url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview?al=en&audience=retail&disclaimer=true",
-          "source_title": "VanEck — VanEck Semiconductor UCITS ETF (SMH)",
-          "accessed": "2026-11-05",
-          "effective_to": null,
-          "note": null
+          "note": "El KIID de 20/03/2026 publicaba 7/7; el KID PRIIPs vigente clasifica en 6/7. Se transcribe el documento más reciente."
         },
         {
           "metric": "divisa_base",
@@ -4312,6 +4763,138 @@
           "source_url": "https://www.vaneck.com/globalassets/home/ucits/documents/kids/KIID_VanEck-Semiconductor-UCITS-ETF_en-UK.pdf",
           "source_title": "VanEck — Key Investor Information IE00BMC38736 (20/03/2026)",
           "accessed": "2026-11-05",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "fecha_datos",
+          "value": "2026-11-20",
+          "unit": "fecha",
+          "literal": "NAV as of 20 Nov 2026",
+          "source_url": "https://www.vaneck.com/uk/en/investments/semiconductor-etf/overview/?al=en&audience=retail&disclaimer=true",
+          "source_title": "VanEck — VanEck Semiconductor UCITS ETF (SMH)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Fecha a la que corresponde el valor liquidativo publicado en la ficha."
+        },
+        {
+          "metric": "costes_operacion",
+          "value": "0.0",
+          "unit": "% anual",
+          "literal": "Transaction costs: 0.00 % of the value of your investment per year (...). USD 0",
+          "source_url": "https://vaneck.com/globalassets/home/ucits/documents/kids/priip_vaneck-semiconductor-ucits-etf_en-es.pdf",
+          "source_title": "VanEck — Key Information Document IE00BMC38736 (27/03/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "incidencia_anual_costes_1a",
+          "value": "0.4",
+          "unit": "% anual",
+          "literal": "Total costs USD 35 / Annual cost impact (*): 0.4 % (si sale después de 1 año)",
+          "source_url": "https://vaneck.com/globalassets/home/ucits/documents/kids/priip_vaneck-semiconductor-ucits-etf_en-es.pdf",
+          "source_title": "VanEck — Key Information Document IE00BMC38736 (27/03/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Sobre un ejemplo de 10.000 USD."
+        },
+        {
+          "metric": "incidencia_anual_costes_5a",
+          "value": "0.4",
+          "unit": "% anual",
+          "literal": "Total costs USD 175 / Annual cost impact (*): 0.4 % (si sale después de 5 años)",
+          "source_url": "https://vaneck.com/globalassets/home/ucits/documents/kids/priip_vaneck-semiconductor-ucits-etf_en-es.pdf",
+          "source_title": "VanEck — Key Information Document IE00BMC38736 (27/03/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Sobre un ejemplo de 10.000 USD."
+        },
+        {
+          "metric": "ucits",
+          "value": "Sí",
+          "unit": "texto",
+          "literal": "The Product is a passively managed UCITS ETF of VanEck UCITS ETFs plc",
+          "source_url": "https://vaneck.com/globalassets/home/ucits/documents/kids/priip_vaneck-semiconductor-ucits-etf_en-es.pdf",
+          "source_title": "VanEck — Key Information Document IE00BMC38736 (27/03/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "paises_registro",
+          "value": "AT, CH, CZ, DE, DK, ES, FI, FR, HR, HU, IE, IS, IT, LU, NL, NO, PL, PT, RO, SE, SG, UK",
+          "unit": "texto",
+          "literal": "Countries of Registration: AT, CH, CZ, DE, DK, ES, FI, FR, HR, HU, IE, IS, IT, LU, NL, NO, PL, PT, RO, SE, SG, UK",
+          "source_url": "https://www.vaneck.com/de/en/smh/fact-sheet",
+          "source_title": "VanEck — VanEck Semiconductor UCITS ETF (SMH), ficha de datos (31/10/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "Códigos de país tal como los publica la ficha; incluye ES (España)."
+        },
+        {
+          "metric": "registro_espana",
+          "value": "España",
+          "unit": "texto",
+          "literal": "Countries of Registration: ... ES ...",
+          "source_url": "https://www.vaneck.com/de/en/smh/fact-sheet",
+          "source_title": "VanEck — VanEck Semiconductor UCITS ETF (SMH), ficha de datos (31/10/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": "ES figura en la lista de países de registro de la ficha."
+        },
+        {
+          "metric": "gestora",
+          "value": "VanEck Asset Management B.V.",
+          "unit": "texto",
+          "literal": "This Fund is managed by VanEck Asset Management B.V.",
+          "source_url": "https://www.vaneck.com/globalassets/home/ucits/documents/kids/KIID_VanEck-Semiconductor-UCITS-ETF_en-UK.pdf",
+          "source_title": "VanEck — Key Investor Information IE00BMC38736 (20/03/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "tipo_vehiculo",
+          "value": "UCITS ETF (subfondo de VanEck UCITS ETFs plc)",
+          "unit": "texto",
+          "literal": "a sub-fund of VanEck UCITS ETFs plc (the «Company»)",
+          "source_url": "https://www.vaneck.com/globalassets/home/ucits/documents/kids/KIID_VanEck-Semiconductor-UCITS-ETF_en-UK.pdf",
+          "source_title": "VanEck — Key Investor Information IE00BMC38736 (20/03/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "replica",
+          "value": "física completa (Physical, Full Replication)",
+          "unit": "texto",
+          "literal": "Product Structure: Physical (Full Replication)",
+          "source_url": "https://www.vaneck.com/de/en/smh/fact-sheet",
+          "source_title": "VanEck — VanEck Semiconductor UCITS ETF (SMH), ficha de datos (31/10/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "prestamo_valores",
+          "value": "no",
+          "unit": "texto",
+          "literal": "The Product invests in the underlying (physical) securities that make up the Index and does not take part in securities lending.",
+          "source_url": "https://vaneck.com/globalassets/home/ucits/documents/kids/priip_vaneck-semiconductor-ucits-etf_en-es.pdf",
+          "source_title": "VanEck — Key Information Document IE00BMC38736 (27/03/2026)",
+          "accessed": "2026-11-23",
+          "effective_to": null,
+          "note": null
+        },
+        {
+          "metric": "periodo_mantenimiento_recomendado",
+          "value": "5",
+          "unit": "años",
+          "literal": "Recommended holding period: 5 years.",
+          "source_url": "https://vaneck.com/globalassets/home/ucits/documents/kids/priip_vaneck-semiconductor-ucits-etf_en-es.pdf",
+          "source_title": "VanEck — Key Information Document IE00BMC38736 (27/03/2026)",
+          "accessed": "2026-11-23",
           "effective_to": null,
           "note": null
         }
