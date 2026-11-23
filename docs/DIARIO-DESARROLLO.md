@@ -834,3 +834,61 @@ fuera de la aplicacion.
 
 Pruebas al cierre: **831 Python** y **127 Node** en verde. Render y Vercel
 desplegados y comprobados sobre la URL publica.
+
+## Entrada — 23 de noviembre de 2026: el chat funciona sin herramientas y falla con ellas
+
+Bateria de 51 preguntas contra la URL publica, con cliente que respeta la cola
+de admision (reintenta el 202 con su ticket; sin eso una prueba lee «vacio» y
+concluye que el chat no contesta). Resultado por categoria:
+
+| Categoria | Responden | Total |
+| --- | --- | --- |
+| Definiciones (TER, SRI, inflacion, diversificacion, bonos...) | 12 | 12 |
+| Metodo y pasos | 5 | 6 |
+| Decisiones practicas | 2 | 7 |
+| Catalogo | 0 | 9 |
+| Calculos | 0 | 3 |
+| Limites y fuera de dominio | 1 | 5 |
+
+El corte no es de calidad del modelo: es **con herramientas y sin ellas**.
+
+**1. La nota fija tapa respuestas que estan bien.** Reproducido en local con el
+catalogo real. A «¿Que TAE tiene el deposito de EBN Banco?» el servicio responde
+con `CATALOGUE_WITHHELD_NOTE` («No repito cifras en prosa: las tasas y
+comisiones solo valen si salen citadas de la ficha»). Los datos correctos si
+viajan: `DEP-EBN-12`, TAE del **3,1 %**, 15 condiciones verificadas, 4 fuentes
+citadas en `sources`. La capa que retiene la prosa del modelo sustituye la
+respuesta entera por esa nota, de modo que el usuario nunca lee el dato aunque
+el DTO lo lleve. Arreglarlo exige componer una respuesta determinista con las
+condiciones ya verificadas (producto, metrica, valor, fuente) en lugar de la
+nota; la prosa del modelo seguiria retenida y la frontera de seguridad no se
+toca. Hay cinco archivos de prueba que hoy fijan la nota.
+
+**2. El turno con herramientas muere sin texto en produccion.** Las 9 preguntas
+de catalogo devuelven `finish_reason: stop` con texto vacio en ~1,9 s, mientras
+una definicion tarda 16 s y devuelve 3.500 caracteres. Se anadio
+`CHAT_EMPTY_ANSWER` (502) para que el hueco no se entregue como respuesta. No se
+ha podido arreglar sin romper garantias: dejar que el modelo responda tras
+rechazar una herramienta invalida pone en rojo 17 pruebas, y un segundo intento
+sin herramientas desde el servicio pone en rojo 20. Ambas vias se revirtieron;
+el contrato del `ToolChatRunner` (un fallo de herramienta termina el turno) es
+una decision de diseno, no un descuido.
+
+**3. Dos fallos arreglados y desplegados** en `adc411f`:
+
+- `que es el TAE` en minusculas devolvia vacio y ahora responde 3.028
+  caracteres. `¿Que es la diversificacion?` daba 502 por falsos positivos de la
+  guarda financiera con frases correctas («ninguna inversion es libre de
+  riesgos»); ahora responde 3.532 caracteres y sigue rechazando la promesa real.
+- La cola de admision liberaba el turno reclamado a los 60 s mientras la
+  llamada seguia viva (respuestas de 45-60 s). Con un turno concurrente, el
+  hueco se liberaba y otro turno entraba en paralelo: dos llamadas reales donde
+  el cupo admite una. El lease sube a 180 s.
+
+**4. Nota de metodo.** Parte de los fallos de cola («cola sin resolver tras 25
+esperas») los provoco la propia bateria: se lanzaron cuatro ejecuciones en
+paralelo contra un servicio con **un solo turno concurrente**. Una pregunta que
+fallo en paralelo respondio 1.917 caracteres en serie. Las mediciones de cola
+deben hacerse en serie.
+
+Pruebas al cierre: **840 Python** en verde, 6 saltadas (ventanas Tk).
