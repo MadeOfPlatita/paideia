@@ -696,18 +696,35 @@ Comprobado además contra producción: `/api/conditions` sigue sirviendo 22 fich
 y 328 condiciones, `/api/compare` devuelve EBN y Self Bank como comparables, y el
 chat responde con el proveedor configurado. Lo que **no** se ha tocado: Render y
 Vercel siguen con la versión anterior hasta el siguiente despliegue.
+
 ### Nota de mantenimiento — fin de línea en `app.js`
 
 Este repositorio se trabaja en Windows con `core.autocrlf=true`, así que git
 convierte a CRLF cualquier archivo al hacer `checkout`, `stash pop` o `restore`.
 `app/static/app.js` no lo soporta: varias pruebas de Node localizan funciones con
-`code.indexOf('
-}
-')` y ese patrón no existe en un archivo CRLF, de modo que
-fallan con «unterminated function» sin que el código haya cambiado. Se añadió
-`.gitattributes` fijando `eol=lf` para `app/static`, `app/tests` y `api/_static`.
-Si alguna vez vuelve a pasar, la comprobación es
-`node -e "console.log(require('fs').readFileSync('app/static/app.js','utf8').includes('
-'))"`
-y debe imprimir `false`.
+`code.indexOf` del literal de cierre de función y ese patrón no existe en un
+archivo CRLF, de modo que fallan con «unterminated function» sin que el código
+haya cambiado. Se añadió `.gitattributes` fijando `eol=lf` para `app/static`,
+`app/tests` y `api/_static`. Si alguna vez vuelve a pasar, comprueba que el
+archivo no tenga retornos de carro:
+
+```
+node -e "console.log(/\r/.test(require('fs').readFileSync('app/static/app.js','utf8')))"
+```
+
+Debe imprimir `false`.
+
+### Puerta de calidad estable — 23 de noviembre de 2026
+
+La suite se ponía en rojo de forma intermitente y **distinta en cada ejecución**
+(unas veces 1 test de ventana, otras 2): los seis casos de
+`test_secure_groq_smoke.py` y `test_session_ui_feedback.py` abren una ventana Tk
+real de la antigua herramienta local para introducir la clave. En este equipo el
+runtime empaquetado trae dos copias de Tcl (`cpython-3.11` y `cpython-3.11.15`) y
+a veces no resuelve `es.msg`. El código del producto no tenía nada que ver.
+
+Se marcaron con `@pytest.mark.tk_window` y `app/conftest.py` los salta por
+defecto con un motivo escrito; se ejecutan con `PAIDEIA_GUI_TESTS=1`. Resultado
+estable: **771 pasan, 6 saltan** (802 subtests). La puerta mide ya el código y no
+el entorno.
 

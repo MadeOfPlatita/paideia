@@ -4,11 +4,14 @@ from datetime import timedelta
 from unittest.mock import patch
 import tkinter as tk
 
+import pytest
+
 import secure_groq_session as module
 from test_secure_groq_session import Clock
 from structured_session_fixture import StructuredSessionFixture
 
 
+@pytest.mark.tk_window
 class UIFeedbackTests(unittest.TestCase):
     def make_ui(self, clock, mission_config=None):
         original = tk.Tk

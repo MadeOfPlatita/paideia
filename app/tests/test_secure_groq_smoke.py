@@ -2,6 +2,8 @@
 import importlib
 import unittest
 
+import pytest
+
 try:
     smoke = importlib.import_module('secure_groq_smoke')
 except ModuleNotFoundError:
@@ -34,6 +36,7 @@ class TestSecureGroqSmoke(unittest.TestCase):
         self.assertNotIn(key, json.dumps(first))
         self.assertEqual(transport.messages, smoke.SMOKE_MESSAGES)
 
+    @pytest.mark.tk_window
     def test_window_masks_key_and_does_not_submit_on_open(self):
         self.assertIsNotNone(smoke)
         self.assertTrue(callable(getattr(smoke, 'create_window', None)), 'Masked local window is missing')
@@ -51,6 +54,7 @@ class TestSecureGroqSmoke(unittest.TestCase):
             finally:
                 window['root'].destroy()
 
+    @pytest.mark.tk_window
     def test_window_roundtrip_saves_sanitized_result_without_key(self):
         import inspect, json, tempfile, time
         from pathlib import Path
