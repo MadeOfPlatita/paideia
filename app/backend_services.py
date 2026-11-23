@@ -862,6 +862,13 @@ class LocalChatService:
         answer_text, answer_text_state, provenance_source = _withhold_unbacked_claim(
             {"answer_text_state": ANSWER_TEXT_SHOWN, "limitations": [], "catalogue": {"used": False}},
             answer_text, ANSWER_TEXT_SHOWN)
+        # Un 200 sin texto no es una respuesta: el usuario vería un hueco. Un
+        # texto retenido por la frontera sí tiene motivo declarado y se entrega
+        # como turno con `answer_text_state: withheld_unbacked_claim`.
+        if not answer_text.strip() and answer_text_state != ANSWER_TEXT_WITHHELD_UNBACKED:
+            raise ServiceProblem(502, "CHAT_EMPTY_ANSWER",
+                "El proveedor devolvió un turno sin texto; vuelve a preguntar o reformula. "
+                "No hay reintento automático.")
         return _profile_applied({"answer": _financial_checked(answer_text),
                 "refused": bool(result.refusal), "truncated": result.finish_reason == "length",
                 "provider_mode": "test_only" if self._test_only else "external",
@@ -1043,6 +1050,14 @@ class LocalChatService:
                 answer_text = result["answer"] if answer_text_state != ANSWER_TEXT_WITHHELD else ""
             if answer_text_state != ANSWER_TEXT_WITHHELD:
                 answer_text = answer_text or result["refusal"] or ""
+            # Un 200 con texto vacío no es una respuesta: es el proveedor sin
+            # devolver contenido (finish_reason stop y mensaje vacío). Un texto
+            # retenido por la frontera sí tiene motivo declarado y se entrega.
+            if (not answer_text.strip() and answer_text_state != ANSWER_TEXT_WITHHELD_UNBACKED
+                    and catalogue.get("used") is not True and result.get("calculation") is None):
+                raise ServiceProblem(502, "CHAT_EMPTY_ANSWER",
+                    "El proveedor devolvió un turno sin texto y no hay datos locales que mostrar; "
+                    "vuelve a preguntar o reformula. No hay reintento automático.")
             calculation = result.get("calculation")
             if type(calculation) is not dict:
                 calculation = None
