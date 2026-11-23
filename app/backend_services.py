@@ -11,7 +11,7 @@ _TRUSTED_GROQ_METHODS = (GroqProvider.chat, GroqProvider._chat, GroqProvider._ch
 from pai_runtime import ANSWER_TEXT_SHOWN, ANSWER_TEXT_WITHHELD, ToolChatRunner
 from chat_context import NOTICE as CONTEXT_NOTICE, validate_context, validate_history, profile_echo
 from catalogue_facts import RULESET_VERSION, ComparisonSpec, evaluate_comparability
-from catalogue_answer import compose_catalogue_answer
+from catalogue_answer import compose_catalogue_answer, pending_evidence_answer
 from financial_quality import FINANCIAL_EDUCATION_PROMPT, assess_financial_text
 from structured_education import render_selection
 from structured_provider_adapter import StructuredProviderAdapter, FakeChatProvider, parse_selection
@@ -1062,6 +1062,11 @@ class LocalChatService:
                 # menos: se compone la respuesta con las condiciones verificadas
                 # del DTO, cada una con su fuente citada.
                 compuesta = compose_catalogue_answer(catalogue)
+                if compuesta is None:
+                    # El producto existe pero su ficha aun no tiene condiciones
+                    # transcritas (ETF-01, FND-02). Decir «no repito cifras en
+                    # prosa» sonaba a politica de estilo y no explicaba nada.
+                    compuesta = pending_evidence_answer(catalogue)
                 answer_text = compuesta if compuesta is not None else CATALOGUE_WITHHELD_NOTE
             else:
                 answer_text = result["answer"] if answer_text_state != ANSWER_TEXT_WITHHELD else ""

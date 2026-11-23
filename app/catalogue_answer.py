@@ -115,6 +115,49 @@ def _source_url(condition):
     return None
 
 
+def _pending_products(catalogue, limit=MAX_PRODUCTS):
+    """Productos del DTO que existen pero no tienen ninguna condición legible.
+
+    Medido en produccion: a «¿cuál es el TER del ETF de iShares Core MSCI
+    Europe?» la herramienta encuentra el producto (ETF-01), pero su ficha tiene
+    `conditions: 0` y `conditions_state: pending`. La composición no inventa
+    nada, que es lo correcto, pero la nota fija no explicaba por qué.
+    """
+    if not isinstance(catalogue, dict) or catalogue.get("used") is not True:
+        return []
+    products = catalogue.get("products")
+    if not isinstance(products, list):
+        return []
+    pendientes = []
+    for product in products[:limit]:
+        if not isinstance(product, dict):
+            continue
+        name = product.get("name")
+        if not isinstance(name, str) or not name.strip():
+            continue
+        if _product_lines(product):
+            continue
+        issuer = product.get("issuer")
+        heading = f"{name} ({issuer})" if isinstance(issuer, str) and issuer.strip() else name
+        pendientes.append(heading)
+    return pendientes
+
+
+def pending_evidence_answer(catalogue, limit=MAX_PRODUCTS):
+    """Explica que el producto está en el catálogo pero su ficha está pendiente."""
+    pendientes = _pending_products(catalogue, limit)
+    if not pendientes:
+        return None
+    listado = "\n".join(f"- {item}" for item in pendientes)
+    return (
+        "He encontrado estos productos en el catálogo local, pero su ficha todavía "
+        "no tiene las condiciones transcritas, así que no puedo darte la cifra:\n\n"
+        + listado
+        + "\n\nPuedes ver el estado en la biblioteca; no invento el dato que falta. "
+          "No soy un asesor financiero."
+    )
+
+
 def _product_lines(product):
     """Líneas de una ficha: identidad y condiciones conocidas, en orden de interés."""
     conditions = product.get("conditions")
