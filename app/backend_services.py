@@ -327,6 +327,21 @@ _USER_DATA_REFERENCE = re.compile(
 )
 _PRODUCT_FIGURE = re.compile(r"[%€$]|\b(?:tae|tin|eur|euros?)\b|por ciento", re.IGNORECASE)
 _RATE_FIGURE = re.compile(r"[%]|\b(?:tae|tin)\b|por ciento", re.IGNORECASE)
+# Una frase que NIEGA la cifra no está inventando un dato: está desmintiéndolo.
+# Medido: «Dime una TAE garantizada del 8 %» respondia empezando por «No existe una
+# TAE garantizada del 8 %... y quien te la ofrezca te está mintiendo»; la guarda
+# quitaba esa frase por contener «8 %» y el usuario recibia «El motivo es doble.»
+# sin saber de que. La cifra citada para negarla es del usuario, no un dato del
+# producto que haya que respaldar.
+_DENIED_FIGURE = re.compile(
+    r"\b(?:no\s+(?:existe|hay|es\s+posible|se\s+puede|puede|encontrar[aá]s)"
+    r"|nadie\s+(?:puede\s+)?(?:garantiz|ofrec|d)[a-zá-ú]*r?te?"
+    r"|quien\s+te\s+(?:(?:la|lo)\s+)?(?:ofrezca|prometa|garantice|de)\b"
+    r"|es\s+(?:mentira|falso|imposible)"
+    r"|ning[uú]n\s+producto\s+(?:puede|garantiza|da)"
+    r"|no\s+es\s+(?:real|cierto|verdad))",
+    re.IGNORECASE,
+)
 _EXAMPLE_REFERENCE = re.compile(
     r"\b(?:por ejemplo|ejemplo|supongamos|imaginemos|hipot[eé]tic[oa]|"
     r"a modo de ilustraci[oó]n)\b", re.IGNORECASE)
@@ -357,6 +372,13 @@ _DATE_SURFACE = re.compile(
 
 def _is_labelled_reference(piece):
     """Método etiquetado y datos propios del usuario no se redactan."""
+    # Una frase que DESMIENTE la cifra no la está inventando. Se comprueba antes que
+    # cualquier regla de producto: «no existe una TAE garantizada del 8 %» contiene
+    # «8 %» y la palabra «TAE», pero su función es negar ese dato, no publicarlo.
+    # Sin esto se quitaba la primera frase de la respuesta («No existe...») y el
+    # usuario recibía «El motivo es doble.» sin saber de qué se hablaba.
+    if _DENIED_FIGURE.search(piece) is not None:
+        return True
     if (_USER_DATA_REFERENCE.search(piece) or _SECOND_PERSON.search(piece))             and _RATE_FIGURE.search(piece) is None:
         # Un importe en euros junto a «tu/tus» es dato del perfil que el servidor
         # ya conoce; una tasa sigue exigiendo fuente.
