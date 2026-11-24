@@ -1250,7 +1250,14 @@ function renderHome() {
             : (provenance && typeof provenance.text_state === "string" ? provenance.text_state : "");
           const catalogueUsed = Boolean(catalogue && catalogue.used === true);
           const calculation = result.calculation && typeof result.calculation === "object" ? result.calculation : null;
-          const withheld = textState.startsWith("withheld") || catalogueUsed;
+          const withheld = textState.startsWith("withheld");
+          // `recordable` separa dos cosas que antes iban juntas: que no se pinte la
+          // prosa del modelo (`withheld`) y que el turno pueda entrar en el
+          // historial. Antes era el mismo booleano, así que TODO turno de catálogo
+          // quedaba fuera y el turno siguiente respondía «no tengo el mensaje
+          // anterior». Un turno de catálogo no muestra la prosa, pero sí entrega los
+          // datos verificados con su fuente: merece recordarse.
+          const recordable = textState !== "withheld_unbacked_claim";
           const withheldReason = provenance && typeof provenance.withheld_reason === "string" ? provenance.withheld_reason : "";
           if (withheld) {
             // El aviso debe decir el motivo real declarado por el backend; si no consta,
@@ -1282,7 +1289,7 @@ function renderHome() {
           // real el historial nunca se llenaba: reenviar turnos anteriores era
           // estructuralmente imposible. Ahora basta el consentimiento de la
           // casilla y que el turno no venga retenido.
-          if (!withheld && includeHistory && historyConsent.checked && historyAtSend === historyRevision && result.answer) {
+          if (recordable && includeHistory && historyConsent.checked && historyAtSend === historyRevision && result.answer) {
             try { PaideiaChatContext.add(query, result.answer); }
             catch (_) { feedback.appendChild(textElement("p", "Este turno no se conservó: excede el límite de historial. Borra el historial para continuar.")); }
           }

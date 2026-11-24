@@ -271,7 +271,14 @@ _PRODUCT_SUBJECT = re.compile(
     r"(?:^|\W)(?:ese|esa|esto|esta|este|aquel|aquella|dicho|dicha|el|la)\s+"
     r"(?:cuenta|dep[oó]sito|producto|oferta|ficha|letra|fondo|etf|contrato)(?:\W|$)"
     r"|(?:^|\W)(?:ese|esa|aquel|aquella|dicho|dicha)\s+"
-    r"(?:banco|entidad)(?:\W|$)",
+    r"(?:banco|entidad)(?:\W|$)"
+    # Un producto con su plazo («un depósito de 24 meses», «un fondo a 3 años») se
+    # está describiendo como producto concreto, no como método. Sin esto, una
+    # frase como «un depósito de 24 meses podría situarse entre 3,5 % y 4 %»
+    # pasaba como «ejemplo educativo» y publicaba una TAE inventada.
+    r"|(?:^|\W)(?:un|una|el|la|este|esta)\s+"
+    r"(?:cuenta|dep[oó]sito|fondo|etf|letra|producto)\b[^.!?]{0,40}?"
+    r"\b(?:a|de|al)\s+(?:\d{1,2}\s*)?(?:mes|meses|año|años|d[ií]a|d[ií]as)(?:\W|$)",
     re.IGNORECASE)
 _DATE_SURFACE = re.compile(
     r"\b\d{1,2}/\d{1,2}/\d{2,4}\b|\b\d{4}-\d{2}-\d{2}\b|"
