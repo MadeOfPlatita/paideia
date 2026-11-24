@@ -770,7 +770,12 @@ CHAT_SYSTEM_PROMPT = (
     "parten de una creencia equivocada, dilo en la primera frase y sin rodeos. Después explica "
     "POR QUÉ no es posible, qué señal de alarma debería reconocer la persona y qué alternativa "
     "razonable existe. Un rechazo de una línea no enseña nada: el valor está en el motivo y en "
-    "la alternativa. No ofrezcas el catálogo si la pregunta no es sobre un producto concreto."
+    "la alternativa. No ofrezcas el catálogo si la pregunta no es sobre un producto concreto. "
+    "(6) Mensaje vacío, incompleto o ininteligible: si solo llega un carácter suelto («a»), un "
+    "signo, un emoji o una palabra sin intención, no contestes «No» ni una palabra sola. Di que "
+    "el mensaje ha llegado incompleto, repite lo que has recibido entre comillas y ofrece dos o "
+    "tres cosas concretas que sí puedes hacer. Un monosílabo deja a la persona sin saber si la "
+    "aplicación funciona. "
     "Responde en español, sin tablas, y distingue educación, incertidumbre y riesgo."
 )
 
@@ -897,6 +902,37 @@ def _retryable_transport_failure(error, tools, context=None):
         # Con herramientas disponibles el turno puede tener efectos; no se repite.
         return False
     return True
+
+
+_MIN_USEFUL_ANSWER_CHARS = 5
+_MIN_USEFUL_NOTE = (
+    "El proveedor devolvió una respuesta demasiado corta para ser útil "
+    "(«{texto}»). Vuelve a preguntar o reformula."
+)
+
+
+def _too_short_to_help(answer_text):
+    """Un monosílabo no es una respuesta.
+
+    Medido: a la pregunta «a» el modelo contestó «No» — dos caracteres. Un «No» seco
+    deja a la persona sin saber si la aplicación funciona. El prompt ya pide explicar
+    que el mensaje llegó incompleto (categoría 6), pero el modelo no siempre lo
+    cumple, así que aquí hay una red: por debajo de cinco caracteres se trata como
+    turno sin respuesta útil y se devuelve un motivo en vez de un monosílabo.
+
+    Cinco y no ocho: «No sé.» tiene seis caracteres y es una respuesta legítima. El
+    umbral solo debe atrapar el monosílabo («No», «Sí», «?»), no una respuesta breve
+    correcta.
+    """
+    if type(answer_text) is not str:
+        return False
+    limpio = answer_text.strip()
+    if not limpio:
+        return False
+    # Los textos sintéticos de las pruebas no son respuestas al usuario.
+    if "TEST ONLY" in limpio:
+        return False
+    return len(limpio) < _MIN_USEFUL_ANSWER_CHARS
 
 
 def _financial_checked(text):
@@ -1174,6 +1210,11 @@ class LocalChatService:
         # Un 200 sin texto no es una respuesta: el usuario vería un hueco. Un
         # texto retenido por la frontera sí tiene motivo declarado y se entrega
         # como turno con `answer_text_state: withheld_unbacked_claim`.
+        if _too_short_to_help(answer_text) and answer_text_state != ANSWER_TEXT_WITHHELD_UNBACKED:
+            # Un monosilabo («No» a la pregunta «a») no es una respuesta: se devuelve
+            # un motivo en su lugar.
+            raise ServiceProblem(502, "CHAT_EMPTY_ANSWER",
+                _MIN_USEFUL_NOTE.format(texto=answer_text.strip()[:20]))
         if not answer_text.strip() and answer_text_state != ANSWER_TEXT_WITHHELD_UNBACKED:
             raise ServiceProblem(502, "CHAT_EMPTY_ANSWER",
                 "El proveedor devolvió un turno sin texto; vuelve a preguntar o reformula. "
@@ -1404,6 +1445,11 @@ class LocalChatService:
             # Un 200 con texto vacío no es una respuesta: es el proveedor sin
             # devolver contenido (finish_reason stop y mensaje vacío). Un texto
             # retenido por la frontera sí tiene motivo declarado y se entrega.
+            if (_too_short_to_help(answer_text)
+                    and answer_text_state != ANSWER_TEXT_WITHHELD_UNBACKED
+                    and catalogue.get("used") is not True and result.get("calculation") is None):
+                raise ServiceProblem(502, "CHAT_EMPTY_ANSWER",
+                    _MIN_USEFUL_NOTE.format(texto=answer_text.strip()[:20]))
             if (not answer_text.strip() and answer_text_state != ANSWER_TEXT_WITHHELD_UNBACKED
                     and catalogue.get("used") is not True and result.get("calculation") is None):
                 raise ServiceProblem(502, "CHAT_EMPTY_ANSWER",
