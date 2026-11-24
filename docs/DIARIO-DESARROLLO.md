@@ -1040,3 +1040,40 @@ la línea viaja aparte, en `profile_line`: el perfil sigue llegando al prompt pe
 no invade el texto del modelo. Tres pruebas nuevas lo fijan.
 
 Pruebas al cierre: **845 Python** y **128 Node** en verde.
+
+### 4. Los cinco fallos restantes, uno por uno
+
+Con el bug de `index` arreglado, la batería subió de **22/51 a 48/53**. De los
+cinco que quedaban, cuatro eran bugs reales y se arreglaron:
+
+**a) La ficha pendiente no se explicaba.** `ETF-01` (iShares) y `FND-02` (Olea)
+existen en el catálogo pero su ficha tiene `conditions: 0` y
+`conditions_state: pending`: la transcripción no está hecha. La nota fija decía
+«no repito cifras en prosa», que suena a política de estilo y no explica nada.
+Ahora `pending_evidence_answer` nombra el producto y el motivo, sin inventar la
+cifra. Solo si tampoco hay productos se cae a la nota anterior.
+
+**b) La búsqueda no encontraba el plural.** «¿Qué letras del Tesoro tienes?»
+devolvía **cero** productos: el catálogo dice «Letra del Tesoro» en singular y la
+búsqueda era subcadena literal. Corregido con una raíz aproximada.
+
+**c) Y con el OR se arrastraba la familia entera.** «deposito EBN» devolvía los
+cuatro depósitos: bastaba con que apareciera «deposito». Ahora se exige que
+aparezcan **todos** los términos y la coincidencia parcial es solo red de rescate:
+
+| Consulta | Antes | Ahora |
+| --- | --- | --- |
+| `letras del Tesoro` | 0 productos | DEBT-01..04 |
+| `deposito EBN` | 4 depósitos | solo DEP-04 |
+| `cuenta Openbank` | 2 cuentas | solo ACC-03 |
+
+**d) El mapa de alias no tenía el nombre canónico.** `letra_deuda_publica` —el
+valor **real** de `family` en el catálogo— no estaba entre los alias, así que el
+modelo lo pedía y la herramienta lo rechazaba con `INVALID_ARGUMENTS`. La prueba
+nueva recorre las familias que el catálogo tiene de verdad, en vez de una lista
+escrita a mano: cubre las que se añadan después.
+
+Solo queda uno sin arreglar: una pregunta de límite devuelve 104 caracteres,
+por debajo del mínimo que yo mismo exijo en la batería.
+
+Pruebas al cierre: **860 Python** (937 subtests) y **128 Node** en verde.
