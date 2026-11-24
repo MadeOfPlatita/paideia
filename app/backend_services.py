@@ -245,6 +245,36 @@ def _withhold_text(result, reason):
     return "", ANSWER_TEXT_WITHHELD_UNBACKED, updated
 
 
+def _calculation_answer(calculation):
+    """Compone la respuesta con el resultado del motor cuando la prosa no se puede usar.
+
+    Medido: «Me ofrecen un depósito al 4 % a 18 meses, ¿es buena idea?» ejecutó
+    `search_products` y `calculate_scenario`, y el usuario recibió una respuesta de
+    CERO caracteres. La prosa se retuvo por una atribución, pero el motor SÍ había
+    calculado el resultado, y ese resultado es dato local determinista: es
+    exactamente lo que hay que enseñar.
+
+    Un hueco nunca es mejor que los datos.
+    """
+    if type(calculation) is not dict:
+        return None
+    partes = []
+    result = calculation.get("result")
+    if type(result) is dict:
+        for etiqueta, clave in (("Capital final", "final_amount"),
+                                ("Intereses", "interest"),
+                                ("Total aportado", "contributed"),
+                                ("Rentabilidad anual", "annual_rate_percent")):
+            valor = result.get(clave)
+            if type(valor) in {int, float} or (type(valor) is str and valor.strip()):
+                partes.append(f"- {etiqueta}: {valor}")
+    if not partes:
+        return None
+    cabecera = ("El cálculo se ha hecho con el motor local, que es determinista y "
+                "no depende del modelo:")
+    return cabecera + "\n\n" + "\n".join(partes)
+
+
 _EDUCATIONAL_REFERENCE = re.compile(
     r"referencia general|regla general|orientativ|como norma|en general|"
     r"ejemplo hipot[eé]tico|supongamos|imaginemos|a modo de ilustraci[oó]n",
@@ -1181,6 +1211,24 @@ class LocalChatService:
                 calculation = None
             answer_text, answer_text_state, provenance_source = _withhold_unbacked_claim(
                 result, answer_text, answer_text_state, calculation)
+            # Si la prosa se retuvo y el usuario se quedaria con un hueco, pero el
+            # motor calculo algo, se entrega el calculo. Medido: «Me ofrecen un
+            # deposito al 4 % a 18 meses, ¿es buena idea?» respondia CERO
+            # caracteres teniendo el resultado del motor en la mano.
+            if (not (answer_text or "").strip()
+                    and answer_text_state == ANSWER_TEXT_WITHHELD_UNBACKED
+                    and calculation is not None):
+                compuesta = _calculation_answer(calculation)
+                if compuesta:
+                    answer_text = compuesta
+                    answer_text_state = ANSWER_TEXT_SHOWN
+                    provenance_source = dict(provenance_source)
+                    notas = [n for n in (provenance_source.get("limitations") or []) if type(n) is str][:6]
+                    nota = ("El texto explicativo del modelo se ha retirado porque atribuia "
+                            "cifras sin respaldo local; el resultado del motor se mantiene.")
+                    if nota not in notas:
+                        notas.insert(0, nota)
+                    provenance_source["limitations"] = notas
             return _profile_applied({"answer": _financial_checked(answer_text),
                     "refused": bool(result["refusal"]), "truncated": result["finish_reason"] == "length",
                     "provider_mode": "test_only" if self._test_only else "external",
