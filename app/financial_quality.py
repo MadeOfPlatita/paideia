@@ -62,6 +62,24 @@ _WHOLE_NEGATION = re.compile(
     r"(?:inversi[oó]n|ahorro|capital|producto)",
     re.I,
 )
+# «No todo ahorro es sin riesgo», «no todo el capital esta libre de riesgo».
+# Cuantificador que NIEGA la generalizacion: es lo contrario de una promesa.
+_NOT_ALL = re.compile(r"\bno\s+todo[s]?\b", re.I)
+# Formas de desmentir la ausencia de riesgo, medidas en 5 respuestas reales sobre
+# la inflacion (las 5 se rechazaban y las 5 eran correctas):
+#   «no conviene afirmar que el ahorro esta sin riesgo»
+#   «no conviene asumir que el capital esta libre de riesgo»
+#   «el ahorro no es automaticamente libre de riesgo»
+#   «sin dar por hecho que ahorrar esta libre de riesgo»
+#   «no hay que dar por sentado que ...»
+# Todas niegan la afirmacion; ninguna promete riesgo cero.
+_DISCOURAGED_CLAIM = re.compile(
+    r"\b(?:no\s+(?:conviene|deber[ií]amos|podemos|hay\s+que|se\s+puede)\s+"
+    r"(?:afirmar|asumir|decir|creer|dar\s+por|pensar))"
+    r"|\bsin\s+(?:dar\s+por\s+(?:hecho|sentado)|asumir|creer|olvidar)"
+    r"|\bno\s+es\s+(?:autom[aá]ticamente|necesariamente|siempre|exactamente)\b",
+    re.I,
+)
 # Refutacion posterior: «un ahorro sin riesgos no existe».
 _TRAILING_REFUTATION = re.compile(r"\s+(?:no|nunca|tampoco)\s+(?:existe|es|son|hay)\b", re.I)
 # Negacion que precede al predicado sin contradecirlo: «la inflacion no hace que
@@ -122,6 +140,9 @@ def assess_financial_text(text: str) -> tuple[str, ...]:
         if (_PREFIX_CONTEXT.search(_last_conjunct(prefix))
                 or _NEGATED_CAUSATIVE.search(prefix)
                 or _HYPOTHETICAL.search(prefix)
+                or _NOT_ALL.search(whole)
+                or _DISCOURAGED_CLAIM.search(prefix)
+                or _DISCOURAGED_CLAIM.search(whole)
                 or _PREDICATE_NEGATION.search(_last_conjunct(match.group()))
                 or _REFUTATION.match(clean[match.end():])
                 or _WHOLE_NEGATION.search(whole)
