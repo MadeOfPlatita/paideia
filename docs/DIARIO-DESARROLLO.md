@@ -1218,3 +1218,97 @@ caracteres con tres productos, TAE, mínimos, máximos y retención, cada dato c
 su fuente, y una explicación conceptual detrás.
 
 Pruebas al cierre: **886 Python** (987 subtests) y **128 Node** en verde.
+
+---
+
+## Noche del 24 de noviembre: el chat que de verdad contesta
+
+La app arrancaba, el catálogo se veía y la biblioteca funcionaba. Lo que no
+funcionaba era **hablar con Pai**. Esta noche se ha medido el chat de punta a
+punta, con una batería de 53 preguntas contra producción, y se han arreglado
+los defectos que aparecieron. El resultado, medido al cierre: **52 de 53**.
+
+La batería está guardada y se puede repetir; es la misma que se usará en el
+testeo.
+
+### Lo que estaba roto y por qué
+
+**1. El chat no se montaba.** Mi propio cambio anterior dejó `renderHome`
+abortándose en silencio: una función usaba una constante local que no estaba en
+su ámbito, lanzaba `ReferenceError`, y la app se quedaba **sin panel de chat**
+sin mostrar ningún error. La página cargaba, la biblioteca y el glosario iban
+bien, así que parecía correcta. Ninguna de las 128 pruebas de Node lo vio porque
+ninguna ejecutaba `renderHome` completa. Ahora hay una que sí (`_render_home_probe.js`
+sobre un DOM mínimo) y se comprobó que **con el bug reintroducido a propósito se
+pone en rojo**.
+
+**2. El historial no guardaba nada de catálogo.** Un mismo booleano (`withheld`)
+decidía dos cosas: que no se pinte la prosa del modelo *y* que el turno no entre
+en el historial. Como todo turno de catálogo lleva esa marca, **ninguno** se
+guardaba: el turno siguiente respondía «no tengo el mensaje anterior». Ahora son
+dos conceptos (`withheld` y `recordable`).
+
+**3. Una ficha documentada se presentaba como «condiciones desconocidas»** y, en
+el mismo bloque, mostraba su TAE del 2,4 %. Cuatro causas encadenadas, cada una
+suficiente para degradar el producto entero: métricas fuera de la lista blanca del
+chat contadas como ilegibles; `Decimal()` aplicado a cláusulas de texto; un tope
+de 32 caracteres que rechazaba cláusulas legítimas; y una regla que exigía fuente
+enlazada **en cada condición** cuando la fuente vive en el producto. Ahora:
+`DEP-04` 14 condiciones con fuente, `ETF-01` 28, y las vencidas siguen vencidas.
+
+**4. La guarda financiera tiraba respuestas correctas.** «¿Qué es la inflación?»
+devolvía 502 en **5 de 5** intentos, y las 5 respuestas eran buenas: contenían una
+frase con una fórmula que la guarda no reconocía («no conviene afirmar que», «no
+asumas que», «no debe presentarse como»...) entre otras diez que enseñaban bien.
+Enumerar fórmulas era un juego de topos. Ahora **se quita la frase peligrosa y se
+entrega el resto**; el fail-closed se mantiene cuando no sobrevive nada. Además se
+cerraron dos huecos en el otro sentido: «este depósito tiene cero riesgo» y «la
+cuenta no tiene ningún riesgo» **pasaban**.
+
+**5. El modelo escribía llamadas a herramienta como texto.** Dos turnos
+devolvieron literalmente `<tool_call>{"name":"search_products"...}</tool_call>`
+porque el `finish_reason` vino como «stop». El servidor no ejecutaba nada y le
+enseñaba el XML al usuario. Ahora se detecta, se quita, y si el turno entero era
+la llamada se avisa con un motivo.
+
+**6. Respuestas de 18.700 caracteres para una pregunta de decisión.** Cada
+condición pintaba hasta seis párrafos de metadata repetida. Ahora es una línea por
+condición con su estado, su clase de fuente y su trazabilidad resumida: **2.606**
+caracteres en el mismo turno.
+
+**7. Cifras inventadas.** Preguntando «¿y si lo dejo 24 meses?», el modelo
+respondía «un depósito de 24 meses podría situarse entre 3,5 % y 4 %». Ese 3,5 %
+no está en ninguna ficha. Se colaba porque `_PRODUCT_SUBJECT` solo reconocía un
+producto con demostrativo («ese depósito»), no la forma natural («un depósito de
+24 meses»).
+
+### El reintento de transporte
+
+El diario anterior decía que se había implementado y **no era cierto**: el código
+respondía «no hay reintento automático» en seis sitios. Ahora sí se reintenta una
+vez, y solo cuando es seguro: fallo de red o tiempo agotado, envío no completado,
+sin herramientas. Si el segundo intento falla, el error sale con su código y su
+mensaje, nunca como un 500 opaco. Coste honesto: el presupuesto descuenta cada
+intento.
+
+### Medición al cierre
+
+Batería de 53 preguntas contra producción:
+
+| Categoría | Resultado |
+|---|---|
+| Definición | 12/12 |
+| Decisión | 6/7 |
+| Método | 6/6 |
+| Catálogo | 9/9 |
+| Cálculo | 3/3 |
+| Límite | 5/5 |
+| Robustez | 11/11 |
+| **Total** | **52/53** |
+
+El único fallo es un `CHAT_TOOL_ERROR` transitorio del proveedor: la misma
+pregunta respondió 2 de 2 veces por API. Es el límite conocido del proveedor, no
+un defecto de la app; reintentar o cambiar de proveedor es una decisión de
+producto.
+
+Pruebas: **917 Python** (1.022 subtests) y **132 Node** en verde.
