@@ -843,19 +843,59 @@ function renderHome() {
   function chatDecimal(value) {
     return typeof value === "string" && CHAT_DECIMAL.test(value) ? value : "";
   }
+  // Etiqueta y formato por metrica. Antes `chatConditionValue` solo entendia TAE y
+  // plazo: cualquier otra condicion (importe minimo, comisiones, garantia, fondo)
+  // decia literalmente «unidad incoherente; no se muestra el valor», que suena a
+  // error del sistema cuando el dato esta perfectamente documentado. Se formatea
+  // segun su unidad y, si no se conoce, se muestra el valor tal cual con su unidad.
+  const CHAT_UNIT_SUFFIX = { PERCENT: " %", EUR: " €", MONTHS: " meses", DAYS: " días", SCALE: "" };
+  const CHAT_METRIC_LABELS = {
+    annual_rate_percent: "TAE", nominal_rate_percent: "TIN", term_months: "Plazo",
+    minimum_eur: "Inversión mínima", maximum_eur: "Importe máximo",
+    withholding_percent: "Retención", risk_scale: "Escala de riesgo",
+    declared_fees: "Comisiones declaradas", deposit_guarantee_fund: "Fondo de garantía",
+    document_date: "Fecha del documento", early_cancellation: "Cancelación anticipada",
+    settlement: "Liquidación", eligibility: "Requisitos", ownership: "Titularidad",
+    requirement: "Condiciones de contratación",
+  };
   function chatConditionValue(condition) {
     const metric = condition && condition.metric;
     const unit = condition && condition.unit;
-    const coherent = (metric === "annual_rate_percent" && unit === "PERCENT")
-      || (metric === "term_months" && unit === "MONTHS");
-    if (!coherent) return "unidad incoherente; no se muestra el valor";
-    if (condition.state === "unknown") return "sin valor documentado";
-    const value = chatDecimal(condition && condition.value);
-    if (!value) return "sin valor documentado";
-    return unit === "MONTHS" ? `${value} meses` : `${value} %`;
+    if (condition && condition.state === "unknown") return "sin valor documentado";
+    const raw = condition && condition.value;
+    if (typeof raw !== "string" || !raw.trim()) return "sin valor documentado";
+    // Defensa que se conserva: una TASA con unidad de tiempo (o un plazo con unidad
+    // de porcentaje) esta mal formada y no se publica como cifra. Es el unico caso
+    // en que de verdad hay incoherencia: el resto de metricas (importes, comisiones,
+    // texto, fechas) tienen su propia unidad valida.
+    const RATE_METRICS = ["annual_rate_percent", "nominal_rate_percent", "withholding_percent"];
+    if (RATE_METRICS.indexOf(metric) !== -1 && unit !== "PERCENT") {
+      return "unidad incoherente; no se muestra el valor";
+    }
+    if (metric === "term_months" && unit !== "MONTHS") {
+      return "unidad incoherente; no se muestra el valor";
+    }
+    if (unit === "PERCENT") {
+      const value = chatDecimal(raw);
+      return value ? `${value} %` : "sin valor documentado";
+    }
+    if (unit === "MONTHS") {
+      const value = chatDecimal(raw);
+      return value ? `${value} meses` : "sin valor documentado";
+    }
+    if (unit === "EUR") {
+      const value = chatDecimal(raw);
+      return value ? `${value} €` : raw.trim();
+    }
+    // TEXT, DATE, SCALE y unidades nuevas: el valor se publica tal cual, que es como
+    // lo entrega el catálogo con su fuente.
+    return raw.trim();
   }
   function chatConditionName(condition) {
-    return condition && condition.metric === "term_months" ? "Plazo" : "TAE";
+    const metric = condition && condition.metric;
+    if (CHAT_METRIC_LABELS[metric]) return CHAT_METRIC_LABELS[metric];
+    // Una metrica nueva se muestra con su nombre tecnico, no como error.
+    return typeof metric === "string" && metric.trim() ? metric : "Condición";
   }
   const CHAT_MONEY = /^-?\d{1,18}(?:\.\d{1,2})?$/;
   const CHAT_PERCENT = /^-?\d{1,4}(?:\.\d{1,4})?$/;
@@ -942,28 +982,43 @@ function renderHome() {
       for (const condition of conditions) {
         if (!condition || typeof condition !== "object") continue;
         const state = CHAT_CONDITION_STATE_LABELS[condition.state] || "desconocida";
+        // Una linea por condicion, con su estado. Antes cada condicion ocupaba hasta
+        // seis parrafos (clase de fuente, consulta, vigencia, atribucion, notas) y un
+        // turno de decision con 4 productos llegaba a 18.700 caracteres: la mitad era
+        // metadata repetida. La trazabilidad se conserva donde importa (la fuente
+        // enlazada y su fecha), no repetida en cada linea.
+        let linea = `${chatConditionName(condition)}: ${chatConditionValue(condition)} — ${state}`;
+        // La clase de fuente (Oficial/Secundaria) es una garantía del producto, no
+        // ruido: se conserva con su etiqueta tal cual.
         const sourceClass = CHAT_SOURCE_CLASS_LABELS[condition.source_class] || "Desconocida";
-        card.appendChild(textElement("p", `${chatConditionName(condition)}: ${chatConditionValue(condition)} — ${state}; clase de fuente: ${sourceClass}.`));
+        linea += `; clase de fuente: ${sourceClass}`;
         const retrieved = chatDate(condition.retrieved_at);
-        if (retrieved) card.appendChild(textElement("p", `Consulta de la fuente: ${retrieved}.`, "field-help"));
         const from = chatDate(condition.effective_from);
         const to = chatDate(condition.effective_to);
-        if (from || to) card.appendChild(textElement("p", `Vigencia: ${from || "sin inicio declarado"} → ${to || "sin fin declarado"}.`, "field-help"));
-        const resolution = CHAT_ATTRIBUTION_LABELS[condition.source_resolution] || "atribución no reconocida";
-        card.appendChild(textElement("p", `Atribución de la condición: ${resolution}.`, "field-help"));
-        for (const note of Array.isArray(condition.limitations) ? condition.limitations.slice(0, 4) : []) {
+        const detalles = [];
+        if (retrieved) detalles.push(`consultada ${retrieved}`);
+        if (from || to) detalles.push(`vigencia ${from || "sin inicio"} → ${to || "sin fin"}`);
+        if (condition.source_resolution === "resolved") {
+          detalles.push("fuente resuelta");
+        } else {
+          const resolution = CHAT_ATTRIBUTION_LABELS[condition.source_resolution] || "atribución no reconocida";
+          detalles.push(resolution);
+        }
+        if (detalles.length) linea += ` (${detalles.join(" · ")})`;
+        card.appendChild(textElement("p", `${linea}.`));
+        for (const note of Array.isArray(condition.limitations) ? condition.limitations.slice(0, 2) : []) {
           if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
         }
-        for (const note of Array.isArray(condition.notes) ? condition.notes.slice(0, 4) : []) {
+        for (const note of Array.isArray(condition.notes) ? condition.notes.slice(0, 2) : []) {
           if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
         }
-        const conditionSources = Array.isArray(condition.sources) ? condition.sources.slice(0, 4) : [];
+        const conditionSources = Array.isArray(condition.sources) ? condition.sources.slice(0, 2) : [];
         for (const conditionSource of conditionSources) {
           if (!conditionSource || typeof conditionSource !== "object" || !isSafePrimaryUrl(conditionSource.url)) continue;
           const conditionSourceTitle = typeof conditionSource.title === "string" && conditionSource.title.trim()
             ? chatText(conditionSource.title.trim(), 160) : "";
           const sourceLine = el("p", { className: "field-help" }, [
-            document.createTextNode("Fuente de la condición: "),
+            document.createTextNode("Fuente: "),
             el("a", { href: conditionSource.url, target: "_blank", rel: "noopener noreferrer" },
               conditionSourceTitle ? `${conditionSourceTitle} — ${chatText(conditionSource.url, 300)}` : chatText(conditionSource.url, 300))
           ]);
