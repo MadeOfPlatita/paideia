@@ -1077,3 +1077,29 @@ Solo queda uno sin arreglar: una pregunta de límite devuelve 104 caracteres,
 por debajo del mínimo que yo mismo exijo en la batería.
 
 Pruebas al cierre: **860 Python** (937 subtests) y **128 Node** en verde.
+
+### 5. La intermitencia que queda no es del código
+
+Al medir, aparecieron fallos en preguntas que acababan de funcionar. Se probó de
+forma sistemática: **5 preguntas × 3 pasadas = 15 turnos**, en serie.
+
+| Pregunta | Pasadas OK |
+| --- | --- |
+| ¿Qué es la inflación y cómo afecta a mis ahorros? | 3/3 |
+| ¿Qué significa el indicador de riesgo SRI 1-7? | 3/3 |
+| Tengo una deuda de tarjeta al 20 % y 3000 € ahorrados | **2/3** |
+| ¿Qué es la TAE? | 3/3 |
+| ¿Cómo calculo cuánto necesito para jubilarme? | 3/3 |
+
+**14 de 15 turnos responden y 4 de 5 preguntas responden siempre.** La misma
+pregunta que devuelve `CHAT_FINANCIAL_QUALITY_REJECTED` o `CHAT_TOOL_ERROR` a los
+13 s responde 1.797 caracteres en el intento siguiente, sin cambios de código.
+Es no determinismo del proveedor, no del producto.
+
+Consecuencia práctica: **no se puede arreglar por código**. Las dos vías sensatas
+son reintentar una vez en el servidor (hoy el contrato dice explícitamente que no
+hay reintento automático) o cambiar de proveedor. Ambas son decisión de producto.
+
+Nota para no volver a medir esto mal: lanzar varias baterías en paralelo contra
+un servicio con límite por minuto produce fallos que **parecen** del producto. Las
+mediciones de este proyecto se hacen en serie.
