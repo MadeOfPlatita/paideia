@@ -131,6 +131,7 @@ class NoToolProseBoundaryTests(unittest.TestCase):
                 status, body = chat_http(service)
 
                 self.assertEqual(status, 200, body)
+                # SIN herramienta ni calculo: nada que entregar, sigue retenido.
                 self.assertEqual(body["answer"], "", body)
                 self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
                 self.assertEqual(body["answer_provenance"]["text_validation"], "not_performed")
@@ -160,6 +161,7 @@ class NoToolProseBoundaryTests(unittest.TestCase):
                 status, body = chat_http(service)
 
                 self.assertEqual(status, 200, body)
+                # SIN herramienta ni calculo: nada que entregar, sigue retenido.
                 self.assertEqual(body["answer"], "", body)
                 self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
                 self.assertNotIn(SENTINEL, json.dumps(body, ensure_ascii=False))
@@ -197,6 +199,9 @@ class PlainChatBoundaryTests(unittest.TestCase):
         body = self.service("TEST ONLY: la TAE vigente es 9,99 %.").chat(
             {"message": "TEST ONLY: ¿qué tasa hay?", "consent": CONSENT})
 
+        # SIN cálculo no hay nada que entregar: este turno sigue retenido y vacío.
+        # (El cambio de «entregar el resultado del motor» aplica solo cuando el motor
+        # calculó algo; aquí no hay cálculo y la prosa es una cifra inventada.)
         self.assertEqual(body["answer"], "")
         self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
         self.assertNotIn(SENTINEL, json.dumps(body, ensure_ascii=False))
@@ -231,10 +236,16 @@ class CalculatorBoundaryTests(unittest.TestCase):
         status, body = chat_http(service, message="TEST ONLY: calcula un escenario.")
 
         self.assertEqual(status, 200, body)
-        self.assertEqual(body["answer"], "")
-        self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
+        # CONTRATO (cambio medido): el nombre de esta prueba ya decia «and the
+        # result is delivered», pero el aserto pedia `answer` vacio: el resultado se
+        # mandaba en `calculation` y el usuario no veia nada. Ahora se compone la
+        # respuesta con las cifras del motor, que no dependen del modelo.
+        self.assertNotEqual(body["answer"].strip(), "", "el resultado debe entregarse")
+        self.assertIn("1030.00", body["answer"], "con la cifra del motor")
+        self.assertIn("motor local", body["answer"], "y diciendo de donde sale")
+        self.assertEqual(body["answer_text_state"], "shown_unverified")
         self.assertEqual(body["answer_provenance"]["text_validation"], "not_performed")
-        self.assertNotIn("1030.00", json.dumps(body["answer"], ensure_ascii=False))
+        # La prosa del modelo NO se usa: su cifra no aparece si no es la del motor.
         self.assertEqual(body["calculation"]["summary"]["final_balance"], "1030.00")
         self.assertEqual(body["calculation"]["assumptions"]["principal"], "1000.00")
         self.assertTrue(any("motor" in note.lower() and "local" in note.lower()
@@ -255,8 +266,11 @@ class CalculatorBoundaryTests(unittest.TestCase):
         status, body = chat_http(service, message="TEST ONLY: calcula un escenario.")
 
         self.assertEqual(status, 200, body)
-        self.assertEqual(body["answer"], "")
-        self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
+        # El resultado del motor se entrega: antes el usuario se quedaba con un hueco.
+        self.assertNotEqual(body["answer"].strip(), "",
+                            "el resultado del motor no puede perderse")
+        self.assertIn("motor local", body["answer"])
+        self.assertEqual(body["answer_text_state"], "shown_unverified")
         self.assertEqual(body["calculation"]["summary"]["final_balance"], "1030.00")
 
     def test_untraceable_rate_in_a_calculator_turn_is_withheld_but_result_remains(self):
@@ -268,8 +282,11 @@ class CalculatorBoundaryTests(unittest.TestCase):
         status, body = chat_http(service, message="TEST ONLY: calcula un escenario.")
 
         self.assertEqual(status, 200, body)
-        self.assertEqual(body["answer"], "")
-        self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
+        # El resultado del motor se entrega: antes el usuario se quedaba con un hueco.
+        self.assertNotEqual(body["answer"].strip(), "",
+                            "el resultado del motor no puede perderse")
+        self.assertIn("motor local", body["answer"])
+        self.assertEqual(body["answer_text_state"], "shown_unverified")
         self.assertNotIn(SENTINEL, json.dumps(body, ensure_ascii=False))
         self.assertEqual(body["calculation"]["summary"]["final_balance"], "1030.00")
         from domain import calculate_scenario
@@ -287,9 +304,14 @@ class CalculatorBoundaryTests(unittest.TestCase):
                 status, body = chat_http(service, message="TEST ONLY: calcula un escenario.")
 
                 self.assertEqual(status, 200, body)
-                self.assertEqual(body["answer"], "")
-                self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
+                # El turno entrega el resultado del MOTOR, no la cifra del modelo:
+                # la cifra inventada del texto no puede aparecer nunca.
+                self.assertNotEqual(body["answer"].strip(), "",
+                                    "el resultado del motor se entrega")
+                self.assertIn("motor local", body["answer"])
                 self.assertNotIn("9999.00", json.dumps(body, ensure_ascii=False))
+                self.assertNotIn("2500.00", body["answer"],
+                                 "la cifra inventada por el modelo no se publica")
 
     def test_traceable_figure_cannot_be_attributed_to_a_product(self):
         service, provider = service_for([
@@ -300,8 +322,11 @@ class CalculatorBoundaryTests(unittest.TestCase):
         status, body = chat_http(service, message="TEST ONLY: calcula un escenario.")
 
         self.assertEqual(status, 200, body)
-        self.assertEqual(body["answer"], "")
-        self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
+        # El resultado del motor se entrega: antes el usuario se quedaba con un hueco.
+        self.assertNotEqual(body["answer"].strip(), "",
+                            "el resultado del motor no puede perderse")
+        self.assertIn("motor local", body["answer"])
+        self.assertEqual(body["answer_text_state"], "shown_unverified")
 
     def test_concept_calculator_prose_keeps_its_text_and_the_result(self):
         answer = "TEST ONLY: el cálculo es hipotético y lo hace el motor local."

@@ -294,24 +294,47 @@ def _calculation_answer(calculation):
     exactamente lo que hay que enseñar.
 
     Un hueco nunca es mejor que los datos.
+
+    El DTO real del cálculo trae `summary` con `final_balance`, `interest`,
+    `contributions` e `inflation_adjusted`, y `assumptions` con los supuestos. La
+    primera versión de esta función buscaba `result`/`final_amount`, que no existen:
+    devolvía None siempre y el hueco seguía ahí. Comprobado contra la respuesta real
+    de producción.
     """
     if type(calculation) is not dict:
         return None
+    resumen = calculation.get("summary")
+    if type(resumen) is not dict:
+        return None
     partes = []
-    result = calculation.get("result")
-    if type(result) is dict:
-        for etiqueta, clave in (("Capital final", "final_amount"),
-                                ("Intereses", "interest"),
-                                ("Total aportado", "contributed"),
-                                ("Rentabilidad anual", "annual_rate_percent")):
-            valor = result.get(clave)
-            if type(valor) in {int, float} or (type(valor) is str and valor.strip()):
-                partes.append(f"- {etiqueta}: {valor}")
+    for etiqueta, clave in (("Capital final", "final_balance"),
+                            ("Intereses", "interest"),
+                            ("Total aportado", "contributions"),
+                            ("Valor ajustado por inflación", "inflation_adjusted")):
+        valor = resumen.get(clave)
+        if type(valor) in {int, float} or (type(valor) is str and valor.strip()):
+            partes.append(f"- {etiqueta}: {valor}")
     if not partes:
         return None
     cabecera = ("El cálculo se ha hecho con el motor local, que es determinista y "
                 "no depende del modelo:")
-    return cabecera + "\n\n" + "\n".join(partes)
+    supuestos = calculation.get("assumptions")
+    if type(supuestos) is dict:
+        interes = supuestos.get("annual_rate_percent")
+        anios = supuestos.get("years")
+        capital = supuestos.get("principal")
+        detalle = []
+        if capital not in (None, ""):
+            detalle.append(f"capital {capital}")
+        if interes not in (None, ""):
+            detalle.append(f"tipo {interes} %")
+        if anios not in (None, ""):
+            detalle.append(f"{anios} años")
+        if detalle:
+            cabecera += " Supuestos: " + ", ".join(detalle) + "."
+    aviso = calculation.get("disclaimer")
+    cierre = f"\n\n{aviso}" if type(aviso) is str and aviso.strip() else ""
+    return cabecera + "\n\n" + "\n".join(partes) + cierre
 
 
 _EDUCATIONAL_REFERENCE = re.compile(

@@ -108,9 +108,19 @@ class CalculatorEngineOutcomeTests(unittest.TestCase):
 
         self.assertEqual(status, 200, body)
         self.assertEqual(len(provider.requests), 2, "no debe haber reintento")
-        self.assertEqual(body["answer"], "")
-        self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim")
-        self.assertEqual(body["answer_provenance"]["withheld_reason"], "calculation")
+        # CONTRATO (cambio medido). Antes el turno devolvia `answer` vacio y el
+        # usuario se quedaba sin nada, teniendo el resultado del motor en la mano.
+        # Ahora se entrega ese resultado compuesto: la prosa del modelo sigue
+        # retenida, pero las cifras del motor (que no dependen de el) se muestran.
+        self.assertNotEqual(body["answer"].strip(), "",
+                            "el resultado del motor no puede perderse")
+        self.assertIn("motor local", body["answer"])
+        self.assertEqual(body["answer_text_state"], "shown_unverified",
+                         "el texto mostrado son datos locales del motor, no prosa del modelo")
+        # `withheld_reason` sigue siendo «calculation»: dice POR QUE se retuvo la
+        # prosa del modelo (para que no se lea como dato). El resultado del motor se
+        # entrega igualmente porque no depende de esa prosa.
+        self.assertEqual(body["answer_provenance"].get("withheld_reason"), "calculation")
         calculation = body.get("calculation")
         self.assertIsInstance(calculation, dict, body)
         self.assertEqual(calculation["summary"], LOCAL["summary"])
@@ -137,13 +147,12 @@ class CalculatorEngineOutcomeTests(unittest.TestCase):
                 status, body = chat_http(service)
 
                 self.assertEqual(status, 200, body)
-                self.assertEqual(body["answer"], "", text)
-                self.assertEqual(body["answer_text_state"], "withheld_unbacked_claim", text)
+                # El resultado del motor se entrega; la PROSA del modelo no.
+                self.assertNotEqual(body["answer"].strip(), "", text)
+                self.assertIn("motor local", body["answer"])
                 raw = json.dumps(body, ensure_ascii=False)
                 self.assertNotIn(text, raw)
                 self.assertNotIn("1.000,00 euros", raw)
-                self.assertEqual(body["answer_provenance"]["text_state"],
-                                 "withheld_unbacked_claim")
                 self.assertIsInstance(body.get("calculation"), dict)
                 self.assertEqual(body["calculation"]["summary"], LOCAL["summary"])
                 self.assertEqual(len(provider.requests), 2)
