@@ -172,6 +172,44 @@ def _unique_object(pairs):
     return result
 
 
+# Palabras que no discriminan nada en una consulta al catalogo.
+_STOPWORDS = frozenset({"de", "del", "la", "el", "los", "las", "un", "una", "y", "o",
+                        "que", "hay", "tienes", "tiene", "en", "con", "para", "por"})
+
+
+def _stem(token):
+    """Raiz aproximada para emparejar singular y plural sin stemming agresivo.
+
+    «letras» -> «letra» empareja con «Letra del Tesoro», que la busqueda literal
+    no encontraba: era la causa de que la pregunta mas natural sobre deuda
+    publica devolviera cero productos.
+    """
+    if len(token) <= 3:
+        return token
+    if token.endswith(("es", "s")) and len(token) > 4:
+        return token[:-2] if token.endswith("es") else token[:-1]
+    return token
+
+
+def _matches_query(query, searchable, *, strict=True):
+    """Empareja la consulta con el texto de un producto.
+
+    En modo estricto exige que aparezcan TODOS los terminos relevantes: quien
+    nombra un banco espera ese banco, no todos los productos de la familia
+    («deposito EBN» daba los cuatro depositos). El modo laxo (algun termino)
+    es la red de rescate para consultas donde una palabra no aparece literal,
+    como «letras del Tesoro» sobre un producto llamado «Letra del Tesoro».
+    """
+    if query in searchable:
+        return True
+    terminos = [t for t in query.split() if t and t not in _STOPWORDS]
+    if not terminos:
+        return False
+    if strict:
+        return all(_stem(termino) in searchable for termino in terminos)
+    return any(_stem(termino) in searchable for termino in terminos)
+
+
 class CatalogueRepository:
     """Read-only interface for the local catalogue snapshot."""
 
@@ -312,9 +350,20 @@ class SnapshotRepository(CatalogueRepository):
                 searchable = " ".join(str(product[key] or "") for key in (
                     "id", "name", "family", "issuer"
                 )).casefold()
-                if query not in searchable:
+                if not _matches_query(query, searchable):
                     continue
             products.append(copy.deepcopy(product))
+        # Red de rescate: si la busqueda estricta no encontro nada, se admiten
+        # coincidencias parciales. Sin esto, «letras del Tesoro» daba cero.
+        if not products and query is not None:
+            for product in self._products:
+                if family is not None and product["family"] != family:
+                    continue
+                searchable = " ".join(str(product[key] or "") for key in (
+                    "id", "name", "family", "issuer"
+                )).casefold()
+                if _matches_query(query, searchable, strict=False):
+                    products.append(copy.deepcopy(product))
         return products
 
     def get_product(self, product_id):
