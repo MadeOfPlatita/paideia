@@ -956,113 +956,102 @@ function renderHome() {
     container.appendChild(textElement("p", "No incluye impuestos ni comisiones. Es un cálculo determinista con los supuestos mostrados; no es una predicción ni una oferta.", "field-help"));
   }
   function renderChatCatalogue(container, catalogue) {
-    const products = catalogue && Array.isArray(catalogue.products) ? catalogue.products.slice(0, 20) : [];
+    const products = catalogue && Array.isArray(catalogue.products) ? catalogue.products : [];
     const box = el("div", { className: "chat-catalogue" });
-    box.appendChild(textElement("p", "Datos locales del catálogo con su procedencia; no son una oferta publicable.", "chat-provenance-title"));
     if (!products.length) {
-      box.appendChild(textElement("p", "No hay fichas locales en este turno; no se muestra texto del modelo para evitar atribuciones no verificadas."));
+      box.appendChild(textElement("p", "No hay fichas locales en este turno."));
       container.appendChild(box);
       return;
     }
-    for (const product of products) {
-      if (!product || typeof product !== "object" || typeof product.id !== "string") continue;
-      const card = el("div", { className: "chat-catalogue-item" });
-      card.appendChild(textElement("h3", `${chatText(product.name, 200) || product.id} (${product.id})`));
-      const identity = product.identity_state === "verified" ? "identidad verificada" : "identidad propuesta";
-      const issuer = chatText(product.issuer, 120);
-      card.appendChild(textElement("p", `Familia: ${chatText(product.family, 40) || "no indicada"} · Emisor: ${issuer || "no indicado"} · ${identity}`));
-      const conditionsState = CHAT_CONDITIONS_STATE_LABELS[product.conditions_state] || "estado no reconocido";
-      const attribution = CHAT_ATTRIBUTION_LABELS[product.attribution_state] || "atribución no reconocida";
-      const reference = chatDate(product.conditions_reference_date);
-      card.appendChild(textElement("p", `Condiciones ${conditionsState}; ${attribution}${reference ? ` · fecha de referencia: ${reference}` : ""}.`));
-      for (const reason of Array.isArray(product.conditions_state_reasons) ? product.conditions_state_reasons.slice(0, 4) : []) {
-        if (typeof reason === "string") card.appendChild(textElement("p", reason, "field-help"));
+    // RESUMEN, no volcado. El chat tiene que servir para decidir, no para copiar la
+    // ficha entera: antes se pintaban hasta 20 productos con familia, emisor,
+    // identidad, estado, atribución, 8 condiciones cada uno, su clase de fuente, su
+    // vigencia, sus conflictos y sus campos desconocidos. Un muro de texto.
+    //
+    // Ahora: los nombres en una línea y, del primero, sus dos o tres datos clave.
+    // La ficha completa sigue en la biblioteca, que es donde se consulta.
+    const validos = products.filter(p => p && typeof p === "object" && typeof p.id === "string");
+    if (!validos.length) {
+      box.appendChild(textElement("p", "No hay fichas legibles en este turno."));
+      container.appendChild(box);
+      return;
+    }
+    const nombres = validos.slice(0, 6).map(p => chatText(p.name, 120) || p.id).filter(Boolean);
+    const resto = validos.length - nombres.length;
+    box.appendChild(textElement("p", `Productos encontrados (${validos.length}): ${nombres.join(" · ")}${resto > 0 ? ` · y ${resto} más` : ""}.`, "field-help"));
+
+    // Del primero (el que el servidor recomienda) sí se dan los datos clave, pero
+    // un máximo de tres: lo que hace falta para decidir.
+    const principal = validos[0];
+    const condiciones = Array.isArray(principal.conditions) ? principal.conditions : [];
+    const CLAVE = ["annual_rate_percent", "term_months", "ter_percent", "management_fee_percent",
+                   "minimum_eur", "risk_scale", "maturity_date", "withholding_percent"];
+    const usadas = new Set();
+    const filas = [];
+    const avisos = [];
+    for (const metrica of CLAVE) {
+      const c = condiciones.find(x => x && x.metric === metrica && !usadas.has(metrica));
+      if (!c) continue;
+      usadas.add(metrica);
+      // Una condición en estado distinto de `known` no es un dato utilizable,
+      // aunque traiga un valor: se avisa, no se publica la cifra.
+      if (c.state !== "known") {
+        avisos.push(`${chatConditionName(c)}: sin valor documentado`);
+        continue;
       }
-      const conditions = Array.isArray(product.conditions) ? product.conditions.slice(0, 8) : [];
-      for (const condition of conditions) {
-        if (!condition || typeof condition !== "object") continue;
-        const state = CHAT_CONDITION_STATE_LABELS[condition.state] || "desconocida";
-        // Una linea por condicion, con su estado. Antes cada condicion ocupaba hasta
-        // seis parrafos (clase de fuente, consulta, vigencia, atribucion, notas) y un
-        // turno de decision con 4 productos llegaba a 18.700 caracteres: la mitad era
-        // metadata repetida. La trazabilidad se conserva donde importa (la fuente
-        // enlazada y su fecha), no repetida en cada linea.
-        let linea = `${chatConditionName(condition)}: ${chatConditionValue(condition)} — ${state}`;
-        // La clase de fuente (Oficial/Secundaria) es una garantía del producto, no
-        // ruido: se conserva con su etiqueta tal cual.
-        const sourceClass = CHAT_SOURCE_CLASS_LABELS[condition.source_class] || "Desconocida";
-        linea += `; clase de fuente: ${sourceClass}`;
-        const retrieved = chatDate(condition.retrieved_at);
-        const from = chatDate(condition.effective_from);
-        const to = chatDate(condition.effective_to);
-        const detalles = [];
-        if (retrieved) detalles.push(`consultada ${retrieved}`);
-        if (from || to) detalles.push(`vigencia ${from || "sin inicio"} → ${to || "sin fin"}`);
-        if (condition.source_resolution === "resolved") {
-          detalles.push("fuente resuelta");
-        } else {
-          const resolution = CHAT_ATTRIBUTION_LABELS[condition.source_resolution] || "atribución no reconocida";
-          detalles.push(resolution);
-        }
-        if (detalles.length) linea += ` (${detalles.join(" · ")})`;
-        card.appendChild(textElement("p", `${linea}.`));
-        for (const note of Array.isArray(condition.limitations) ? condition.limitations.slice(0, 2) : []) {
-          if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
-        }
-        for (const note of Array.isArray(condition.notes) ? condition.notes.slice(0, 2) : []) {
-          if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
-        }
-        const conditionSources = Array.isArray(condition.sources) ? condition.sources.slice(0, 2) : [];
-        for (const conditionSource of conditionSources) {
-          if (!conditionSource || typeof conditionSource !== "object" || !isSafePrimaryUrl(conditionSource.url)) continue;
-          const conditionSourceTitle = typeof conditionSource.title === "string" && conditionSource.title.trim()
-            ? chatText(conditionSource.title.trim(), 160) : "";
-          const sourceLine = el("p", { className: "field-help" }, [
-            document.createTextNode("Fuente: "),
-            el("a", { href: conditionSource.url, target: "_blank", rel: "noopener noreferrer" },
-              conditionSourceTitle ? `${conditionSourceTitle} — ${chatText(conditionSource.url, 300)}` : chatText(conditionSource.url, 300))
-          ]);
-          card.appendChild(sourceLine);
-        }
+      const valor = chatConditionValue(c);
+      // Una condición mal formada NO se publica como cifra, pero tampoco se
+      // esconde: el usuario tiene que saber que ese dato no es utilizable.
+      if (valor === "unidad incoherente; no se muestra el valor" || valor === "sin valor documentado") {
+        avisos.push(`${chatConditionName(c)}: ${valor}`);
+        continue;
       }
-      const conflicts = Array.isArray(product.conflicts) ? product.conflicts.filter((item) => typeof item === "string").slice(0, 5) : [];
-      const unknownFields = Array.isArray(product.unknown_fields) ? product.unknown_fields.filter((item) => typeof item === "string").slice(0, 12) : [];
-      if (conflicts.length || unknownFields.length) {
-        card.appendChild(textElement("p", "Revisión pendiente declarada por la ficha:", "chat-provenance-title"));
-        if (conflicts.length) {
-          card.appendChild(textElement("p", "Conflictos que siguen abiertos:", "field-help"));
-          for (const conflict of conflicts) card.appendChild(textElement("p", chatText(conflict, 200), "field-help"));
-        }
-        if (unknownFields.length) {
-          card.appendChild(textElement("p", "Campos desconocidos:", "field-help"));
-          for (const field of unknownFields) card.appendChild(textElement("p", chatText(field, 120), "field-help"));
-        }
-      } else {
-        card.appendChild(textElement("p", "La ficha no enumera conflictos ni campos desconocidos; eso no equivale a que no existan.", "field-help"));
-      }
-      const tiers = Array.isArray(product.rate_tiers) ? product.rate_tiers.slice(0, 6) : [];
-      if (tiers.length) {
-        const list = el("ul", { className: "chat-rate-tiers" });
-        for (const tier of tiers) {
-          if (!tier || typeof tier !== "object") continue;
-          const tae = chatDecimal(tier.tae);
-          const tin = chatDecimal(tier.tin);
-          const label = chatText(tier.condition_label, 160) || chatText(tier.condition, 64) || "Tramo";
-          list.appendChild(textElement("li", `${label}: TAE ${tae ? `${tae} %` : "no disponible"}; TIN ${tin ? `${tin} %` : "no disponible"}.`));
-        }
-        card.appendChild(list);
-        if (product.rate_tiers_validity !== "known") {
-          card.appendChild(textElement("p", "Los tramos no constan como vigentes; no se presentan como actuales.", "field-help"));
-        }
-        const tierDate = chatDate(product.rate_tiers_effective_to);
-        if (tierDate) card.appendChild(textElement("p", `Vigencia de los tramos: hasta ${tierDate}.`, "field-help"));
-      } else if (product.rate_tiers_state === "invalid" || product.rate_tiers_state === "inconsistent") {
-        card.appendChild(textElement("p", "Los tramos no se muestran porque su forma o sus cifras son incoherentes.", "field-help"));
-      }
-      for (const note of Array.isArray(product.rate_tiers_limitations) ? product.rate_tiers_limitations.slice(0, 4) : []) {
-        if (typeof note === "string") card.appendChild(textElement("p", note, "field-help"));
-      }
-      box.appendChild(card);
+      if (!valor) { avisos.push(`${chatConditionName(c)}: sin valor documentado`); continue; }
+      filas.push(`${chatConditionName(c)}: ${valor}`);
+      if (filas.length >= 3) break;
+    }
+    const heading = `${chatText(principal.name, 160) || principal.id}`;
+    box.appendChild(textElement("p", filas.length ? `${heading} — ${filas.join(" · ")}.` : heading));
+    if (avisos.length) {
+      box.appendChild(textElement("p", avisos.join(" · ") + ".", "field-help"));
+    }
+
+    // Lo que NO se puede quitar: la clase de la fuente (una nota de prensa no es
+    // una fuente oficial), los conflictos declarados y los campos que la ficha
+    // desconoce. Antes acompañaban a cada producto; ahora solo al recomendado,
+    // que es el único que se presenta como dato. Una línea cada uno.
+    const condicionesPrincipal = Array.isArray(principal.conditions) ? principal.conditions : [];
+    const clases = [...new Set(condicionesPrincipal
+      .map(c => c && c.source_class)
+      .filter(c => typeof c === "string" && c)
+      .map(c => (c === "official" ? "Oficial" : c === "secondary" ? "Secundaria" : c)))];
+    if (clases.length) {
+      box.appendChild(textElement("p", `Clase de la fuente: ${clases.join(", ")}.`, "field-help"));
+    }
+    const conflictos = Array.isArray(principal.conflicts) ? principal.conflicts.filter(c => typeof c === "string" && c) : [];
+    if (conflictos.length) {
+      box.appendChild(textElement("p", `Conflictos: ${conflictos.join(" ")}`, "field-help"));
+    }
+    const desconocidos = Array.isArray(principal.unknown_fields)
+      ? principal.unknown_fields.filter(c => typeof c === "string" && c) : [];
+    if (desconocidos.length) {
+      box.appendChild(textElement("p", `Campos desconocidos: ${desconocidos.join(", ")}.`, "field-help"));
+    }
+    // El enlace a la fuente del producto recomendado se conserva: sin él la cifra
+    // no es comprobable. Uno solo, no uno por condición como antes.
+    const enlace = condicionesPrincipal
+      .flatMap(c => (c && Array.isArray(c.sources) ? c.sources : []))
+      .map(f => f && f.url)
+      .find(u => typeof u === "string" && /^https?:\/\//.test(u));
+    if (enlace) {
+      const parrafo = el("p", { className: "field-help" });
+      parrafo.appendChild(document.createTextNode("Fuente: "));
+      parrafo.appendChild(el("a", { href: enlace, textContent: enlace, rel: "noopener noreferrer",
+        target: "_blank" }));
+      box.appendChild(parrafo);
+    }
+    if (validos.length > 1) {
+      box.appendChild(textElement("p", "La ficha completa de cualquiera está en la biblioteca.", "field-help"));
     }
     container.appendChild(box);
   }

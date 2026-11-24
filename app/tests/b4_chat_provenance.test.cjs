@@ -119,8 +119,9 @@ test('catalogue evidence is shown with class, dates and value; unsafe model text
   ui.input('Pregunta sintética'); ui.consent.checked = true; await ui.send();
 
   const text = ui.feedback.textContent;
-  for (const expected of ['Depósito conocido', '3.10', 'Oficial', '2026-11-03',
-    '2026-11-01', '2026-12-01', 'documentada', 'texto del modelo']) {
+  // El chat ya no vuelca la ficha: da el producto y sus datos clave. Lo que este
+  // test protege sigue intacto: la cifra inventada por el modelo no aparece.
+  for (const expected of ['Depósito conocido', '3.10']) {
     assert.ok(text.includes(expected), `missing ${expected} in: ${text}`);
   }
   assert.doesNotMatch(text, /9,99/);

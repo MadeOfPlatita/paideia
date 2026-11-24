@@ -600,7 +600,10 @@ class ServiceAnswerProvenanceTests(unittest.TestCase):
         # lugar se compone la respuesta con las condiciones verificadas del DTO,
         # cada una con su fuente: antes se respondía la nota fija y el usuario
         # nunca leía el dato aunque el DTO lo llevara.
-        self.assertIn("Según el catálogo local", body["answer"])
+        # CONTRATO (cambio pedido por el uso real): el chat ya no vuelca la ficha
+        # entera. Recomienda UN producto con su motivo y da solo los datos clave:
+        # el volcado de seis fichas con todas sus condiciones era ilegible.
+        self.assertIn("el que mejor encaja", body["answer"])
         self.assertIn("3,10 %", body["answer"])
         self.assertIn("https://example.invalid/synthetic/DEP-KNOWN", body["answer"])
         self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])

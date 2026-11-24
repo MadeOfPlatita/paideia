@@ -1245,6 +1245,18 @@ class LocalChatService:
 
     def _tools_chat(self, messages, ticket=None, *, structured_payload=None, approved_provider=None,
                     profile_line="", practical=False):
+        # La pregunta del usuario hace falta para elegir el criterio de la
+        # recomendación de catálogo (no es lo mismo «¿qué TAE?» que «¿cuál pide
+        # menos dinero?»). Ya viaja en `messages`: no hace falta un atributo nuevo
+        # ni estado compartido entre peticiones.
+        pregunta = ""
+        if isinstance(messages, list):
+            for mensaje in reversed(messages):
+                if isinstance(mensaje, dict) and mensaje.get("role") == "user":
+                    contenido = mensaje.get("content")
+                    if isinstance(contenido, str):
+                        pregunta = contenido
+                        break
         if self._tools_enabled and not self._test_only and not self._catalogue_usage_approved and self._tools_scope != "calculator_only":
             raise ServiceProblem(503, "CHAT_TOOLS_NOT_APPROVED", "El uso externo de los datos del catálogo no está aprobado; no se ha enviado la consulta.")
         if (self._tools_enabled and self._dispatcher is None) or self._admission is None:
@@ -1431,7 +1443,8 @@ class LocalChatService:
                 # menos: se compone la respuesta con las condiciones verificadas
                 # del DTO, cada una con su fuente citada.
                 explicacion = _catalogue_explanation(result.get("answer"))
-                compuesta = compose_catalogue_answer(catalogue, explanation=explicacion)
+                compuesta = compose_catalogue_answer(catalogue, explanation=explicacion,
+                                                     question=pregunta)
                 if compuesta is None:
                     # El producto existe pero su ficha aun no tiene condiciones
                     # transcritas (ETF-01, FND-02). Decir «no repito cifras en

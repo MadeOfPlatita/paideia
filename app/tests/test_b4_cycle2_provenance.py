@@ -476,7 +476,10 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
         })
 
         # La prosa del modelo no se entrega; la respuesta se compone con el DTO.
-        self.assertIn("Según el catálogo local", body["answer"])
+        # CONTRATO (cambio pedido por el uso real): el chat ya no vuelca la ficha
+        # entera. Recomienda UN producto con su motivo y da solo los datos clave:
+        # el volcado de seis fichas con todas sus condiciones era ilegible.
+        self.assertIn("el que mejor encaja", body["answer"])
         self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])
         self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))
@@ -505,7 +508,10 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
                 "message": "TEST ONLY: detalla DEP-KNOWN.", "consent": CONSENT})
 
         # La prosa del modelo no se entrega; la respuesta se compone con el DTO.
-        self.assertIn("Según el catálogo local", body["answer"])
+        # CONTRATO (cambio pedido por el uso real): el chat ya no vuelca la ficha
+        # entera. Recomienda UN producto con su motivo y da solo los datos clave:
+        # el volcado de seis fichas con todas sus condiciones era ilegible.
+        self.assertIn("el que mejor encaja", body["answer"])
         self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])
         self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))
