@@ -89,14 +89,20 @@ class CatalogueApiTests(unittest.TestCase):
         body_text = payload.decode("utf-8")
         body = __import__("json").loads(body_text)
         self.assertEqual(status, 200)
-        self.assertEqual(body["count"], 20)
-        self.assertEqual(len(body["items"]), 20)
+        # 20 candidatos del snapshot + 2 fichas transcritas que ya servian
+        # /api/conditions y el chat. Antes la lista decia 20 y habia 22 abribles.
+        self.assertEqual(body["count"], 22)
+        self.assertEqual(len(body["items"]), 22)
         self.assertTrue(body["not_for_publication"])
         product = body["items"][0]
+        # Lista blanca estricta: un campo nuevo sin revisar sigue haciendo fallar
+        # esta prueba. `rate_tiers` y `source` los anade el adaptador enriquecido
+        # (tramos de tipo y procedencia de la transcripcion) y la interfaz los usa.
         self.assertEqual(set(product), {
             "id", "name", "family", "issuer", "isin", "identity_state",
             "primary_url", "as_of", "publication_ready", "conditions_state",
-            "conflicts", "unknown_fields",
+            "conflicts", "unknown_fields", "rate_tiers", "rate_tiers_state",
+            "source", "conditions_reference_date",
         })
         self.assertTrue(all(item["publication_ready"] is False for item in body["items"]))
         # El estado ya no es siempre «pending»: las fichas transcritas con fuente lo dicen.

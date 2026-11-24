@@ -246,6 +246,28 @@ function conditionsLabel(product) {
   return product && product.conditions_state === "pending" ? "Condiciones pendientes" : "Condiciones no validadas para publicar";
 }
 
+// Un ETF no tiene TAE: su dato de referencia es el TER. Antes la tarjeta decia
+// «sin tasa documentada» aunque la ficha tuviera 28 metricas con fuente, y se
+// leia como un hueco. Aqui se elige la cifra que de verdad identifica al
+// producto, sin inventar ninguna.
+function headlineMetric(productId) {
+  const candidatos = [
+    ["annual_rate_percent", (v) => `${formatRate(v)}`],
+    ["ter_percent", (v) => `${formatRate(v)} anual`],
+    ["management_fee_percent", (v) => `${formatRate(v)} anual`]
+  ];
+  for (const [metric, formato] of candidatos) {
+    const condicion = conditionOf(productId, metric);
+    if (!condicion || condicion.state !== "known" || condicion.value == null) continue;
+    const texto = formato(condicion.value);
+    if (!texto) continue;
+    const etiqueta = metric === "annual_rate_percent" ? "TAE documentada"
+      : (metric === "ter_percent" ? "TER documentado" : "Comisión de gestión documentada");
+    return { kind: "verified", text: `${etiqueta}: ${texto}`, retry: false };
+  }
+  return null;
+}
+
 // Filas de la ficha: qué métrica se muestra, cómo se llama y cómo se formatea.
 // Solo entran las que la transcripción trae con valor; el resto no genera fila.
 const CONDITION_ROWS = Object.freeze({
@@ -1858,7 +1880,15 @@ function conditionStateText(condition) {
 }
 
 function rateSummary(productId) {
-  return window.PaideiaConditionsLoad.rateSummary(state.conditions, conditionOf(productId, "annual_rate_percent"));
+  const resumen = window.PaideiaConditionsLoad.rateSummary(
+    state.conditions, conditionOf(productId, "annual_rate_percent"));
+  // Si no hay TAE porque el producto no la tiene (ETF, fondo), no se anuncia un
+  // hueco: se muestra la cifra que si esta documentada.
+  if (resumen && resumen.kind === "missing") {
+    const alternativa = headlineMetric(productId);
+    if (alternativa) return alternativa;
+  }
+  return resumen;
 }
 
 async function loadConditions(force = false) {
@@ -1870,7 +1900,7 @@ async function loadConditions(force = false) {
   } catch (error) {
     state.conditions = window.PaideiaConditionsLoad.fail(error);
   }
-  if (state.route === "biblioteca") { renderCuratedCatalogue(); renderCatalogueResults(); renderProductDetail(); }
+  if (state.route === "biblioteca") { renderCatalogueResults(); renderCuratedCatalogue(); renderProductDetail(); }
   if (state.route === "comparar") renderComparisonResult();
   if (state.route === "simulacion") {
     const amountInput = document.getElementById("simulation-amount");
@@ -1889,10 +1919,14 @@ function renderCuratedCatalogue() {
   const holder = document.getElementById("curated-results");
   if (!holder) return;
   holder.replaceChildren();
-  const items = [...state.conditions.byId.values()].filter((entry) => entry && entry.origin === "curated_conditions");
+  // Solo las que NO vienen ya en la lista del catalogo: si la API las sirve,
+  // pintarlas otra vez duplicaba las tarjetas.
+  const enLista = new Set((state.library.items || []).map((item) => item && item.id));
+  const items = [...state.conditions.byId.values()]
+    .filter((entry) => entry && entry.origin === "curated_conditions" && !enLista.has(entry.product_id));
   if (!items.length) return;
   holder.appendChild(el("h2", {}, "Productos con condiciones transcritas"));
-  holder.appendChild(textElement("p", "No forman parte de los 20 candidatos originales: se añadieron desde una fuente con URL y fecha de consulta.", "small muted"));
+  holder.appendChild(textElement("p", "No forman parte de los candidatos originales: se añadieron desde una fuente con URL y fecha de consulta.", "small muted"));
   const list = el("div", { className: "result-list" });
   for (const entry of items) {
     const product = {
@@ -1903,7 +1937,9 @@ function renderCuratedCatalogue() {
       identity_state: entry.identity_state === "verified" ? "verified" : "proposed",
       primary_url: entry.source && entry.source.url,
       as_of: entry.source && entry.source.retrieved_at,
-      conditions_state: "pending",
+      conditions_state: entry.conditions.some((c) => c && c.state === "known"
+        && c.value != null && Array.isArray(c.source_ids) && c.source_ids.length)
+        ? "documented" : "pending",
       conflicts: [],
       unknown_fields: []
     };
@@ -2097,6 +2133,9 @@ async function loadCatalogueForLibrary() {
     if (seq === state.library.requestId) {
       state.library.loading = false;
       renderCatalogueResults();
+      // Sin este repintado, la seccion de transcritos conservaba las tarjetas que
+      // pinto cuando el catalogo estaba vacio y las duplicaba en la lista.
+      renderCuratedCatalogue();
       renderLibrarySelection();
       announce(state.library.error
         ? "No se pudo cargar el catálogo"

@@ -119,7 +119,7 @@ class CatalogueWithConditions:
         item["source"] = deepcopy(source) if type(source) is dict else None
         return item
 
-    def list_products(self, q=None, family=None):
+    def list_products(self, q=None, family=None, summary_only=False):
         # La consulta se resuelve aquí, no en el repositorio: así el catálogo base y
         # los productos transcritos comparten la misma tolerancia a acentos y plurales.
         items = [dict(item) for item in self._repository.list_products(q=None, family=family)]
@@ -148,7 +148,13 @@ class CatalogueWithConditions:
         for _, extra in candidates:
             seen.add(extra.get("id"))
             items.append(extra)
-        return [self._enrich(item, report) for item in items]
+        enriched = [self._enrich(item, report) for item in items]
+        if summary_only:
+            # La lista no lleva la ficha entera: se conserva el estado, el resumen y
+            # la procedencia, y se descartan las condiciones una a una.
+            for item in enriched:
+                item.pop("conditions", None)
+        return enriched
 
     FAMILY_WORDS = {
         "cuenta_remunerada": "cuenta remunerada",
@@ -241,13 +247,23 @@ class CatalogueWithConditions:
         return self._enrich(dict(product), report)
 
     def get_product_detail(self, product_id):
-        """Ficha enriquecida con las condiciones, igual que `get_product`.
+        """Ficha enriquecida con las condiciones y con el texto del conflicto.
 
         Sin este metodo, `__getattr__` lo delegaba al repositorio base, que
         devuelve la ficha SIN condiciones: la herramienta recibia
         `conditions: []` aunque el servicio tuviera las metricas documentadas.
+
+        El texto literal del conflicto vive en el repositorio base
+        (`_conflict_details`), no en el servicio de condiciones: se copia aqui
+        para que la ficha diga QUE discrepa y no una frase generica.
         """
-        return self.get_product(product_id)
+        product = self.get_product(product_id)
+        if product is None:
+            return None
+        detalles = getattr(self._repository, "_conflict_details", None)
+        if isinstance(detalles, dict) and product_id in detalles:
+            product["conflicts"] = list(detalles[product_id])
+        return product
 
     def __getattr__(self, name):
         return getattr(self._repository, name)

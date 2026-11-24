@@ -152,7 +152,7 @@ const LIBRARY_NAMES = [
   'el', 'textElement', 'callout', 'button', 'routeLink', 'errorBox', 'badge', 'familyLabel',
   'identityKind', 'identityLabel', 'conditionsLabel', 'issuerLabel', 'productName',
   'appendPrimarySource', 'isSafePrimaryUrl', 'formatEuros', 'formatRate', 'conditionOf',
-  'conditionStateText', 'conditionRowText', 'rateSummary', 'productCard', 'section',
+  'conditionStateText', 'conditionRowText', 'headlineMetric', 'rateSummary', 'productCard', 'section',
   'renderCatalogueResultsBody', 'renderCatalogueResults',
 ];
 
@@ -417,7 +417,7 @@ test('las razones de la comparación se filtran en lugar de romper el pintado', 
   load(ui.ctx, ['el', 'textElement', 'callout', 'badge', 'familyLabel', 'identityLabel', 'identityKind',
     'conditionsLabel', 'issuerLabel', 'productName', 'appendList',
     'appendPrimarySource', 'isSafePrimaryUrl', 'safeComparisonProduct', 'comparisonCard',
-    'conditionOf', 'rateSummary', 'conditionConsultedAt', 'conditionValidityText',
+    'conditionOf', 'headlineMetric', 'rateSummary', 'conditionConsultedAt', 'conditionValidityText',
     'productEffectiveDate', 'renderComparisonResultBody'], ['FAMILIES', 'CONDITION_ROWS']);
 
   const holder = new Node('section');

@@ -14,6 +14,7 @@ from urllib.parse import parse_qsl, unquote_to_bytes, urlsplit
 from domain import InputValidationError, calculate_scenario
 from backend_services import CatalogueComparisonService, DEPOSIT_CRITERION, LocalChatService, ServiceProblem
 from conditions_service import ConditionsService
+from catalogue_adapter import CatalogueWithConditions
 from env_local import load_env
 from pai_setup import build_chat_service, chat_enabled
 
@@ -459,7 +460,15 @@ class _Handler(BaseHTTPRequestHandler):
                      if not (isinstance(label, str) and _unknown_label_is_documented(label, fields))]
         updated = dict(item)
         updated["unknown_fields"] = remaining
-        updated["conditions_state"] = "documented" if "rate" in fields else "partial"
+        # El adaptador ya calculó el estado real a partir de las condiciones
+        # documentadas: un ETF tiene 28 métricas con fuente aunque no tenga tasa,
+        # así que forzar `partial` por «no hay rate» mentía. Se respeta lo que ya
+        # viene calculado y solo se ajusta cuando falta.
+        actual = item.get("conditions_state")
+        if actual in {"documented", "partial", "pending"}:
+            updated["conditions_state"] = actual
+        else:
+            updated["conditions_state"] = "documented" if "rate" in fields else "partial"
         return updated
 
     def _catalogue_query(self, raw_query):
@@ -851,8 +860,15 @@ class _Handler(BaseHTTPRequestHandler):
                 return
             if path == "/api/catalogue":
                 q, family = self._catalogue_query(request.query)
-                items = [self._with_conditions_state(item)
-                         for item in self.server.catalogue_repository.list_products(q=q, family=family)]
+                repository = self.server.catalogue_repository
+                # El adaptador enriquecido acepta summary_only: la lista pinta
+                # tarjetas y no necesita las 34 condiciones de cada ficha. Un
+                # repositorio sin servicio de condiciones no lo admite.
+                if hasattr(repository, "_conditions"):
+                    raw_items = repository.list_products(q=q, family=family, summary_only=True)
+                else:
+                    raw_items = repository.list_products(q=q, family=family)
+                items = [self._with_conditions_state(item) for item in raw_items]
                 self._send_json(200, {
                     "items": items,
                     "count": len(items),
@@ -875,18 +891,14 @@ class _Handler(BaseHTTPRequestHandler):
                     self._not_found()
                 repository = self.server.catalogue_repository
                 product = getattr(repository, "get_product_detail", repository.get_product)(product_id)
-                service = self.server.conditions_service
-                conditions = None
-                if service is not None:
-                    try:
-                        conditions = service.for_product(product_id)
-                    except (OSError, ValueError, RuntimeError):
-                        conditions = None
-                if product is None and conditions is None:
+                if product is None:
                     self._not_found()
-                if product is not None:
-                    product = self._with_conditions_state(product)
-                self._send_json(200, {"product": product, "conditions": conditions})
+                product = self._with_conditions_state(product)
+                # La ficha entera (con TODAS sus condiciones) viaja dentro de
+                # `product`. Antes se servía además un campo `conditions` aparte con
+                # solo 7 métricas (el recorte del DTO de chat): dos listas distintas
+                # en la misma respuesta y la más corta parecía la buena. Se retira.
+                self._send_json(200, {"product": product})
                 return
             if path in {"/api/compare", "/api/calculate", "/api/chat", "/api/chat-status", "/api/context-preview"}:
                 raise ApiProblem(405, "METHOD_NOT_ALLOWED", "Método no permitido.")
@@ -926,14 +938,22 @@ def create_server(host="127.0.0.1", port=8765, repository=None, *,
     httpd = ThreadingHTTPServer((host, port), _Handler)
     httpd.daemon_threads = True
     try:
-        catalogue = repository if repository is not None else SnapshotRepository()
         comparison = comparison_service if comparison_service is not None else CatalogueComparisonService()
+        conditions = conditions_service or (ConditionsService() if repository is None else None)
+        if repository is not None:
+            catalogue = repository
+        elif conditions is not None:
+            # El adaptador enriquece cada ficha con sus condiciones. Sin el, la lista
+            # servia 20 productos mientras el chat y /api/conditions trabajaban con 22:
+            # las fichas transcritas existian pero no se contaban ni se listaban.
+            catalogue = CatalogueWithConditions(SnapshotRepository(), conditions)
+        else:
+            catalogue = SnapshotRepository()
         httpd.catalogue_repository = catalogue
         httpd.comparison_service = comparison
         httpd.chat_service = (chat_service if chat_service is not None
                               else build_chat_service(catalogue, comparison))
-        httpd.conditions_service = (conditions_service if conditions_service is not None
-                                    else ConditionsService() if repository is None else None)
+        httpd.conditions_service = conditions
     except Exception:
         httpd.server_close()
         raise

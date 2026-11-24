@@ -61,7 +61,7 @@ function setup() {
     'identityLabel', 'identityKind', 'conditionsLabel', 'issuerLabel', 'productName',
     'section', 'appendPrimarySource', 'appendList', 'conditionOf', 'conditionConsultedAt',
     'conditionValidityText', 'productEffectiveDate', 'formatRate', 'conditionStateText',
-    'rateSummary', 'productCard', 'renderProductDetail', 'callout', 'errorBox', 'routeLink',
+    'headlineMetric', 'rateSummary', 'productCard', 'renderProductDetail', 'callout', 'errorBox', 'routeLink',
     'formatEuros', 'conditionRowText',
   ];
   vm.runInContext(names.map((name) => grab(code, name)).join('\n\n'), ctx);
