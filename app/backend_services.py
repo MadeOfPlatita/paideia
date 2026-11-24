@@ -1053,6 +1053,24 @@ class LocalChatService:
                 con_herramientas = not practical
                 result = ToolChatRunner(provider, self._dispatcher).run(
                     messages, with_tools=con_herramientas)
+                if (result.get("finish_reason") == "tool_error" and con_herramientas
+                        and self._tools_scope != "calculator_only"
+                        and not [e for e in (result.get("tool_events") or [])
+                                 if e.get("state") == "executed"]):
+                    # Una llamada rechazada mataba el turno sin dar nada al usuario.
+                    # Se reintenta UNA vez sin herramientas: no se ejecutó ninguna
+                    # (las rechazadas dejan evento, pero con estado `rejected`, no
+                    # `executed`), así que no se duplica trabajo.
+                    #
+                    # Nunca con scope `calculator_only`: ahí una llamada al catálogo
+                    # es una violación de la frontera del servicio y debe fallar, no
+                    # buscar una salida. Hay una prueba que lo fija.
+                    respaldo = ToolChatRunner(provider, self._dispatcher).run(
+                        messages, with_tools=False)
+                    if (respaldo.get("answer") or "").strip():
+                        result = {**respaldo,
+                                  "tool_events": result.get("tool_events") or [],
+                                  "catalogue": result.get("catalogue") or {"used": False, "products": []}}
             else:
                 plain = provider.chat(messages)
                 if plain.tool_calls:
