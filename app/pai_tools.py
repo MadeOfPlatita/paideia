@@ -367,6 +367,10 @@ class ToolDispatcher:
         "deposito": "deposito", "depositos": "deposito", "plazo_fijo": "deposito",
         "letra": "letra_deuda_publica", "letras": "letra_deuda_publica",
         "deuda_publica": "letra_deuda_publica", "tesoro": "letra_deuda_publica",
+        # Nombre canonico de la familia: el modelo lo pide tal cual y antes se
+        # rechazaba con INVALID_ARGUMENTS porque faltaba en el mapa.
+        "letra_deuda_publica": "letra_deuda_publica",
+        "letras_del_tesoro": "letra_deuda_publica", "deuda_publica_letra": "letra_deuda_publica",
         "fondo": "fondo_tradicional", "fondos": "fondo_tradicional",
         "fondo_tradicional": "fondo_tradicional",
         "etf": "etf_ucits", "etfs": "etf_ucits", "etf_ucits": "etf_ucits",
