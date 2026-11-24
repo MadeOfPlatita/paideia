@@ -29,7 +29,8 @@ FINANCIAL_EDUCATION_PROMPT = (
 )
 
 # Formas lexicales conocidas; no es verificacion semantica.
-_SUBJECT = r'\b(?:ahorrar|ahorro|capital|invertir|inversi[oó]n)\b'
+_SUBJECT = (r'\b(?:ahorrar|ahorro|capital|invertir|inversi[oó]n|dep[oó]sito|cuenta|'
+            r'fondo|etf|producto|letra)\b')
 _CLAIM = re.compile(
     _SUBJECT + r'[^.!?;:]{0,95}?(?:'
     r'\bsin\s*(?:ning[uú]n\s+)?riesgos?\b'
@@ -63,6 +64,22 @@ _WHOLE_NEGATION = re.compile(
 )
 # Refutacion posterior: «un ahorro sin riesgos no existe».
 _TRAILING_REFUTATION = re.compile(r"\s+(?:no|nunca|tampoco)\s+(?:existe|es|son|hay)\b", re.I)
+# Negacion que precede al predicado sin contradecirlo: «la inflacion no hace que
+# tu inversion este libre de riesgos», «no implica que el ahorro sea sin riesgo».
+# La negacion recae sobre el verbo causativo, no sobre la ausencia de riesgo, asi
+# que la frase ENSENA que el riesgo existe. Sin esto se rechazaba una respuesta
+# entera sobre la inflacion (medido: 502 en produccion).
+_NEGATED_CAUSATIVE = re.compile(
+    r'\b(?:no|nunca|tampoco)\s+(?:hace|implica|significa|quiere\s+decir|supone|garantiza)'
+    r'\s+que\b[^.!?]{0,60}$',
+    re.I,
+)
+# «Si tu inversion no tiene ningun riesgo, revisa quien te lo dice»: condicional
+# que el propio texto pone en duda. La frase no afirma el riesgo cero.
+_HYPOTHETICAL = re.compile(
+    r'\b(?:si|cuando|supongamos|imagina|sup[oó]n)\b[^.!?]{0,80}$',
+    re.I,
+)
 # Afirmacion literal de ausencia de riesgo: «no conlleva ningun riesgo». Es la
 # peligrosa, no una negacion, y por eso se comprueba antes de las exenciones.
 _ASSERTED_NO_RISK = re.compile(
@@ -96,8 +113,15 @@ def assess_financial_text(text: str) -> tuple[str, ...]:
         # «no conlleva / no tiene ... ningun riesgo» es la afirmacion peligrosa
         # literal, no una negacion: se rechaza antes de aplicar las exenciones.
         if _ASSERTED_NO_RISK.search(match.group()):
-            return ('ABSOLUTE_NO_RISK',)
+            # Una afirmacion literal se rechaza siempre... salvo que la frase sea
+            # una hipotesis que el propio texto pone en duda («si tu inversion no
+            # tiene ningun riesgo, revisa quien te lo dice»). Ahi la ensenanza es
+            # que el riesgo existe.
+            if not _HYPOTHETICAL.search(prefix):
+                return ('ABSOLUTE_NO_RISK',)
         if (_PREFIX_CONTEXT.search(_last_conjunct(prefix))
+                or _NEGATED_CAUSATIVE.search(prefix)
+                or _HYPOTHETICAL.search(prefix)
                 or _PREDICATE_NEGATION.search(_last_conjunct(match.group()))
                 or _REFUTATION.match(clean[match.end():])
                 or _WHOLE_NEGATION.search(whole)
