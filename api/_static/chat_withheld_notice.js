@@ -7,7 +7,7 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = model;
   if (root) root.PaideiaWithheldNotice = model;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  const CATALOGUE = 'El texto del modelo no se muestra en esta consulta de catálogo: no está validado y no puede adjudicar fuentes ni tasas. Se muestran los datos locales con su clase, fechas y límites.';
+  const CATALOGUE = 'Los datos de esta respuesta vienen del catálogo local, con su fuente y su fecha. La explicación de Pai va limpia de cifras: así ninguna tasa ni importe puede atribuirse al producto equivocado.';
   const CALCULATION = 'Se ha omitido el texto del modelo en este turno de calculadora: una cifra de la prosa puede atribuirse al concepto equivocado. Se muestra el resultado y los supuestos del motor local.';
   const GENERIC = 'Se ha omitido el texto del modelo porque no se pudo verificar localmente. No se presenta como dato.';
   const REASONS = Object.freeze({

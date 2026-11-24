@@ -116,13 +116,14 @@ function chatCapabilitiesText(capabilities) {
 // prometia siempre "hasta dos turnos anteriores" aunque la capacidad estuviera
 // apagada, que es el caso de produccion: el usuario leia una promesa y
 // encontraba un control muerto.
-function chatHistoryConsentText() {
-  if (chatCapabilities?.history !== true) {
+function chatHistoryConsentText(capabilities) {
+  const caps = capabilities && typeof capabilities === "object" ? capabilities : null;
+  if (caps?.history !== true) {
     return "Historial no disponible: este servicio no reenvía preguntas anteriores, "
       + "así que Pai responde solo con lo que diga tu mensaje actual.";
   }
   return "Autorizo reenviar con esta pregunta hasta dos turnos anteriores de esta "
-    + "pestaña (cuatro mensajes como máximo, 1.000 caracteres cada uno); sin "
+    + "pestaña (cuatro mensajes como máximo, 4.000 caracteres cada uno); sin "
     + "guardado en el servidor.";
 }
 
@@ -1088,7 +1089,7 @@ function renderHome() {
   const contextConsent = el("input", {type:"checkbox", id:"chat-context-consent", disabled:chatCapabilities?.context !== true});
   const historyConsent = el("input", {type:"checkbox", id:"chat-history-consent", disabled:chatCapabilities?.history !== true});
   chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-context-consent"}, [contextConsent, el("span", {}, "Autorizo adjuntar a esta pregunta solo los campos de mi mapa que he marcado.")]));
-  chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, chatHistoryConsentText())]));
+  chatOptions.appendChild(el("label", {className:"choice", htmlFor:"chat-history-consent"}, [historyConsent, el("span", {}, chatHistoryConsentText(chatCapabilities))]));
   let historyRevision = 0;
   const historyClear = button("Borrar historial de esta pestaña", () => { historyRevision += 1; PaideiaChatContext.clear(); feedback.textContent = "Historial borrado de esta pestaña. Los mensajes ya enviados al proveedor no se borran."; }, "button button-quiet", {id:"chat-history-clear", type:"button"});
   // Sin la capacidad de historial no hay nada que borrar: ofrecer el boton
@@ -1157,7 +1158,7 @@ function renderHome() {
     }
     const selectedFields = PaideiaChatContext.fields.filter((_, index) => contextChoices[index].checked);
     if (contextConsent.checked && !selectedFields.length) { feedback.textContent = "Marca al menos un campo de tu mapa para adjuntarlo."; return; }
-    if (historyConsent.checked && query.length > 1000) { feedback.textContent = "Límite de historial: 1.000 caracteres por mensaje; solo se conservan los dos últimos turnos. Reduce la pregunta o desmarca su envío."; return; }
+    if (historyConsent.checked && query.length > 4000) { feedback.textContent = "Límite de historial: 4.000 caracteres por mensaje; solo se conservan los dos últimos turnos. Reduce la pregunta o desmarca su envío."; return; }
     const includeContext = contextConsent.checked, includeHistory = historyConsent.checked, historyAtSend = historyRevision;
     const attemptedTicket = state.chatTicket && state.chatTicketQuery === query ? state.chatTicket : null;
     if (!attemptedTicket && state.chatTicket) {
