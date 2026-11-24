@@ -233,6 +233,45 @@ def _profile_applied(body, profile_line):
     return body
 
 
+def _looks_like_tool_attempt(text):
+    """Detecta una llamada a herramienta escrita COMO TEXTO en vez de como llamada.
+
+    Medido en dos turnos reales: el modelo respondio literalmente
+
+        <tool_call> {"name":"search_products","arguments":{"query":"VanEck"}} </tool_call>
+
+    y lo mismo con `<tool_use>`. El `finish_reason` vino como «stop», no como
+    «tool_calls», asi que el servidor no ejecuto nada... y ese texto se le mostro al
+    usuario tal cual: XML crudo y una busqueda que nunca se hizo.
+
+    Es basura visible y un intento perdido. Se detecta para no publicarlo y para
+    avisar de que la busqueda no se ha hecho.
+    """
+    if type(text) is not str:
+        return False
+    return (_TOOL_ATTEMPT.search(text) is not None)
+
+
+_TOOL_ATTEMPT = re.compile(
+    r"<\s*/?\s*(?:tool_call|tool_use|function_call|invoke)\b",
+    re.IGNORECASE,
+)
+
+
+def _strip_tool_attempts(text):
+    """Quita los bloques de llamada escritos como texto y deja el resto."""
+    if type(text) is not str or not text:
+        return text
+    limpio = _TOOL_ATTEMPT_BLOCK.sub("", text)
+    return limpio.strip()
+
+
+_TOOL_ATTEMPT_BLOCK = re.compile(
+    r"<\s*(?:tool_call|tool_use|function_call|invoke)\b[^>]*>.*?<\s*/\s*(?:tool_call|tool_use|function_call|invoke)\s*>",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
 def _withhold_text(result, reason):
     limitations = [note for note in (result.get("limitations") or []) if type(note) is str][:6]
     note = _UNBACKED_CLAIM_NOTES[reason]
@@ -735,7 +774,21 @@ def _financial_checked(text):
     Ahora la frase peligrosa se elimina y el resto se entrega. La promesa no se
     muestra nunca; lo que cambia es que el usuario conserva la explicacion en vez
     de perderla entera.
+
+    Aqui se quitan tambien las llamadas a herramienta escritas COMO TEXTO: si el
+    modelo escribe `<tool_call>{...}</tool_call>` en vez de llamar, ese XML no puede
+    llegar al usuario.
     """
+    if _looks_like_tool_attempt(text):
+        restante = _strip_tool_attempts(text)
+        if not restante.strip():
+            # El turno entero era una llamada escrita como texto: la busqueda no se
+            # ejecuto. Decirselo al usuario es mejor que un 502 o que enseñarle XML.
+            raise ServiceProblem(
+                502, "CHAT_TOOL_CALL_AS_TEXT",
+                "El modelo intentó consultar el catálogo pero no llegó a ejecutar la "
+                "consulta; no hay datos que mostrar en este turno. Vuelve a preguntar.")
+        text = restante
     limpio, _quitadas = redact_financial_claims(text)
     # Un texto vacio que LLEGA vacio no es un problema de calidad: es un turno sin
     # prosa (el de calculadora, por ejemplo, donde la respuesta son los datos del
