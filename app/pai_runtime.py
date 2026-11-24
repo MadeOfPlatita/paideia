@@ -431,8 +431,18 @@ class ToolChatRunner:
         }
 
     @classmethod
-    def _evidence_condition(cls, raw):
-        """Copia solo campos ya validados; una forma inesperada no se publica."""
+    def _evidence_condition(cls, raw, product_source=None):
+        """Copia solo campos ya validados; una forma inesperada no se publica.
+
+        `product_source`: fuente del producto, que se usa cuando la condición no
+        trae la suya. El adaptador entrega las condiciones SIN `sources` (la fuente
+        está en el producto, en `primary_url`/`source`), y el proyector exigía una
+        fuente por condición para aceptar «documentada». Resultado medido: un
+        producto con 14 condiciones correctas y su TAE 2,4 % se degradaba entero a
+        «condiciones desconocidas» y la misma respuesta contradecía la cifra que
+        mostraba. La condición hereda la fuente del producto que la documenta: es la
+        misma procedencia, no una atribución inventada.
+        """
         if type(raw) is not dict:
             return None
         metric = raw.get("metric")
@@ -453,12 +463,21 @@ class ToolChatRunner:
             return None
         value = raw.get("value")
         if value is not None:
-            if type(value) is not str or len(value) > 32:
+            # Las clausulas de texto («Varios titulares, documento firmado por
+            # todos», «Disponer de Cuenta Operativa») son condiciones legitimas y
+            # pueden ser largas: el tope de 32 caracteres las daba por invalidas y
+            # degradaba el producto entero. El tope estricto se queda para los
+            # valores numericos, que nunca son largos.
+            tope = 400 if unit == "TEXT" else 32
+            if type(value) is not str or len(value) > tope:
                 return None
-            try:
-                Decimal(value)
-            except (InvalidOperation, ValueError):
-                return None
+            # Solo las metricas NUMERICAS exigen un numero. `TEXT` (clausulas),
+            # `DATE` (2026-09-29) y `SCALE` (1/6) tienen forma propia.
+            if unit not in {"TEXT", "DATE", "SCALE"}:
+                try:
+                    Decimal(value)
+                except (InvalidOperation, ValueError):
+                    return None
         if state == "known" and value is None:
             return None
         if state == "unknown" and value is not None:
@@ -485,6 +504,21 @@ class ToolChatRunner:
                     "class": source.get("class") if source.get("class") in {"official", "secondary", "unknown"} else "unknown",
                     "title": cls._safe_text(source.get("title"), 200),
                     "retrieved_at": cls._safe_text(source.get("retrieved_at"), 40),
+                    "resolution": "resolved",
+                })
+        if not sources and type(product_source) is dict:
+            # La fuente del producto documenta sus condiciones. Se hereda para no
+            # degradar a «desconocida» una ficha cuyas cifras sí están publicadas y
+            # enlazadas: medido, DEP-04 y DEP-EBN-12 perdian su TAE por esto.
+            url = cls._https_url(product_source.get("url"))
+            if url is not None:
+                sources.append({
+                    "url": url,
+                    "class": (product_source.get("class")
+                              if product_source.get("class") in {"official", "secondary", "unknown"}
+                              else "unknown"),
+                    "title": cls._safe_text(product_source.get("title"), 200),
+                    "retrieved_at": cls._safe_text(product_source.get("retrieved_at"), 40),
                     "resolution": "resolved",
                 })
         limitations = cls._safe_string_list(raw.get("limitations"), limit=4, max_length=400)
@@ -520,6 +554,12 @@ class ToolChatRunner:
         conditions = []
         invalid_conditions = 0
         truncated_conditions = 0
+        # Fuente del producto: la heredan sus condiciones cuando no traen la suya.
+        product_source = raw.get("source") if type(raw.get("source")) is dict else None
+        if product_source is None:
+            primary = cls._https_url(raw.get("primary_url"))
+            if primary is not None:
+                product_source = {"url": primary, "class": "official"}
         raw_conditions = raw.get("conditions")
         if raw_conditions is None:
             pass
@@ -535,9 +575,13 @@ class ToolChatRunner:
             for condition in raw_conditions[:MAX_CHAT_CONDITIONS]:
                 metric = condition.get("metric") if type(condition) is dict else None
                 if metric not in PROJECTED_METRIC_UNITS:
-                    # Fuera de la lista blanca del catalogo: no viaja al chat.
+                    # Fuera de la lista blanca del catalogo: no viaja al chat. NO es
+                    # una condicion ilegible: es una metrica que el chat no publica
+                    # (hay 34 documentadas y el chat solo lleva tasa y plazo). Contarla
+                    # como invalida rebajaba el producto entero a «condiciones
+                    # desconocidas» mientras la misma respuesta mostraba su TAE 2,4 %.
                     continue
-                projected = cls._evidence_condition(condition)
+                projected = cls._evidence_condition(condition, product_source)
                 if projected is None:
                     invalid_conditions += 1
                 else:
