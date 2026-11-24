@@ -1375,3 +1375,37 @@ La prueba lo fija: la herramienta se ejecuta **una** vez y el modelo se llama tr
 también cae, el turno devuelve su error con su código.
 
 Pruebas al cierre: **921 Python** (1.037 subtests) y **132 Node**.
+
+### El 502 que quedaba no era de la aplicación
+
+La medición agresiva confundió dos cosas y conviene dejarlo dicho, porque es el tipo
+de error que hace buscar un fallo donde no está: lancé 16 turnos seguidos con
+herramientas (2–4 llamadas al modelo cada uno) contra un servicio con límite de 10
+llamadas por minuto. Los 8 «fallos» eran **429 de cuota**, no 502. Ningún 502.
+
+Con los turnos espaciados, la tasa real de 502 bajó a **1 de 10**, y ese único no
+traía código. Dato decisivo: todos los 502 que produce el código llevan su código
+propio (`CHAT_TOOL_ERROR`, `CHAT_EMPTY_ANSWER`, `CHAT_INVALID_RESPONSE`…). Un 502
+sin cuerpo solo puede venir del proxy.
+
+La causa encaja con los tiempos: Render corta las peticiones a los **100 s** y
+devuelve un 502 mudo. El proveedor admite **60 s por intento**, así que un fallo por
+tiempo agotado más su reintento sumaban 120 s. El reintento estaba causando el 502
+que pretendía evitar.
+
+Ahora el reintento se salta si el turno ya gastó su presupuesto (30 s) y el usuario
+recibe el 504 con su motivo, que es un diagnóstico honesto. La distribución real de
+267 turnos medidos —mediana 20 s, p90 32 s, máximo 77 s, solo 1 por encima de 55 s—
+deja el reintento disponible para casi todos los turnos.
+
+### Medición final
+
+Doce turnos con herramientas, espaciados, contra el despliegue final: **12 de 12**,
+cero fallos. Incluye «Dame los pasos para comparar dos depósitos», que había dado
+502 dos veces.
+
+Y una nota sobre la métrica: las respuestas de catálogo «cortas» (760 y 978
+caracteres) no lo eran. La primera trae las cuatro comisiones del fondo —gestión
+1,4 %, depositario 0,05 %, entrada 0,0 %, salida 0,0 %— cada una con su fuente; la
+segunda trae la cuenta con su TIN y su TAE matizados. En catálogo la longitud no
+mide la calidad: mide tener el dato y su fuente.
