@@ -1093,12 +1093,20 @@ class ToolChatRunner:
                 result = self._provider.chat(copy.deepcopy(current_messages),
                                              tools=copy.deepcopy(definitions) if with_tools else None)
             except Exception as _error:
-                # Un fallo de red se reintenta UNA vez, y solo si este turno no
-                # ha ejecutado ninguna herramienta: repetir con trabajo ya
-                # hecho duplicaria llamadas. La app nunca ejecuta operaciones
-                # financieras, asi que repetir la consulta al modelo no tiene
-                # efectos; como mucho cuesta una llamada mas.
-                if _is_retryable_transport(_error) and not tool_events:
+                # Un fallo de red se reintenta UNA vez. Antes se exigia ademas que
+                # este turno no hubiera ejecutado ninguna herramienta, y eso dejaba
+                # fuera justo los turnos que mas fallan: los de catalogo ejecutan
+                # search_products en la primera ronda y, si la segunda llamada al
+                # modelo se corta, el usuario recibia 502 con todo el trabajo hecho.
+                # Medido: ~2-4 % de los turnos con herramientas, y la misma pregunta
+                # responde al reintentar.
+                #
+                # Es seguro porque las cinco herramientas son de SOLO LECTURA sobre
+                # el catalogo local (buscar, detalle, comparar, fuentes) o aritmetica
+                # determinista (calculate_scenario): ninguna escribe, ninguna mueve
+                # dinero y ninguna llama a un servicio externo. Repetir la llamada al
+                # modelo no repite esas consultas: solo vuelve a pedir la respuesta.
+                if _is_retryable_transport(_error):
                     self._debug("provider_retry_transport")
                     try:
                         result = self._provider.chat(copy.deepcopy(current_messages),

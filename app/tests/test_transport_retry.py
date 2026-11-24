@@ -1,4 +1,4 @@
-"""El reintento de transporte: una vez, solo red, nunca con trabajo hecho.
+"""El reintento de transporte: una vez, solo red, sin repetir herramientas.
 
 Medido en producción: alrededor del 2 % de los turnos moría con un 502 sin código
 y la misma pregunta respondía al reintentar a mano (2.660, 3.177 y 3.588
@@ -11,7 +11,16 @@ condiciones:
 1. Se reintenta el fallo de red (`transport_error`, `timeout`).
 2. NO se reintenta lo que no se arregla repitiendo: cupo, misión, credencial ni
    respuesta inválida.
-3. NO se reintenta si el turno ya ejecutó una herramienta.
+3. Se reintenta también si el turno ya ejecutó una herramienta, pero **la
+   herramienta no se vuelve a ejecutar**: su resultado ya viaja en el historial que
+   se reenvía al modelo. Las cinco herramientas son de solo lectura sobre el
+   catálogo local (buscar, detalle, comparar, fuentes) o aritmética determinista
+   (calculate_scenario): ninguna escribe ni mueve dinero.
+
+La condición 3 era antes «no se reintenta si el turno ya ejecutó una herramienta»,
+y eso dejaba fuera justo los turnos que más fallan: los de catálogo ejecutan
+`search_products` en la primera ronda y, si la segunda llamada al modelo se corta,
+el usuario recibía 502 con todo el trabajo hecho.
 """
 
 import sys
@@ -117,19 +126,45 @@ class TransportRetryTests(unittest.TestCase):
             [{"role": "user", "content": "hola"}], with_tools=False)
         self.assertEqual(proveedor.llamadas, 1, "repetir no arregla un cupo agotado")
 
-    def test_a_transport_failure_is_not_retried_once_a_tool_ran(self):
+    def test_a_transport_failure_after_a_tool_is_retried_without_repeating_the_tool(self):
         # Turno 1: el modelo pide una herramienta. Turno 2: cae la red.
+        #
+        # CONTRATO (cambio medido). Antes no se reintentaba tras una herramienta,
+        # por miedo a «duplicar trabajo». Eso dejaba fuera justo los turnos que mas
+        # fallan: los de catalogo ejecutan search_products en la primera ronda y, si
+        # la segunda llamada al modelo se corta, el usuario recibia 502 con todo el
+        # trabajo hecho (~2-4 % de los turnos, y la misma pregunta responde al
+        # reintentar).
+        #
+        # La garantia que importa NO es «no llamar dos veces al modelo», sino que la
+        # herramienta no se ejecute dos veces. Las cinco son de solo lectura sobre el
+        # catalogo local o aritmetica: su resultado ya esta en el historial que se
+        # reenvia, asi que el reintento solo vuelve a pedir la respuesta.
         proveedor = Provider([
             ChatResult("", None, (ToolCall("c1", "search_products", {"query": "deposito"}),),
                        "tool_calls"),
             ProviderError("transport_error"),
+            ChatResult("respuesta final", None, (), "stop"),
+            ChatResult("respuesta final", None, (), "stop"),
         ])
         despachante = Dispatcher()
-        ToolChatRunner(proveedor, despachante).run(
+        resultado = ToolChatRunner(proveedor, despachante).run(
             [{"role": "user", "content": "hola"}], with_tools=True)
-        self.assertEqual(len(despachante.calls), 1, "la herramienta se ejecutó una vez")
-        self.assertEqual(proveedor.llamadas, 2,
-                         "tras una herramienta no se repite el turno: duplicaria trabajo")
+        # La garantia que importa: la herramienta NO se ejecuta dos veces.
+        self.assertEqual(len(despachante.calls), 1,
+                         "la herramienta se ejecuta UNA vez: el reintento no la duplica")
+        self.assertEqual(proveedor.llamadas, 3,
+                         "el modelo se llama tres veces: original, fallo y reintento")
+        # Y el turno se rescata: no queda en error, sino con los datos del catalogo.
+        # El `answer` va vacio a proposito porque es un turno de catalogo (la prosa
+        # del modelo se retiene y se sirven los datos verificados), asi que lo que se
+        # comprueba es que HAY datos, no que hay prosa.
+        self.assertEqual(resultado["finish_reason"], "stop",
+                         "el reintento rescata el turno en vez de devolver error")
+        self.assertTrue(resultado["catalogue"]["used"],
+                        "el resultado del reintento trae los datos del catalogo")
+        self.assertGreater(len(resultado["catalogue"]["products"]), 0,
+                           "la busqueda que ya se ejecuto sigue estando disponible")
 
 
 if __name__ == "__main__":
