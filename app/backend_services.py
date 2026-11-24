@@ -444,17 +444,70 @@ def _redact_unbacked_figures(text, strict=False):
                 kept.append(piece.strip())
                 continue
             removed += 1
+            # Si la frase descartada ERA un paso numerado («4. Fiscalidad...»), su
+            # numero no puede quedarse pegado al paso siguiente: la lista acabaria
+            # «1. Pide las cifras. 2. 3. 4. **Vinculaciones.**», que parece un fallo
+            # de la aplicación. Se anota que habia un paso aqui.
+            if _NUMBERED_STEP.match(piece.strip()):
+                kept.append("\x00PASO\x00")
             continue
         kept.append(piece.strip())
-    partial = " ".join(kept).strip()
+    parcial = " ".join(pieza for pieza in kept if pieza != "\x00PASO\x00").strip()
     if removed == 0:
         # No había nada que quitar: el texto se devuelve íntegro. Devolver "" aquí
         # hacía que el llamador lo interpretara como «todo redactado» y retuviera
         # la respuesta entera.
         return text.strip(), 0
-    if not partial:
+    if not parcial:
         return "", removed
-    return partial, removed
+    return _renumber(parcial), removed
+
+
+_NUMBERED_STEP = re.compile(r"(?<![\d.,])(\d{1,2})\.\s+(?=\S)")
+
+
+def _renumber(text):
+    """Repara una lista numerada a la que se le quitaron pasos.
+
+    Medido en una respuesta real: al descartar cuatro frases con cifras, la lista de
+    pasos quedaba «1. Pide las cifras. 2. 3. 4. 5. 6. **Vinculaciones.**» — números
+    sueltos sin texto, que parecen un fallo de la aplicación.
+
+    Dos arreglos, en este orden:
+      1. Se ELIMINAN los números que se quedaron sin contenido (un «N.» pegado al
+         siguiente número no es un paso: es el hueco que dejó una frase borrada).
+      2. Se renumeran los que sobreviven, para que la lista vuelva a ir 1, 2, 3.
+    """
+    marcas = list(_NUMBERED_STEP.finditer(text))
+    if len(marcas) < 2:
+        return text
+    # 1) Quitar los números huérfanos (sin texto propio antes del siguiente).
+    piezas = []
+    ultimo = 0
+    for indice, marca in enumerate(marcas):
+        siguiente = marcas[indice + 1] if indice + 1 < len(marcas) else None
+        contenido = text[marca.end():siguiente.start() if siguiente else len(text)].strip()
+        if len(contenido) < 3:
+            # Número sin contenido: se descarta entero, junto con su hueco.
+            piezas.append(text[ultimo:marca.start()])
+            ultimo = marca.end()
+        else:
+            piezas.append(text[ultimo:marca.start()])
+            ultimo = marca.start()
+    piezas.append(text[ultimo:])
+    limpio = " ".join(pieza.strip() for pieza in piezas if pieza.strip())
+    # 2) Renumerar lo que queda.
+    marcas = list(_NUMBERED_STEP.finditer(limpio))
+    if len(marcas) < 1:
+        return limpio
+    salida = []
+    ultimo = 0
+    for posicion, marca in enumerate(marcas, start=1):
+        salida.append(limpio[ultimo:marca.start()])
+        salida.append(f"{posicion}. ")
+        ultimo = marca.end()
+    salida.append(limpio[ultimo:])
+    return "".join(salida)
 
 
 def _catalogue_explanation(text):
