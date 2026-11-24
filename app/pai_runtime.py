@@ -15,6 +15,7 @@ import copy
 import json
 import os
 import re
+import time
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlsplit
 
@@ -72,6 +73,11 @@ MAX_CHAT_CONDITIONS = 40
 # repitiendo. La app no ejecuta operaciones financieras, asi que repetir la
 # consulta al modelo no tiene efectos; como mucho cuesta una llamada mas.
 _RETRYABLE_TRANSPORT = frozenset({"transport_error", "timeout"})
+
+# Presupuesto para permitir el reintento. Render corta a los 100 s con un 502 sin
+# cuerpo; por encima de este umbral no se reintenta y se devuelve el error propio,
+# que al menos explica que paso. Deja margen para un intento completo de 60 s.
+_RETRY_TIME_BUDGET_SECONDS = 30.0
 
 
 def _is_retryable_transport(error):
@@ -1074,6 +1080,17 @@ class ToolChatRunner:
         catalogue_used = False
         catalogue_products = {}
         calculation = None
+        # Presupuesto de tiempo del turno. Render corta la peticion a los 100 s y
+        # devuelve un 502 SIN cuerpo: el usuario pierde hasta el codigo del error.
+        # El proveedor puede tardar 60 s por intento y el reintento sumaria otro
+        # tanto, asi que un turno lento se pasaria del limite del proxy. Medido: de
+        # 267 turnos, la mediana es 20 s, el p90 32 s y el maximo 77 s.
+        #
+        # Por eso el reintento se salta si ya se ha consumido el presupuesto: en ese
+        # caso el turno devuelve su error con su codigo (timeout, 504), que es un
+        # diagnostico honesto, en vez de morir en el proxy como 502 mudo.
+        inicio = time.monotonic()
+        presupuesto_reintento = _RETRY_TIME_BUDGET_SECONDS
         try:
             current_messages = copy.deepcopy(messages)
             definitions = copy.deepcopy(self._dispatcher.definitions()) if with_tools else None
@@ -1106,7 +1123,14 @@ class ToolChatRunner:
                 # determinista (calculate_scenario): ninguna escribe, ninguna mueve
                 # dinero y ninguna llama a un servicio externo. Repetir la llamada al
                 # modelo no repite esas consultas: solo vuelve a pedir la respuesta.
-                if _is_retryable_transport(_error):
+                #
+                # Y se salta si el turno ya gasto su presupuesto de tiempo: reintentar
+                # entonces sumaria otro intento de hasta 60 s, el proxy de Render
+                # cortaria a los 100 s con un 502 MUDO y el usuario perderia el codigo
+                # del error. Sin reintento recibe su 504 con su motivo.
+                transcurrido = time.monotonic() - inicio
+                if (_is_retryable_transport(_error)
+                        and transcurrido < presupuesto_reintento):
                     self._debug("provider_retry_transport")
                     try:
                         result = self._provider.chat(copy.deepcopy(current_messages),
