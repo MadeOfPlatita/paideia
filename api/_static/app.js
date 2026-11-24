@@ -1094,14 +1094,20 @@ function renderHome() {
   }
   function renderChatProvenance(container, provenance) {
     if (!provenance || typeof provenance !== "object") return;
-    container.appendChild(textElement("p", "Trazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.", "field-help"));
-    for (const note of Array.isArray(provenance.limitations) ? provenance.limitations.slice(0, 6) : []) {
-      if (typeof note === "string") container.appendChild(textElement("p", note, "field-help"));
+    const notes = (Array.isArray(provenance.limitations) ? provenance.limitations : [])
+      .filter(note => typeof note === "string" && note.trim());
+    // El aviso fijo solo si el servidor no manda ninguna limitacion: antes se
+    // pintaban los dos y el usuario leia la misma advertencia dos veces seguidas.
+    if (!notes.length) {
+      container.appendChild(textElement("p", "Trazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.", "field-help"));
+    }
+    for (const note of notes.slice(0, 6)) {
+      container.appendChild(textElement("p", note, "field-help"));
     }
   }
   chat.appendChild(callout("Si la IA está disponible y das tu consentimiento, tu pregunta se enviará al proveedor. No incluyas nombres, documentos ni datos bancarios.", "warning-note"));
   const form = el("form", { className: "chat-form" });
-  const message = el("textarea", { id: "chat-message", name: "message", maxlength: 1200, "aria-describedby": "chat-help chat-feedback" });
+  const message = el("textarea", { id: "chat-message", name: "message", maxlength: 4000, "aria-describedby": "chat-help chat-feedback" });
   message.value = state.chatMessage;
   const messageField = field("Escribe una pregunta de prueba", message, "El texto solo se enviará tras marcar la casilla y pulsar el botón.", "chat-message");
   messageField.querySelector(".field-help").id = "chat-help";
