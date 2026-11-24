@@ -18,7 +18,7 @@ import re
 from decimal import Decimal, InvalidOperation
 from urllib.parse import urlsplit
 
-from pai_tools import TOOL_RESULT_HANDLING, project_rate_tiers
+from pai_tools import PROJECTED_METRIC_UNITS, TOOL_RESULT_HANDLING, project_rate_tiers
 from providers import ChatResult, ToolCall
 
 
@@ -62,7 +62,9 @@ CATALOGUE_TOOLS = frozenset({
     "search_products", "get_product_detail", "compare_products", "get_sources",
 })
 # Condiciones que viajan al modelo por producto; el resto queda en la ficha.
-MAX_CHAT_CONDITIONS = 12
+# 12 recortaba cualquier ETF (28 metricas) antes de llegar al TER. La
+# herramienta admite hasta 64; 40 deja margen y sigue acotando el DTO.
+MAX_CHAT_CONDITIONS = 40
 
 ANSWER_TEXT_SHOWN = "shown_unverified"
 ANSWER_TEXT_WITHHELD = "withheld_catalogue_evidence"
@@ -424,11 +426,14 @@ class ToolChatRunner:
         metric = raw.get("metric")
         state = raw.get("state")
         unit = raw.get("unit")
-        if metric not in {"annual_rate_percent", "term_months"}:
+        expected_unit = PROJECTED_METRIC_UNITS.get(metric)
+        if expected_unit is None:
+            # Metrica no documentada en el catalogo: no se publica.
             return None
         if state not in {"known", "stale", "conflict", "unknown"}:
             return None
-        if unit not in {"PERCENT", "MONTHS"}:
+        if unit != expected_unit:
+            # Unidad incoherente con la metrica: no se publica como condicion.
             return None
         if (metric == "annual_rate_percent" and unit != "PERCENT") or (
                 metric == "term_months" and unit != "MONTHS"):
@@ -517,8 +522,8 @@ class ToolChatRunner:
                 truncated_conditions = len(raw_conditions)
             for condition in raw_conditions[:MAX_CHAT_CONDITIONS]:
                 metric = condition.get("metric") if type(condition) is dict else None
-                if metric not in {"annual_rate_percent", "term_months"}:
-                    # El DTO del chat solo publica tasa y plazo; el resto vive en la ficha.
+                if metric not in PROJECTED_METRIC_UNITS:
+                    # Fuera de la lista blanca del catalogo: no viaja al chat.
                     continue
                 projected = cls._evidence_condition(condition)
                 if projected is None:

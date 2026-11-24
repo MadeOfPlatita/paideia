@@ -240,5 +240,14 @@ class CatalogueWithConditions:
             return None
         return self._enrich(dict(product), report)
 
+    def get_product_detail(self, product_id):
+        """Ficha enriquecida con las condiciones, igual que `get_product`.
+
+        Sin este metodo, `__getattr__` lo delegaba al repositorio base, que
+        devuelve la ficha SIN condiciones: la herramienta recibia
+        `conditions: []` aunque el servicio tuviera las metricas documentadas.
+        """
+        return self.get_product(product_id)
+
     def __getattr__(self, name):
         return getattr(self._repository, name)
