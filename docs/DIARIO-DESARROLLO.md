@@ -1123,3 +1123,28 @@ primero, el tercero entra.
 
 **Regla del proyecto: una sola medición a la vez.** Los números de referencia son
 los de una pasada en aislamiento, no los de una pasada con otro script al lado.
+
+### 7. Resultado final de la batería, en aislamiento
+
+Pasada completa de las 53 preguntas sin ningún otro script en marcha:
+
+| Categoría | Responden |
+| --- | --- |
+| **Catálogo** | **9/9** |
+| **Cálculo** | **3/3** |
+| **Decisiones prácticas** | **7/7** |
+| **Método y pasos** | **6/6** |
+| **Límites y fuera de dominio** | **5/5** |
+| **Robustez** (vacío, emoji, inyección, mayúsculas, idioma) | **11/11** |
+| Definiciones | 11/12 |
+| **Total** | **52/53** |
+
+Punto de partida de la misma batería: **22/51**.
+
+El único fallo fue un 502 sin código a los 9,5 s (respuesta de transporte no
+JSON). Reintentado tres veces en aislamiento responde 2.660, 3.177 y 3.588
+caracteres. No es reproducible: es el transporte del proveedor.
+
+También se comprobó aparte que los dos «fallos» del catálogo que antes caían a la
+nota fija ahora responden con el motivo real (ficha pendiente de transcripción),
+y que los tres cálculos devuelven 719, 919 y 318 caracteres.
