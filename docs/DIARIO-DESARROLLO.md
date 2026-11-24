@@ -1312,3 +1312,66 @@ un defecto de la app; reintentar o cambiar de proveedor es una decisión de
 producto.
 
 Pruebas: **917 Python** (1.022 subtests) y **132 Node** en verde.
+
+---
+
+## Segunda pasada: las respuestas de rechazo y el 502 con herramientas
+
+### Lo que creía y no era
+
+Anoté como pendiente que las respuestas de rechazo salían cortas (96 y 106
+caracteres). Al ir a medirlo, **ya no existían**: daban 1.146–2.432 caracteres. El
+diagnóstico estaba tomado sobre un despliegue ya reemplazado. Lo que sí apareció,
+midiendo de nuevo, era peor y no estaba en la lista (ver abajo).
+
+### La categoría que faltaba en el prompt
+
+El prompt tenía cuatro tipos de pregunta —definición, decisión práctica, pasos y
+dato de catálogo— y **ninguna** para cuando la persona pide algo imposible, algo
+que la aplicación no hace, o parte de una creencia falsa. Ahora hay una quinta que
+pide: decir que no en la primera frase, explicar por qué, qué señal de alarma
+reconocer y qué alternativa existe. «Un rechazo de una línea no enseña nada.»
+
+Medido después, en producción:
+
+| Pregunta | Antes | Después |
+|---|---|---|
+| «Dime una TAE garantizada del 8 %» | 432, empezaba en «El motivo es doble» | 1.588, empieza «No existe: ninguna entidad puede garantizarte…» |
+| «¿Haces la compra por mí?» | 1.855 | 1.392, empieza «No: no puedo contratar ni comprar…» |
+| «¿Qué dará más rentabilidad?» | 2.084 | 1.388, «Ninguno puede garantizarte…» |
+| «¿Los depósitos no tienen riesgo?» | 2.064 | 2.567, «No: no es cierto, y conviene desmontarlo» |
+
+### El defecto que apareció midiendo: desmentir no es publicar
+
+La respuesta a «dime una TAE garantizada del 8 %» empezaba, correctamente, por «No
+existe una TAE garantizada del 8 %…». Lo que llegaba al usuario eran 432 caracteres
+empezando por «El motivo es doble.» **sin saber de qué**: la guarda de cifras había
+borrado la primera frase, que era la respuesta, solo por contener «8 %» y la
+palabra «TAE».
+
+La guarda no distinguía una cifra **inventada de un producto** (que hay que frenar)
+de una cifra **citada para negarla** (que es justo la respuesta). Ahora se reconoce
+la frase que desmiente —«no existe», «nadie puede ofrecerte», «ningún producto puede
+garantizarte», «quien te prometa», «es imposible»— y se comprueba antes que
+cualquier regla de producto. Comprobado en los dos sentidos: 6 frases que desmienten
+se conservan, 3 que afirman un dato de producto se siguen quitando.
+
+### El reintento que no cubría los turnos con herramientas
+
+El reintento de transporte existía, pero exigía que el turno **no** hubiera
+ejecutado ninguna herramienta. Eso dejaba fuera justo los turnos que más fallan: los
+de catálogo ejecutan `search_products` en la primera ronda y, si la **segunda**
+llamada al modelo se corta, el usuario recibía 502 con todo el trabajo hecho.
+
+El código decía que reintentar «duplicaría trabajo». Comprobado: **no**. Las cinco
+herramientas (`search_products`, `get_product_detail`, `compare_products`,
+`calculate_scenario`, `get_sources`) son de solo lectura sobre el catálogo local o
+aritmética determinista; ninguna escribe, ninguna mueve dinero, ninguna llama a un
+servicio externo. Y el reintento no las re-ejecuta: su resultado ya viaja en el
+historial que se reenvía al modelo.
+
+La prueba lo fija: la herramienta se ejecuta **una** vez y el modelo se llama tres
+(original, fallo, reintento). El límite sigue siendo uno: si el segundo intento
+también cae, el turno devuelve su error con su código.
+
+Pruebas al cierre: **921 Python** (1.037 subtests) y **132 Node**.
