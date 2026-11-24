@@ -1148,3 +1148,73 @@ caracteres. No es reproducible: es el transporte del proveedor.
 También se comprobó aparte que los dos «fallos» del catálogo que antes caían a la
 nota fija ahora responden con el motivo real (ficha pendiente de transcripción),
 y que los tres cálculos devuelven 719, 919 y 318 caracteres.
+
+## Entrada — 24 de noviembre de 2026: la madrugada (ocho fichas invisibles y cinco defectos de interfaz)
+
+### 1. El bug que hacía invisibles ocho fichas enteras
+
+Dos capas, encadenadas:
+
+**a) `CatalogueWithConditions` no definía `get_product_detail`.** Python caía en
+`__getattr__`, que delegaba al repositorio base, y ese método devuelve la ficha
+**sin enriquecer**. La herramienta recibía `conditions: []` y
+`conditions_state: pending` aunque el servicio tuviera las métricas. El método
+existe ahora y delega en `get_product`.
+
+**b) El DTO del chat solo publicaba tasa y plazo, con tope de 12 condiciones.**
+Para un depósito basta; para un ETF de 28 métricas, el TER, las comisiones, el
+ISIN y el SRI se descartaban antes de responder. Se alinea con
+`PROJECTED_METRIC_UNITS` (la misma lista blanca que ya usaba la herramienta) y el
+tope sube a 40.
+
+Medido antes: «¿Cuál es el TER del ETF de iShares?» → *«su ficha todavía no tiene
+las condiciones transcritas»*.
+Medido después: *«TER: 0,12 % (blackrock.com/…/kiid/…)»* y *«Comisión de gestión:
+1,4 % (oleagestion.com/…)»* para Olea.
+
+Recuperadas: ETF-01..04 (26-30 condiciones cada uno), FND-01..04 (18-34) y DEP-04
+(14).
+
+### 2. Cinco defectos de interfaz, medidos en el navegador
+
+1. **`/api/catalogue` servía 20** mientras `/api/conditions` y el chat tenían 22.
+   La biblioteca decía «20 candidatos» y había 22 fichas abribles. `create_server`
+   usa ahora el adaptador enriquecido.
+2. **La sección de transcritos duplicaba 2 tarjetas** (24 en pantalla) porque se
+   pintaba antes que los resultados. Se repinta al cargar el catálogo y excluye
+   lo que ya viene en la lista.
+3. **`conditions_state` se escribía a mano** como `pending`: un producto con 15
+   condiciones documentadas se anunciaba «Condiciones pendientes».
+4. **La tarjeta de un ETF decía «Sin tasa documentada»** aunque tuviera 28
+   métricas. Un ETF no tiene TAE: su dato es el TER. Ahora muestra «TER
+   documentado: 0,12 %» y en un fondo «Comisión de gestión documentada: 1,40 %».
+5. **`/api/products/<id>` devolvía dos listas de condiciones**: las 28 dentro de
+   `product` y un campo aparte con 7 (el recorte del DTO de chat). Se retira la
+   corta, que hacía parecer que la ficha solo tenía 7.
+
+Además, el adaptador conserva el **texto literal del conflicto** documentado: la
+ficha decía «conflicto pendiente de revisión» en vez de qué discrepa.
+
+Medido en navegador al cierre: **22 tarjetas, 0 duplicados, 0 «pendientes», 12 con
+su dato visible**, y contadores «22 candidatos · 4 con tasa · 22 con condiciones».
+
+### 3. Reintento de transporte
+
+Un ~2 % de los turnos moría con 502 sin código; la misma pregunta respondía al
+reintentar. Ahora se reintenta **una vez** y solo si: el fallo es de red
+(`transport_error`, `timeout`), no se ha ejecutado ninguna herramienta y no es
+cupo, misión, credencial ni respuesta inválida. La app no ejecuta operaciones
+financieras, así que repetir la consulta no tiene efectos.
+
+### 4. La respuesta del catálogo explica, no solo lista
+
+Antes se descartaba toda la prosa del modelo y quedaba el listado de cifras.
+Ahora la prosa se limpia (sin cifras ni atribuciones, con la misma guarda del
+resto del chat) y se coloca detrás de los datos verificados. Si no queda nada
+útil, no se añade nada: las cifras solo salen de la ficha.
+
+Medido: «compara el depósito de EBN con el de Self Bank» devuelve 1.152
+caracteres con tres productos, TAE, mínimos, máximos y retención, cada dato con
+su fuente, y una explicación conceptual detrás.
+
+Pruebas al cierre: **886 Python** (987 subtests) y **128 Node** en verde.
