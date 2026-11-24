@@ -66,6 +66,18 @@ CATALOGUE_TOOLS = frozenset({
 # herramienta admite hasta 64; 40 deja margen y sigue acotando el DTO.
 MAX_CHAT_CONDITIONS = 40
 
+# Fallos de red que merecen UN reintento. Medido en produccion: ~2 % de los turnos
+# morian con 502 sin codigo y la misma pregunta respondia al reintentar. Nunca se
+# reintenta cupo, mision, credencial ni respuesta invalida: eso no se arregla
+# repitiendo. La app no ejecuta operaciones financieras, asi que repetir la
+# consulta al modelo no tiene efectos; como mucho cuesta una llamada mas.
+_RETRYABLE_TRANSPORT = frozenset({"transport_error", "timeout"})
+
+
+def _is_retryable_transport(error):
+    """True si el fallo es de red y repetir no duplica ningun efecto."""
+    return getattr(error, "code", None) in _RETRYABLE_TRANSPORT
+
 ANSWER_TEXT_SHOWN = "shown_unverified"
 ANSWER_TEXT_WITHHELD = "withheld_catalogue_evidence"
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
@@ -1036,9 +1048,23 @@ class ToolChatRunner:
             try:
                 result = self._provider.chat(copy.deepcopy(current_messages),
                                              tools=copy.deepcopy(definitions) if with_tools else None)
-            except Exception:
-                self._debug("provider_error")
-                return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+            except Exception as _error:
+                # Un fallo de red se reintenta UNA vez, y solo si este turno no
+                # ha ejecutado ninguna herramienta: repetir con trabajo ya
+                # hecho duplicaria llamadas. La app nunca ejecuta operaciones
+                # financieras, asi que repetir la consulta al modelo no tiene
+                # efectos; como mucho cuesta una llamada mas.
+                if _is_retryable_transport(_error) and not tool_events:
+                    self._debug("provider_retry_transport")
+                    try:
+                        result = self._provider.chat(copy.deepcopy(current_messages),
+                                                     tools=copy.deepcopy(definitions) if with_tools else None)
+                    except Exception:
+                        self._debug("provider_error_after_retry")
+                        return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                else:
+                    self._debug("provider_error")
+                    return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
             if not self._valid_chat_result(result):
                 self._debug("invalid_chat_result")
                 return self._failure(tool_events=tool_events, sources=sources, catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
