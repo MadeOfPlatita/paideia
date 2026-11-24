@@ -1103,3 +1103,23 @@ hay reintento automático) o cambiar de proveedor. Ambas son decisión de produc
 Nota para no volver a medir esto mal: lanzar varias baterías en paralelo contra
 un servicio con límite por minuto produce fallos que **parecen** del producto. Las
 mediciones de este proyecto se hacen en serie.
+
+### 6. La contención se confundió con bugs dos veces
+
+La ejecución de la batería de 53 preguntas coincidió en el tiempo con el test de
+intermitencia. Resultado: **17 fallos** en esa pasada, incluidos cálculos
+devueltos con 38 y 0 caracteres, cuando en medición aislada los tres cálculos
+responden (719, 919 y 318 caracteres) y el catálogo queda **9/9**.
+
+La causa es la misma que ya se anotó en el apartado 4 y se volvió a cometer: el
+servicio admite 10 llamadas por minuto y **cada turno con herramientas hace de 2
+a 4**. Dos scripts a la vez saturan el cupo, y el resultado se lee como producto
+roto.
+
+Arreglo: `pai_cerrojo.py` toma un cerrojo exclusivo en disco antes de medir. Quien
+llega segundo se detiene con un motivo explícito en vez de falsear los números.
+Comprobado con dos procesos reales: el segundo queda bloqueado y, tras liberar el
+primero, el tercero entra.
+
+**Regla del proyecto: una sola medición a la vez.** Los números de referencia son
+los de una pasada en aislamiento, no los de una pasada con otro script al lado.
