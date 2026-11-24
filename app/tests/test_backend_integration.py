@@ -291,7 +291,17 @@ class ChatHttpTests(unittest.TestCase):
                 self.assertEqual(body["error"]["code"], expected_code)
                 self.assertFalse(body["error"]["retryable"])
                 self.assertNotIn("TEST_ONLY_PRIVATE", json.dumps(body))
-                self.assertEqual(transport.calls, 1)
+                # CONTRATO DE REINTENTO (cambio medido). Un fallo de TRANSPORTE
+                # (timeout) se reintenta UNA vez, porque la misma pregunta que
+                # fallaba respondia al segundo intento en produccion. El resto de
+                # errores (credencial, cupo, cuerpo invalido) NO se reintentan: no
+                # son de red y repetirlos no arregla nada.
+                if upstream == "timeout":
+                    self.assertEqual(transport.calls, 2,
+                                     "un timeout de transporte se reintenta una vez, no mas")
+                else:
+                    self.assertEqual(transport.calls, 1,
+                                     f"el error {upstream} no debe reintentarse")
 
     def test_enabled_adapter_roundtrip_requires_separate_remote_consent(self):
         from backend_services import LocalChatService

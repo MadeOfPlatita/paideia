@@ -91,8 +91,39 @@ def test_trusted_http_transport_failure_reports_state(failure, expected):
                 assert payload['error']['retryable'] is False
                 assert 'external_sent' not in raw
                 assert 'SYNTHETIC-PRIVATE-MARKER' not in raw and 'FAKE-KEY-ONLY' not in raw
-                assert calls == ([] if failure in ('forged', 'generic', 'status_forged') else ['connection'] if failure == 'connect' else ['connection', 'request'])
-                assert budget.remaining() == (24 if failure in ('forged', 'generic', 'status_forged') else 23)
+                # CONTRATO DE REINTENTO (cambio medido). Un `transport_error` en un
+                # turno SIN herramientas y con el envio no completado se reintenta
+                # UNA vez: la misma pregunta que fallaba respondia al segundo
+                # intento (~2 % de turnos). El transporte se llama dos veces, no
+                # mas: `calls` prueba que el reintento es unico y acotado.
+                # Los fallos 'forged'/'generic'/'status_forged' no son de transporte
+                # y no se reintentan; 'response-completed' ya se proceso, tampoco.
+                una_vez = ['connection'] if failure == 'connect' else ['connection', 'request']
+                if failure in ('forged', 'generic', 'status_forged'):
+                    esperado_calls = []
+                elif expected == 'completed':
+                    esperado_calls = una_vez
+                else:
+                    esperado_calls = una_vez * 2
+                assert calls == esperado_calls, (calls, esperado_calls)
+                # El presupuesto descuenta CADA intento: con reintento son 22 (24-2).
+                # Es el coste real para el proveedor y se ve en el panel; el reintento
+                # no es gratis, y por eso se limita a fallos de transporte.
+                # `calls` registra EVENTOS de transporte (conexion y peticion), no
+                # intentos: un intento normal son dos eventos. El presupuesto
+                # descuenta una llamada por intento, asi que rem = 24 - intentos.
+                eventos = ['connection'] if failure == 'connect' else ['connection', 'request']
+                if failure in ('forged', 'generic', 'status_forged'):
+                    intentos = 0
+                elif expected == 'completed':
+                    # Envio completado: el reintento NO procede, un intento.
+                    intentos = 1
+                    assert calls == eventos, (calls, eventos)
+                else:
+                    # Reintento unico: dos intentos, cuatro eventos.
+                    intentos = 2
+                    assert calls == eventos * 2, (calls, eventos * 2)
+                assert budget.remaining() == 24 - intentos, (budget.remaining(), intentos)
             finally:
                 server.shutdown()
                 server.server_close()

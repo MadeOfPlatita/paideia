@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import json
 import os
 import re
-from providers import PROVIDER_LABEL, ProviderError, GroqProvider
+from providers import PROVIDER_LABEL, ProviderError, GroqProvider, SendState
 from secure_groq_session import _SingleFlightProvider, _CountedTransport, Session
 
 _TRUSTED_SINGLE_CHAT = _SingleFlightProvider.chat
@@ -763,6 +763,37 @@ def _trusted_send_state(provider, error):
         return None
 
 
+def _retryable_transport_failure(error, tools, context=None):
+    """Si este fallo se puede reintentar una vez, sin efectos secundarios.
+
+    El fallo que se repite en produccion es de RED, no de contenido: la misma
+    pregunta que devuelve 502 responde bien al intentarlo de nuevo (medido: «¿que
+    es el interes simple?» fallo una vez y respondio 3 de 3 por API).
+
+    Se reintenta SOLO si se cumplen las tres condiciones:
+      1. el codigo es de transporte (red o tiempo agotado), no de contenido,
+         credenciales, cupo ni mision;
+      2. el envio anterior no llego a completarse (`send_state`), asi que no hay
+         dos peticiones cobradas por el mismo turno;
+      3. no se ha ejecutado ninguna herramienta: repetir una consulta de catalogo
+         es inocuo, pero repetir un turno con herramientas podria duplicar efectos.
+
+    La app no ejecuta operaciones financieras, asi que en el peor caso se paga una
+    consulta de mas al proveedor.
+    """
+    code = getattr(error, "code", None)
+    if code not in {"transport_error", "timeout"}:
+        return False
+    if getattr(error, "send_state", None) == SendState.COMPLETED:
+        # El proveedor ya recibio y proceso la peticion: reintentar podria cobrar
+        # dos veces el mismo turno.
+        return False
+    if tools:
+        # Con herramientas disponibles el turno puede tener efectos; no se repite.
+        return False
+    return True
+
+
 def _financial_checked(text):
     """Quita las frases que prometen riesgo cero; solo falla si no queda nada.
 
@@ -1120,7 +1151,21 @@ class LocalChatService:
                 try:
                     if type(service._provider) is FakeChatProvider:
                         return _fake_chat(service._provider, context, tools=tools)
-                    return service._provider.chat(context, tools=tools)
+                    try:
+                        return service._provider.chat(context, tools=tools)
+                    except ProviderError as primera:
+                        # REINTENTO UNICO DE TRANSPORTE.
+                        # Medido: ~2 % de los turnos moria con 502 sin codigo y la
+                        # misma pregunta respondia al intentar de nuevo (comprobado
+                        # con «¿que es el interes simple?»: fallo en la bateria y
+                        # respondio 3 de 3 veces por API). Es un fallo de red.
+                        # Solo si es seguro (_retryable_transport_failure): codigo de
+                        # transporte, envio no completado y sin herramientas. Si el
+                        # segundo intento tambien falla, el error sube al manejador
+                        # normal: nunca se convierte en un 500 opaco.
+                        if not _retryable_transport_failure(primera, tools, context):
+                            raise
+                        return service._provider.chat(context, tools=tools)
                 except ProviderError as error:
                     status, code = {
                         "disabled": (503, "CHAT_NOT_CONFIGURED"),
