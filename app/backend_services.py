@@ -336,6 +336,23 @@ def _redact_unbacked_figures(text, strict=False):
     return partial, removed
 
 
+def _catalogue_explanation(text):
+    """Prosa del modelo apta para acompanar a los datos: sin cifras ni atribuciones.
+
+    Cuando el turno uso el catalogo, la prosa se descartaba entera y el usuario
+    solo veia el listado: correcto pero poco util. Aqui se conserva lo que no
+    puede convertirse en un dato falso. Se recorta a 1.200 caracteres para que
+    la respuesta no se eternice detras del listado.
+    """
+    if type(text) is not str or not text.strip():
+        return None
+    limpio, _quitadas = _redact_unbacked_figures(text.strip(), strict=True)
+    if not limpio or not limpio.strip():
+        return None
+    limpio = limpio.strip()[:1200].strip()
+    return limpio or None
+
+
 def _withhold_unbacked_claim(result, text, text_state, calculation=None):
     if text_state == ANSWER_TEXT_WITHHELD:
         updated = dict(result)
@@ -1066,7 +1083,8 @@ class LocalChatService:
                 # hueco tampoco sirve, y una nota fija que no contesta la pregunta
                 # menos: se compone la respuesta con las condiciones verificadas
                 # del DTO, cada una con su fuente citada.
-                compuesta = compose_catalogue_answer(catalogue)
+                explicacion = _catalogue_explanation(result.get("answer"))
+                compuesta = compose_catalogue_answer(catalogue, explanation=explicacion)
                 if compuesta is None:
                     # El producto existe pero su ficha aun no tiene condiciones
                     # transcritas (ETF-01, FND-02). Decir «no repito cifras en

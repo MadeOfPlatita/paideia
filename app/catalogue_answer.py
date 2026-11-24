@@ -182,8 +182,12 @@ def _product_lines(product):
     return lines
 
 
-def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS):
-    """Compone la respuesta con los productos y condiciones del DTO.
+def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None):
+    """Datos verificados y, si la hay, la explicación del modelo sin cifras.
+
+    `explanation` llega redactada por el modelo y NO se usa para ningún dato:
+    se coloca después del listado, ya sin sus cifras, para que oriente sin
+    poder introducir una tasa, un importe ni una atribución no verificada.
 
     Devuelve None cuando no hay ningún dato legible: en ese caso el servicio
     mantiene la nota anterior en lugar de inventar una respuesta vacía.
@@ -217,9 +221,10 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS):
         cuerpo += (f"\n\nHay {total} productos en el catálogo; muestra de {len(blocks)}. "
                    "La ficha completa de cada uno está en la biblioteca.")
 
-    return (
-        "Según el catálogo local, con la fuente de cada dato entre paréntesis:\n\n"
-        + cuerpo
-        + "\n\nSon datos transcritos de fuentes oficiales, no una oferta ni una "
-          "recomendación. No soy un asesor financiero."
-    )
+    partes = ["Según el catálogo local, con la fuente de cada dato entre paréntesis:\n\n"
+              + cuerpo]
+    if isinstance(explanation, str) and explanation.strip():
+        partes.append(explanation.strip())
+    partes.append("Son datos transcritos de fuentes oficiales, no una oferta ni una "
+                  "recomendación. No soy un asesor financiero.")
+    return "\n\n".join(partes)
