@@ -474,8 +474,13 @@ _PRACTICAL_QUESTION = re.compile(
     r"funcionan|montar|empezar a invertir|salir de (?:una|la) deuda|"
     r"d[oó]nde\s+(?:lo\s+|la\s+)?(?:meto|pongo|invierto|guardo|dejo)|"
     r"mejor\s+(?:meter|poner|invertir|guardar|opci[oó]n|sitio)|"
-    r"qu[eé]\s+hago\s+con|qu[eé]\s+me\s+recomiendas|me\s+recomiendas|"
-    r"qu[eé]\s+opciones\s+tengo|d[oó]nde\s+invierto)\b", re.IGNORECASE)
+    r"qu[eé]\s+hago|qu[eé]\s+me\s+recomiendas|me\s+recomiendas|qu[eé]\s+me\s+conviene|"
+    r"qu[eé]\s+opciones\s+tengo|d[oó]nde\s+invierto|"
+    # Peticiones de criterio que antes abrian el catalogo y acababan en un
+    # listado de productos en vez de en una respuesta de decision.
+    r"garantizad[ao]s?|lo\s+mejor\s+para|mejor\s+para\s+m[ií]|"
+    r"qu[eé]\s+priorizo|amortizo\s+o|primero\s+amortizo|qu[eé]\s+hago\s+primero)"
+    r"\b", re.IGNORECASE)
 _PRODUCT_SPECIFIC = re.compile(
     r"\b(?:cat[aá]logo|ficha|isin|cuenta contigo|del dep[oó]sito|de la cuenta|"
     r"de las letras|producto concreto|ese producto|"
