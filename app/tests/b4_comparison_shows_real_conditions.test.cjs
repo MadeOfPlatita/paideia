@@ -231,7 +231,7 @@ test('una tasa vencida se declara vencida y no se lee como vigente', () => {
   assert.ok(texto.includes('vencida'), `no se declara vencida: ${texto}`);
 });
 
-test('las métricas sin traducción se muestran igual, no se esconden', () => {
+test('una métrica sin traducir no se publica como identificador', () => {
   const { ctx } = setup();
   ctx.state.conditions.byId.set('FND-X', {
     product_id: 'FND-X', family: 'fondo_tradicional',
@@ -240,8 +240,14 @@ test('las métricas sin traducción se muestran igual, no se esconden', () => {
   const texto = textOf(ctx.comparisonCard({
     id: 'FND-X', name: 'Fondo X', family: 'fondo_tradicional', issuer: 'Gestora X',
   }));
+  // El DATO sí se muestra: no se esconde información documentada.
   assert.ok(texto.includes('dato real'), `se escondió un dato documentado: ${texto}`);
-  assert.ok(texto.includes('metrica nueva sin traducir'), `no se legibilizó la métrica: ${texto}`);
+  // Pero la etiqueta no publica el identificador interno en inglés.
+  assert.ok(!texto.includes('metrica_nueva_sin_traducir'),
+    `se publicó el identificador crudo: ${texto}`);
+  assert.ok(!texto.includes('metrica nueva sin traducir'),
+    `se publicó el identificador con guiones vueltos espacios: ${texto}`);
+  assert.ok(/no catalogada/i.test(texto), `no se declara que la métrica no está catalogada: ${texto}`);
 });
 
 test('la tarjeta no depende de funciones internas de la sección de chat', () => {

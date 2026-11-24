@@ -1108,12 +1108,16 @@ function renderHome() {
   // en un texto en castellano («Clase de la fuente: Oficial, unknown»).
   const SOURCE_CLASS_ES = {
     official: "fuente oficial", secondary: "fuente secundaria",
-    unknown: "procedencia sin identificar", identity: "identidad del producto",
-    curated: "ficha revisada", inferred: "dato inferido",
+    mixed: "fuentes mixtas", unknown: "procedencia sin identificar",
+    identity: "identidad del producto", curated: "ficha revisada",
+    inferred: "dato inferido", press_documented: "documentada por prensa",
+    condition_source: "documento de condiciones", press: "nota de prensa",
   };
   function humanSourceClass(value) {
     if (typeof value !== "string" || !value.trim()) return "procedencia sin identificar";
-    return SOURCE_CLASS_ES[value] || value.replace(/_/g, " ");
+    // Nunca se devuelve el valor crudo: `tabla[v] || v` era justo el bug que colaba
+    // «unknown» en un texto en castellano.
+    return SOURCE_CLASS_ES[value] || "procedencia sin identificar";
   }
   function renderChatProvenance(container, provenance) {
     if (!provenance || typeof provenance !== "object") return;
@@ -2617,12 +2621,81 @@ const METRIC_ES = {
   promocion_ventana_alta: "Ventana de contratación",
   base_calculo_intereses: "Base de cálculo", requisito_fiscal: "Requisito fiscal",
   titularidad: "Titularidad",
+  // Las 76 métricas REALES del catálogo (medidas contra ConditionsService.describe()).
+  // Faltaban 64 y se pintaban en inglés («annual rate percent», «custody fee percent»).
+  account_domicile: "Domiciliación de la cuenta",
+  annual_cost_figure: "Coste anual",
+  annual_rate_percent: "TAE",
+  availability: "Disponibilidad",
+  base_calculation: "Base de cálculo",
+  category: "Categoría",
+  cnmv_registration_date: "Fecha de registro en la CNMV",
+  cnmv_registry: "Registro de la CNMV",
+  cost_impact_1y_percent: "Coste anual (1 año)",
+  cost_impact_5y_percent: "Coste anual (5 años)",
+  custody_fee_percent: "Comisión de depositario",
+  data_date: "Fecha de los datos",
+  declared_fees: "Comisiones declaradas",
+  deposit_guarantee_fund: "Fondo de garantía de depósitos",
+  depositary: "Depositaria",
+  direct_debits: "Recibos domiciliados",
+  distribution_policy: "Política de reparto",
+  document_date: "Fecha del documento",
+  early_cancellation: "Cancelación anticipada",
+  eligibility: "Quién puede contratarlo",
+  entry_fee_percent: "Comisión de entrada",
+  exit_fee_percent: "Comisión de salida",
+  fund_assets_eur: "Patrimonio del fondo",
+  fund_investors: "Tipo de inversor",
+  holding_period_years: "Periodo recomendado",
+  interest_basis: "Base de cálculo de intereses",
+  last_prospectus_date: "Fecha del folleto",
+  last_regulation_date: "Fecha del reglamento",
+  launch_date: "Fecha de lanzamiento",
+  lock_in: "Periodo de bloqueo",
+  main_market: "Mercado principal",
+  management_fee_percent: "Comisión de gestión",
+  manager: "Gestora",
+  maximum_eur: "Importe máximo",
+  maximum_note: "Importe máximo",
+  minimum_eur: "Inversión mínima",
+  minimum_horizon: "Horizonte mínimo",
+  minimum_note: "Inversión mínima",
+  nav_eur: "Valor liquidativo",
+  nominal_rate_percent: "TIN",
+  operating_costs: "Costes de operación",
+  ownership: "Titularidad",
+  performance_fee_percent: "Comisión de éxito",
+  promotion_window: "Ventana de la promoción",
+  recommended_horizon: "Horizonte recomendado",
+  registration_date: "Fecha de registro",
+  registry_countries: "Países de registro",
+  renewal: "Renovación",
+  replication: "Réplica",
+  requirement: "Condiciones de contratación",
+  retail_access: "Acceso para particulares",
+  risk_scale: "Escala de riesgo",
+  securities_lending: "Préstamo de valores",
+  settlement: "Liquidación",
+  sfdr_article: "Artículo SFDR",
+  share_class_currency: "Divisa de la clase",
+  spain_registry: "Registro en España",
+  subscription_redemption: "Suscripción y reembolso",
+  subsequent_nominal_rate_percent: "TIN posterior",
+  subsequent_rate_note: "Tipo posterior",
+  subsequent_rate_percent: "Tipo posterior",
+  ter_percent: "TER",
+  term_months: "Plazo",
+  ucits: "OICVM",
+  vehicle_type: "Tipo de vehículo",
+  withholding_percent: "Retención fiscal",
 };
 function humanMetricLabel(metric) {
   if (typeof metric !== "string" || !metric.trim()) return "Condición";
   if (METRIC_ES[metric]) return METRIC_ES[metric];
-  // Sin traducción: el nombre técnico con los guiones bajos vueltos en espacios.
-  return metric.replace(/_/g, " ");
+  // Sin traducción: se dice que no está catalogada en vez de publicar el
+  // identificador en inglés («securities lending», «retail access»…).
+  return "Condición no catalogada";
 }
 
 // Valor legible de una condición para el comparador. Es autónomo a propósito:

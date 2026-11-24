@@ -326,6 +326,35 @@ class ToolChatRunner:
             sort_keys=True,
         )
 
+    # Campos decimales del escenario. El motor los parsea con Decimal, así que
+    # «2000», «2000.0» y «2000.00» dan EL MISMO resultado. Sin normalizar la clave,
+    # el mismo cálculo escrito con otro formato se ejecutaba dos veces: es el
+    # `calculate_scenario (executed); calculate_scenario (executed)` que se midió
+    # en producción sobre la pregunta del estudiante con 2.000 €.
+    _CALC_DECIMAL_FIELDS = ("principal", "monthly_contribution",
+                            "annual_rate_percent", "inflation_percent")
+
+    @classmethod
+    def _invocation_key(cls, name, arguments):
+        """Clave estable de (herramienta, argumentos) para reutilizar resultados.
+
+        Solo se normaliza lo que el motor ya normaliza: los decimales del
+        escenario. El resto de herramientas conserva la comparación literal,
+        porque sus identificadores y consultas no se pueden reinterpretar.
+        """
+        if name == "calculate_scenario" and type(arguments) is dict:
+            normalizados = {}
+            for clave, valor in arguments.items():
+                if clave in cls._CALC_DECIMAL_FIELDS and type(valor) is str:
+                    try:
+                        normalizados[clave] = format(Decimal(valor).normalize(), "f")
+                    except (InvalidOperation, ValueError):
+                        normalizados[clave] = valor
+                else:
+                    normalizados[clave] = valor
+            arguments = normalizados
+        return (name, cls._json_text(arguments))
+
     @classmethod
     def _valid_dispatch_result(cls, result, expected_tool):
         if (type(result) is not dict
@@ -1103,6 +1132,10 @@ class ToolChatRunner:
                             if with_tools else frozenset())
         seen_call_ids = set()
         seen_invocations = set()
+        # Resultados ya obtenidos en ESTE turno, por clave canónica. Repetir una
+        # consulta de solo lectura no debe volver a ejecutarse ni, mucho menos,
+        # tumbar el turno. El memo muere con el turno: el servicio sigue stateless.
+        memo_invocaciones = {}
         tool_rounds = 0
 
         for _model_call in range(self._max_tool_rounds + 1):
@@ -1184,16 +1217,23 @@ class ToolChatRunner:
                     rechazo = (posicion, "invalid_arguments")
                 else:
                     try:
-                        invocacion = (call.name, self._json_text(call.arguments))
+                        invocacion = self._invocation_key(call.name, call.arguments)
                     except (TypeError, ValueError, RecursionError, OverflowError):
                         rechazo = (posicion, "invalid_arguments")
                     else:
                         if invocacion in seen_invocations:
-                            rechazo = (posicion, "duplicate_invocation")
-                        else:
+                            # REUTILIZAR, no rechazar. Antes, repetir el mismo cálculo
+                            # con los mismos argumentos marcaba `duplicate_invocation`
+                            # y tiraba el LOTE ENTERO: `_failure(... detail="round_limit")`
+                            # terminaba en un 502 CHAT_TOOL_ERROR y el usuario se quedaba
+                            # sin respuesta. Es lo que se midió en producción. Repetir una
+                            # herramienta de solo lectura no aporta nada, pero tampoco es
+                            # motivo para no contestar: se sirve el resultado ya validado.
                             seen_call_ids.add(call.id)
-                            seen_invocations.add(invocacion)
                             continue
+                        seen_call_ids.add(call.id)
+                        seen_invocations.add(invocacion)
+                        continue
                 break
             if rechazo is not None:
                 posicion, codigo = rechazo
@@ -1207,7 +1247,21 @@ class ToolChatRunner:
             tool_messages = []
             for call in result.tool_calls:
                 try:
-                    dispatched = self._dispatcher.dispatch(call.name, copy.deepcopy(call.arguments))
+                    ya_vista = self._invocation_key(call.name, call.arguments) in memo_invocaciones
+                except (TypeError, ValueError, RecursionError, OverflowError):
+                    ya_vista = False
+                try:
+                    if ya_vista:
+                        # Se reutiliza el resultado ya validado en este turno: la
+                        # llamada consta como `executed` porque obtuvo resultado y se
+                        # usó, solo que no se vuelve a pagar por él. Cada tool_call_id
+                        # recibe su propia respuesta, así que el proveedor ve todas sus
+                        # llamadas contestadas y el turno termina con texto.
+                        dispatched = copy.deepcopy(
+                            memo_invocaciones[self._invocation_key(call.name, call.arguments)])
+                        self._debug("duplicate_reused")
+                    else:
+                        dispatched = self._dispatcher.dispatch(call.name, copy.deepcopy(call.arguments))
                 except Exception:
                     self._debug("dispatch_error")
                     tool_events.append(self._event(call, state="rejected", status="temporarily_unavailable"))
@@ -1232,6 +1286,13 @@ class ToolChatRunner:
                                          catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
                 tool_events.append(self._event(call, state="executed", status=status))
+                # Se memoriza solo lo que salió bien: un error puede ser transitorio
+                # y no debe reutilizarse como si fuera un resultado.
+                if not ya_vista:
+                    try:
+                        memo_invocaciones[self._invocation_key(call.name, call.arguments)] = copy.deepcopy(dispatched)
+                    except (TypeError, ValueError, RecursionError, OverflowError, KeyError):
+                        pass
                 if call.name == "calculate_scenario":
                     calculation = self._project_calculation(dispatched["data"])
                 if call.name in CATALOGUE_TOOLS:

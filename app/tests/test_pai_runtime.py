@@ -357,34 +357,46 @@ class PaiRuntimeWorkflowTests(unittest.TestCase):
                 self.assertNotIn("execute_sql", json.dumps(result))
                 self.assertNotIn("TEST ONLY: SELECT 1", json.dumps(result))
 
-    def test_repeated_call_ids_and_repeated_invocations_are_rejected(self):
+    def test_repeated_call_id_is_rejected_but_repeated_invocation_is_reused(self):
+        """Repetir el tool_call_id es un error de contrato; repetir la INVOCACIÓN no.
+
+        Antes las dos cosas se trataban igual: `duplicate_invocation` tumbaba el lote
+        entero y el turno terminaba en `tool_error` — un 502 que dejaba al usuario sin
+        respuesta. Repetir una consulta de solo lectura con los mismos argumentos no
+        aporta nada, pero tampoco es motivo para no contestar: se reutiliza el
+        resultado ya validado en el turno.
+        """
         same_arguments = {"product_id": "DEP-01"}
-        cases = (
-            (
-                ToolCall("call_repeat", "get_product_detail", same_arguments),
-                ToolCall("call_repeat", "get_product_detail", same_arguments),
-            ),
-            (
-                ToolCall("call_first", "get_product_detail", same_arguments),
-                ToolCall("call_new_id", "get_product_detail", same_arguments),
-            ),
-        )
-        for first, second in cases:
-            with self.subTest(second_id=second.id):
-                dispatcher = TestOnlyDispatcher([tool_result("get_product_detail")])
-                provider = TestOnlyFakeProvider([
-                    ChatResult("", None, (first,), "tool_calls"),
-                    ChatResult("", None, (second,), "tool_calls"),
-                ])
 
-                result = ToolChatRunner(provider, dispatcher).run([
-                    {"role": "user", "content": "TEST ONLY: detalla DEP-01."},
-                ])
+        # (1) Mismo tool_call_id dos veces: error de contrato, se rechaza.
+        dispatcher = TestOnlyDispatcher([tool_result("get_product_detail")])
+        provider = TestOnlyFakeProvider([
+            ChatResult("", None, (ToolCall("call_repeat", "get_product_detail", same_arguments),), "tool_calls"),
+            ChatResult("", None, (ToolCall("call_repeat", "get_product_detail", same_arguments),), "tool_calls"),
+        ])
+        result = ToolChatRunner(provider, dispatcher).run([
+            {"role": "user", "content": "TEST ONLY: detalla DEP-01."},
+        ])
+        self.assertEqual(result["tool_events"][-1]["state"], "rejected")
+        self.assertEqual(result["finish_reason"], "tool_error")
+        self.assertEqual(len(dispatcher.calls), 1)
 
-                self.assertEqual(len(provider.requests), 2)
-                self.assertEqual(len(dispatcher.calls), 1)
-                self.assertEqual(result["tool_events"][-1]["state"], "rejected")
-                self.assertEqual(result["finish_reason"], "tool_error")
+        # (2) Misma invocación con otro id: se reutiliza y el turno sigue adelante.
+        dispatcher = TestOnlyDispatcher([tool_result("get_product_detail")])
+        provider = TestOnlyFakeProvider([
+            ChatResult("TEST ONLY: primera respuesta.", None,
+                       (ToolCall("call_first", "get_product_detail", same_arguments),), "tool_calls"),
+            ChatResult("TEST ONLY: el turno termina con texto.", None,
+                       (ToolCall("call_new_id", "get_product_detail", same_arguments),), "tool_calls"),
+        ])
+        result = ToolChatRunner(provider, dispatcher).run([
+            {"role": "user", "content": "TEST ONLY: detalla DEP-01."},
+        ])
+        # La herramienta se ejecuta UNA vez y las dos llamadas constan como atendidas:
+        # sin 502 y sin pagar dos veces por la misma consulta.
+        self.assertEqual(len(dispatcher.calls), 1)
+        self.assertNotEqual(result["finish_reason"], "tool_error")
+        self.assertEqual(result["tool_events"][-1]["state"], "executed")
 
     def test_provider_refusal_truncation_and_errors_are_terminal_without_retries(self):
         cases = (
