@@ -111,6 +111,7 @@ class RecommendationsTest(unittest.TestCase):
         texto = compose_catalogue_answer(catalogo, question="¿Qué TAE tiene el depósito?")
         assert texto is not None
         self.assertIn("no vigente", texto)
+        self.assertNotIn(",  y ", texto)
 
     def test_a_listing_question_answers_with_what_exists(self):
         catalogo = _catalogue(

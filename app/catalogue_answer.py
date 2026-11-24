@@ -393,10 +393,12 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
         caducados = [_product_heading(p) for p in productos_legibles if not _is_current(p)]
         caducados = [n for n in caducados if n]
         if caducados:
-            lineas.append("Ojo: " + ", ".join(caducados)
-                          + (" está marcado como no vigente" if len(caducados) == 1
-                             else " están marcados como no vigentes")
-                          + " en la ficha.")
+            # «A, B están marcados» → falta la conjunción: se enumera con «y».
+            if len(caducados) == 1:
+                lineas.append(f"Ojo: {caducados[0]} está marcado como no vigente en la ficha.")
+            else:
+                lineas.append("Ojo: " + ", ".join(caducados[:-1]) + " y " + caducados[-1]
+                              + " están marcados como no vigentes en la ficha.")
         partes = ["\n\n".join(lineas)]
         if isinstance(explanation, str) and explanation.strip():
             partes.append(explanation.strip())
