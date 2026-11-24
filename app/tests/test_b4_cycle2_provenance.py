@@ -479,7 +479,7 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
         # CONTRATO (cambio pedido por el uso real): el chat ya no vuelca la ficha
         # entera. Recomienda UN producto con su motivo y da solo los datos clave:
         # el volcado de seis fichas con todas sus condiciones era ilegible.
-        self.assertIn("el que mejor encaja", body["answer"])
+        self.assertIn("encaja", body["answer"])
         self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])
         self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))
@@ -511,7 +511,7 @@ class ServiceAndHttpProvenanceTests(unittest.TestCase):
         # CONTRATO (cambio pedido por el uso real): el chat ya no vuelca la ficha
         # entera. Recomienda UN producto con su motivo y da solo los datos clave:
         # el volcado de seis fichas con todas sus condiciones era ilegible.
-        self.assertIn("el que mejor encaja", body["answer"])
+        self.assertIn("encaja", body["answer"])
         self.assertNotIn(CATALOGUE_WITHHELD_NOTE, body["answer"])
         self.assertNotIn("TEST ONLY", body["answer"])
         self.assertNotIn("9,99", json.dumps(body))

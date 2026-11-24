@@ -93,7 +93,15 @@ test('duplicate submission while busy must not send a second request', async () 
 test('flags, safe sources and tool events are visible; unsafe links are suppressed', async () => {
   const ui=setup(async()=>response(200,{provider_mode:'test_only',answer:'fixture',refused:true,truncated:true,tool_events:[{name:'search_products',state:'executed'}],sources:[{source:{url:'https://example.org',label:'Oficial'}},{source:{url:'javascript:alert(1)',label:'Mala'}}]}));
   ui.input('Pregunta'); ui.consent.checked=true; await ui.send();
-  for (const text of ['PRUEBA SINTÉTICA','fixture','rechazado','incompleta','search_products','Oficial']) assert.ok(ui.feedback.textContent.includes(text),text);
+  // Los avisos de rechazo y truncado siguen a la vista. Las herramientas y las
+  // fuentes se conservan pero PLEGADAS (eran parte del ruido que hacía la
+  // respuesta ilegible), así que se comprueba el texto y no su visibilidad.
+  for (const text of ['PRUEBA SINTÉTICA','fixture','rechazado','incompleta','Cómo se ha consultado el catálogo','Fuentes consultadas','Oficial']) {
+    assert.ok(ui.feedback.textContent.includes(text), `falta «${text}» en: ${ui.feedback.textContent}`);
+  }
+  // La herramienta se nombra en castellano, no con el identificador interno.
+  assert.ok(ui.feedback.textContent.includes('búsqueda de productos'),
+    'la herramienta debe leerse en castellano');
   assert.doesNotMatch(ui.feedback.textContent,/Mala/);
 });
 

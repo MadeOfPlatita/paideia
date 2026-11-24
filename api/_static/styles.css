@@ -241,6 +241,29 @@ p { text-wrap: pretty; }
 .chat-panel textarea { min-height: 110px; resize: vertical; }
 .chat-state { min-height: 28px; margin: 12px 0 0; color: var(--muted); }
 
+/* Detalles plegables del chat. La respuesta conversacional va a la vista; la
+   trazabilidad (fuentes, herramientas, limitaciones, conflictos) se conserva pero
+   cerrada, para que el turno no parezca un volcado técnico. */
+.chat-tools, .chat-sources-block, .chat-limitations, .chat-card-detail {
+  margin: 10px 0 0; border-top: 1px solid var(--line); padding-top: 8px;
+}
+.chat-tools > summary, .chat-sources-block > summary,
+.chat-limitations > summary, .chat-card-detail > summary {
+  cursor: pointer; color: var(--muted); font-size: .84rem; font-weight: 600;
+  list-style-position: outside; padding: 2px 0;
+}
+.chat-tools > summary:hover, .chat-sources-block > summary:hover,
+.chat-limitations > summary:hover, .chat-card-detail > summary:hover { color: var(--ink); }
+.chat-tools > summary:focus-visible, .chat-sources-block > summary:focus-visible,
+.chat-limitations > summary:focus-visible, .chat-card-detail > summary:focus-visible {
+  outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 3px;
+}
+.chat-tools-list { margin: 6px 0 0; padding-left: 20px; color: var(--muted); font-size: .84rem; }
+.chat-sources { margin: 6px 0 0; padding-left: 18px; font-size: .84rem; color: var(--muted); }
+.chat-sources li { margin-bottom: 4px; }
+.chat-sources a { color: var(--blue); word-break: break-word; }
+.chat-catalogue { margin: 10px 0 0; }
+
 .field { display: grid; gap: 6px; margin: 14px 0; }
 .field > label, .field-label { color: var(--ink); font-size: .92rem; font-weight: 650; letter-spacing: 0; text-transform: none; }
 .field-help { margin: 0; color: var(--muted); font-size: .84rem; }

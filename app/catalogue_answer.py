@@ -249,6 +249,37 @@ def _question_intent(question):
     return "general"
 
 
+def _money_text(valor):
+    """Formato de dinero para leer: sin decimales si son .00, con coma si no.
+
+    2000 → «2.000», 1500.0 → «1.500», 62.5 → «62,50».
+    """
+    if valor is None:
+        return None
+    try:
+        numero = float(valor)
+    except (TypeError, ValueError):
+        return None
+    if abs(numero - round(numero)) < 0.005:
+        return f"{int(round(numero)):,}".replace(",", ".")
+    return f"{numero:,.2f}".replace(",", "\u00a0").replace(".", ",").replace("\u00a0", ".")
+
+
+def _rate_text(valor):
+    """Tasa con dos decimales, que es como se lee una TAE: 3.1 → «3,10».
+
+    Sin esto, «3,10 %» se quedaba en «3,1 %»: el dato es correcto pero pierde
+    precisión justo donde el usuario compara productos.
+    """
+    if valor is None:
+        return None
+    try:
+        numero = float(valor)
+    except (TypeError, ValueError):
+        return None
+    return f"{numero:.2f}".replace(".", ",")
+
+
 def _is_current(product):
     """¿La oferta sigue vigente según la ficha?
 
@@ -257,6 +288,118 @@ def _is_current(product):
     algo que ya no existe. `documented` y `documented_partial` sí sirven.
     """
     return product.get("conditions_state") != "documented_not_current"
+
+
+# Cantidades en euros tal como las escribe una persona: «2000 euros», «2.000 €»,
+# «1.500 euros», «mil euros», «2.000,50 €». Se exige que lleve la palabra euro o
+# el símbolo, para no confundir un plazo («12 meses») ni una tasa («3 %») con el
+# dinero del que habla el usuario.
+_AMOUNT_PATTERNS = (
+    # 2.000,50 / 2000.50 / 2.000 / 2000 seguidos de euro/€/EUR. El símbolo «€» no
+    # es carácter de palabra, así que tras él no se puede exigir \b (daba None con
+    # «tengo 2.000 €»); se admite tanto fin de palabra como el propio símbolo.
+    re.compile(
+        r"(?<![\d.,])(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:[.,]\d{1,2})?)\s*"
+        r"(?:euros?(?![a-záéíóúñ])|€|eur(?:os)?(?![a-záéíóúñ]))",
+        re.IGNORECASE,
+    ),
+    # «mil euros», «dos mil euros» (solo el caso exacto de mil, que es el habitual)
+    re.compile(r"\b(?:un\s+)?mil\s+(?:euros?(?![a-záéíóúñ])|€)", re.IGNORECASE),
+)
+
+# Cantidades de dinero SIN la palabra euro, para el gasto previsto («un gasto de
+# 1500 para los estudios»). Se exige un verbo o preposición de gasto delante para
+# no confundirla con un plazo ni con una tasa.
+_EXPENSE_PATTERN = re.compile(
+    r"(?:gasto|gastar|gastar[eé]|necesit[oa]s?|necesitar[eé]|pago|pagar|"
+    r"me\s+cuesta|presupuesto|para\s+los\s+estudios|matr[íi]cula)"
+    r"[^.\d]{0,30}?(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d{1,7}(?:[.,]\d{1,2})?)"
+    r"\s*(?:euros?|€)?",
+    re.IGNORECASE,
+)
+
+
+def _parse_spanish_number(bruto):
+    """«2.000» → 2000.0, «2000,50» → 2000.5, «1.500» → 1500.0."""
+    if not isinstance(bruto, str) or not bruto.strip():
+        return None
+    texto = bruto.strip()
+    if "," in texto:
+        # Coma decimal; los puntos son de millares.
+        limpio = texto.replace(".", "").replace(",", ".")
+    elif "." in texto:
+        entero, _, decimales = texto.rpartition(".")
+        # «2.000» es dos mil; «2000.50» es dos mil con cincuenta.
+        limpio = texto.replace(".", "") if len(decimales) == 3 else texto
+    else:
+        limpio = texto
+    try:
+        valor = float(limpio)
+    except (TypeError, ValueError):
+        return None
+    return valor if 0 < valor <= 100_000_000 else None
+
+
+def extract_amount_eur(text):
+    """Cantidad en euros con la palabra euro o el símbolo, o None.
+
+    Sirve para no recomendar un producto cuyo importe mínimo no se alcanza. Es el
+    fallo medido: a un estudiante con 2.000 € se le recomendaban depósitos que
+    exigen 5.000 € y 6.000 €, y se le calculaba la rentabilidad del 3,10 % de uno
+    de ellos. Un asesor no manda a nadie a contratar lo que no puede pagar.
+    """
+    if not isinstance(text, str) or not text.strip():
+        return None
+    for pattern in _AMOUNT_PATTERNS:
+        match = pattern.search(text)
+        if not match:
+            continue
+        if not match.groups():
+            return 1000.0
+        valor = _parse_spanish_number(match.group(1))
+        if valor is not None:
+            return valor
+    return None
+
+
+def extract_expense_eur(text):
+    """Gasto previsto mencionado sin la palabra «euro», o None."""
+    if not isinstance(text, str) or not text.strip():
+        return None
+    match = _EXPENSE_PATTERN.search(text)
+    if not match:
+        return None
+    return _parse_spanish_number(match.group(1))
+
+
+def _minimum_eur(product):
+    """Importe mínimo documentado del producto, o None si no consta.
+
+    Se leen las formas que usa el catálogo: `minimum_eur` numérico,
+    `minimum_note` («Min. 5.000€») y las claves antiguas `importe_minimo` /
+    `importe_minimo_texto`. Si el texto dice «sin mínimo», el mínimo es 1 €.
+    """
+    raw = None
+    for metric in ("minimum_eur", "importe_minimo", "minimum_note", "importe_minimo_texto"):
+        for condition in product.get("conditions") or ():
+            if not isinstance(condition, dict) or condition.get("metric") != metric:
+                continue
+            raw = condition.get("value")
+            if raw not in (None, ""):
+                break
+        if raw not in (None, ""):
+            break
+    if raw is None:
+        return None
+    texto = str(raw).strip()
+    if not texto:
+        return None
+    if re.search(r"sin\s+m[íi]nimo|no\s+(?:hay|existe)\s+m[íi]nimo", texto, re.IGNORECASE):
+        return 1.0
+    numeros = re.findall(r"\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?", texto)
+    if not numeros:
+        return None
+    return _parse_spanish_number(numeros[0])
 
 
 def _mentions_issuer(product, text):
@@ -365,6 +508,25 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     nombrados = [p for p in valid_products if _mentions_issuer(p, question)]
     if nombrados:
         valid_products = nombrados
+    # El dinero del que habla el usuario manda: no se recomienda lo que no puede
+    # contratar. Fallo medido: a un estudiante con 2.000 € se le ofrecían depósitos
+    # de 5.000 € y 6.000 € y se le calculaba la rentabilidad del 3,10 % de uno de
+    # ellos. Un asesor no manda a nadie a contratar lo que no puede pagar.
+    cantidad = extract_amount_eur(question)
+    descartados_por_importe = []
+    if cantidad is not None:
+        alcanzables = []
+        for product in valid_products:
+            minimo = _minimum_eur(product)
+            if minimo is not None and minimo > cantidad:
+                descartados_por_importe.append((_product_heading(product), minimo))
+            else:
+                alcanzables.append(product)
+        if alcanzables:
+            valid_products = alcanzables
+        # Si no queda ninguno, NO se vacía la lista: se explica el motivo con los
+        # mínimos reales, que es la respuesta útil. Dejar el conjunto vacío haría
+        # que el turno cayera a la nota genérica.
     # Una oferta vencida no se recomienda. Si todas lo están, se dice: es más
     # honesto que empujar a contratar algo que ya no existe.
     vigentes = [p for p in valid_products if _is_current(p)]
@@ -377,6 +539,11 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     _, chosen, by_metric = best
     heading = _product_heading(chosen)
     facts = _key_facts(by_metric)
+    # Lo que el usuario ha dicho de su situación: cuánto tiene y cuánto necesita.
+    cantidad_txt = _format_number(str(int(cantidad))) if cantidad is not None else None
+    planificado = extract_expense_eur(question)
+    if planificado is not None and cantidad is not None and planificado >= cantidad:
+        planificado = None
 
     # Listado: la persona quiere saber QUÉ HAY, no una elección. Se da el nombre
     # de cada producto con su dato más identificativo y nada más: decirle «el que
@@ -406,12 +573,101 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
                       "recomendación personalizada.")
         return "\n\n".join(partes)
 
-    # Cuerpo: una recomendación, su motivo y sus datos clave. Nada más.
-    lineas = [f"Para lo que preguntas, el que mejor encaja es **{heading}**."]
+    # CUERPO CONVERSACIONAL. Antes esto era una ficha («Para lo que preguntas, el
+    # que mejor encaja es X. Es el mejor remunerado… Lo esencial: …»), que el
+    # usuario describió como «demasiado robotizado, demasiado texto numérico».
+    # Un asesor razona con las cifras en vez de enumerarlas: primero la situación,
+    # luego qué implica, luego el producto y cuánto supone en euros.
+    tasa = _numeric(by_metric, "annual_rate_percent")
+    plazo = _numeric(by_metric, "term_months")
+    # El mínimo se lee con _minimum_eur, que entiende «Sin mínimo» y los formatos
+    # del catálogo; _numeric fallaba con ese texto y el mínimo desaparecía.
+    minimo = _minimum_eur(chosen)
+    lineas = []
+
+    # 1) La situación, en sus términos. Si dijo cuánto tiene y cuánto necesita, eso
+    #    es lo primero: es el marco de la decisión.
+    if cantidad is not None and planificado is not None:
+        libre = cantidad - planificado
+        lineas.append(
+            f"Con {_money_text(cantidad)} € y {_money_text(planificado)} € comprometidos "
+            f"para dentro de un año, la clave es que esos {_money_text(planificado)} € "
+            f"estén disponibles sí o sí. Te quedan {_money_text(libre)} € que puedes "
+            f"mover sin tocar lo que ya tienes comprometido.")
+    elif cantidad is not None:
+        lineas.append(
+            f"Partiendo de {_money_text(cantidad)} €, lo que buscas es que el dinero no "
+            f"se quede parado sin quedarse atrapado.")
+
+    # 2) El producto y qué aporta, en una frase con la cifra integrada. NO se repite
+    #    la tasa en el motivo: ya va aquí, y repetirla era el «demasiado texto
+    #    numérico» que se reportó.
+    if tasa is not None and plazo is not None:
+        lineas.append(
+            f"Para eso encaja **{heading}**: {_rate_text(tasa)} % TAE a "
+            f"{_format_number(str(int(plazo)))} meses.")
+    elif tasa is not None:
+        lineas.append(f"Para eso encaja **{heading}**: {_rate_text(tasa)} % TAE.")
+    else:
+        lineas.append(f"Para eso encaja **{heading}**.")
+    # El motivo, sin la cifra que ya se ha dado arriba.
     if motivo:
-        lineas.append(f"{motivo[0].upper() + motivo[1:]}.")
-    if facts:
-        lineas.append("Lo esencial: " + "; ".join(facts) + ".")
+        limpio = re.sub(r"\s*\([^)]*\)\s*$", "", motivo).strip()
+        if limpio:
+            lineas.append(f"{limpio[0].upper() + limpio[1:]}.")
+
+    # 3) Trabajar la cifra: cuánto dinero supone de verdad. Esto es lo que faltaba:
+    #    el 3,03 % no significa nada hasta que se traduce a euros. Se calcula sobre
+    #    el dinero LIBRE (lo que no está comprometido), no sobre el gasto: el gasto
+    #    no se invierte, se paga.
+    if tasa is not None and cantidad is not None:
+        base = cantidad - planificado if planificado is not None else cantidad
+        anios = (plazo / 12) if plazo else 1.0
+        if base and base > 0:
+            interes = base * (tasa / 100) * anios
+            if interes >= 1:
+                lineas.append(
+                    f"Si pones esos {_money_text(base)} € a ese tipo durante el año, "
+                    f"sacan unos {_money_text(round(interes, 2))} € de intereses. Poco, "
+                    f"pero es dinero que no pierdes y que recuperas al vencer.")
+            else:
+                lineas.append(
+                    f"Sobre {_money_text(base)} € el interés sería de unos "
+                    f"{_money_text(round(interes, 2))} € al año: son migajas, y el motivo "
+                    f"es que el dinero tiene que estar disponible, no que el producto sea malo.")
+    # El mínimo se dice SIEMPRE que conste: es el dato que decide si la ficha sirve
+    # o no, tanto si el usuario dijo cuánto tiene como si no.
+    if minimo is not None:
+        if cantidad is not None and minimo > cantidad:
+            lineas.append(f"El problema es el mínimo: pide {_money_text(minimo)} € y con "
+                          f"{_money_text(cantidad)} € no llegas.")
+        elif minimo <= 1:
+            if cantidad is not None:
+                lineas.append(f"Y puedes entrar desde 1 €, así que con "
+                              f"{_money_text(cantidad)} € no tienes problema de mínimo.")
+            else:
+                lineas.append("Y puedes entrar desde 1 €, así que el mínimo no es un estorbo.")
+        else:
+            if cantidad is not None:
+                lineas.append(f"El mínimo son {_money_text(minimo)} €, que sí alcanzas con "
+                              f"{_money_text(cantidad)} €.")
+            else:
+                lineas.append(f"Pide un mínimo de {_money_text(minimo)} €.")
+
+    # 4) Los datos clave que aún no se han dicho y que ayudan a decidir (riesgo,
+    #    retención, vencimiento…). Se excluyen por MÉTRICA, no por el texto del
+    #    valor: comparar cadenas dejaba pasar «TAE: 3,03 %» otra vez.
+    ya_dichas = {"annual_rate_percent", "term_months", "minimum_eur", "minimum_note"}
+    extras = []
+    for metric, condition in by_metric.items():
+        if metric in ya_dichas:
+            continue
+        claim = _claim_line(condition)
+        if claim:
+            extras.append(claim)
+    if extras:
+        lineas.append("Además: " + "; ".join(extras[:2]) + ".")
+
     # Estado, solo si aporta: una oferta vencida no puede presentarse como vigente.
     if chosen.get("conditions_state") == "documented_not_current":
         lineas.append("Ojo: la ficha marca esta oferta como no vigente, así que "
@@ -427,6 +683,13 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
         cola = f" y {resto} más" if resto > 0 else ""
         lineas.append("También están " + ", ".join(muestra) + cola +
                       "; dime si quieres que mire alguno en concreto.")
+    # Los que no se pueden contratar con su dinero se dicen, con el mínimo real: es
+    # la información que evita que pierda el tiempo mirando una ficha inalcanzable.
+    if descartados_por_importe and cantidad is not None:
+        partes_min = [f"{nombre.split(' (')[0]} pide {_money_text(minimo)} €"
+                      for nombre, minimo in descartados_por_importe[:2]]
+        lineas.append(f"Los he descartado por importe: " + " y ".join(partes_min)
+                      + f", y con {_money_text(cantidad)} € no llegas.")
 
     # Trazabilidad en una sola línea, no repetida por condición.
     fuente = None

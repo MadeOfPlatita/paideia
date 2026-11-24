@@ -148,8 +148,8 @@ test('a secondary source is labelled secondary and never official', async () => 
   ui.input('Pregunta sintética'); ui.consent.checked = true; await ui.send();
 
   const text = ui.feedback.textContent;
-  assert.ok(text.includes('Secundaria'), text);
-  assert.ok(text.includes('Secundaria') && !text.includes('Clase: Oficial'), text);
+  assert.ok(text.includes('fuente secundaria'), text);
+  assert.ok(!text.includes('fuente oficial'), `una fuente secundaria no puede etiquetarse como oficial: ${text}`);
 });
 
 test('a conceptual turn keeps its text and shows the provenance limitation', async () => {
@@ -314,7 +314,7 @@ test('chat catalogue cards show the real conflicts, unknown fields and condition
   assert.ok(text.includes('plazos disponibles'), text);
   assert.ok(text.includes('fecha efectiva de cada oferta'), text);
   assert.match(text, /Conflictos/);
-  assert.match(text, /Campos desconocidos/);
+  assert.match(text, /Sin documentar todavía/);
   const anchors = [];
   (function walk(node) { if (node && node.tag === 'a') anchors.push(node);
     for (const child of (node && node.children) || []) walk(child); })(ui.feedback);
@@ -337,8 +337,8 @@ test('aggregate source truncation is declared instead of silently slicing to 20'
   }));
   ui.input('Pregunta'); ui.consent.checked = true; await ui.send();
 
-  assert.match(ui.feedback.textContent, /20 de 22/);
-  assert.match(ui.feedback.textContent, /2 se omiten|2 referencias/);
+  assert.match(ui.feedback.textContent, /22 referencias en total/);
+  assert.match(ui.feedback.textContent, /20 distintas/);
 });
 
 test('an incoherent metric/unit or unknown-with-value is not shown as a usable figure', async () => {

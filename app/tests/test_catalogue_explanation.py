@@ -52,7 +52,7 @@ class ExplanationTests(unittest.TestCase):
         texto = compose_catalogue_answer(
             FICHA, explanation="Mira el plazo antes de contratar.")
         assert texto is not None
-        posicion_dato = texto.index("3,1 %")
+        posicion_dato = texto.index("3,10 %")
         posicion_explicacion = texto.index("Mira el plazo")
         self.assertLess(posicion_dato, posicion_explicacion,
                         "los datos verificados van primero")
@@ -61,7 +61,7 @@ class ExplanationTests(unittest.TestCase):
     def test_without_explanation_the_answer_is_just_the_data(self):
         texto = compose_catalogue_answer(FICHA)
         assert texto is not None
-        self.assertIn("3,1 %", texto)
+        self.assertIn("3,10 %", texto)
         self.assertNotIn("Mira el plazo", texto)
 
 

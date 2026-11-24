@@ -1024,19 +1024,24 @@ function renderHome() {
     const clases = [...new Set(condicionesPrincipal
       .map(c => c && c.source_class)
       .filter(c => typeof c === "string" && c)
-      .map(c => (c === "official" ? "Oficial" : c === "secondary" ? "Secundaria" : c)))];
+      .map(humanSourceClass))];
+    // La trazabilidad de la tarjeta va plegada: la cifra y su enlace ya están a la
+    // vista, y estas líneas eran parte del ruido que hacía la respuesta ilegible.
+    const tecnico = el("details", { className: "chat-card-detail" });
+    tecnico.appendChild(el("summary", {}, "Detalle de la ficha"));
     if (clases.length) {
-      box.appendChild(textElement("p", `Clase de la fuente: ${clases.join(", ")}.`, "field-help"));
+      tecnico.appendChild(textElement("p", `Fuente: ${clases.join(", ")}.`, "field-help"));
     }
     const conflictos = Array.isArray(principal.conflicts) ? principal.conflicts.filter(c => typeof c === "string" && c) : [];
     if (conflictos.length) {
-      box.appendChild(textElement("p", `Conflictos: ${conflictos.join(" ")}`, "field-help"));
+      tecnico.appendChild(textElement("p", `Conflictos: ${conflictos.join(" ")}`, "field-help"));
     }
     const desconocidos = Array.isArray(principal.unknown_fields)
       ? principal.unknown_fields.filter(c => typeof c === "string" && c) : [];
     if (desconocidos.length) {
-      box.appendChild(textElement("p", `Campos desconocidos: ${desconocidos.join(", ")}.`, "field-help"));
+      tecnico.appendChild(textElement("p", `Sin documentar todavía: ${desconocidos.join(", ")}.`, "field-help"));
     }
+    if (tecnico.children.length > 1) box.appendChild(tecnico);
     // El enlace a la fuente del producto recomendado se conserva: sin él la cifra
     // no es comprobable. Uno solo, no uno por condición como antes.
     const enlace = condicionesPrincipal
@@ -1056,43 +1061,76 @@ function renderHome() {
     container.appendChild(box);
   }
   function renderChatSources(container, sources, sourcesTotal, sourcesTruncated) {
-    const list = el("ul", { className: "chat-sources" });
     const items = Array.isArray(sources) ? sources.slice(0, 20) : [];
-    let shown = 0;
+    // Deduplicación. Antes salían 14 líneas para tres productos: la misma fuente
+    // repetida por cada condición, y encima con clases distintas («Oficial» y
+    // «Desconocida» para el mismo depósito). Repetir la misma referencia no aporta
+    // nada y hacía que la respuesta pareciera un volcado.
+    const vistos = new Set();
+    const limpias = [];
     for (const item of items) {
       const source = item && item.source;
       if (!source || typeof source !== "object" || !isSafePrimaryUrl(source.url)) continue;
+      const clave = `${source.url}|${source.claim_scope || ""}`;
+      if (vistos.has(clave)) continue;
+      vistos.add(clave);
+      limpias.push(source);
+    }
+    if (!limpias.length) return;
+    // Plegado: la trazabilidad tiene que estar, pero quien pregunta quiere la
+    // respuesta, no catorce líneas de procedencia. Se abre quien la quiera ver.
+    const detalles = el("details", { className: "chat-sources-block" });
+    detalles.appendChild(el("summary", {}, `Fuentes consultadas (${limpias.length})`));
+    const list = el("ul", { className: "chat-sources" });
+    for (const source of limpias) {
       const line = el("li");
       line.appendChild(el("a", { href: source.url, target: "_blank", rel: "noopener noreferrer" }, chatText(source.label, 160) || chatText(source.product_id, 40) || "Fuente"));
-      const kind = source.kind === "identity" ? "Identidad" : (CHAT_SOURCE_CLASS_LABELS[source.source_class] || "Desconocida");
+      const kind = humanSourceClass(source.kind === "identity" ? "identity" : source.source_class);
       const retrieved = chatDate(source.retrieved_at);
-      line.appendChild(textElement("span", ` — clase: ${kind}; ${retrieved ? `consultada: ${retrieved}` : "fecha no disponible"}.`));
-      const scope = source.claim_scope === "product_identity_only" ? "Acredita identidad, no condiciones." : (source.claim_scope === "condition_documentation_only" ? "Documenta condiciones; no es una oferta vigente." : "");
+      line.appendChild(textElement("span", ` — ${kind}; ${retrieved ? `consultada el ${retrieved}` : "sin fecha de consulta"}.`));
+      const scope = source.claim_scope === "product_identity_only"
+        ? "Acredita que el producto existe, no sus condiciones."
+        : (source.claim_scope === "condition_documentation_only"
+          ? "Documenta condiciones; no es una oferta vigente." : "");
       if (scope) line.appendChild(textElement("span", ` ${scope}`));
       list.appendChild(line);
-      shown += 1;
     }
-    if (shown) {
-      container.appendChild(textElement("p", "Referencias locales (la clase y la fecha acompañan a cada cita):", "chat-provenance-title"));
-      container.appendChild(list);
-      const total = Number.isInteger(sourcesTotal) && sourcesTotal > shown ? sourcesTotal : (Number.isInteger(sourcesTruncated) && sourcesTruncated > 0 ? shown + sourcesTruncated : shown);
-      if (total > shown) {
-        container.appendChild(textElement("p", `Se muestran ${shown} de ${total} referencias locales; ${total - shown} se omiten por el límite agregado de 20 o por no tener una URL HTTPS segura, y no se presentan como inexistentes.`, "field-help"));
-      }
+    detalles.appendChild(list);
+    container.appendChild(detalles);
+    const total = Number.isInteger(sourcesTotal) && sourcesTotal > limpias.length
+      ? sourcesTotal
+      : (Number.isInteger(sourcesTruncated) && sourcesTruncated > 0 ? limpias.length + sourcesTruncated : limpias.length);
+    if (total > limpias.length) {
+      container.appendChild(textElement("p", `Hay ${total} referencias en total; se muestran las ${limpias.length} distintas con URL segura.`, "field-help"));
     }
+  }
+  // Traducción de los valores internos del backend. Sin esto se colaba «unknown»
+  // en un texto en castellano («Clase de la fuente: Oficial, unknown»).
+  const SOURCE_CLASS_ES = {
+    official: "fuente oficial", secondary: "fuente secundaria",
+    unknown: "procedencia sin identificar", identity: "identidad del producto",
+    curated: "ficha revisada", inferred: "dato inferido",
+  };
+  function humanSourceClass(value) {
+    if (typeof value !== "string" || !value.trim()) return "procedencia sin identificar";
+    return SOURCE_CLASS_ES[value] || value.replace(/_/g, " ");
   }
   function renderChatProvenance(container, provenance) {
     if (!provenance || typeof provenance !== "object") return;
     const notes = (Array.isArray(provenance.limitations) ? provenance.limitations : [])
       .filter(note => typeof note === "string" && note.trim());
-    // El aviso fijo solo si el servidor no manda ninguna limitacion: antes se
-    // pintaban los dos y el usuario leia la misma advertencia dos veces seguidas.
+    // Antes se apilaban hasta cinco párrafos de advertencias, y el usuario los
+    // describió como ruido. Se conservan, pero en una sola línea y plegadas: la
+    // advertencia importante (no es una recomendación) ya va al final del texto.
+    const detalles = el("details", { className: "chat-limitations" });
+    detalles.appendChild(el("summary", {}, "Cómo se ha elaborado esta respuesta"));
     if (!notes.length) {
-      container.appendChild(textElement("p", "Trazabilidad: el texto del modelo no se valida semánticamente contra las fuentes.", "field-help"));
+      detalles.appendChild(textElement("p", "El texto del modelo no se valida semánticamente contra las fuentes.", "field-help"));
     }
     for (const note of notes.slice(0, 6)) {
-      container.appendChild(textElement("p", note, "field-help"));
+      detalles.appendChild(textElement("p", note, "field-help"));
     }
+    container.appendChild(detalles);
   }
   chat.appendChild(callout("Si la IA está disponible y das tu consentimiento, tu pregunta se enviará al proveedor. No incluyas nombres, documentos ni datos bancarios.", "warning-note"));
   const form = el("form", { className: "chat-form" });
@@ -1347,7 +1385,23 @@ function renderHome() {
         if (!structured && result.refused) feedback.appendChild(textElement("p", "El proveedor ha rechazado esta consulta."));
         if (!structured && result.truncated) feedback.appendChild(textElement("p", "Respuesta incompleta: se alcanzó el límite de longitud. Pide que continúe o concreta la pregunta."));
         if (!structured && Array.isArray(result.tool_events) && result.tool_events.length) {
-          feedback.appendChild(textElement("p", "Herramientas: " + result.tool_events.map(item => `${item.name || "rechazada"} (${item.state})`).join("; ")));
+          // «Herramientas: search_products (executed); ...» es andamiaje interno: no
+          // aporta nada a quien pregunta y contribuía a que la respuesta se sintiera
+          // robotizada. Se conserva para auditoría, pero PLEGADO y sin jerga.
+          const consultas = result.tool_events.filter(item => item && item.state === "executed");
+          if (consultas.length) {
+            const detalles = el("details", { className: "chat-tools" });
+            detalles.appendChild(el("summary", {}, `Cómo se ha consultado el catálogo (${consultas.length} consulta${consultas.length === 1 ? "" : "s"})`));
+            const nombres = { search_products: "búsqueda de productos",
+                              get_product_detail: "ficha del producto",
+                              calculate_scenario: "cálculo con el motor local" };
+            const lista = el("ul", { className: "chat-tools-list" });
+            for (const item of consultas) {
+              lista.appendChild(el("li", {}, nombres[item.name] || chatText(item.name, 40) || "consulta"));
+            }
+            detalles.appendChild(lista);
+            feedback.appendChild(detalles);
+          }
         }
         feedback.className = "chat-state note";
       }

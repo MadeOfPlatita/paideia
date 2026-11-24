@@ -63,7 +63,7 @@ class PendingEvidenceTests(unittest.TestCase):
     def test_a_product_with_conditions_uses_the_normal_composition(self):
         texto = compose_catalogue_answer(CON_DATOS)
         assert texto is not None, "debía componer la respuesta con el dato conocido"
-        self.assertIn("3,1 %", texto)
+        self.assertIn("3,10 %", texto)
         self.assertIn("https://www.ebnbanco.com/x", texto)
 
     def test_without_catalogue_used_there_is_no_answer(self):

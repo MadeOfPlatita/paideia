@@ -71,7 +71,7 @@ class RecommendationsTest(unittest.TestCase):
         assert texto is not None
         # Tres datos como mucho: el cuarto (la retención) no debe aparecer.
         self.assertIn("TAE", texto)
-        self.assertIn("plazo", texto)
+        self.assertIn("12 meses", texto)
         self.assertNotIn("Gestora Sintética", texto)
 
     def test_the_other_products_are_mentioned_by_name_only(self):
@@ -101,7 +101,7 @@ class RecommendationsTest(unittest.TestCase):
         assert texto is not None
         # La tasa del vencido es más alta, pero no se puede recomendar.
         self.assertIn("Depósito Vigente", texto)
-        self.assertIn("Para lo que preguntas", texto)
+        self.assertIn("encaja", texto)
 
     def test_if_every_offer_is_expired_it_says_so_instead_of_recommending_it(self):
         catalogo = _catalogue(
