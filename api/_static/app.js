@@ -2437,21 +2437,68 @@ function comparisonCard(product) {
   card.appendChild(textElement("p", `${familyLabel(product.family)} · ${issuerLabel(product)}`, "comparison-issuer"));
   card.appendChild(el("div", { className: "badge-row" }, [badge(identityLabel(product), identityKind(product)), badge(conditionsLabel(product), "pending")]));
   const rows = el("dl", { className: "comparison-rows" });
-  const rate = rateSummary(product.id);
-  const term = conditionOf(product.id, "term_months");
-  const fields = [
-    ["ISIN", product.isin || "No indicado en el metadato"],
-    ["Disponibilidad / liquidez", "Desconocida en los metadatos disponibles."],
-    ["Plazo", term && term.state === "known" ? `${term.value} meses (documentado)` : "No disponible en la respuesta de comparación."],
-    ["Costes", "No disponibles; no se infieren."],
-    ["Condiciones / garantía", "Pendientes de validación; no se infieren."],
-    ["Posible pérdida", "No evaluada en estos metadatos; no se deduce por familia."],
-    ["Rendimiento", rate.text],
-    ["Fecha de consulta de la condición", conditionConsultedAt(product.id) || "No consta fecha de consulta de la condición."],
-    ["Vigencia de la condición", conditionValidityText(product.id)],
-    ["Fecha efectiva del producto", productEffectiveDate(product) || "No consta una fecha efectiva del producto en los metadatos."]
+  // BUG REAL CORREGIDO: aquí había seis valores escritos a mano («Desconocida en
+  // los metadatos», «No disponibles; no se infieren», «Pendientes de
+  // validación»…). Con dos letras del Tesoro seleccionadas, las dos tarjetas eran
+  // idénticas y sin un solo dato, aunque cada letra tiene 10 condiciones reales
+  // en el catálogo (vencimiento distinto, precio distinto, tipo marginal
+  // distinto). El comparador solo sabía leer `annual_rate_percent` y
+  // `term_months`, que las letras no tienen: su tasa es `marginal_rate_percent`.
+  //
+  // Ahora se leen las condiciones que el producto SÍ tiene, con una lista de
+  // métricas equivalentes por concepto, para que cada familia muestre lo suyo.
+  const CONCEPTOS = [
+    // [etiqueta, métricas equivalentes por orden de preferencia]
+    ["Rentabilidad", ["annual_rate_percent", "marginal_rate_percent", "average_rate_percent",
+                      "nominal_rate_percent", "ter_percent"]],
+    ["Plazo / vencimiento", ["term_months", "maturity_date"]],
+    ["Precio", ["minimum_price_percent", "average_price_percent", "nav_eur"]],
+    ["Inversión mínima", ["minimum_eur", "minimum_note"]],
+    ["Importe máximo", ["maximum_eur", "maximum_note"]],
+    ["Costes y comisiones", ["declared_fees", "comisiones", "management_fee_percent",
+                             "custody_fee_percent", "entry_fee_percent", "exit_fee_percent",
+                             "performance_fee_percent", "costes_operacion"]],
+    ["Liquidez / reembolso", ["suscripcion_reembolso", "liquidez", "liquidacion", "settlement"]],
+    ["Cancelación anticipada", ["early_cancellation", "cancelacion_anticipada"]],
+    ["Garantía", ["deposit_guarantee_fund", "garantia_depositos"]],
+    ["Riesgo", ["risk_scale", "riesgo"]],
+    ["Retención fiscal", ["withholding_percent"]],
+    ["Requisitos", ["requirement", "requisito", "eligibility", "elegibilidad"]],
+    ["Divisa", ["base_currency", "divisa", "divisa_base"]],
+    ["ISIN", ["isin"]],
   ];
-  for (const [label, value] of fields) rows.append(el("dt", {}, label), el("dd", {}, value));
+  const vistas = new Set();
+  for (const [etiqueta, metricas] of CONCEPTOS) {
+    let condicion = null;
+    for (const metrica of metricas) {
+      const candidata = conditionOf(product.id, metrica);
+      // Se acepta `known`; una condición vencida o en conflicto se declara, no se
+      // presenta como dato vivo.
+      if (candidata && candidata.state === "known") { condicion = candidata; break; }
+      if (candidata && !condicion) condicion = candidata;
+    }
+    if (!condicion) continue;
+    vistas.add(condicion.metric);
+    const valor = comparisonValue(condicion);
+    if (!valor) continue;
+    rows.append(el("dt", {}, etiqueta), el("dd", {}, valor));
+  }
+  // Cualquier otra condición documentada que no esté en la lista: se muestra con
+  // su nombre técnico legible, para no ocultar un dato que sí existe.
+  const entrada = state.conditions.byId.get(product.id);
+  const todas = entrada && Array.isArray(entrada.conditions) ? entrada.conditions : [];
+  for (const condicion of todas) {
+    if (!condicion || vistas.has(condicion.metric)) continue;
+    if (condicion.state !== "known") continue;
+    const valor = comparisonValue(condicion);
+    if (!valor) continue;
+    rows.append(el("dt", {}, humanMetricLabel(condicion.metric)), el("dd", {}, valor));
+  }
+  // Si de verdad no hay nada documentado, se dice una vez y con el motivo.
+  if (!rows.children.length) {
+    rows.append(el("dt", {}, "Condiciones"), el("dd", {},
+      "Esta ficha no tiene condiciones transcritas todavía; no se infieren por familia."));
+  }
   card.appendChild(rows);
   appendPrimarySource(card, product);
   const unknown = el("details");
@@ -2482,6 +2529,88 @@ function comparisonCard(product) {
     card.appendChild(explore);
   }
   return card;
+}
+
+// Etiqueta legible de una métrica del catálogo, para las que no están en la lista
+// de conceptos. Se prefiere un nombre en castellano y, si no hay traducción, el
+// nombre técnico tal cual: mejor eso que esconder el dato.
+const METRIC_ES = {
+  tin: "TIN", tae: "TAE", ter: "TER", nav: "Valor liquidativo", isin: "ISIN",
+  plazo_meses: "Plazo", importe_minimo: "Inversión mínima", importe_maximo: "Importe máximo",
+  liquidacion: "Liquidación", comisiones: "Comisiones", garantia_depositos: "Fondo de garantía",
+  risk_indicator: "Riesgo", cancelacion_anticipada: "Cancelación anticipada",
+  renovacion: "Renovación", elegibilidad: "Requisitos", requisito: "Condiciones de contratación",
+  divisa: "Divisa", divisa_base: "Divisa base", base_currency: "Divisa base",
+  fecha_documento: "Fecha del documento", fecha_datos: "Fecha de los datos",
+  fecha_lanzamiento: "Fecha de lanzamiento", reparto: "Reparto", replica: "Réplica",
+  ucits: "OICVM", gestora: "Gestora", depositaria: "Depositaria", domicilio: "Domicilio",
+  patrimonio: "Patrimonio", prestamo_valores: "Préstamo de valores", sfdr: "SFDR",
+  outstanding_balance: "Saldo en circulación", minimum_price_percent: "Precio mínimo",
+  average_price_percent: "Precio medio", marginal_rate_percent: "Tipo marginal",
+  average_rate_percent: "Tipo medio", auction_date: "Fecha de subasta",
+  settlement_date: "Fecha de liquidación", awarded_nominal_eur: "Nominal adjudicado",
+  maturity_date: "Vencimiento", costes_operacion: "Costes de operación",
+  incidencia_anual_costes_1a: "Coste anual (1 año)",
+  incidencia_anual_costes_5a: "Coste anual (5 años)",
+  comision_entrada: "Comisión de entrada", comision_salida: "Comisión de salida",
+  comision_rendimiento: "Comisión de éxito",
+  periodo_mantenimiento_recomendado: "Periodo recomendado",
+  horizonte_recomendado: "Horizonte recomendado",
+  paises_registro: "Países de registro", registro_espana: "Registro en España",
+  mercado_principal: "Mercado principal", tipo_vehiculo: "Tipo de vehículo",
+  acceso_minorista: "Acceso minorista", suscripcion_reembolso: "Suscripción y reembolso",
+  importe_minimo_texto: "Inversión mínima", importe_maximo_texto: "Importe máximo",
+  promocion_ventana_alta: "Ventana de contratación",
+  base_calculo_intereses: "Base de cálculo", requisito_fiscal: "Requisito fiscal",
+  titularidad: "Titularidad",
+};
+function humanMetricLabel(metric) {
+  if (typeof metric !== "string" || !metric.trim()) return "Condición";
+  if (METRIC_ES[metric]) return METRIC_ES[metric];
+  // Sin traducción: el nombre técnico con los guiones bajos vueltos en espacios.
+  return metric.replace(/_/g, " ");
+}
+
+// Valor legible de una condición para el comparador. Es autónomo a propósito:
+// `chatConditionValue` vive dentro de `renderHome` y no es visible desde aquí
+// (fue exactamente el fallo que dejó el comparador en blanco con
+// «chatConditionValue is not defined»). Aquí se replica el mismo criterio —
+// unidad, formato español y aviso de incoherencia— sin acoplarse a la sección del
+// chat.
+function comparisonValue(condition) {
+  if (!condition || typeof condition !== "object") return "";
+  if (condition.state === "unknown") return "sin valor documentado";
+  const raw = condition.value;
+  if (typeof raw !== "string" || !raw.trim()) return "";
+  const metric = condition.metric;
+  const unit = condition.unit;
+  // Una tasa con unidad de tiempo (o un plazo con unidad de porcentaje) está mal
+  // formada: no se publica como cifra.
+  const RATE_METRICS = ["annual_rate_percent", "nominal_rate_percent", "withholding_percent"];
+  if (RATE_METRICS.indexOf(metric) !== -1 && unit !== "PERCENT") {
+    return "unidad incoherente; no se muestra el valor";
+  }
+  if (metric === "term_months" && unit !== "MONTHS") {
+    return "unidad incoherente; no se muestra el valor";
+  }
+  let texto = raw.trim();
+  if (unit === "PERCENT") {
+    const numero = Number(texto);
+    texto = Number.isFinite(numero)
+      ? `${numero.toLocaleString("es-ES", { maximumFractionDigits: 4 })} %`
+      : `${texto} %`;
+  } else if (unit === "MONTHS") {
+    texto = `${texto} meses`;
+  } else if (unit === "EUR") {
+    const numero = Number(texto);
+    // Un nominal enorme no se lee: se deja tal cual con separadores.
+    texto = Number.isFinite(numero)
+      ? `${numero.toLocaleString("es-ES", { maximumFractionDigits: 2 })} €`
+      : `${texto} €`;
+  }
+  if (condition.state === "stale") return `${texto} (vencida)`;
+  if (condition.state === "conflict") return `${texto} (en conflicto)`;
+  return texto;
 }
 
 function renderComparisonResult() {
