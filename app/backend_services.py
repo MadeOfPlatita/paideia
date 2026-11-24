@@ -356,8 +356,40 @@ def _catalogue_explanation(text):
     limpio, _quitadas = _redact_unbacked_figures(text.strip(), strict=True)
     if not limpio or not limpio.strip():
         return None
-    limpio = limpio.strip()[:1200].strip()
+    limpio = _strip_markdown_tables(limpio.strip())[:1200].strip()
     return limpio or None
+
+
+def _strip_markdown_tables(text):
+    """Convierte una tabla markdown en una lista, o la quita si no se puede.
+
+    El prompt pide «sin tablas» pero el modelo las usa: la interfaz inserta el texto
+    literal (solo quita **negritas**), así que el usuario ve «| Elemento | Qué mirar
+    |» y una fila de guiones. Un turno de catálogo medido en producción acabó así.
+
+    Cada fila se convierte en «- columna1: columna2», que se lee igual de bien y no
+    depende de que la interfaz entienda markdown.
+    """
+    if "|" not in text:
+        return text
+    lineas = text.splitlines()
+    salida = []
+    for linea in lineas:
+        recortada = linea.strip()
+        # La fila de separación de una tabla (! --- | ---) se descarta entera.
+        if recortada.startswith("|") and set(recortada) <= set("|-: "):
+            continue
+        if recortada.startswith("|") and recortada.count("|") >= 2:
+            celdas = [c.strip() for c in recortada.strip("|").split("|") if c.strip()]
+            if not celdas:
+                continue
+            if len(celdas) == 1:
+                salida.append(f"- {celdas[0]}")
+            else:
+                salida.append(f"- {celdas[0]}: " + " · ".join(celdas[1:]))
+            continue
+        salida.append(linea)
+    return "\n".join(salida)
 
 
 def _withhold_unbacked_claim(result, text, text_state, calculation=None):
