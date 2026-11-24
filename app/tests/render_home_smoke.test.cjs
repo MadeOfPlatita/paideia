@@ -75,3 +75,23 @@ test("renderHome funciona sin estado de IA (servicio caído)", () => {
     `sin status renderHome lanzó "${salida.error}": la app quedaría inservible`);
   assert.ok(salida.ids.includes("chat-message"), "el chat debe montarse aunque no haya estado");
 });
+
+test("el aviso del historial dice la verdad en los dos casos", () => {
+  // El texto de la casilla depende de la capacidad, que solo se conoce al llegar
+  // /api/status. Antes se quedaba con «no disponible» mientras la casilla sí
+  // aparecía habilitada: dos mensajes opuestos en el mismo control.
+  const salida = renderHome(CAPACIDADES);
+  const avisos = salida.aviso_historial;
+
+  assert.ok(avisos, "el sondeo debe devolver el texto del aviso");
+  // Con historial: habla de reenviar turnos y no de que no esté disponible.
+  assert.match(avisos.con, /reenviar/i,
+    `con history:true el aviso debe hablar de reenviar: "${avisos.con}"`);
+  assert.doesNotMatch(avisos.con, /no disponible/i,
+    `con history:true no puede decir «no disponible»: "${avisos.con}"`);
+  // Sin historial: lo dice con claridad y no promete nada.
+  assert.match(avisos.sin, /no disponible/i,
+    `con history:false debe decirlo: "${avisos.sin}"`);
+  assert.doesNotMatch(avisos.sin, /Autorizo reenviar/i,
+    `con history:false no puede prometer reenvío: "${avisos.sin}"`);
+});

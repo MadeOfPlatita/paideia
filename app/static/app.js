@@ -3865,6 +3865,12 @@ async function checkLocalStatus() {
       const control = document.getElementById(id);
       if (control) { control.disabled = !available; if (!available) control.checked = false; }
     }
+    // El texto de la casilla de historial depende de la capacidad, que solo se
+    // conoce al llegar /api/status. Sin este repintado se quedaba con el mensaje
+    // de «no disponible» aunque la casilla sí estuviera habilitada: dos mensajes
+    // contradictorios en el mismo control.
+    const historyLabel = document.querySelector('label[for="chat-history-consent"] span');
+    if (historyLabel) historyLabel.textContent = chatHistoryConsentText(caps);
     PaideiaChatContext.fields.forEach((key, index) => {
       const control = document.getElementById(`chat-context-field-${index}`);
       if (!control) return;

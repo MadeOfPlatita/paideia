@@ -171,8 +171,31 @@ function recoger(nodo, acc) {
 const acc = recoger(body, { ids: [], clases: [] });
 for (const nodo of Object.values(byId)) recoger(nodo, acc);
 
+// Texto del aviso de historial: su contenido depende de la capacidad del servicio.
+function buscarTexto(nodo, acc) {
+  if (!nodo || typeof nodo !== "object") return acc;
+  if (String(nodo.className || "").includes("choice") || nodo.tag === "label") {
+    acc.push((nodo.textContent || "").replace(/\s+/g, " ") + " " +
+             (nodo.children || []).map((h) => h.textContent || "").join(" "));
+  }
+  for (const hijo of nodo.children || []) buscarTexto(hijo, acc);
+  return acc;
+}
+const avisos = buscarTexto(body, []).join(" ").replace(/\s+/g, " ");
+
+// El aviso del historial se busca por el texto que le pasa chatHistoryConsentText,
+// que es lo que hay que verificar: no depende de que el DOM falso propague
+// textContent por los padres.
+let avisoHistorial = null;
+try {
+  const conHistorial = ctx.chatHistoryConsentText({ history: true });
+  const sinHistorial = ctx.chatHistoryConsentText({ history: false });
+  avisoHistorial = { con: String(conHistorial), sin: String(sinHistorial) };
+} catch (_) { /* si la funcion no es accesible, queda null */ }
+
 process.stdout.write(JSON.stringify({
   error,
   ids: [...new Set(acc.ids)],
   clases: [...new Set(acc.clases)],
+  aviso_historial: avisoHistorial,
 }));
