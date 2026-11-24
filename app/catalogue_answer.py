@@ -168,6 +168,19 @@ def _known_conditions(product):
     return by_metric
 
 
+def _any_condition(product, metric):
+    """Condición de esa métrica en CUALQUIER estado, o None.
+
+    Hace falta para distinguir «no hay tasa» de «hay tasa pero está vencida». La
+    primera no se puede recomendar por tasa; la segunda tampoco, pero hay que
+    decirlo en vez de presentar el producto sin cifra y sin explicación.
+    """
+    for condition in product.get("conditions") or ():
+        if isinstance(condition, dict) and condition.get("metric") == metric:
+            return condition
+    return None
+
+
 def _key_facts(by_metric, limit=MAX_KEY_FACTS):
     """Dos o tres datos clave del producto, no la ficha entera."""
     ordered = [by_metric[m] for m in _KEY_METRICS if m in by_metric]
@@ -435,6 +448,11 @@ def _pick_best(products, intent):
     El criterio es explícito y determinista: se ordena por la métrica que
     corresponde a lo preguntado y se toma el primero. Nunca inventa: si no hay
     datos para el criterio, cae al orden del catálogo.
+
+    Antes de ordenar, una preferencia fuerte: una tasa VIGENTE vale más que una
+    vencida. Es el fallo medido con Pibank: su TAE está en estado `stale` y, al no
+    haber otro producto con tasa viva en el conjunto, se recomendaba igualmente sin
+    poder dar la cifra. Si hay alguno con tasa viva, se recomienda ese.
     """
     candidates = []
     for index, product in enumerate(products):
@@ -444,6 +462,14 @@ def _pick_best(products, intent):
         candidates.append((index, product, by_metric))
     if not candidates:
         return None, None
+
+    def tiene_tasa_viva(candidate):
+        return _numeric(candidate[2], "annual_rate_percent") is not None
+
+    if intent in {"rate", "cost", "general", "term"}:
+        con_viva = [c for c in candidates if tiene_tasa_viva(c)]
+        if con_viva:
+            candidates = con_viva
 
     if intent == "rate":
         with_rate = [c for c in candidates if _numeric(c[2], "annual_rate_percent") is not None]
@@ -583,6 +609,15 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     # El mínimo se lee con _minimum_eur, que entiende «Sin mínimo» y los formatos
     # del catálogo; _numeric fallaba con ese texto y el mínimo desaparecía.
     minimo = _minimum_eur(chosen)
+    # Una tasa vencida no se publica como si fuera la vigente. Es lo que pasó con
+    # Pibank: su TAE (3,03 %) está en estado `stale` porque la promoción caducó, y
+    # la respuesta la omitía sin explicar por qué, dejando el producto sin cifra.
+    tasa_vencida = _any_condition(chosen, "annual_rate_percent")
+    if tasa_vencida is not None and tasa_vencida.get("state") != "known":
+        tasa = None
+        valor_vencido = _format_number(tasa_vencida.get("value"))
+    else:
+        valor_vencido = None
     lineas = []
 
     # 1) La situación, en sus términos. Si dijo cuánto tiene y cuánto necesita, eso
@@ -610,6 +645,13 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
         lineas.append(f"Para eso encaja **{heading}**: {_rate_text(tasa)} % TAE.")
     else:
         lineas.append(f"Para eso encaja **{heading}**.")
+    # Si la única tasa que hay está vencida, se dice con la cifra y su condición, en
+    # vez de presentar el producto sin número y sin explicación.
+    if valor_vencido:
+        lineas.append(
+            f"Su TAE documentada era el {valor_vencido} %, pero la ficha la marca como "
+            f"vencida: esa promoción ya no está en vigor, así que el tipo que te "
+            f"ofrezcan hoy puede ser distinto. Confírmalo antes de contratar.")
     # El motivo, sin la cifra que ya se ha dado arriba.
     if motivo:
         limpio = re.sub(r"\s*\([^)]*\)\s*$", "", motivo).strip()
@@ -619,7 +661,8 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     # 3) Trabajar la cifra: cuánto dinero supone de verdad. Esto es lo que faltaba:
     #    el 3,03 % no significa nada hasta que se traduce a euros. Se calcula sobre
     #    el dinero LIBRE (lo que no está comprometido), no sobre el gasto: el gasto
-    #    no se invierte, se paga.
+    #    no se invierte, se paga. Sin tasa vigente no se calcula: inventar el
+    #    interés con un tipo caducado sería peor que no darlo.
     if tasa is not None and cantidad is not None:
         base = cantidad - planificado if planificado is not None else cantidad
         anios = (plazo / 12) if plazo else 1.0
@@ -669,7 +712,9 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
         lineas.append("Además: " + "; ".join(extras[:2]) + ".")
 
     # Estado, solo si aporta: una oferta vencida no puede presentarse como vigente.
-    if chosen.get("conditions_state") == "documented_not_current":
+    # Si ya se ha avisado arriba con la cifra, no se repite: dos avisos seguidos del
+    # mismo hecho eran parte del ruido.
+    if chosen.get("conditions_state") == "documented_not_current" and not valor_vencido:
         lineas.append("Ojo: la ficha marca esta oferta como no vigente, así que "
                       "comprueba el tipo antes de contar con ella.")
 

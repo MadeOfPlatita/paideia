@@ -186,5 +186,60 @@ class DesignatedIssuerStillWinsTest(unittest.TestCase):
         self.assertNotIn("encaja **Depósito Pibank", texto)
 
 
+class ExpiredRateTest(unittest.TestCase):
+    """La tasa de Pibank está en estado `stale`: la promoción caducó.
+
+    Fallo medido en producción: al recomendar ese depósito, la respuesta decía «para
+    eso encaja Depósito Pibank» y NO daba ninguna TAE, porque el compositor descarta
+    las condiciones no `known`. El producto quedaba sin cifra y sin explicación.
+    """
+
+    def _pibank_vencido(self):
+        return {
+            "id": "DEP-03", "name": "Depósito Pibank a 12 meses", "issuer": "Pibank",
+            "conditions_state": "documented_not_current",
+            "conditions": [
+                _cond("annual_rate_percent", "3.03"),
+                _cond("term_months", "12", "MONTHS"),
+                _cond("minimum_note", "Sin mínimo", "TEXT"),
+            ],
+        }
+
+    def test_an_expired_rate_is_declared_expired_with_its_figure(self):
+        producto = self._pibank_vencido()
+        for condition in producto["conditions"]:
+            if condition["metric"] == "annual_rate_percent":
+                condition["state"] = "stale"
+        catalogo = {"used": True, "products": [producto]}
+        texto = compose_catalogue_answer(catalogo, question=PREGUNTA) or ""
+        # La cifra aparece, pero declarada vencida: no se presenta como vigente…
+        self.assertIn("3,03", texto)
+        self.assertIn("vencida", texto.lower())
+        # …y no se inventa un interés con un tipo caducado.
+        self.assertNotIn("15,15", texto)
+
+    def test_a_live_rate_is_preferred_over_an_expired_one(self):
+        vencido = self._pibank_vencido()
+        for condition in vencido["conditions"]:
+            if condition["metric"] == "annual_rate_percent":
+                condition["state"] = "stale"
+        vivo = _deposit("DEP-EBN-12", "Depósito Nuevo Ahorro 12 meses", "EBN Banco", "3.10", "1000")
+        catalogo = {"used": True, "products": [vencido, vivo]}
+        texto = compose_catalogue_answer(catalogo, question=PREGUNTA) or ""
+        # Se recomienda el que tiene tasa viva, no el vencido.
+        self.assertIn("Nuevo Ahorro", texto)
+        self.assertNotIn("encaja **Depósito Pibank", texto)
+
+    def test_if_only_expired_rates_exist_it_says_so_plainly(self):
+        producto = self._pibank_vencido()
+        for condition in producto["conditions"]:
+            if condition["metric"] == "annual_rate_percent":
+                condition["state"] = "stale"
+        catalogo = {"used": True, "products": [producto]}
+        texto = compose_catalogue_answer(catalogo, question=PREGUNTA) or ""
+        # No se deja al usuario con un producto sin cifra: se le dice qué pasa.
+        self.assertRegex(texto, r"ya no está en vigor|Confírmalo antes de contratar")
+
+
 if __name__ == "__main__":
     unittest.main()
