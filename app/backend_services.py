@@ -12,7 +12,7 @@ from pai_runtime import ANSWER_TEXT_SHOWN, ANSWER_TEXT_WITHHELD, ToolChatRunner
 from chat_context import NOTICE as CONTEXT_NOTICE, validate_context, validate_history, profile_echo
 from catalogue_facts import RULESET_VERSION, ComparisonSpec, evaluate_comparability
 from catalogue_answer import compose_catalogue_answer, pending_evidence_answer
-from financial_quality import FINANCIAL_EDUCATION_PROMPT, assess_financial_text
+from financial_quality import FINANCIAL_EDUCATION_PROMPT, assess_financial_text, redact_financial_claims
 from structured_education import render_selection
 from structured_provider_adapter import StructuredProviderAdapter, FakeChatProvider, parse_selection
 from structured_session_fixture import StructuredSessionFixture
@@ -695,9 +695,25 @@ def _trusted_send_state(provider, error):
 
 
 def _financial_checked(text):
-    if assess_financial_text(text):
-        raise ServiceProblem(502, "CHAT_FINANCIAL_QUALITY_REJECTED", "La respuesta del proveedor contiene una afirmación financiera problemática; no se ha mostrado y no hay reintento automático.")
-    return text
+    """Quita las frases que prometen riesgo cero; solo falla si no queda nada.
+
+    Antes se rechazaba el turno entero. Medido: una sola frase con una formula que
+    la guarda no reconocia dejaba al usuario con un 502 en preguntas educativas
+    normales («¿que es la inflacion?», «dame los pasos para comparar dos
+    depositos»). Enumerar formulas era un juego de topos.
+
+    Ahora la frase peligrosa se elimina y el resto se entrega. La promesa no se
+    muestra nunca; lo que cambia es que el usuario conserva la explicacion en vez
+    de perderla entera.
+    """
+    limpio, _quitadas = redact_financial_claims(text)
+    # Un texto vacio que LLEGA vacio no es un problema de calidad: es un turno sin
+    # prosa (el de calculadora, por ejemplo, donde la respuesta son los datos del
+    # motor). Antes se devolvia tal cual; ahora tambien. El 502 solo tiene sentido
+    # cuando la guarda ha tenido que quitar algo y no queda nada.
+    if not limpio and text and text.strip():
+        raise ServiceProblem(502, "CHAT_FINANCIAL_QUALITY_REJECTED", "La respuesta del proveedor solo contenía afirmaciones financieras problemáticas; no se ha mostrado y no hay reintento automático.")
+    return limpio
 
 
 class _CalculatorOnlyDispatcher:

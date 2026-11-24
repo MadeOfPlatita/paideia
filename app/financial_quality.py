@@ -76,6 +76,12 @@ _NOT_ALL = re.compile(r"\bno\s+todo[s]?\b", re.I)
 _DISCOURAGED_CLAIM = re.compile(
     r"\b(?:no\s+(?:conviene|deber[ií]amos|podemos|hay\s+que|se\s+puede)\s+"
     r"(?:afirmar|asumir|decir|creer|dar\s+por|pensar))"
+    # Imperativo de cautela: «no asumas que el capital esta libre de riesgo»,
+    # «no des por hecho que el ahorro es sin riesgo». Lo usa el modelo a menudo
+    # cuando escribe en segunda persona.
+    r"|\bno\s+(?:asumas|asum[aá]is|des\s+por|afirmes|digas|creas|pienses)\b"
+    r"|\bno\s+(?:debe|deber[ií]a|puede|podr[ií]a|hay\s+que)\s+presentar"
+    r"|\bno\s+se\s+(?:debe|deber[ií]a|puede)\s+presentar"
     r"|\bsin\s+(?:dar\s+por\s+(?:hecho|sentado)|asumir|creer|olvidar)"
     r"|\bno\s+es\s+(?:autom[aá]ticamente|necesariamente|siempre|exactamente)\b",
     re.I,
@@ -110,6 +116,14 @@ _REFUTATION = re.compile(
     re.I,
 )
 _CONJUNCTION = re.compile(r'\b(?:y|pero)\b', re.I)
+# Cualquier negacion delante de la afirmacion convierte una promesa de riesgo cero
+# en lo contrario. Es la exencion que generaliza: las listas de formulas concretas
+# se quedaban cortas con cada redaccion nueva del modelo.
+_ANY_NEGATION = re.compile(
+    r"\b(?:no|nunca|jamas|jamás|tampoco|ni|ning[uú]n[oa]?s?|sin|lejos\s+de|"
+    r"evita|evitar|rechaza|rechazar|desmiente)\b",
+    re.I,
+)
 
 
 def _last_conjunct(text: str) -> str:
@@ -150,3 +164,34 @@ def assess_financial_text(text: str) -> tuple[str, ...]:
             continue
         return ('ABSOLUTE_NO_RISK',)
     return ()
+
+
+def redact_financial_claims(text: str) -> tuple[str, int]:
+    """Quita las frases que prometen riesgo cero y conserva el resto.
+
+    Medido: preguntas educativas legitimas devolvian 502 porque UNA frase de una
+    respuesta larga usaba una formula que la guarda no reconocia. Rechazar el turno
+    entero castiga al usuario por una frase y deja la app inservible en preguntas
+    normales.
+
+    Se quita la frase y se entrega el resto: la promesa peligrosa no se muestra
+    nunca, y el usuario conserva la explicacion. Solo si NO sobrevive nada tiene
+    sentido el 502.
+
+    Devuelve (texto_limpio, frases_quitadas).
+    """
+    if not isinstance(text, str):
+        raise TypeError('text must be str')
+    if not assess_financial_text(text):
+        return text, 0
+    # Se corta por frase conservando el separador, y se comprueba cada una por
+    # separado: una frase sin la afirmacion no se toca.
+    piezas = re.split(r'(?<=[.!?])\s+', text)
+    conservadas = []
+    quitadas = 0
+    for pieza in piezas:
+        if assess_financial_text(pieza):
+            quitadas += 1
+            continue
+        conservadas.append(pieza)
+    return " ".join(conservadas).strip(), quitadas

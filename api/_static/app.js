@@ -2297,7 +2297,14 @@ function renderProductDetail() {
 }
 
 function renderLibrary() {
-  const { page, heading } = pageFrame("Explorar · catálogo interno", "Biblioteca de candidatos", "Busca y filtra por familia. Son 20 candidatos de investigación interna si la API devuelve el conjunto completo; ninguno está listo para publicar.");
+  // El subtítulo no puede llevar un total escrito a mano: el catálogo creció y
+  // seguía anunciando «son 20 candidatos», que es un dato falso en la primera línea
+  // de la página. Se cuenta lo que haya en la caché de productos cargados.
+  const totalCandidatos = state.catalogueCache instanceof Map ? state.catalogueCache.size : 0;
+  const subtitulo = totalCandidatos > 0
+    ? `Busca y filtra por familia. Son ${totalCandidatos} candidatos de investigación interna con los datos cargados; ninguno está listo para publicar.`
+    : "Busca y filtra por familia. Ninguno está listo para publicar.";
+  const { page, heading } = pageFrame("Explorar · catálogo interno", "Biblioteca de candidatos", subtitulo);
   page.appendChild(callout("Solo se muestran tasas documentadas con fuente y fecha. «Oferta vencida», «conflicto entre fuentes» o «sin tasa documentada» se muestran tal cual: no se completan huecos ni se convierten en ofertas publicables.", "warning-note"));
   const controls = el("div", { className: "catalogue-controls" });
   const search = el("input", { type: "search", id: "catalogue-search", maxlength: 100, autocomplete: "off", value: state.library.query, "aria-describedby": "catalogue-search-error" });
