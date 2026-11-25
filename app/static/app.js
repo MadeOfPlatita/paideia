@@ -274,8 +274,9 @@ function headlineMetric(productId) {
     // fecha»: la tarjeta decía «TAE documentada: 3,10 %» y «Documentadas con fuente»
     // sin decir de cuándo, así que el dato no se podía situar en el tiempo. Medido
     // en pantalla recorriendo la biblioteca: 22 fichas, 25 fuentes, 0 fechas.
-    const cuando = condicion.retrieved_at || (condicion.source && condicion.source.retrieved_at);
-    const fecha = typeof cuando === "string" && cuando ? `, consultada el ${cuando}` : ", sin fecha de consulta";
+    // `conditionConsultedAt` ya resuelve la fecha (de la condición o de su fuente).
+    const cuando = typeof conditionConsultedAt === "function" ? conditionConsultedAt(productId) : "";
+    const fecha = cuando ? `, consultada el ${cuando}` : ", sin fecha de consulta";
     return { kind: "verified", text: `${etiqueta}: ${texto}${fecha}`, retry: false };
   }
   return null;
