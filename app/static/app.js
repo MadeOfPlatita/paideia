@@ -849,6 +849,24 @@ function renderHome() {
   function chatDecimal(value) {
     return typeof value === "string" && CHAT_DECIMAL.test(value) ? value : "";
   }
+
+  // Formatea un número al estilo español: «3.1» -> «3,10», «5000» -> «5.000».
+  //
+  // Medido en pantalla: la misma respuesta decía «3,10 % TAE» y «5.000 €» en el
+  // texto, y «TAE: 3.1 % · Inversión mínima: 5000 €» en la ficha de debajo. Dos
+  // convenciones en el mismo turno se ven descuidadas, y el punto decimal inglés
+  // choca con el castellano que usa el resto de la aplicación.
+  function chatDecimalEs(value) {
+    const texto = chatDecimal(value);
+    if (!texto) return "";
+    const negativo = texto.startsWith("-");
+    const cuerpo = negativo ? texto.slice(1) : texto;
+    const [entero, fraccion = ""] = cuerpo.split(".");
+    const enteros = entero.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    // Dos decimales para porcentajes y dinero, los que usa la ficha del producto.
+    const decimales = (fraccion + "00").slice(0, 2);
+    return `${negativo ? "-" : ""}${enteros},${decimales}`;
+  }
   // Etiqueta y formato por metrica. Antes `chatConditionValue` solo entendia TAE y
   // plazo: cualquier otra condicion (importe minimo, comisiones, garantia, fondo)
   // decia literalmente «unidad incoherente; no se muestra el valor», que suena a
@@ -882,15 +900,15 @@ function renderHome() {
       return "unidad incoherente; no se muestra el valor";
     }
     if (unit === "PERCENT") {
-      const value = chatDecimal(raw);
+      const value = chatDecimalEs(raw);
       return value ? `${value} %` : "sin valor documentado";
     }
     if (unit === "MONTHS") {
-      const value = chatDecimal(raw);
+      const value = chatDecimalEs(raw);
       return value ? `${value} meses` : "sin valor documentado";
     }
     if (unit === "EUR") {
-      const value = chatDecimal(raw);
+      const value = chatDecimalEs(raw);
       return value ? `${value} €` : raw.trim();
     }
     // TEXT, DATE, SCALE y unidades nuevas: el valor se publica tal cual, que es como
