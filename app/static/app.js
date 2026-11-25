@@ -1441,7 +1441,16 @@ function renderHome() {
           } else if (typeof result.answer === "string" && result.answer) {
             // El modelo usa **negrita** markdown, pero aquí el texto se inserta
             // literal: se quitan las marcas para no enseñar asteriscos.
-            feedback.appendChild(textElement("p", result.answer.replace(/\*\*(.+?)\*\*/g, "$1")));
+            const limpio = result.answer.replace(/\*\*(.+?)\*\*/g, "$1");
+            // Un solo <p> con 1.500 caracteres es un muro ilegible: medido en
+            // pantalla, la respuesta del asesor salía como un bloque compacto sin
+            // una sola pausa. Se separa por párrafos y se quitan los encabezados
+            // markdown crudos («## Qué hace un 2 %…») que el modelo deja y que en
+            // pantalla se leen como almohadillas.
+            for (const trozo of limpio.split(/\n\s*\n/)) {
+              const texto = trozo.replace(/^\s*#{1,6}\s*/gm, "").trim();
+              if (texto) feedback.appendChild(textElement("p", texto));
+            }
             if (calculation) renderChatCalculation(feedback, calculation);
           }
           if (result.claims && typeof PaideiaClaims !== "undefined" && PaideiaClaims

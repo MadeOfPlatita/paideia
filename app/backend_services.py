@@ -511,7 +511,19 @@ def _redact_unbacked_figures(text, strict=False):
                 kept.append("\x00PASO\x00")
             continue
         kept.append(piece.strip())
-    parcial = " ".join(pieza for pieza in kept if pieza != "\x00PASO\x00").strip()
+    # Se separan en parrafos, no en un unico muro. Medido en pantalla: la respuesta
+    # del asesor salia como 1.500 caracteres seguidos sin una sola pausa. Cada dos
+    # frases se abre parrafo para que la lectura respire.
+    frases = [pieza for pieza in kept if pieza != "\x00PASO\x00"]
+    bloques, actual = [], []
+    for pieza in frases:
+        actual.append(pieza)
+        if len(actual) >= 2:
+            bloques.append(" ".join(actual))
+            actual = []
+    if actual:
+        bloques.append(" ".join(actual))
+    parcial = "\n\n".join(bloques).strip()
     if removed == 0:
         # No había nada que quitar: el texto se devuelve íntegro. Devolver "" aquí
         # hacía que el llamador lo interpretara como «todo redactado» y retuviera
