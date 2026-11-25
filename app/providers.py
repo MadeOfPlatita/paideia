@@ -374,7 +374,11 @@ class GroqHTTPSJSONTransport:
                 or set(headers) != expected_headers or headers.get("Content-Type") != "application/json"
                 or headers.get("Accept") != "application/json" or not valid_authorization
                 or type(body) is not bytes or len(body) > MAX_REQUEST_BYTES
-                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 60.0):
+                # Habia DOS techos de 60 s: el del provider y este, el del
+                # transporte. Subir solo el primero no servia de nada porque la
+                # peticion moria aqui con "invalid transport request" y el usuario
+                # veia un 503 sin explicacion. Los dos van juntos.
+                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 120.0):
             raise ValueError("invalid transport request")
         # Cupo global de la misión: se cuenta ANTES de abrir la conexión. Fuera de una
         # ventana de misión provisionada no interviene y la ruta ordinaria usa su cuota.
