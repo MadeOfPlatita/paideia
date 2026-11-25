@@ -121,7 +121,10 @@ test('catalogue evidence is shown with class, dates and value; unsafe model text
   const text = ui.feedback.textContent;
   // El chat ya no vuelca la ficha: da el producto y sus datos clave. Lo que este
   // test protege sigue intacto: la cifra inventada por el modelo no aparece.
-  for (const expected of ['Depósito conocido', '3.10']) {
+  // La cifra se muestra en formato español: «3,10 %», no «3.10». El DTO la manda en
+  // formato máquina («3.10») y el render la humaniza; dos convenciones en el mismo
+  // turno se veían descuidadas.
+  for (const expected of ['Depósito conocido', '3,10 %']) {
     assert.ok(text.includes(expected), `missing ${expected} in: ${text}`);
   }
   assert.doesNotMatch(text, /9,99/);
