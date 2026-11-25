@@ -131,11 +131,17 @@ class NotRecommendingWhatCannotBeAffordedTest(unittest.TestCase):
         self.assertIn("5.000", texto)
         self.assertIn("6.000", texto)
 
-    def test_without_an_amount_it_still_recommends_normally(self):
+    def test_without_an_amount_it_asks_instead_of_recommending(self):
+        """Cambió a propósito: antes recomendaba sin saber cuánto dinero hay.
+
+        Ese comportamiento es justo el que produjo el fallo del estudiante con
+        2.000 € al que se le ofrecían depósitos de 5.000 €. Ahora, sin la cantidad,
+        se pregunta y se adelanta la ficha del producto que hay.
+        """
         catalogo = {"used": True, "products": [EBN, PIBANK]}
-        texto = compose_catalogue_answer(catalogo, question="¿Qué depósito me conviene?")
-        assert texto is not None
-        self.assertIn("encaja", texto)
+        texto = compose_catalogue_answer(catalogo, question="¿Qué depósito me conviene?") or ""
+        self.assertIn("¿Cuánto dinero", texto)
+        self.assertIn("3,10", texto)
 
     def test_a_product_without_a_documented_minimum_is_not_discarded(self):
         """No se puede descartar por un mínimo que el catálogo no publica: sería
@@ -239,6 +245,68 @@ class ExpiredRateTest(unittest.TestCase):
         texto = compose_catalogue_answer(catalogo, question=PREGUNTA) or ""
         # No se deja al usuario con un producto sin cifra: se le dice qué pasa.
         self.assertRegex(texto, r"ya no está en vigor|Confírmalo antes de contratar")
+
+
+class AskingBeforeRecommendingTest(unittest.TestCase):
+    """Un asesor pregunta cuando la respuesta depende de algo que no le han dicho.
+
+    El prompt del sistema ya lo pedía («si falta un dato que cambia la respuesta,
+    pide solo ese dato»), pero cuando el turno usa el catálogo la prosa del modelo se
+    retiene y compone `compose_catalogue_answer`, así que esa política se perdía: la
+    app recomendaba sin saber cuánto dinero hay ni para cuándo.
+    """
+
+    def test_without_an_amount_it_asks_for_it(self):
+        texto = compose_catalogue_answer({"used": True, "products": [PIBANK]},
+                                         question="¿Qué depósito me conviene?") or ""
+        self.assertIn("¿Cuánto dinero", texto)
+        # Y no deja al usuario sin nada: adelanta el dato que sí tiene.
+        self.assertIn("3,03", texto)
+
+    def test_with_an_amount_but_no_horizon_it_asks_for_the_horizon(self):
+        texto = compose_catalogue_answer({"used": True, "products": [PIBANK]},
+                                         question="Tengo 2000 euros, ¿qué depósito me conviene?") or ""
+        self.assertIn("¿Para cuándo", texto)
+
+    def test_with_both_data_points_it_does_not_ask(self):
+        texto = compose_catalogue_answer(
+            {"used": True, "products": [PIBANK]},
+            question="Tengo 2000 euros y necesito 1500 dentro de un año") or ""
+        self.assertNotIn("me falta un dato", texto)
+        # Y hace el razonamiento completo.
+        self.assertIn("500", texto)
+
+    def test_a_horizon_in_words_counts_as_known(self):
+        for pregunta in ("Tengo 2000 euros para un año",
+                         "Tengo 2000 euros a 6 meses",
+                         "Tengo 2000 euros y no lo toco en dos años"):
+            with self.subTest(pregunta=pregunta):
+                texto = compose_catalogue_answer({"used": True, "products": [PIBANK]},
+                                                 question=pregunta) or ""
+                self.assertNotIn("¿Para cuándo", texto)
+
+    def test_a_listing_question_does_not_ask_for_anything(self):
+        """A «¿qué depósitos hay?» no se le pide el dinero: quiere saber qué hay."""
+        texto = compose_catalogue_answer({"used": True, "products": [PIBANK]},
+                                         question="¿Qué productos de depósito hay?") or ""
+        self.assertNotIn("¿Cuánto dinero", texto)
+        self.assertIn("Pibank", texto)
+
+    def test_a_request_for_a_concrete_datum_does_not_ask_for_money(self):
+        """«¿Qué TAE tiene el depósito de EBN?» pide una cifra, no una recomendación.
+
+        Pedir el importe disponible aquí sería no contestar lo que se ha preguntado.
+        """
+        for pregunta in ("¿Qué TAE tiene el depósito de EBN Banco?",
+                         "dame la ficha del depósito",
+                         "detalla DEP-KNOWN",
+                         "¿qué comisiones tiene el fondo Olea Neutral?",
+                         "¿cuál es el TER del ETF de iShares?"):
+            with self.subTest(pregunta=pregunta):
+                texto = compose_catalogue_answer({"used": True, "products": [PIBANK]},
+                                                 question=pregunta) or ""
+                self.assertNotIn("¿Cuánto dinero", texto,
+                                 f"preguntó por el dinero en una consulta de dato: {texto}")
 
 
 if __name__ == "__main__":

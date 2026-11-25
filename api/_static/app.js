@@ -1974,6 +1974,9 @@ function formatRate(value) {
 
 function conditionStateText(condition) {
   const reasons = {
+    // `CURATED_DOCUMENTED` es el 96 % de las condiciones reales del catálogo y no
+    // estaba en la tabla: caía en el falso «documentado» del fallback.
+    CURATED_DOCUMENTED: "",
     CURATED_OFFICIAL: "fuente oficial",
     CURATED_SECONDARY_PRESS: "fuente secundaria",
     DOCUMENTED_PROMO_TAE: "promoción documentada",
@@ -1981,6 +1984,7 @@ function conditionStateText(condition) {
     DOCUMENTED_REPORTED_TERMS_SNAPSHOT: "condiciones del documento",
     PROMOTION_EXPIRED: "vigencia terminada",
     SOURCE_CONFLICT: "fuentes en conflicto",
+    SOURCE_UNRESOLVED: "sin fuente que lo respalde",
     MULTIPLE_RATES_DOCUMENTED: "varias tasas en el mismo documento",
     IDENTITY_NOT_VERIFIED: "identidad no verificada",
     RATE_NOT_DOCUMENTED: "sin tasa en el documento",
@@ -1991,8 +1995,18 @@ function conditionStateText(condition) {
     MULTIPLE_TERMS_DOCUMENTED: "varios plazos en el documento",
     DOCUMENTED_OFFICIAL_DOCUMENT_IDENTITY: "documento oficial"
   };
-  const stateLabel = { known: "documentada por la fuente", stale: "vencida", conflict: "en conflicto", unknown: "sin dato" }[condition.state] || condition.state;
-  return `${stateLabel}; ${reasons[condition.reason] || "documentado"}`;
+  const states = { known: "documentada por la fuente", stale: "vencida",
+                   conflict: "en conflicto", unknown: "sin dato",
+                   not_applicable: "no aplicable" };
+  // Ni el estado ni el motivo se publican en crudo: un valor nuevo dice que no
+  // está clasificado, no su código interno.
+  const stateLabel = states[condition.state] || "estado no reconocido";
+  const motivo = typeof condition.reason === "string" && condition.reason.trim()
+    ? (Object.prototype.hasOwnProperty.call(reasons, condition.reason)
+        ? reasons[condition.reason]
+        : "motivo no clasificado")
+    : "";
+  return motivo ? `${stateLabel}; ${motivo}` : stateLabel;
 }
 
 function rateSummary(productId) {

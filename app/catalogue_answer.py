@@ -293,6 +293,47 @@ def _rate_text(valor):
     return f"{numero:.2f}".replace(".", ",")
 
 
+def _missing_key_datum(question, cantidad, planificado, intent=None):
+    """Qué dato falta y cambia la recomendación, o None si no falta nada.
+
+    El prompt ya dice «si falta un dato que cambia la respuesta, pide solo ese
+    dato», pero cuando el turno usa el catálogo la prosa del modelo se retiene y
+    compone esta función: la política se perdía y la app recomendaba a ciegas.
+    Un asesor pregunta antes de recomendar cuando la respuesta depende de algo que
+    no le han dicho.
+
+    NO se pregunta cuando la persona ha pedido un DATO concreto («¿qué TAE tiene el
+    depósito de EBN?»). Ahí la respuesta es la cifra, no una recomendación, y pedir
+    el dinero sería no contestar lo que se ha preguntado. Solo se pregunta en una
+    pregunta de DECISIÓN, donde de verdad cambia la elección:
+      - cuánto dinero hay (decide el filtro por importe mínimo);
+      - para cuándo lo necesita (decide el plazo y la liquidez).
+    """
+    if not isinstance(question, str) or not question.strip():
+        return None
+    if intent is not None and intent not in {"general"}:
+        # rate, cost, minimum, risk, term, list: son consultas, no decisiones.
+        return None
+    texto = question.casefold()
+    # Una consulta de FICHA («detalla DEP-KNOWN», «dame la ficha de…», «háblame de
+    # este producto») pide datos de un producto concreto, no una recomendación. Pedir
+    # el importe disponible ahí sería no contestar lo que se ha preguntado.
+    if re.search(r"\b(?:detalla|detalle|ficha|h[aá]blame\s+de|dime\s+los?\s+datos|"
+                 r"informaci[oó]n\s+de|qu[eé]\s+sabes\s+de)\b", texto):
+        return None
+    if cantidad is None:
+        return "¿Cuánto dinero tienes pensado poner?"
+    if planificado is None:
+        # El horizonte puede venir por palabra («un año», «6 meses», «año y medio»)
+        # sin que haya un gasto concreto.
+        if re.search(r"\b(?:\d{1,2}\s*(?:meses|años?)|un\s+año|dos\s+años|"
+                     r"medio\s+año|año\s+y\s+medio|a\s+largo\s+plazo|"
+                     r"sin\s+tocar(?:lo)?\s+(?:en\s+)?\d+)", texto):
+            return None
+        return "¿Para cuándo lo necesitas? Con el plazo puedo decirte si te encaja algo a 6 o a 12 meses."
+    return None
+
+
 def _is_current(product):
     """¿La oferta sigue vigente según la ficha?
 
@@ -579,8 +620,9 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
         # de depósito hay?» contestar con una lista incompleta es peor que no
         # contestar, porque el usuario no sabe que falta el resto.
         nombres = [n for n in (_product_heading(p) for p in productos_legibles) if n]
-        lineas = [f"En el catálogo hay {len(nombres)} productos de este tipo: "
-                  + ", ".join(nombres) + "."]
+        # Concordancia: «1 producto», no «1 productos».
+        cuantos = f"{len(nombres)} producto" if len(nombres) == 1 else f"{len(nombres)} productos"
+        lineas = [f"En el catálogo hay {cuantos} de este tipo: " + ", ".join(nombres) + "."]
         lineas.append("Dime cuál te interesa y te doy su TAE, su plazo y su "
                       "inversión mínima con la fuente.")
         caducados = [_product_heading(p) for p in productos_legibles if not _is_current(p)]
@@ -620,7 +662,30 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
         valor_vencido = None
     lineas = []
 
-    # 1) La situación, en sus términos. Si dijo cuánto tiene y cuánto necesita, eso
+    # 1) Si falta un dato que cambia la respuesta, se pregunta ANTES de recomendar.
+    #    El prompt ya lo pedía, pero cuando el turno usa el catálogo la prosa del
+    #    modelo se retiene y esa política se perdía: la app recomendaba a ciegas.
+    falta = _missing_key_datum(question, cantidad, planificado, intent)
+    if falta:
+        # Se da lo que sí se puede dar ya —el producto y su cifra— y se pide el dato
+        # que falta, en vez de una respuesta incompleta o una pregunta a secas.
+        if tasa is not None:
+            extra = f" a {_format_number(str(int(plazo)))} meses" if plazo else ""
+            lineas.append(f"Para orientarte de verdad me falta un dato. {falta}")
+            lineas.append(f"Te adelanto lo que sí sé: **{heading}** está a "
+                          f"{_rate_text(tasa)} % TAE{extra}.")
+        else:
+            lineas.append(f"Para orientarte de verdad me falta un dato. {falta}")
+            lineas.append(f"Cuando me lo digas miro qué encaja; en el catálogo está "
+                          f"**{heading}**.")
+        partes = ["\n\n".join(lineas)]
+        if isinstance(explanation, str) and explanation.strip():
+            partes.append(explanation.strip())
+        partes.append("Son datos transcritos de fuentes oficiales, no una oferta ni una "
+                      "recomendación personalizada.")
+        return "\n\n".join(partes)
+
+    # 2) La situación, en sus términos. Si dijo cuánto tiene y cuánto necesita, eso
     #    es lo primero: es el marco de la decisión.
     if cantidad is not None and planificado is not None:
         libre = cantidad - planificado

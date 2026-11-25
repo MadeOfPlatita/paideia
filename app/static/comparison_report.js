@@ -93,6 +93,36 @@
     if (!Number.isFinite(number)) return '';
     return number.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + ' %';
   }
+  // Los códigos internos NO se imprimen nunca en un informe que el usuario descarga
+  // e imprime: «TAE 2,61 % · vencida · motivo PROMOTION_EXPIRED» se lee como un
+  // error del programa, no como una explicación. Se traducen, y un código nuevo
+  // dice que no está clasificado en vez de publicarse en crudo.
+  var ESTADOS_CONDICION = {
+    known: 'con dato', stale: 'vencida', conflict: 'en conflicto',
+    unknown: 'sin dato', not_applicable: 'no aplicable',
+  };
+  var MOTIVOS_CONDICION = {
+    CURATED_DOCUMENTED: '',                    // el 96 % del catálogo: no aporta nada
+    CURATED_OFFICIAL: 'fuente oficial',
+    CURATED_SECONDARY_PRESS: 'fuente secundaria (nota de prensa)',
+    CURATED_TERM: 'plazo documentado',
+    PROMOTION_EXPIRED: 'la promoción ha caducado',
+    RETRIEVAL_TOO_OLD: 'la consulta es demasiado antigua',
+    SOURCE_CONFLICT: 'las fuentes se contradicen',
+    SOURCE_UNRESOLVED: 'sin fuente que lo respalde',
+    RATE_NOT_DOCUMENTED: 'el documento no publica la tasa',
+    TERM_NOT_DOCUMENTED: 'el documento no publica el plazo',
+    IDENTITY_NOT_VERIFIED: 'identidad sin verificar',
+  };
+  function humanConditionState(state) {
+    if (typeof state !== 'string' || !state.trim()) return 'sin dato';
+    return ESTADOS_CONDICION[state] || 'estado no reconocido';
+  }
+  function humanConditionReason(reason) {
+    if (typeof reason !== 'string' || !reason.trim()) return '';
+    if (Object.prototype.hasOwnProperty.call(MOTIVOS_CONDICION, reason)) return MOTIVOS_CONDICION[reason];
+    return 'motivo no clasificado';
+  }
   function conditionStateLabel(condition, generated) {
     if (condition.state === 'known') {
       if (condition.effective_to && condition.effective_to < generated) return 'documentada; vigencia terminada el ' + condition.effective_to;
@@ -101,13 +131,14 @@
       if (condition.effective_from) return 'documentada; vigencia declarada desde ' + condition.effective_from + ', sin fecha de fin';
       return 'documentada; sin fechas de vigencia (no verificada)';
     }
-    return { stale: 'vencida', conflict: 'en conflicto', unknown: 'sin dato' }[condition.state] || condition.state;
+    return humanConditionState(condition.state);
   }
   function conditionLabel(condition, generated) {
     if (!condition) return '';
     const rate = rateDisplay(condition.value);
     const value = rate ? 'TAE ' + rate : 'TAE sin cifra utilizable';
-    return value + ' · ' + conditionStateLabel(condition, generated) + (condition.reason ? ' · motivo ' + condition.reason : '');
+    const motivo = humanConditionReason(condition.reason);
+    return value + ' · ' + conditionStateLabel(condition, generated) + (motivo ? ' · ' + motivo : '');
   }
   function tierLabel(source) {
     if (!source) return '';
