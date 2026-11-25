@@ -264,6 +264,46 @@ p { text-wrap: pretty; }
 .chat-sources a { color: var(--blue); word-break: break-word; }
 .chat-catalogue { margin: 10px 0 0; }
 
+/* La respuesta del chat es TEXTO PARA LEER, no un volcado: necesita aire.
+   Medido con captura real: la respuesta salía como un bloque monolítico de ~20
+   líneas, sin un solo salto de párrafo, y era imposible distinguir dónde acaba una
+   idea y empieza otra. La causa era que no existía NINGUNA regla para los <p> del
+   chat, así que se pegaban unos a otros.
+
+   Los valores siguen los estándares del U.S. Web Design System (designsystem.digital.gov):
+   - interlineado 1.5–1.6 para cuerpo de texto; aquí 1.6, que es lo que pide un
+     bloque largo de lectura y no se separa del 1.5 del resto de la app.
+   - medida de línea (measure) de 45–90 caracteres, con objetivo 66. El panel mide
+     920px como máximo; a 16px eso son ~110 caracteres, demasiado para leer cómodo,
+     así que la respuesta se limita a 68ch.
+   - espacio entre párrafos: 0.85em, que a 16px son ~13.6px, dentro de la escala que
+     ya usa el proyecto (12/14/16) y suficiente para separar ideas sin parecer roto. */
+#chat-feedback { line-height: 1.6; }
+#chat-feedback > p { max-width: 68ch; margin: 0 0 0.85em; }
+/* El primer párrafo no lleva aire arriba y el último no lo lleva abajo: si no, la
+   caja aparece con un hueco raro antes del texto y otro después. */
+#chat-feedback > p:first-of-type { margin-top: 0; }
+#chat-feedback > p:last-of-type { margin-bottom: 0; }
+/* Los avisos pequeños (field-help) van pegados a lo que explican, no separados. */
+#chat-feedback > p.field-help { max-width: 68ch; font-size: .87rem; color: var(--muted); }
+
+/* Listas dentro de la respuesta. El modelo enumera mucho («1. Mide… 2. Fija…») y
+   en pantalla esos pasos llegaban pegados dentro del párrafo, con los números a
+   mitad de línea. Renderizados como lista real, cada paso respira y se puede
+   seguir la secuencia. */
+#chat-feedback ol, #chat-feedback ul {
+  max-width: 68ch;
+  margin: 0 0 0.85em;
+  padding-left: 1.5em;
+}
+#chat-feedback ol { list-style: decimal; }
+#chat-feedback ul { list-style: disc; }
+#chat-feedback li { margin: 0 0 0.4em; padding-left: 0.2em; }
+#chat-feedback li:last-child { margin-bottom: 0; }
+/* Un párrafo que precede a una lista no necesita todo el aire: la lista ya abre
+   bloque. */
+#chat-feedback > p + ol, #chat-feedback > p + ul { margin-top: -0.35em; }
+
 .field { display: grid; gap: 6px; margin: 14px 0; }
 .field > label, .field-label { color: var(--ink); font-size: .92rem; font-weight: 650; letter-spacing: 0; text-transform: none; }
 .field-help { margin: 0; color: var(--muted); font-size: .84rem; }
