@@ -632,11 +632,29 @@ def _catalogue_explanation(text):
     limpio, _quitadas = _redact_unbacked_figures(text.strip(), strict=True)
     if not limpio or not limpio.strip():
         return None
-    limpio = _strip_markdown_tables(limpio.strip())[:1200].strip()
+    limpio = _strip_markdown_tables(limpio.strip())
+    # El recorte respeta la última frase completa: cortar a media palabra producía
+    # respuestas que empezaban o acababan a medias («…que mide unos oc»), y eso es
+    # lo que hace que el texto se lea como un fragmento y no como una respuesta.
+    limpio = _trim_to_sentence(limpio, 1200)
     # El aplanado de encabezados va AQUÍ, sobre el texto ya sin tablas: si se hace
     # antes, el encabezado se fusiona con la tabla y deja un «|» suelto.
     limpio = _flatten_headings(limpio)
     return limpio or None
+
+
+def _trim_to_sentence(text, limite):
+    """Recorta a `limite` sin partir una frase ni una palabra."""
+    texto = (text or "").strip()
+    if len(texto) <= limite:
+        return texto
+    corte = texto.rfind(". ", 0, limite)
+    if corte < limite * 0.5:
+        # No hay un punto razonable: al menos no partir la última palabra.
+        corte = texto.rfind(" ", 0, limite)
+    if corte <= 0:
+        return texto[:limite].strip()
+    return texto[:corte + 1].strip()
 
 
 def _strip_markdown_tables(text):

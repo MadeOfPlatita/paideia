@@ -963,18 +963,47 @@ function renderHome() {
       frase += `, añadiendo ${view.monthly} € al mes`;
     }
     frase += `, acabas con ${final} €: ${interes} € de intereses.`;
+    // El tipo lo ha elegido el modelo, no la persona. Presentarlo como «si dejas el
+    // dinero al 2 %» sin más hace creer que ese 2 % es el de un producto concreto;
+    // hay que decir de dónde sale.
     container.appendChild(textElement("p", frase));
+    container.appendChild(textElement("p",
+      `Ojo con el tipo: ese ${view.rate} % es un supuesto para el ejemplo, no el de un ` +
+      `producto concreto. Cámbialo por el que te ofrezcan y la cuenta cambia.`,
+      "field-help"));
 
     // La inflación, solo si cambia la conclusión: es el dato que de verdad importa
     // cuando el tipo es bajo, y en tabla se perdía entre las otras cuatro líneas.
-    const finalNum = Number(String(final).replace(/\./g, "").replace(",", "."));
-    const realNum = Number(String(real).replace(/\./g, "").replace(",", "."));
-    if (Number.isFinite(finalNum) && Number.isFinite(realNum) && realNum < finalNum) {
-      const perdida = (finalNum - realNum).toFixed(2).replace(".", ",");
-      container.appendChild(textElement("p",
-        `Con una inflación del ${view.inflation} %, ese dinero compra lo que hoy comprarías ` +
-        `con ${real} €: el interés no llega a cubrir la subida de precios, así que en ` +
-        `términos reales pierdes unos ${perdida} €.`));
+    const aNumero = (txt) => Number(String(txt).replace(/\./g, "").replace(",", "."));
+    const finalNum = aNumero(final);
+    const realNum = aNumero(real);
+    const aportadoNum = aNumero(aportado);
+    if (Number.isFinite(finalNum) && Number.isFinite(realNum) && Number.isFinite(aportadoNum)) {
+      if (realNum < aportadoNum) {
+        // La inflación se come el interés Y parte del capital: es la conclusión que
+        // de verdad importa y antes no se decía.
+        const perdida = (aportadoNum - realNum).toFixed(2).replace(".", ",");
+        container.appendChild(textElement("p",
+          `Con una inflación del ${view.inflation} %, ese dinero compra lo que hoy ` +
+          `comprarías con ${real} €. Es menos de los ${aportado} € que pusiste: el ` +
+          `interés no cubre la subida de precios, así que en términos reales pierdes ` +
+          `unos ${perdida} €.`));
+      } else if (realNum < finalNum) {
+        const ganancia = (realNum - aportadoNum).toFixed(2).replace(".", ",");
+        if (realNum <= aportadoNum) {
+          // El interés nominal no compensa la inflación: en términos reales no se
+          // gana nada. Decir «ganas 0,00 €» suena a error de la aplicación.
+          container.appendChild(textElement("p",
+            `Con una inflación del ${view.inflation} %, ese dinero compra lo que hoy ` +
+            `comprarías con ${real} €: lo que ganas con el interés se lo come la ` +
+            `subida de precios, así que en términos reales te quedas igual.`));
+        } else {
+          container.appendChild(textElement("p",
+            `Con una inflación del ${view.inflation} %, ese dinero compra lo que hoy ` +
+            `comprarías con ${real} €: ganas ${ganancia} € en términos reales, ` +
+            `no los ${interes} € que parece.`));
+        }
+      }
     }
     container.appendChild(textElement("p",
       "Es un cálculo con esos supuestos, sin impuestos ni comisiones; no es una predicción.",
