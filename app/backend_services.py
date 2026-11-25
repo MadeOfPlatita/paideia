@@ -259,10 +259,21 @@ _TOOL_ATTEMPT = re.compile(
 
 
 def _strip_tool_attempts(text):
-    """Quita los bloques de llamada escritos como texto y deja el resto."""
+    """Quita los bloques de llamada escritos como texto y deja el resto.
+
+    Se quitan primero los bloques completos. Después, si queda cualquier etiqueta de
+    apertura sin cerrar, se corta DESDE ahí hasta el final: medido, el modelo devolvió
+    `<tool_call>{"name": "search_products", ...}` sin etiqueta de cierre, el filtro de
+    bloques no la reconocía y el XML crudo llegaba tal cual a la pantalla del usuario.
+    Cortar el resto es correcto porque todo lo que sigue a una llamada abierta forma
+    parte de su carga JSON, no de la respuesta.
+    """
     if type(text) is not str or not text:
         return text
     limpio = _TOOL_ATTEMPT_BLOCK.sub("", text)
+    abierta = _TOOL_ATTEMPT.search(limpio)
+    if abierta is not None:
+        limpio = limpio[:abierta.start()]
     return limpio.strip()
 
 
@@ -1648,6 +1659,12 @@ class LocalChatService:
                         result = {**respaldo,
                                   "tool_events": result.get("tool_events") or [],
                                   "catalogue": result.get("catalogue") or {"used": False, "products": []}}
+                    elif result.get("catalogue", {}).get("used") is True or result.get("calculation"):
+                        # El lote se rechazó pero el turno YA tenía datos locales de
+                        # una ronda anterior (catálogo o resultado del motor). El
+                        # respaldo solo aportaba texto; si no lo hay, no se tira lo
+                        # que sí está verificado: se entrega como turno de datos.
+                        result = {**result, "finish_reason": "stop", "answer": result.get("answer") or ""}
             else:
                 plain = provider.chat(messages)
                 if plain.tool_calls:
@@ -1735,12 +1752,14 @@ class LocalChatService:
                 calculation = None
             answer_text, answer_text_state, provenance_source = _withhold_unbacked_claim(
                 result, answer_text, answer_text_state, calculation)
-            # Si la prosa se retuvo y el usuario se quedaria con un hueco, pero el
-            # motor calculo algo, se entrega el calculo. Medido: «Me ofrecen un
-            # deposito al 4 % a 18 meses, ¿es buena idea?» respondia CERO
-            # caracteres teniendo el resultado del motor en la mano.
+            # Si la prosa se retuvo —o el modelo no escribió ninguna— y el usuario se
+            # quedaría con un hueco, pero el motor calculó algo, se entrega el cálculo.
+            # Medido: «Me ofrecen un deposito al 4 % a 18 meses, ¿es buena idea?»
+            # respondía CERO caracteres teniendo el resultado del motor en la mano; y
+            # «Calcula 5000 al 3 % a 2 años» devolvía 200 con `answer` vacío cuando el
+            # modelo no redactó nada tras la herramienta.
             if (not (answer_text or "").strip()
-                    and answer_text_state == ANSWER_TEXT_WITHHELD_UNBACKED
+                    and answer_text_state in {ANSWER_TEXT_SHOWN, ANSWER_TEXT_WITHHELD_UNBACKED}
                     and calculation is not None):
                 # El usuario se quedaría sin el razonamiento, y lo único que vería
                 # sería la tabla del motor. Primero se intenta conservar la prosa
@@ -1752,6 +1771,7 @@ class LocalChatService:
                 elif compuesta:
                     answer_text = compuesta
                 if answer_text:
+                    retenida = answer_text_state == ANSWER_TEXT_WITHHELD_UNBACKED
                     answer_text_state = ANSWER_TEXT_SHOWN
                     provenance_source = dict(provenance_source)
                     # El motivo de retención deja de aplicar cuando la prosa SÍ se
@@ -1761,18 +1781,30 @@ class LocalChatService:
                     # retención, describe de dónde sale la cifra.
                     if provenance_source.get("withheld_reason") != "calculation":
                         provenance_source["withheld_reason"] = None
-                    notas = [n for n in (provenance_source.get("limitations") or []) if type(n) is str][:6]
-                    nota = ("Las cifras concretas se han quitado del texto porque podían atribuirse "
-                            "al concepto equivocado; el razonamiento y el resultado del motor se mantienen.")
-                    if nota not in notas:
-                        notas.insert(0, nota)
-                    provenance_source["limitations"] = notas
+                    if retenida:
+                        notas = [n for n in (provenance_source.get("limitations") or []) if type(n) is str][:6]
+                        nota = ("Las cifras concretas se han quitado del texto porque podían atribuirse "
+                                "al concepto equivocado; el razonamiento y el resultado del motor se mantienen.")
+                        if nota not in notas:
+                            notas.insert(0, nota)
+                        provenance_source["limitations"] = notas
             # La guarda financiera corre la última, cuando ya se sabe si el turno tiene
             # datos locales. Si los tiene (catálogo o motor), quedarse sin prosa no es
             # un 502: se entregan los datos. Sin datos, el 502 se mantiene.
-            return _profile_applied({"answer": _financial_checked(
-                        answer_text,
-                        has_local_data=catalogue.get("used") is True or calculation is not None),
+            datos_locales = catalogue.get("used") is True or calculation is not None
+            answer_final = _financial_checked(answer_text, has_local_data=datos_locales)
+            if not answer_final.strip() and datos_locales:
+                # La guarda se llevó por delante TODA la prosa. El hueco no puede
+                # quedar: si el motor calculó, se entrega su resultado, que no depende
+                # del modelo y es dato local determinista. Medido: «Me ofrecen un
+                # depósito al 4 % a 18 meses» acababa en 502 teniendo la cuenta hecha.
+                if calculation is not None:
+                    answer_final = _calculation_answer(calculation) or ""
+                if not answer_final.strip() and catalogue.get("used") is True:
+                    answer_final = CATALOGUE_WITHHELD_NOTE
+                if answer_final.strip():
+                    answer_text_state = ANSWER_TEXT_SHOWN
+            return _profile_applied({"answer": answer_final,
                     "refused": bool(result["refusal"]), "truncated": result["finish_reason"] == "length",
                     "provider_mode": "test_only" if self._test_only else "external",
                     "external_sent": not self._test_only,
