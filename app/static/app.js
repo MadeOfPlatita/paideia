@@ -2911,19 +2911,37 @@ function comparisonValue(condition) {
     return "unidad incoherente; no se muestra el valor";
   }
   let texto = raw.trim();
-  if (unit === "PERCENT") {
-    const numero = Number(texto);
-    texto = Number.isFinite(numero)
-      ? `${numero.toLocaleString("es-ES", { maximumFractionDigits: 4 })} %`
-      : `${texto} %`;
+  // Las unidades del catálogo real no son solo PERCENT/MONTHS/EUR: hay «% del
+  // nominal», «millones EUR» o «%». Medido en pantalla con las letras del Tesoro,
+  // el saldo vivo salía como «8780.5» (punto decimal inglés) y el precio medio como
+  // «99,339 %»: dos convenciones en la misma tarjeta. Se decide por la FORMA del
+  // valor y de la unidad, no por una lista cerrada de nombres.
+  const unidad = typeof unit === "string" ? unit.trim() : "";
+  const esPorcentaje = unit === "PERCENT" || /^\s*%/.test(unidad) || /porcentaje/i.test(unidad);
+  const esMillones = /mill(?:o|ó)n/i.test(unidad);
+  const esEuros = unit === "EUR" || /^eur/i.test(unidad) || /euros?/i.test(unidad);
+  const numero = Number(texto);
+  // `Intl` no agrupa los números de cuatro cifras por defecto en algunos entornos, y
+  // el usuario lee «8780,5» peor que «8.780,5». Se fuerza el agrupamiento, que es lo
+  // que ya hacen el resto de importes de la aplicación.
+  const agrupar = (valor, decimales) => valor.toLocaleString("es-ES", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimales,
+    useGrouping: true
+  }).replace(/^(\d)(?=\d{3}\b)/, "$1");
+  if (Number.isFinite(numero) && /^-?\d+(?:[.,]\d+)?$/.test(texto)) {
+    if (esPorcentaje) {
+      texto = `${agrupar(numero, 4)} %`;
+    } else if (esMillones) {
+      // «8780.5» millones de euros -> «8.780,5 M€». La cifra viene en millones.
+      texto = `${agrupar(numero, 2)} M€`;
+    } else if (esEuros) {
+      texto = `${agrupar(numero, 2)} €`;
+    } else if (unit === "MONTHS") {
+      texto = `${texto} meses`;
+    }
   } else if (unit === "MONTHS") {
     texto = `${texto} meses`;
-  } else if (unit === "EUR") {
-    const numero = Number(texto);
-    // Un nominal enorme no se lee: se deja tal cual con separadores.
-    texto = Number.isFinite(numero)
-      ? `${numero.toLocaleString("es-ES", { maximumFractionDigits: 2 })} €`
-      : `${texto} €`;
   }
   if (condition.state === "stale") return `${texto} (vencida)`;
   if (condition.state === "conflict") return `${texto} (en conflicto)`;
