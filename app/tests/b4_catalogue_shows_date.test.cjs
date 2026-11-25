@@ -41,11 +41,18 @@ test('la tarjeta declara la fecha de consulta junto a la cifra', () => {
 test('la fuente y la fecha viajan en el DTO de la condición', () => {
   const src = fs.readFileSync(APP, 'utf8');
   const bloque = src.slice(src.indexOf('function headlineMetric'),
-                           src.indexOf('function headlineMetric') + 1400);
-  assert.ok(bloque.includes('retrieved_at'),
-    'se lee `retrieved_at` de la condición');
-  assert.ok(bloque.includes('condicion.source'),
-    'y también de la fuente anidada, por si la condición no lo trae');
+                           src.indexOf('function headlineMetric') + 1600);
+  // La fecha se resuelve con `conditionConsultedAt`, que lee `retrieved_at` de la
+  // condición y, si no está, de su fuente. Se comprueba la cadena completa: que la
+  // tarjeta la use Y que la resolución lea el campo real del DTO.
+  assert.ok(bloque.includes('conditionConsultedAt'),
+    'la tarjeta debe resolver la fecha con conditionConsultedAt');
+  const resolutor = src.slice(src.indexOf('function conditionConsultedAt'),
+                              src.indexOf('function conditionConsultedAt') + 700);
+  assert.ok(resolutor.includes('retrieved_at'),
+    'conditionConsultedAt debe leer retrieved_at del DTO');
+  assert.ok(resolutor.includes('entry.source'),
+    'y también la fuente del registro, como respaldo');
 });
 
 test('una cifra sin fecha no se presenta como dato verificado sin más', () => {

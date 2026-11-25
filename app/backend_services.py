@@ -754,24 +754,17 @@ def _redact_unbacked_figures(text, strict=False, user_text=""):
                 kept.append("\x00PASO\x00")
             continue
         kept.append(piece.strip())
-    # Se separan en parrafos, no en un unico muro. Medido en pantalla: la respuesta
-    # del asesor salia como 1.500 caracteres seguidos sin una sola pausa. Cada dos
-    # frases se abre parrafo para que la lectura respire.
-    frases = [pieza for pieza in kept if pieza != "\x00PASO\x00"]
-    bloques, actual = [], []
-    for pieza in frases:
-        actual.append(pieza)
-        if len(actual) >= 2:
-            bloques.append(" ".join(actual))
-            actual = []
-    if actual:
-        bloques.append(" ".join(actual))
-    parcial = "\n\n".join(bloques).strip()
+    # Las frases se apilan en prosa corrida y los párrafos se abren AL FINAL, en
+    # `_paragraph_blocks`: así la agrupación ve la numeración ya reparada por
+    # `_renumber`, y `_flatten_headings` sigue trabajando sobre prosa plana.
+    parcial = " ".join(pieza for pieza in kept if pieza != "\x00PASO\x00").strip()
     if removed == 0:
         # No había nada que quitar: el texto se devuelve íntegro. Devolver "" aquí
         # hacía que el llamador lo interpretara como «todo redactado» y retuviera
-        # la respuesta entera.
-        return texto.strip(), 0
+        # la respuesta entera. Los párrafos se abren igualmente: medido en pantalla,
+        # el turno del colchón no tenía ninguna frase que quitar y llegaba como un
+        # único bloque de 3.100 caracteres con los cinco pasos dentro.
+        return _paragraph_blocks(texto), 0
     if not parcial:
         return "", removed
     # Un título que se quedó sin su frase es peor que no tenerlo: se cae antes de
@@ -782,7 +775,73 @@ def _redact_unbacked_figures(text, strict=False, user_text=""):
     # El aplanado de encabezados NO se hace antes de quitar las tablas markdown: si
     # se hiciera, el encabezado se fusionaría con la tabla y dejaría un «|» suelto
     # en el texto. Cada llamador decide cuándo llamar a `_strip_markdown_tables`.
-    return _renumber(parcial), removed
+    return _paragraph_blocks(_renumber(parcial)), removed
+
+
+def _paragraph_blocks(text):
+    """Abre párrafos: cada dos frases, y cada paso de una enumeración en el suyo.
+
+    Medido en pantalla con la captura del colchón: la respuesta del asesor llegaba
+    como un ÚNICO bloque de 3.100 caracteres y los cinco pasos —«1. Mide tus
+    esenciales… 2. Fija el objetivo… 3. Separa…»— iban dentro del párrafo, con los
+    números a mitad de línea. La interfaz parte el texto por línea en blanco, así
+    que sin saltos no hay lista que pintar.
+
+    Dos reglas, y nada más:
+      - Una frase NORMAL se sigue agrupando de dos en dos: la lectura respira.
+      - Un PASO NUMERADO («N. …») abre párrafo propio y admite hasta dos frases de
+        continuación (tres en total). Así cada «N.» empieza bloque —que es lo que
+        el frontend necesita para reconocer la enumeración— y un bloque de
+        continuación nunca queda suelto entre dos pasos, que partiría la lista en
+        dos listas con un párrafo en medio.
+
+    Las líneas se respetan: lo que ya venía en su propia línea —una fila de tabla
+    convertida en «- columna: valor»— no se pega a la anterior, porque pegado
+    dejaría de reconocerse como elemento de lista.
+    """
+    if type(text) is not str:
+        return text
+    if not text.strip():
+        return ""
+    bloques, actual = [], []
+    tope = [2]  # frases por bloque: dos en prosa normal, tres dentro de un paso
+
+    def cerrar():
+        if actual:
+            bloques.append(" ".join(actual))
+            del actual[:]
+        tope[0] = 2
+
+    for linea in text.split("\n"):
+        recortada = linea.strip()
+        if not recortada:
+            # Una línea en blanco que el modelo ya escribió es una frontera: se
+            # respeta en vez de fundir dos secciones en un solo párrafo.
+            cerrar()
+            continue
+        if recortada.startswith("- "):
+            # Un elemento de lista ya escrito en su línea: se queda solo.
+            cerrar()
+            bloques.append(recortada)
+            continue
+        # El punto de la NUMERACIÓN («1. », «2. ») no es final de frase: sin
+        # protegerlo, «1. Mide tus esenciales» se partiría en «1.» + «Mide…» y el
+        # trozo dejaría de reconocerse como paso.
+        protegido = _NUMBERED_STEP.sub(lambda m: f"\x01{m.group(1)}\x02", recortada)
+        for trozo in re.split(r"(?<=[.!?])\s+", protegido):
+            if not trozo.strip():
+                continue
+            frase = trozo.replace("\x01", "").replace("\x02", ". ").strip()
+            if _NUMBERED_STEP.match(frase) is not None:
+                cerrar()
+                actual.append(frase)
+                tope[0] = 3
+                continue
+            actual.append(frase)
+            if len(actual) >= tope[0]:
+                cerrar()
+    cerrar()
+    return "\n\n".join(bloques).strip()
 
 
 # Solo un importe (con su símbolo o su palabra) o una tasa: lo que puede leerse como

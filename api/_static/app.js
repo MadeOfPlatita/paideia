@@ -270,7 +270,14 @@ function headlineMetric(productId) {
     if (!texto) continue;
     const etiqueta = metric === "annual_rate_percent" ? "TAE documentada"
       : (metric === "ter_percent" ? "TER documentado" : "Comisión de gestión documentada");
-    return { kind: "verified", text: `${etiqueta}: ${texto}`, retry: false };
+    // La fecha acompaña SIEMPRE a la cifra. El criterio del producto es «fuente y
+    // fecha»: la tarjeta decía «TAE documentada: 3,10 %» y «Documentadas con fuente»
+    // sin decir de cuándo, así que el dato no se podía situar en el tiempo. Medido
+    // en pantalla recorriendo la biblioteca: 22 fichas, 25 fuentes, 0 fechas.
+    // `conditionConsultedAt` ya resuelve la fecha (de la condición o de su fuente).
+    const cuando = typeof conditionConsultedAt === "function" ? conditionConsultedAt(productId) : "";
+    const fecha = cuando ? `, consultada el ${cuando}` : ", sin fecha de consulta";
+    return { kind: "verified", text: `${etiqueta}: ${texto}${fecha}`, retry: false };
   }
   return null;
 }
@@ -955,6 +962,135 @@ function renderHome() {
       .replace(/\u0001(.+?)\u0002/g, "$1");
   }
 
+  // El modelo enumera en prosa («1. Mide… 2. Fija… 3. Separa…») y la lista llegaba
+  // a la pantalla hecha trizas: los pasos pegados dentro del párrafo, con los
+  // números «2.», «3.» a mitad de línea. Medido con captura real: los cinco pasos
+  // del colchón de emergencia perdieron por completo su estructura.
+  //
+  // Estas dos funciones convierten esos párrafos en <ol> de verdad. Trabajan sobre
+  // los DOS formatos que se han visto en producción:
+  //   - la enumeración escrita en prosa, toda en un párrafo («… 1. Mide… 2. Fija…»);
+  //   - un paso por párrafo, que es como la parte ahora el backend.
+  // En ambos casos el texto anterior al «1.» y el posterior al último paso quedan
+  // como párrafos propios, y cada paso conserva su texto íntegro.
+  //
+  // No cualquier número con punto es una lista: «2.000 €», «1.500 euros», «un 3 %
+  // TAE» y «a las 12.30» se quedan como prosa. El marcador exige ir tras un límite
+  // real y seguir con punto, espacio y texto (mayúscula o verbo en infinitivo). Y
+  // hacen falta DOS pasos consecutivos (1 y 2): un «1.» suelto sigue siendo una
+  // frase, y se devuelve tal cual, con su número.
+  const CHAT_STEP = /(^|[\s([«"“¿¡•;:]) *(\d{1,2})\.\s+(?=[A-ZÁÉÍÓÚÜÑ¿¡«"“(]|[a-záéíóúüñ]{3,}(?:ar|er|ir)\b)/g;
+
+  // Marcadores de numeración dentro de un texto, con su posición y su contenido.
+  function chatSteps(texto) {
+    const marcas = [];
+    CHAT_STEP.lastIndex = 0;
+    let hallada = CHAT_STEP.exec(texto);
+    while (hallada !== null) {
+      const separador = hallada[1] || "";
+      marcas.push({
+        numero: Number(hallada[2]),
+        inicio: hallada.index + separador.length,
+        texto: hallada.index + hallada[0].length,
+      });
+      if (CHAT_STEP.lastIndex <= hallada.index) CHAT_STEP.lastIndex = hallada.index + 1;
+      hallada = CHAT_STEP.exec(texto);
+    }
+    for (let k = 0; k < marcas.length; k += 1) {
+      marcas[k].fin = k + 1 < marcas.length ? marcas[k + 1].inicio : texto.length;
+    }
+    return marcas;
+  }
+
+  // Pinta la prosa ya limpia. Recibe TODOS los trozos de la respuesta de una vez —
+  // no uno a uno— porque para saber si hay lista hace falta ver la numeración
+  // entera: con «1.» en un párrafo y «2.» en el siguiente, aislados no parecen
+  // nada y juntos son una lista.
+  function renderChatProse(container, trozos) {
+    const bloques = [];
+    let abierta = null;
+    // Párrafos sin numeración que llegan con una lista abierta. Si el siguiente
+    // encadena («N+1»), ese texto era la continuación del paso anterior y se une a
+    // él; si no, son párrafos normales. Sin este búfer, una frase de continuación
+    // partía la lista en dos y el resto de pasos dejaba de reconocerse.
+    let pendiente = [];
+    const volcar = () => {
+      for (const texto of pendiente) bloques.push({ tipo: "p", texto });
+      pendiente = [];
+    };
+    const cerrar = () => {
+      if (!abierta) { volcar(); return; }
+      if (abierta.items.length >= 2) {
+        bloques.push({ tipo: "ol", desde: abierta.desde, items: abierta.items.map((item) => item.texto) });
+      } else {
+        // Un solo paso no es lista: vuelve a ser el párrafo que era, con su número.
+        const solo = abierta.items[0].crudo;
+        const previo = bloques.length ? bloques[bloques.length - 1] : null;
+        if (previo && previo.tipo === "p" && previo.deLista) previo.texto = `${previo.texto} ${solo}`;
+        else bloques.push({ tipo: "p", texto: solo });
+      }
+      abierta = null;
+      volcar();
+    };
+
+    for (const trozo of trozos) {
+      const texto = typeof trozo === "string" ? trozo.trim() : "";
+      if (!texto) continue;
+      const marcas = chatSteps(texto);
+      if (!marcas.length) {
+        // Sin numeración: si hay lista abierta queda a la espera; si no, es prosa.
+        if (abierta) pendiente.push(texto);
+        else bloques.push({ tipo: "p", texto });
+        continue;
+      }
+      let consumido = 0;
+      for (let k = 0; k < marcas.length; k += 1) {
+        const marca = marcas[k];
+        // Un «1.» con una lista abierta es SIEMPRE otra enumeración: la anterior se
+        // cierra aquí.
+        if (marca.numero === 1 && abierta) cerrar();
+        const toca = abierta ? abierta.siguiente : 1;
+        // Un número que no encadena no es un paso: se queda dentro de la prosa.
+        if (marca.numero !== toca) continue;
+        const previo = texto.slice(consumido, marca.inicio).trim();
+        if (previo) {
+          cerrar();
+          bloques.push({ tipo: "p", texto: previo, deLista: true });
+        }
+        if (abierta && pendiente.length) {
+          // El paso anterior seguía y este encadena: lo pendiente era su continuación.
+          abierta.items[abierta.items.length - 1].texto += ` ${pendiente.join(" ")}`;
+          pendiente = [];
+        }
+        if (!abierta) abierta = { desde: marca.numero, siguiente: marca.numero, items: [] };
+        abierta.items.push({
+          crudo: texto.slice(marca.inicio, marca.fin).trim(),
+          texto: texto.slice(marca.texto, marca.fin).replace(/\s*\n+\s*/g, " ").trim(),
+        });
+        abierta.siguiente = marca.numero + 1;
+        consumido = marca.fin;
+      }
+      const resto = texto.slice(consumido).trim();
+      if (resto) {
+        cerrar();
+        bloques.push({ tipo: "p", texto: resto });
+      }
+    }
+    cerrar();
+
+    for (const bloque of bloques) {
+      if (bloque.tipo !== "ol") {
+        container.appendChild(textElement("p", bloque.texto));
+        continue;
+      }
+      // <ol start="N"> conserva la numeración cuando la lista no empieza en 1.
+      const lista = el("ol", bloque.desde > 1 ? { start: bloque.desde } : {});
+      for (const item of bloque.items) lista.appendChild(el("li", {}, item));
+      container.appendChild(lista);
+    }
+    return bloques;
+  }
+
   function chatMoney(value) {
     if (typeof value !== "string" || !CHAT_MONEY.test(value)) return "";
     const negative = value.startsWith("-");
@@ -1329,13 +1465,21 @@ function renderHome() {
   submit.setAttribute("id", "chat-submit");
   form.appendChild(el("div", { className: "button-row" }, submit));
   const initialStatus = chatInitialStatus();
-  const feedback = textElement(
-    "p",
-    initialStatus.text,
-    initialStatus.warning ? "chat-state warning-note" : "chat-state"
+  // El contenedor de la respuesta es un <div>, NO un <p>. Medido en el navegador:
+  // se creaba como <p> y luego se le metían dentro otros <p> y <ol> al pintar la
+  // respuesta. Eso es anidamiento HTML inválido: el DOM vivo lo tolera
+  // (createElement/appendChild), pero al reparsear el HTML los hijos se expulsan del
+  // contenedor y todo el texto desaparece de la caja. Además, todas las reglas
+  // `#chat-feedback > p` dependen de esa estructura para dar el aire entre párrafos.
+  const feedback = el(
+    "div",
+    {
+      id: "chat-feedback",
+      role: "status",
+      className: initialStatus.warning ? "chat-state warning-note" : "chat-state"
+    },
+    initialStatus.text
   );
-  feedback.id = "chat-feedback";
-  feedback.setAttribute("role", "status");
   form.appendChild(feedback);
   let messageRevision = 0;
   const markDraftChanged = () => {
@@ -1519,10 +1663,9 @@ function renderHome() {
             const textoDeLaApp = result.answer_origin === "app"
               && typeof result.answer === "string" && result.answer.trim();
             if (textoDeLaApp) {
-              for (const trozo of chatPlain(result.answer).split(/\n\s*\n/)) {
-                const texto = trozo.trim();
-                if (texto) feedback.appendChild(textElement("p", texto));
-              }
+              // Todos los trozos de una vez: la numeración de una lista puede venir
+              // repartida entre párrafos y solo se reconoce mirándolos juntos.
+              renderChatProse(feedback, chatPlain(result.answer).split(/\n\s*\n/));
             }
             // La tarjeta del catálogo pintaba «Productos encontrados (3)» y «TAE: sin
             // valor documentado» ENCIMA de la respuesta que ya compone el backend: el
@@ -1540,11 +1683,9 @@ function renderHome() {
             // se inserta literal, así que hay que limpiarlo: medido en pantalla,
             // salían «## La diferencia en una frase», «*APR*» y listas con guion.
             // Un solo <p> con 1.500 caracteres es además un muro ilegible: se separa
-            // por párrafos para que la lectura respire.
-            for (const trozo of chatPlain(result.answer).split(/\n\s*\n/)) {
-              const texto = trozo.trim();
-              if (texto) feedback.appendChild(textElement("p", texto));
-            }
+            // por párrafos para que la lectura respire, y una enumeración «1. … 2. …»
+            // se pinta como <ol> real en vez de quedar pegada dentro del párrafo.
+            renderChatProse(feedback, chatPlain(result.answer).split(/\n\s*\n/));
             if (calculation) renderChatCalculation(feedback, calculation);
           }
           if (result.claims && typeof PaideiaClaims !== "undefined" && PaideiaClaims
@@ -2290,13 +2431,22 @@ function productCard(product) {
   const conflicts = Array.isArray(product.conflicts) ? product.conflicts.filter((item) => typeof item === "string").slice(0, 5) : [];
   const unknownFields = Array.isArray(product.unknown_fields) ? product.unknown_fields.filter((item) => typeof item === "string").slice(0, 12) : [];
   const review = el("div", { className: "product-review" });
+  // Los conflictos y los campos desconocidos son LISTAS, no prosa. Antes se
+  // pintaban como párrafos sueltos con la misma letra y el mismo hueco que sus
+  // propios encabezados: medido en navegador, nueve <p> seguidos a 13,6 px, todos
+  // a .small, y el rótulo «Campos desconocidos:» indistinguible de los campos. Se
+  // convierte en <ul> de verdad, con el rótulo separado del grupo.
   if (conflicts.length) {
-    review.appendChild(textElement("p", "Conflictos que siguen abiertos:", "small"));
-    for (const conflict of conflicts) review.appendChild(textElement("p", conflict.slice(0, 200), "small muted"));
+    review.appendChild(textElement("p", "Conflictos que siguen abiertos:", "small product-review-label"));
+    const list = el("ul", { className: "text-list product-review-list" });
+    for (const conflict of conflicts) list.appendChild(el("li", {}, conflict.slice(0, 200)));
+    review.appendChild(list);
   }
   if (unknownFields.length) {
-    review.appendChild(textElement("p", "Campos desconocidos:", "small"));
-    for (const field of unknownFields) review.appendChild(textElement("p", field.slice(0, 120), "small muted"));
+    review.appendChild(textElement("p", "Campos desconocidos:", "small product-review-label"));
+    const list = el("ul", { className: "text-list product-review-list" });
+    for (const field of unknownFields) list.appendChild(el("li", {}, field.slice(0, 120)));
+    review.appendChild(list);
   }
   if (!conflicts.length && !unknownFields.length) {
     review.appendChild(textElement("p", "La respuesta del servicio no enumera conflictos ni campos desconocidos; eso no equivale a que no existan.", "small muted"));
@@ -4261,7 +4411,16 @@ function renderPrivacy() {
   const toggleId = "profile-persist-toggle";
   const toggle = el("input", { type: "checkbox", id: toggleId, checked: state.profileOptIn, disabled: !state.profileComplete });
   storage.appendChild(el("label", { className: "choice", htmlFor: toggleId }, [toggle, el("span", {}, "Quiero permitir el almacenamiento local del mapa revisado en este dispositivo." )]));
-  storage.appendChild(textElement("p", "Al marcar la casilla y pulsar Guardar se crea una copia local, incluidos los estados aún no preguntados. Después, los cambios posteriores se guardarán automáticamente en este navegador durante esta sesión mientras siga activado el guardado local. Al recargar, la copia se conserva para revisión pero el guardado automático queda desactivado hasta que vuelvas a marcar la casilla y pulsar Guardar. El almacenamiento local es independiente del procesamiento local y no autoriza ningún envío remoto." + (state.profileComplete ? "" : " Revisa el mapa primero para activar el guardado opt-in."), "field-help"));
+  // Tres párrafos, no uno de 496 caracteres. Medido en navegador a 1440 px, aquel
+  // bloque se leía como una sola masa a 124 caracteres por línea: el usuario tenía
+  // que releerlo para separar «qué se guarda» de «qué pasa al recargar» y de «esto
+  // no autoriza ningún envío». Las tres ideas ya estaban en el texto; ahora cada
+  // una es un párrafo.
+  for (const parrafo of [
+    "Al marcar la casilla y pulsar Guardar se crea una copia local, incluidos los estados aún no preguntados.",
+    "Después, los cambios posteriores se guardarán automáticamente en este navegador durante esta sesión mientras siga activado el guardado local. Al recargar, la copia se conserva para revisión pero el guardado automático queda desactivado hasta que vuelvas a marcar la casilla y pulsar Guardar.",
+    "El almacenamiento local es independiente del procesamiento local y no autoriza ningún envío remoto." + (state.profileComplete ? "" : " Revisa el mapa primero para activar el guardado opt-in.")
+  ]) storage.appendChild(textElement("p", parrafo, "field-help"));
   const feedback = el("div", { id: "profile-storage-feedback", className: "note", role: "status" });
   feedback.appendChild(textElement("p", state.storageNotice || "Todavía no se ha guardado nada en esta visita."));
   storage.appendChild(feedback);

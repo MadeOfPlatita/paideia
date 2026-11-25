@@ -24,6 +24,12 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --gutter: 32px;
+  /* Medida de lectura: 45–90 caracteres por línea es el rango legible; aquí 68ch,
+     el mismo valor que ya usa la respuesta del chat, para que toda la aplicación
+     hable un solo idioma tipográfico. Sin esto, un párrafo de la ficha medía 100
+     caracteres por línea y la ayuda de un campo llegaba a 124 (medido a 1440 px):
+     la vista se cansa antes de terminar la frase. */
+  --measure: 68ch;
   font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 16px;
   line-height: 1.5;
@@ -164,6 +170,24 @@ h3 { margin: 0 0 8px; font-size: 1.08rem; line-height: 1.35; }
 h4 { margin: 0 0 6px; font-size: .96rem; }
 p { text-wrap: pretty; }
 
+/* Medida de lectura para la prosa de contenido.
+   Medido en navegador a 1440 px con el texto real de la app: sin esto, un párrafo
+   de la ficha medía 100 caracteres por línea, la ayuda de un campo llegaba a 124 y
+   una nota del escenario a 158. El rango legible es 45–90; el chat ya se limita a
+   68ch desde su propio arreglo, y el resto de la app tiene que hablar el mismo
+   idioma. Se aplica SOLO a prosa dentro de los contenedores de contenido: no toca
+   la cabecera, la bandeja de avisos ni los controles, donde el texto es corto o va
+   en una fila flexible. `:where()` para que la especificidad siga siendo la de `p`
+   y cualquier regla más concreta (`.section-head p` a 56ch, `.home-actions p` a
+   44ch) siga mandando. */
+:where(.paper-section, .data-panel, .summary-card, .question-panel, .product-card,
+       .detail-panel, .privacy-preview) :is(p, li, figcaption) {
+  max-width: var(--measure);
+}
+/* La bandeja de selección queda fuera: sus <li> son chips en una fila flexible y
+   no prosa. Se capan solo sus párrafos. */
+.selection-tray > p { max-width: var(--measure); }
+
 .button {
   min-height: 46px;
   display: inline-flex;
@@ -274,39 +298,91 @@ p { text-wrap: pretty; }
    - interlineado 1.5–1.6 para cuerpo de texto; aquí 1.6, que es lo que pide un
      bloque largo de lectura y no se separa del 1.5 del resto de la app.
    - medida de línea (measure) de 45–90 caracteres, con objetivo 66. El panel mide
-     920px como máximo; a 16px eso son ~110 caracteres, demasiado para leer cómodo,
-     así que la respuesta se limita a 68ch.
-   - espacio entre párrafos: 0.85em, que a 16px son ~13.6px, dentro de la escala que
-     ya usa el proyecto (12/14/16) y suficiente para separar ideas sin parecer roto. */
+     920px como máximo; sin límite, a 16px salen ~110 caracteres por línea, demasiado
+     para leer cómodo, así que la respuesta se limita a 68ch. MEDIDO en navegador con
+     texto real del dominio a .92rem: 68ch = 540px y 65–73 caracteres por línea.
+   - espacio entre párrafos: 0.85em. El cuerpo del chat va a .92rem (14,72px con la
+     raíz a 16px), así que el hueco medido es 12,5px: dentro de la banda 0,75em–1em
+     para párrafos de un mismo bloque y alineado con los 12px de la escala del
+     proyecto. Se deja en em y no en px para que crezca si se agranda el texto
+     (WCAG 1.4.4, redimensionar texto). */
 #chat-feedback { line-height: 1.6; }
-#chat-feedback > p { max-width: 68ch; margin: 0 0 0.85em; }
+/* También los párrafos que van dentro de un envoltorio, como el resumen del
+   catálogo: no son hijos directos y se quedaban fuera (medido: 816px de ancho,
+   ~110 caracteres por línea, y 7px entre ellos por `.note p + p`, no 12,5px). */
+#chat-feedback > p,
+#chat-feedback .chat-catalogue p { max-width: 68ch; margin: 0 0 0.85em; }
 /* El primer párrafo no lleva aire arriba y el último no lo lleva abajo: si no, la
-   caja aparece con un hueco raro antes del texto y otro después. */
+   caja aparece con un hueco raro antes del texto y otro después.
+   El último se detecta con `:last-child`, NO con `:last-of-type`: medido en
+   navegador, un párrafo cerraba la respuesta seguido de una lista, `:last-of-type`
+   le quitaba el margen inferior y la lista se le echaba encima. */
 #chat-feedback > p:first-of-type { margin-top: 0; }
-#chat-feedback > p:last-of-type { margin-bottom: 0; }
+#chat-feedback > p:last-child { margin-bottom: 0; }
+#chat-feedback .chat-catalogue p:last-child { margin-bottom: 0; }
+/* El cuerpo de la respuesta va en tinta, no en gris: `#chat-feedback` lleva la
+   clase `.chat-state`, que declara `color: var(--muted)` DESPUÉS de `.note`, así
+   que por orden de aparición toda la respuesta salía en gris y el texto principal
+   no se distinguía de sus propios avisos. Medido: rgb(79,94,98) en claro y
+   rgb(182,190,186) en oscuro para el cuerpo. El contraste ya pasaba AA (6,19:1 y
+   9,96:1), así que esto no corrige un fallo de accesibilidad sino la jerarquía:
+   cuerpo en `--ink`, avisos secundarios en `--muted`. */
+#chat-feedback > p:not(.field-help),
+#chat-feedback .chat-catalogue p:not(.field-help) { color: var(--ink); }
 /* Los avisos pequeños (field-help) van pegados a lo que explican, no separados. */
 #chat-feedback > p.field-help { max-width: 68ch; font-size: .87rem; color: var(--muted); }
+/* Los párrafos de la trazabilidad plegada (`<details>`) tampoco son hijos
+   directos: se quedaban sin medida (816px, ~110 caracteres) y con los 7px de
+   `.note p + p` en vez de un hueco de la escala. Aquí el texto es secundario, así
+   que se capa igual pero con menos aire (0.6em) que el cuerpo. */
+#chat-feedback details p {
+  max-width: 68ch;
+  margin: 0 0 0.6em;
+  color: var(--muted);
+}
 
 /* Listas dentro de la respuesta. El modelo enumera mucho («1. Mide… 2. Fija…») y
    en pantalla esos pasos llegaban pegados dentro del párrafo, con los números a
    mitad de línea. Renderizados como lista real, cada paso respira y se puede
-   seguir la secuencia. */
-#chat-feedback ol, #chat-feedback ul {
+   seguir la secuencia.
+
+   Se excluyen las listas que el render ya pinta con clase propia (`.chat-tools-list`
+   de herramientas, `.chat-sources` de fuentes, `.text-list` de afirmaciones): este
+   selector lleva id y por especificidad (1,0,1) pisaba sus márgenes. Medido: el
+   `margin-top: 0` dejaba la lista PEGADA a su `<summary>` (0px) en vez de los 6px
+   de `.chat-tools-list`.
+
+   Las exclusiones van en `:where()` para que la especificidad siga siendo (1,0,1),
+   la misma que tenía la regla original: así el ajuste `p + lista` de más abajo
+   (1,0,2) la sigue ganando, que es lo que se pretende. */
+#chat-feedback :is(ol, ul):where(:not(.chat-tools-list):not(.chat-sources):not(.text-list)) {
   max-width: 68ch;
   margin: 0 0 0.85em;
   padding-left: 1.5em;
 }
-#chat-feedback ol { list-style: decimal; }
-#chat-feedback ul { list-style: disc; }
-#chat-feedback li { margin: 0 0 0.4em; padding-left: 0.2em; }
-#chat-feedback li:last-child { margin-bottom: 0; }
+#chat-feedback ol:where(:not(.chat-tools-list):not(.chat-sources):not(.text-list)) { list-style: decimal; }
+#chat-feedback ul:where(:not(.chat-tools-list):not(.chat-sources):not(.text-list)) { list-style: disc; }
+#chat-feedback :is(ol, ul):where(:not(.chat-tools-list):not(.chat-sources):not(.text-list)) > li {
+  margin: 0 0 0.4em;
+  padding-left: 0.2em;
+}
+#chat-feedback :is(ol, ul):where(:not(.chat-tools-list):not(.chat-sources):not(.text-list)) > li:last-child { margin-bottom: 0; }
 /* Un párrafo que precede a una lista no necesita todo el aire: la lista ya abre
    bloque. */
 #chat-feedback > p + ol, #chat-feedback > p + ul { margin-top: -0.35em; }
+/* Si la respuesta TERMINA en lista, tampoco lleva aire debajo: mismo criterio que
+   con el último párrafo, para que la caja no acabe con un hueco. */
+#chat-feedback > :is(ol, ul):last-child { margin-bottom: 0; }
 
 .field { display: grid; gap: 6px; margin: 14px 0; }
 .field > label, .field-label { color: var(--ink); font-size: .92rem; font-weight: 650; letter-spacing: 0; text-transform: none; }
 .field-help { margin: 0; color: var(--muted); font-size: .84rem; }
+/* `.field-help` va a `margin: 0` para pegarse a SU control (el hueco lo pone el
+   `.field`). Pero cuando la ayuda son varios párrafos —el texto de Privacidad
+   tenía 496 caracteres en uno solo— esa misma regla los pegaba unos a otros a
+   0px: medido en navegador, un bloque de cuatro avisos seguidos aparecía como
+   una sola masa. Dos ayudas consecutivas son dos ideas y llevan aire. */
+p.field-help + p.field-help { margin-top: 8px; }
 input[type="text"], input[type="number"], input[type="search"], select, textarea {
   width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink);
 }
@@ -346,12 +422,32 @@ summary { min-height: 24px; padding: 4px 0; }
 .product-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: .86rem; }
 .product-card .product-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
 .product-card .source-line { margin: 10px 0 0; font-size: .86rem; }
+/* La revisión de la tarjeta eran nueve párrafos con el mismo hueco (13,6 px) y el
+   mismo tamaño: el rótulo de un grupo no se distinguía de los elementos del grupo,
+   y la vista no sabía dónde acababa «conflictos» y empezaba «campos desconocidos».
+   Ahora el rótulo abre bloque, la lista se lee como lista y el cierre va aparte. */
+.product-review { margin-top: 12px; }
+.product-review-label { margin: 10px 0 0; font-weight: 650; }
+.product-review > .product-review-label:first-child { margin-top: 0; }
+.product-review-list { margin: 4px 0 0; font-size: .85rem; color: var(--muted); }
+.product-review-list li + li { margin-top: 3px; }
+.product-review > p + p:not(.product-review-label) { margin-top: 10px; }
 .source-line a { overflow-wrap: anywhere; }
 .detail-panel { margin-top: 20px; scroll-margin-top: 20px; }
 .detail-list, .simple-definitions { display: grid; grid-template-columns: minmax(150px, .7fr) minmax(0, 1.3fr); gap: 0 18px; margin: 12px 0 0; }
 .detail-list dt, .detail-list dd, .simple-definitions dt, .simple-definitions dd { margin: 0; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .detail-list dt, .simple-definitions dt { font-weight: 650; }
 .detail-list dd, .simple-definitions dd { color: var(--muted); overflow-wrap: anywhere; }
+/* La rejilla de dos columnas solo vale para pares término/definición de un <dl>:
+   allí cada fila es un <dt> y su <dd>. En un <ul> —las condiciones de la ficha y
+   del ensayo— la rejilla repartía los <li> de dos en dos y en orden de columna,
+   así que se leía «TAE / Plazo» en la misma línea y «Comisiones» debajo de «TAE»:
+   medido a 1440 px, las filas quedaban a dos por línea con el orden de lectura
+   roto. Una condición por línea, con su lista de viñetas intacta. */
+ul.detail-list { grid-template-columns: minmax(0, 1fr); gap: 0; }
+ul.detail-list > li { padding: 7px 0; list-style: disc; }
+ul.detail-list > li::marker { color: var(--muted); }
+ul.detail-list > li + li { margin-top: 0; }
 .text-list { margin: 8px 0 0; padding-left: 20px; }
 .text-list li + li { margin-top: 5px; }
 .loading-state { padding: 16px 0; color: var(--muted); }
@@ -413,6 +509,16 @@ summary { min-height: 24px; padding: 4px 0; }
 .privacy-field-list .choice { align-items: flex-start; }
 .privacy-preview { min-height: 70px; padding: 12px; border: 1px dashed var(--border); background: var(--paper); }
 .privacy-preview p { margin: 0; }
+/* La nota de cierre («Vista previa local…») es hermana de la tabla de campos, no
+   parte de ella. Con `p { margin: 0 }` y `.detail-list { margin-bottom: 0 }`, la
+   nota quedaba pegada al último par término/valor: medido en navegador, 0 px entre
+   la tabla y la frase que la explica.
+   Hace falta `.privacy-preview > p + *` y no un `* + *`: `.privacy-preview p`
+   (0,1,1) gana a `.privacy-preview > * + *` (0,1,0) y el margen se quedaba en 0
+   —comprobado en pantalla después de escribirlo—. */
+.privacy-preview > * + * { margin-top: 10px; }
+.privacy-preview > p + *,
+.privacy-preview > * + p { margin-top: 10px; }
 .privacy-preview .detail-list { grid-template-columns: minmax(130px,.55fr) minmax(0,1.45fr); }
 .glossary-list { display: grid; gap: 0; margin: 0; }
 .glossary-item { display: grid; grid-template-columns: minmax(140px,.65fr) minmax(0,1.35fr); gap: 18px; padding: 15px 0; border-bottom: 1px solid var(--line); }

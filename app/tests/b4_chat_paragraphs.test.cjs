@@ -46,14 +46,16 @@ test('la respuesta se parte en párrafos y no deja almohadillas markdown', () =>
 });
 
 test('el texto del modelo llega con párrafos desde el backend', () => {
-  // El backend une las frases con \n\n cada dos, no con un espacio suelto: así el
-  // render tiene algo que partir.
+  // El backend abre párrafos cada dos frases y deja cada paso numerado en el suyo:
+  // así el render tiene algo que partir y puede pintar la lista.
   const py = fs.readFileSync(path.join(__dirname, '..', 'backend_services.py'), 'utf8');
-  const bloque = py.slice(py.indexOf('def _redact_unbacked_figures'), py.indexOf('def _catalogue_explanation'));
+  const bloque = py.slice(py.indexOf('def _paragraph_blocks'), py.indexOf('def _catalogue_explanation'));
   assert.ok(bloque.includes('\\n\\n".join(bloques)'),
     'las frases se agrupan en párrafos con salto doble');
-  assert.ok(bloque.includes('if len(actual) >= 2'),
+  assert.ok(bloque.includes('len(actual) >= tope[0]'),
     'se abre párrafo cada dos frases para que la lectura respire');
+  assert.ok(bloque.includes('_NUMBERED_STEP.match(frase)'),
+    'un paso numerado abre párrafo propio, para que el frontend pinte la lista');
 });
 
 test('un encabezado markdown suelto no se convierte en un título con almohadillas', () => {
@@ -68,7 +70,9 @@ test('un encabezado markdown suelto no se convierte en un título con almohadill
 
 test('el cálculo va DESPUÉS de la prosa, no en medio', () => {
   const { code } = setup();
-  const i = code.indexOf('for (const trozo of chatPlain(result.answer).split(');
+  // La prosa se pinta en un solo paso (renderChatProse recibe todos los párrafos,
+  // porque la numeración de una lista puede venir repartida entre ellos).
+  const i = code.indexOf('renderChatProse(feedback, chatPlain(result.answer)');
   const j = code.indexOf('if (calculation) renderChatCalculation(feedback, calculation);', i);
   assert.ok(i > 0 && j > i,
     'la prosa se pinta primero y el cálculo detrás');
