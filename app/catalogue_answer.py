@@ -293,7 +293,7 @@ def _rate_text(valor):
     return f"{numero:.2f}".replace(".", ",")
 
 
-def _missing_key_datum(question, cantidad, planificado, intent=None):
+def _missing_key_datum(question, cantidad, planificado, intent=None, previous_questions=None):
     """Qué dato falta y cambia la recomendación, o None si no falta nada.
 
     El prompt ya dice «si falta un dato que cambia la respuesta, pide solo ese
@@ -321,16 +321,62 @@ def _missing_key_datum(question, cantidad, planificado, intent=None):
     if re.search(r"\b(?:detalla|detalle|ficha|h[aá]blame\s+de|dime\s+los?\s+datos|"
                  r"informaci[oó]n\s+de|qu[eé]\s+sabes\s+de)\b", texto):
         return None
+    # El horizonte puede constar en un turno anterior («lo necesito en un año»). Si
+    # ya lo dijo, no se vuelve a preguntar.
+    if previous_questions:
+        for previo in previous_questions:
+            if isinstance(previo, str) and _mentions_horizon(previo.casefold()):
+                return None
     if cantidad is None:
         return "¿Cuánto dinero tienes pensado poner?"
     if planificado is None:
-        # El horizonte puede venir por palabra («un año», «6 meses», «año y medio»)
-        # sin que haya un gasto concreto.
-        if re.search(r"\b(?:\d{1,2}\s*(?:meses|años?)|un\s+año|dos\s+años|"
-                     r"medio\s+año|año\s+y\s+medio|a\s+largo\s+plazo|"
-                     r"sin\s+tocar(?:lo)?\s+(?:en\s+)?\d+)", texto):
+        if _mentions_horizon(texto):
             return None
         return "¿Para cuándo lo necesitas? Con el plazo puedo decirte si te encaja algo a 6 o a 12 meses."
+    return None
+
+
+_HORIZON_RE = re.compile(
+    r"\b(?:\d{1,2}\s*(?:meses|años?)|un\s+año|dos\s+años|tres\s+años|"
+    r"medio\s+año|año\s+y\s+medio|a\s+largo\s+plazo|"
+    r"sin\s+tocar(?:lo)?\s+(?:en\s+)?\d+|"
+    r"(?:el|este|pr[oó]ximo)\s+año)\b",
+    re.IGNORECASE,
+)
+
+
+def _mentions_horizon(texto):
+    """¿El texto dice para cuándo hace falta el dinero?"""
+    return bool(isinstance(texto, str) and _HORIZON_RE.search(texto))
+
+
+def _horizon_months(texto):
+    """Plazo en meses que menciona el texto, o None.
+
+    «dentro de un año» → 12, «en 6 meses» → 6, «año y medio» → 18. Sirve para
+    calcular el interés sobre el horizonte real y para no volver a preguntarlo.
+    """
+    if not isinstance(texto, str) or not texto.strip():
+        return None
+    t = texto.casefold()
+    if re.search(r"\baño\s+y\s+medio\b", t):
+        return 18
+    if re.search(r"\bmedio\s+año\b", t):
+        return 6
+    m = re.search(r"\bdentro\s+de\s+(\d{1,2})\s*(meses?|años?)\b", t)
+    if not m:
+        m = re.search(r"\ben\s+(\d{1,2})\s*(meses?|años?)\b", t)
+    if not m:
+        m = re.search(r"\b(?:a|para|por)\s+(\d{1,2})\s*(meses?|años?)\b", t)
+    if m:
+        n = int(m.group(1))
+        return n * 12 if m.group(2).startswith("a") else n
+    if re.search(r"\b(?:un|el|este|pr[oó]ximo)\s+año\b", t):
+        return 12
+    if re.search(r"\bdos\s+años\b", t):
+        return 24
+    if re.search(r"\btres\s+años\b", t):
+        return 36
     return None
 
 
@@ -422,6 +468,13 @@ def extract_expense_eur(text):
         return None
     match = _EXPENSE_PATTERN.search(text)
     if not match:
+        return None
+    # «lo necesito en 6 meses» NO es un gasto de 6 €: el patrón de gasto incluye
+    # «necesito» y capturaba el número del plazo. Si justo detrás viene una unidad de
+    # tiempo, esa cifra es el HORIZONTE, no dinero.
+    detras = text[match.end(1):match.end(1) + 12]
+    if re.match(r"\s*(?:meses|mes|años?|ano|d[íi]as?|semanas?|trimestres?)\b",
+                detras, re.IGNORECASE):
         return None
     return _parse_spanish_number(match.group(1))
 
@@ -546,12 +599,18 @@ def _pick_best(products, intent):
     return (index, product, by_metric), None
 
 
-def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, question=None):
+def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, question=None,
+                             previous_questions=None):
     """Un producto concreto con su motivo, no un volcado de fichas.
 
     `explanation` llega redactada por el modelo y NO se usa para ningún dato: se
     coloca al final, ya sin sus cifras, para que oriente sin poder introducir una
     tasa, un importe ni una atribución no verificada.
+
+    `previous_questions` son los mensajes anteriores de la persona en la
+    conversación. Se usan SOLO para no volver a preguntar un dato que ya dio: si en
+    el turno anterior dijo «tengo 2000 euros» y ahora pregunta «¿qué depósito me
+    conviene?», el importe ya se sabe. Sin esto, el chat repreguntaba lo mismo.
 
     Devuelve None cuando no hay ningún dato legible: en ese caso el servicio
     mantiene la nota anterior en lugar de inventar una respuesta vacía.
@@ -579,7 +638,17 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     # contratar. Fallo medido: a un estudiante con 2.000 € se le ofrecían depósitos
     # de 5.000 € y 6.000 € y se le calculaba la rentabilidad del 3,10 % de uno de
     # ellos. Un asesor no manda a nadie a contratar lo que no puede pagar.
+    #
+    # La cantidad y el gasto se buscan primero en la pregunta actual y, si no están,
+    # en los mensajes anteriores: si ya dijo «tengo 2.000 €» en el turno previo, no
+    # se le vuelve a preguntar.
+    previos = [t for t in (previous_questions or ()) if isinstance(t, str) and t.strip()]
     cantidad = extract_amount_eur(question)
+    if cantidad is None:
+        for previo in reversed(previos):
+            cantidad = extract_amount_eur(previo)
+            if cantidad is not None:
+                break
     descartados_por_importe = []
     if cantidad is not None:
         alcanzables = []
@@ -609,8 +678,21 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     # Lo que el usuario ha dicho de su situación: cuánto tiene y cuánto necesita.
     cantidad_txt = _format_number(str(int(cantidad))) if cantidad is not None else None
     planificado = extract_expense_eur(question)
+    if planificado is None:
+        for previo in reversed(previos):
+            planificado = extract_expense_eur(previo)
+            if planificado is not None:
+                break
     if planificado is not None and cantidad is not None and planificado >= cantidad:
         planificado = None
+    # El horizonte no siempre es un gasto con cifra: «lo necesito dentro de un año».
+    # Sin esto, el interés no se calcula y la respuesta se queda en el dato suelto.
+    horizonte_meses = _horizon_months(question)
+    if horizonte_meses is None:
+        for previo in reversed(previos):
+            horizonte_meses = _horizon_months(previo)
+            if horizonte_meses is not None:
+                break
 
     # Listado: la persona quiere saber QUÉ HAY, no una elección. Se da el nombre
     # de cada producto con su dato más identificativo y nada más: decirle «el que
@@ -665,14 +747,17 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     # 1) Si falta un dato que cambia la respuesta, se pregunta ANTES de recomendar.
     #    El prompt ya lo pedía, pero cuando el turno usa el catálogo la prosa del
     #    modelo se retiene y esa política se perdía: la app recomendaba a ciegas.
-    falta = _missing_key_datum(question, cantidad, planificado, intent)
+    falta = _missing_key_datum(question, cantidad, planificado, intent, previos)
     if falta:
         # Se da lo que sí se puede dar ya —el producto y su cifra— y se pide el dato
         # que falta, en vez de una respuesta incompleta o una pregunta a secas.
         if tasa is not None:
             extra = f" a {_format_number(str(int(plazo)))} meses" if plazo else ""
+            # Si ya consta la cantidad, se nombra: así la persona ve que se ha tenido
+            # en cuenta y no repite lo que ya dijo.
+            conocido = f" con esos {_money_text(cantidad)} €" if cantidad is not None else ""
             lineas.append(f"Para orientarte de verdad me falta un dato. {falta}")
-            lineas.append(f"Te adelanto lo que sí sé: **{heading}** está a "
+            lineas.append(f"Te adelanto lo que sí sé{conocido}: **{heading}** está a "
                           f"{_rate_text(tasa)} % TAE{extra}.")
         else:
             lineas.append(f"Para orientarte de verdad me falta un dato. {falta}")
@@ -689,16 +774,19 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     #    es lo primero: es el marco de la decisión.
     if cantidad is not None and planificado is not None:
         libre = cantidad - planificado
+        # El horizonte, en palabras: no decir «dentro de un año» cuando son 6 meses.
+        cuando = "para dentro de un año"
+        if horizonte_meses and abs(horizonte_meses - 12) >= 0.5:
+            cuando = f"para dentro de {int(horizonte_meses)} meses"
         lineas.append(
             f"Con {_money_text(cantidad)} € y {_money_text(planificado)} € comprometidos "
-            f"para dentro de un año, la clave es que esos {_money_text(planificado)} € "
+            f"{cuando}, la clave es que esos {_money_text(planificado)} € "
             f"estén disponibles sí o sí. Te quedan {_money_text(libre)} € que puedes "
             f"mover sin tocar lo que ya tienes comprometido.")
     elif cantidad is not None:
         lineas.append(
             f"Partiendo de {_money_text(cantidad)} €, lo que buscas es que el dinero no "
             f"se quede parado sin quedarse atrapado.")
-
     # 2) El producto y qué aporta, en una frase con la cifra integrada. NO se repite
     #    la tasa en el motivo: ya va aquí, y repetirla era el «demasiado texto
     #    numérico» que se reportó.
@@ -730,18 +818,26 @@ def compose_catalogue_answer(catalogue, limit=MAX_PRODUCTS, explanation=None, qu
     #    interés con un tipo caducado sería peor que no darlo.
     if tasa is not None and cantidad is not None:
         base = cantidad - planificado if planificado is not None else cantidad
-        anios = (plazo / 12) if plazo else 1.0
+        # El plazo del cálculo es el HORIZONTE de la persona si lo dijo («lo necesito
+        # en un año»), y si no, el del producto. Antes se usaba siempre el del
+        # producto, así que el interés no se calculaba cuando la pregunta no llevaba
+        # un gasto con cifra.
+        meses_calculo = horizonte_meses if horizonte_meses is not None else plazo
+        anios = (meses_calculo / 12) if meses_calculo else 1.0
         if base and base > 0:
             interes = base * (tasa / 100) * anios
+            # «durante el año» solo si el horizonte es de un año; si no, el plazo real.
+            periodo = ("durante el año" if meses_calculo and abs(meses_calculo - 12) < 0.5
+                       else (f"en {int(meses_calculo)} meses" if meses_calculo else "al año"))
             if interes >= 1:
                 lineas.append(
-                    f"Si pones esos {_money_text(base)} € a ese tipo durante el año, "
+                    f"Si pones esos {_money_text(base)} € a ese tipo {periodo}, "
                     f"sacan unos {_money_text(round(interes, 2))} € de intereses. Poco, "
                     f"pero es dinero que no pierdes y que recuperas al vencer.")
             else:
                 lineas.append(
                     f"Sobre {_money_text(base)} € el interés sería de unos "
-                    f"{_money_text(round(interes, 2))} € al año: son migajas, y el motivo "
+                    f"{_money_text(round(interes, 2))} € {periodo}: son migajas, y el motivo "
                     f"es que el dinero tiene que estar disponible, no que el producto sea malo.")
     # El mínimo se dice SIEMPRE que conste: es el dato que decide si la ficha sirve
     # o no, tanto si el usuario dijo cuánto tiene como si no.

@@ -309,5 +309,66 @@ class AskingBeforeRecommendingTest(unittest.TestCase):
                                  f"preguntó por el dinero en una consulta de dato: {texto}")
 
 
+class RememberingPreviousTurnsTest(unittest.TestCase):
+    """No se vuelve a preguntar un dato que la persona ya dio.
+
+    Fallo medido en producción: turno 1 «Tengo 2000 euros ahorrados»; turno 2 «¿Qué
+    depósito me conviene?» → el chat volvía a preguntar «¿cuánto dinero tienes?». El
+    compositor solo miraba el mensaje actual, no el historial.
+    """
+
+    def test_it_does_not_ask_for_money_already_given(self):
+        texto = compose_catalogue_answer(
+            {"used": True, "products": [PIBANK]},
+            question="¿Qué depósito me conviene?",
+            previous_questions=["Tengo 2000 euros ahorrados"]) or ""
+        self.assertNotIn("¿Cuánto dinero", texto)
+        # Y usa la cifra del turno anterior.
+        self.assertIn("2.000", texto)
+
+    def test_it_does_not_ask_for_a_horizon_already_given(self):
+        texto = compose_catalogue_answer(
+            {"used": True, "products": [PIBANK]},
+            question="¿Qué depósito me conviene?",
+            previous_questions=["Tengo 2000 euros y lo necesito dentro de un año"]) or ""
+        self.assertNotIn("¿Cuánto dinero", texto)
+        self.assertNotIn("¿Para cuándo", texto)
+
+    def test_with_both_data_in_history_it_reasons_fully(self):
+        texto = compose_catalogue_answer(
+            {"used": True, "products": [PIBANK]},
+            question="¿Qué depósito me conviene?",
+            previous_questions=["Tengo 2000 euros y lo necesito dentro de un año"]) or ""
+        # Razonamiento completo: la cifra y el interés calculado.
+        self.assertIn("2.000", texto)
+        self.assertIn("60", texto)
+        self.assertIn("intereses", texto)
+
+    def test_the_current_message_wins_over_the_history(self):
+        """Si cambia de cantidad, manda la nueva."""
+        texto = compose_catalogue_answer(
+            {"used": True, "products": [PIBANK]},
+            question="Al final tengo 3000 euros para un año, ¿qué depósito me conviene?",
+            previous_questions=["Tengo 2000 euros"]) or ""
+        self.assertIn("3.000", texto)
+        self.assertNotIn("2.000", texto)
+
+    def test_a_term_is_not_mistaken_for_an_expense(self):
+        """«lo necesito en 6 meses» no es un gasto de 6 €."""
+        from catalogue_answer import extract_expense_eur
+        self.assertIsNone(extract_expense_eur("lo necesito en 6 meses"))
+        self.assertEqual(extract_expense_eur("necesito 1500 para el año"), 1500.0)
+        # Pero un gasto con cifra y plazo sí se lee.
+        self.assertEqual(extract_expense_eur("necesito 1500 en 6 meses"), 1500.0)
+
+    def test_the_horizon_is_read_in_months(self):
+        from catalogue_answer import _horizon_months
+        casos = {"dentro de un año": 12, "en 6 meses": 6, "año y medio": 18,
+                 "para 2 años": 24, "tengo 12 meses": None}
+        for texto, esperado in casos.items():
+            with self.subTest(texto=texto):
+                self.assertEqual(_horizon_months(texto), esperado)
+
+
 if __name__ == "__main__":
     unittest.main()

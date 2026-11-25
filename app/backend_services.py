@@ -1250,13 +1250,23 @@ class LocalChatService:
         # menos dinero?»). Ya viaja en `messages`: no hace falta un atributo nuevo
         # ni estado compartido entre peticiones.
         pregunta = ""
+        # El historial de la persona, no solo su último mensaje. Sin esto, el chat
+        # preguntaba «¿cuánto dinero tienes?», la persona lo decía en el turno
+        # siguiente y el compositor volvía a pedirlo: solo miraba el mensaje actual.
+        # Medido en producción: turno 1 «tengo 2000 euros», turno 2 «¿qué depósito me
+        # conviene?» → volvía a preguntar el importe.
+        contexto_previo = []
         if isinstance(messages, list):
             for mensaje in reversed(messages):
-                if isinstance(mensaje, dict) and mensaje.get("role") == "user":
-                    contenido = mensaje.get("content")
-                    if isinstance(contenido, str):
-                        pregunta = contenido
-                        break
+                if not isinstance(mensaje, dict):
+                    continue
+                contenido = mensaje.get("content")
+                if not isinstance(contenido, str):
+                    continue
+                if mensaje.get("role") == "user" and not pregunta:
+                    pregunta = contenido
+                elif mensaje.get("role") == "user":
+                    contexto_previo.append(contenido)
         if self._tools_enabled and not self._test_only and not self._catalogue_usage_approved and self._tools_scope != "calculator_only":
             raise ServiceProblem(503, "CHAT_TOOLS_NOT_APPROVED", "El uso externo de los datos del catálogo no está aprobado; no se ha enviado la consulta.")
         if (self._tools_enabled and self._dispatcher is None) or self._admission is None:
@@ -1444,7 +1454,8 @@ class LocalChatService:
                 # del DTO, cada una con su fuente citada.
                 explicacion = _catalogue_explanation(result.get("answer"))
                 compuesta = compose_catalogue_answer(catalogue, explanation=explicacion,
-                                                     question=pregunta)
+                                                     question=pregunta,
+                                                     previous_questions=contexto_previo)
                 if compuesta is None:
                     # El producto existe pero su ficha aun no tiene condiciones
                     # transcritas (ETF-01, FND-02). Decir «no repito cifras en
