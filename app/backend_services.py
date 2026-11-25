@@ -422,6 +422,14 @@ def _redact_unbacked_figures(text, strict=False):
     La frontera es la misma de siempre (superficie, no semántica): no comprueba que
     una cifra sea cierta, así que la frase que la contiene se descarta entera. El
     texto que queda sigue siendo prosa no validada y se declara como tal.
+
+    `strict` es para turnos de calculadora, donde una cifra del modelo puede leerse
+    como el resultado del motor. Pero NO basta con «tiene un número»: medido en
+    pantalla, eso borraba 13 frases y dejaba solo los encabezados («Qué descarto y
+    por qué.», «Qué sí encaja, por categoría.»), que es lo que se lee como una tabla
+    rota. Lo que hay que quitar es la frase que presenta un IMPORTE o una TASA, que
+    es lo que se puede atribuir al motor; un plazo («en 12 meses») o una enumeración
+    («dos cosas») son prosa y se quedan.
     """
     pieces = re.split(r"(?<=[.!?])\s+", text.strip())
     kept, removed = [], 0
@@ -436,9 +444,13 @@ def _redact_unbacked_figures(text, strict=False):
                   # respuesta entera, y se declara.
                   or _attribution_piece_is_unbacked(piece))
         if strict and not figura:
-            # En un turno de calculadora cualquier cifra puede leerse como el
-            # resultado del motor: se quitan todas las frases numéricas.
-            figura = _NUMBER.search(piece) is not None or _SPELLED_NUMBER.search(piece) is not None
+            # Solo se quita la frase que presenta una CIFRA concreta: un importe
+            # («1.000 €», «500 euros») o un porcentaje («3 %», «un 3 % anual»). La
+            # mera mención del término «TAE» o «TIN» no es una cifra: «La TAE sí
+            # incorpora comisiones» es una definición y se conserva. Antes se
+            # borraban tres frases de una explicación que solo tenía una cifra.
+            figura = (_MONEY_FIGURE.search(piece) is not None
+                      or _FIGURE_WITH_NUMBER.search(piece) is not None)
         if figura:
             if _is_labelled_reference(piece):
                 kept.append(piece.strip())
@@ -460,7 +472,104 @@ def _redact_unbacked_figures(text, strict=False):
         return text.strip(), 0
     if not parcial:
         return "", removed
+    # El aplanado de encabezados NO se hace aquí: cada llamador decide cuándo. Si se
+    # hiciera antes de quitar las tablas markdown, el encabezado se fusionaría con
+    # la tabla y dejaría un «|» suelto en el texto.
     return _renumber(parcial), removed
+
+
+# Solo un importe (con su símbolo o su palabra) o una tasa: lo que puede leerse como
+# el resultado de la calculadora. Un «12» suelto es un plazo, no una cifra.
+_MONEY_FIGURE = re.compile(
+    r"[€$]"
+    r"|\b\d[\d.,]*\s*(?:€|eur(?:os)?|mil(?:lones)?\s+de\s+euros)\b"
+    r"|\b(?:eur(?:os)?|d[óo]lares)\s*\d",
+    re.IGNORECASE,
+)
+
+# Una cifra PEGADA a un signo de porcentaje o a una unidad de tasa: «3 %», «un 2,5 %
+# anual», «3,10 % TAE». Es lo que se puede atribuir al resultado del motor. La
+# palabra «TAE» sin cifra al lado no cuenta: es una definición, no un dato.
+_FIGURE_WITH_NUMBER = re.compile(
+    r"\d[\d.,]*\s*(?:%|por\s+ciento|porcentaje)"
+    r"|(?:%|por\s+ciento)\s*\d"
+    r"|\b(?:tae|tin|tasa|tipo|inter[eé]s|rentabilidad)\b[^.!?]{0,20}?\d"
+    r"|\d[^.!?]{0,20}?\b(?:tae|tin)\b"
+    # Una cifra junto a una palabra que la convierte en resultado monetario, aunque
+    # no lleve el símbolo: «el saldo final es 9999.00», «el resultado sería 2500.00».
+    # Sin esto se publicaba una cifra INVENTADA por el modelo en un turno donde el
+    # motor había dado otra, que es el fallo que este filtro existe para evitar.
+    r"|\b(?:saldo|resultado|interes(?:es)?|inter[eé]s|importe|total|capital|"
+    r"rendimiento|beneficio|final|aportaci[oó]n(?:es)?|acabas|tendr[íi]as)\b"
+    r"[^.!?]{0,30}?\d",
+    re.IGNORECASE,
+)
+
+# Un encabezado suelto: «Qué descarto y por qué.», «Qué sí encaja, por categoría.»
+# Se reconoce porque es corto, empieza por interrogativo o por «qué/cómo/cuándo» y no
+# tiene verbo conjugado ni cifra. Dejarlo sin el contenido que le seguía es lo que
+# hacía que la respuesta pareciera una tabla rota.
+# Un encabezado suelto: «Qué descarto y por qué.», «Qué sí encaja, por categoría.»
+# Se reconoce porque es CORTO, empieza por interrogativo y NO lleva coma interna: una
+# frase como «Como referencia general, entre tres y seis meses de gastos» empieza por
+# «como» pero es prosa normal, y fusionarla rompía el texto.
+_HEADING_PIECE = re.compile(
+    # Admite una sola coma interna («Qué sí encaja, por categoría.») pero no una
+    # frase larga con varias: «Como referencia general, entre tres y seis meses de
+    # gastos» lleva otra coma de más y no es un encabezado.
+    r"^\s*(?:qu[eé]|cu[aá]l|cu[aá]nto)\s+[^.!?,]{0,60}(?:,\s*[^.!?,]{0,40})?[.:]?\s*$",
+    re.IGNORECASE,
+)
+
+
+def _flatten_headings(text):
+    """Convierte un encabezado suelto en el arranque de la frase siguiente.
+
+    Medido en pantalla: la respuesta salía como
+    «…los estudios del año que viene. Qué descarto y por qué. Con vencimiento a un
+    año, cualquier instrumento…». Ese «Qué descarto y por qué.» es un TÍTULO que el
+    modelo puso para estructurar, y al llegar a la pantalla como frase suelta se lee
+    como una tabla partida. Unido a lo que sigue, el mismo texto se lee como prosa:
+    «Qué descarto y por qué: con vencimiento a un año, …».
+    """
+    if not isinstance(text, str) or not text.strip():
+        return text
+    pieces = [p for p in re.split(r"(?<=[.!?])\s+", text.strip()) if p.strip()]
+    salida = []
+    for indice, pieza in enumerate(pieces):
+        if _HEADING_PIECE.match(pieza) and len(pieza.split()) <= 12:
+            siguiente = pieces[indice + 1] if indice + 1 < len(pieces) else ""
+            if siguiente:
+                # Se pega con dos puntos y la siguiente frase en minúscula inicial,
+                # salvo que empiece por sigla o nombre propio evidente.
+                resto = siguiente
+                if resto[:1].isupper() and not resto[:2].isupper():
+                    resto = resto[:1].lower() + resto[1:]
+                salida.append(pieza.rstrip(".:").strip() + ": " + resto)
+                pieces[indice + 1] = ""
+                continue
+        if pieza:
+            salida.append(pieza)
+    return " ".join(p for p in salida if p).strip()
+
+
+def _drop_orphan_headings(text):
+    """Quita los encabezados que se han quedado sin su contenido.
+
+    Tras redactar, un título como «Qué descarto y por qué.» puede quedar seguido de
+    otro título o del final del texto. Se elimina: sin contenido debajo no informa,
+    y su presencia es justo lo que hacía la respuesta ilegible en pantalla.
+    """
+    pieces = [p for p in re.split(r"(?<=[.!?])\s+", (text or "").strip()) if p.strip()]
+    salida = []
+    for indice, pieza in enumerate(pieces):
+        if _HEADING_PIECE.match(pieza) and len(pieza.split()) <= 12:
+            siguiente = pieces[indice + 1] if indice + 1 < len(pieces) else ""
+            # Se cae si no hay nada detrás o si lo que hay es otro encabezado.
+            if not siguiente or (_HEADING_PIECE.match(siguiente) and len(siguiente.split()) <= 12):
+                continue
+        salida.append(pieza)
+    return " ".join(salida).strip()
 
 
 _NUMBERED_STEP = re.compile(r"(?<![\d.,])(\d{1,2})\.\s+(?=\S)")
@@ -524,6 +633,9 @@ def _catalogue_explanation(text):
     if not limpio or not limpio.strip():
         return None
     limpio = _strip_markdown_tables(limpio.strip())[:1200].strip()
+    # El aplanado de encabezados va AQUÍ, sobre el texto ya sin tablas: si se hace
+    # antes, el encabezado se fusiona con la tabla y deja un «|» suelto.
+    limpio = _flatten_headings(limpio)
     return limpio or None
 
 
@@ -1491,14 +1603,21 @@ class LocalChatService:
             if (not (answer_text or "").strip()
                     and answer_text_state == ANSWER_TEXT_WITHHELD_UNBACKED
                     and calculation is not None):
+                # El usuario se quedaría sin el razonamiento, y lo único que vería
+                # sería la tabla del motor. Primero se intenta conservar la prosa
+                # conceptual del modelo (sin sus cifras): hablar es el objetivo.
+                solo_prosa = _catalogue_explanation(result.get("answer"))
                 compuesta = _calculation_answer(calculation)
-                if compuesta:
+                if solo_prosa and compuesta:
+                    answer_text = solo_prosa.strip() + "\n\n" + compuesta
+                elif compuesta:
                     answer_text = compuesta
+                if answer_text:
                     answer_text_state = ANSWER_TEXT_SHOWN
                     provenance_source = dict(provenance_source)
                     notas = [n for n in (provenance_source.get("limitations") or []) if type(n) is str][:6]
-                    nota = ("El texto explicativo del modelo se ha retirado porque atribuia "
-                            "cifras sin respaldo local; el resultado del motor se mantiene.")
+                    nota = ("Las cifras concretas se han quitado del texto porque podían atribuirse "
+                            "al concepto equivocado; el razonamiento y el resultado del motor se mantienen.")
                     if nota not in notas:
                         notas.insert(0, nota)
                     provenance_source["limitations"] = notas

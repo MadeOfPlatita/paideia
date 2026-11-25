@@ -253,13 +253,19 @@ test('calculator turn renders the local engine result and assumptions, never mod
   ui.input('Calcula 1000 euros al 3 % dos años'); ui.consent.checked = true; await ui.send();
 
   const text = ui.feedback.textContent;
-  for (const expected of ['motor determinista local', '1.000,00', '1.060,90', '60,90',
-    '1.019,70', '3,00 %', '2 años', 'compuesto', '0,00']) {
+  // El cálculo se pinta como una FRASE («Si dejas … acabas con …»), no como cinco
+  // líneas de tabla («Supuestos:», «Aportaciones:», «Saldo final:»…) que es lo que
+  // hacía que la respuesta se leyera como una tabla y no como una conversación.
+  for (const expected of ['1.000,00', '1.060,90', '60,90', '1.019,70', '3,00 %', 'años']) {
     assert.ok(text.includes(expected), `missing ${expected} in: ${text}`);
   }
-  assert.match(text, /Interés:\s*60,90 EUR/);
-  assert.match(text, /Saldo final:\s*1\.060,90 EUR/);
+  // Lo que se conserva de la frontera: la cifra inventada por el modelo no aparece
+  // y el resultado del motor sí.
+  assert.match(text, /acabas con 1\.060,90/);
   assert.doesNotMatch(text, /El interés obtenido/);
+  // Y NO se ha vuelto a la tabla línea a línea.
+  assert.doesNotMatch(text, /Supuestos: principal/);
+  assert.doesNotMatch(text, /Saldo final:\s*1\.060,90 EUR/);
 });
 
 test('a malformed calculation is not rendered and declares the limit', async () => {

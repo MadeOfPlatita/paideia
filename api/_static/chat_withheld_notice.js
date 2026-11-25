@@ -7,9 +7,13 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = model;
   if (root) root.PaideiaWithheldNotice = model;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  const CATALOGUE = 'Los datos de esta respuesta vienen del catálogo local, con su fuente y su fecha. La explicación de Pai va limpia de cifras: así ninguna tasa ni importe puede atribuirse al producto equivocado.';
-  const CALCULATION = 'Se ha omitido el texto del modelo en este turno de calculadora: una cifra de la prosa puede atribuirse al concepto equivocado. Se muestra el resultado y los supuestos del motor local.';
-  const GENERIC = 'Se ha omitido el texto del modelo porque no se pudo verificar localmente. No se presenta como dato.';
+  // Lo que la persona lee al principio de una respuesta con datos de catálogo. Antes
+  // era jerga de ingeniería («los datos vienen del catálogo local», «la explicación
+  // va limpia de cifras»): describía cómo está hecha la respuesta en vez de decir
+  // qué se ha usado. Medido en pantalla, era la primera frase que se leía.
+  const CATALOGUE = 'Esto sale de las fichas que tengo del catálogo, con su fuente y su fecha.';
+  const CALCULATION = 'La cuenta la ha hecho la calculadora de la app con los datos que me diste; no la he estimado yo.';
+  const GENERIC = 'No puedo darte esto como dato comprobado; lo que sigue es orientación, no una cifra verificada.';
   const REASONS = Object.freeze({
     figure: 'Se ha omitido el texto del modelo: contenía una cifra, un importe o un porcentaje sin datos locales que lo respalden. No se presenta como prosa verificada y, si el turno no aportó datos del motor o del catálogo, no se muestra ninguna cifra.',
     attribution: 'Se ha omitido el texto del modelo: atribuía una fuente, una vigencia o una confirmación sin datos locales que la respalden. No se presenta como dato verificado.',

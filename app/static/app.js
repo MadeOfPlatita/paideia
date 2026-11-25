@@ -944,16 +944,41 @@ function renderHome() {
   }
   function renderChatCalculation(container, calculation) {
     const view = chatCalculationView(calculation);
-    container.appendChild(textElement("p", "Resultado del motor determinista local (escenario hipotético):", "chat-provenance-title"));
     if (!view) {
       container.appendChild(textElement("p", "El resultado del motor local no llegó con una forma válida; no se muestran cifras. No se sustituye por la prosa del modelo.", "field-help"));
       return;
     }
-    container.appendChild(textElement("p", `Supuestos: principal ${view.principal} EUR; aportación mensual ${view.monthly} EUR; plazo ${view.years} ${view.years === 1 ? "año" : "años"}; método ${view.method}; tasa anual ${view.rate} %; inflación anual ${view.inflation} %.`));
-    for (const [label, key] of [["Aportaciones", "contributions"], ["Saldo final", "final_balance"], ["Interés", "interest"], ["Saldo ajustado por inflación", "inflation_adjusted"]]) {
-      container.appendChild(textElement("p", `${label}: ${view.money[key]} EUR`));
+    // Antes esto eran CINCO líneas de tabla («Supuestos: …», «Aportaciones: …»,
+    // «Saldo final: …», «Interés: …», «Saldo ajustado por inflación: …»). Medido en
+    // pantalla: eso es lo que hacía que la respuesta se leyera como una tabla y no
+    // como una conversación. La misma información, en dos frases que la explican.
+    const anios = Number(view.years) === 1 ? "un año" : `${view.years} años`;
+    const interes = view.money.interest;
+    const final = view.money.final_balance;
+    const real = view.money.inflation_adjusted;
+    const aportado = view.money.contributions;
+
+    let frase = `Si dejas ${aportado} € al ${view.rate} % durante ${anios}`;
+    if (view.monthly && view.monthly !== "0,00") {
+      frase += `, añadiendo ${view.monthly} € al mes`;
     }
-    container.appendChild(textElement("p", "No incluye impuestos ni comisiones. Es un cálculo determinista con los supuestos mostrados; no es una predicción ni una oferta.", "field-help"));
+    frase += `, acabas con ${final} €: ${interes} € de intereses.`;
+    container.appendChild(textElement("p", frase));
+
+    // La inflación, solo si cambia la conclusión: es el dato que de verdad importa
+    // cuando el tipo es bajo, y en tabla se perdía entre las otras cuatro líneas.
+    const finalNum = Number(String(final).replace(/\./g, "").replace(",", "."));
+    const realNum = Number(String(real).replace(/\./g, "").replace(",", "."));
+    if (Number.isFinite(finalNum) && Number.isFinite(realNum) && realNum < finalNum) {
+      const perdida = (finalNum - realNum).toFixed(2).replace(".", ",");
+      container.appendChild(textElement("p",
+        `Con una inflación del ${view.inflation} %, ese dinero compra lo que hoy comprarías ` +
+        `con ${real} €: el interés no llega a cubrir la subida de precios, así que en ` +
+        `términos reales pierdes unos ${perdida} €.`));
+    }
+    container.appendChild(textElement("p",
+      "Es un cálculo con esos supuestos, sin impuestos ni comisiones; no es una predicción.",
+      "field-help"));
   }
   function renderChatCatalogue(container, catalogue) {
     const products = catalogue && Array.isArray(catalogue.products) ? catalogue.products : [];
@@ -1329,10 +1354,29 @@ function renderHome() {
             for (const item of structured.items) feedback.appendChild(textElement("p", item.text));
           }
           if (structured.calculation) {
-            feedback.appendChild(textElement("p", "Resultado del motor determinista local (escenario hipotético):"));
+            // Mismo criterio que en el chat libre: una frase, no una tabla. Y la
+            // serie mes a mes iba a un párrafo por punto: con un año eran doce
+            // líneas más de volcado.
             const data = structured.calculation.data;
-            for (const [label,key] of [["Aportaciones","contributions"],["Saldo final","final_balance"],["Interés","interest"],["Saldo ajustado por inflación","inflation_adjusted"]]) feedback.appendChild(textElement("p", `${label}: ${data.summary[key]} EUR`));
-            for (const point of data.series) feedback.appendChild(textElement("p", `Mes ${point.month}: aportaciones ${point.contributions}, saldo ${point.balance}, saldo real ${point.real_balance} EUR`));
+            const resumen = data.summary || {};
+            const anios = Number(data.years) === 1 ? "un año" : `${data.years} años`;
+            feedback.appendChild(textElement("p",
+              `Si dejas ${resumen.contributions} € durante ${anios}, acabas con ` +
+              `${resumen.final_balance} €: ${resumen.interest} € de intereses.`));
+            feedback.appendChild(textElement("p",
+              `Con la inflación aplicada, ese dinero compra lo que hoy ${resumen.inflation_adjusted} €.`,
+              "field-help"));
+            if (Array.isArray(data.series) && data.series.length) {
+              const serie = el("details", { className: "chat-card-detail" });
+              serie.appendChild(el("summary", {}, "Ver la evolución mes a mes"));
+              const lista = el("ul", { className: "chat-tools-list" });
+              for (const point of data.series) {
+                lista.appendChild(el("li", {},
+                  `Mes ${point.month}: aportaciones ${point.contributions}, saldo ${point.balance}, saldo real ${point.real_balance} EUR`));
+              }
+              serie.appendChild(lista);
+              feedback.appendChild(serie);
+            }
           }
         } else {
           const catalogue = result.catalogue && typeof result.catalogue === "object" ? result.catalogue : null;

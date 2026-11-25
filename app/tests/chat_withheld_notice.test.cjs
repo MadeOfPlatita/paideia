@@ -43,7 +43,7 @@ test('un motivo desconocido no se convierte en una acusación de fuente oficial'
     const text = notice.notice({ reason, hasCalculation: false, catalogueUsed: false });
     assert.ok(typeof text === 'string' && text.length > 20);
     assert.doesNotMatch(text, OFFICIAL);
-    assert.match(text, /no se muestra|omitido/i);
+    assert.match(text, /no se muestra|omitido|no puedo darte|orientaci/i);
   }
 });
 
