@@ -228,7 +228,7 @@ test('429 and 504 produce different, explicit messages and never retry by themse
   ui429.input('Pregunta con límite'); ui429.consent.checked=true; await ui429.send();
   assert.equal(calls429,1);
   assert.match(ui429.feedback.textContent,/límite de uso \(429\)/i);
-  assert.match(ui429.feedback.textContent,/no es un timeout/i);
+  assert.match(ui429.feedback.textContent,/no se agotó ninguna espera/i);
   assert.doesNotMatch(ui429.feedback.textContent,/tiempo de espera|pudo llegar/i);
   assert.equal(ui429.message.value,'Pregunta con límite');
   await new Promise(resolve=>setTimeout(resolve,40));

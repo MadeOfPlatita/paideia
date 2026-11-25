@@ -13,7 +13,7 @@
     return emptyState(false, error || new Error('No se pudieron cargar las condiciones documentadas.'));
   }
   function succeed(data) {
-    if (!data || !Array.isArray(data.products)) throw new Error('invalid conditions');
+    if (!data || !Array.isArray(data.products)) throw new Error('La respuesta de condiciones no trae la lista de productos.');
     const byId = new Map();
     for (const product of data.products) {
       if (product && typeof product.product_id === 'string') byId.set(product.product_id, product);

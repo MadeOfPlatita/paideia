@@ -399,16 +399,16 @@ function chatFailureNotice(error) {
   }
   if (error.code === "CHAT_TIMEOUT" || error.status === 504) {
     const stateText = error.sendState === "not_started"
-      ? "La petición terminó con un tiempo de espera agotado del proveedor (504). El último intento de transporte consta como no iniciado, pero ese dato no demuestra que el turno completo no se enviara al proveedor."
+      ? "El proveedor agotó el tiempo de espera (504). El último intento de transporte consta como no iniciado, pero ese dato no demuestra que el turno completo no se enviara al proveedor."
       : error.sendState === "completed"
-        ? "La petición terminó con un tiempo de espera agotado del proveedor (504). El último intento de transporte consta como completado, pero eso no confirma que el proveedor aceptara ni procesara el turno completo."
+        ? "El proveedor agotó el tiempo de espera (504). El último intento de transporte consta como completado, pero eso no confirma que el proveedor aceptara ni procesara el turno completo."
         : "El proveedor agotó el tiempo de espera (504) y no está confirmado si el turno llegó a completarse; la petición pudo llegar al proveedor.";
     return { uncertain: true, text: stateText + " No hay reintento automático." };
   }
   if (error.code === "CHAT_RATE_LIMITED") {
     return {
       uncertain: false,
-      text: "El proveedor rechazó la llamada por límite de uso (429); no es un tiempo de espera agotado. No hay reintento automático; espera antes de volver a enviar."
+      text: "El proveedor rechazó la llamada por límite de uso (429); no se agotó ninguna espera. No hay reintento automático; espera antes de volver a enviar."
     };
   }
   /* Cupo global de intentos reales: la petición no llegó a salir hacia el proveedor
@@ -443,7 +443,7 @@ function chatInitialStatus() {
   if (state.chatUncertain) {
     const sameDraft = state.chatUncertainQuery === draft;
     const ticketNote = state.chatUncertainTicket
-      ? " El ticket de cola del intento anterior no se reutiliza: pudo quedar reclamado o cerrado; un reenvío manual podría duplicar el turno o ser rechazado."
+      ? " El número de cola del intento anterior no se reutiliza: pudo quedar reclamado o cerrado; un reenvío manual podría duplicar el turno o ser rechazado."
       : "";
     return {
       warning: true,
@@ -455,7 +455,7 @@ function chatInitialStatus() {
   if (state.chatTicket && state.chatTicketQuery === draft) {
     return {
       warning: true,
-      text: "Hay un turno en cola pendiente de reenvío manual. No se envía automáticamente; al reenviarlo se usará su ticket."
+      text: "Hay un turno en cola pendiente de reenvío manual. No se envía automáticamente; al reenviarlo se usará su número de cola."
     };
   }
   return {
@@ -467,7 +467,7 @@ function chatInitialStatus() {
 function chatFailureDraftText(query, sameDraft, attemptedTicket) {
   const notes = [];
   if (attemptedTicket) {
-    notes.push("El ticket de cola usado en este intento no se reutiliza: pudo quedar reclamado o cerrado. Un reenvío manual empezaría un turno nuevo y podría duplicar el turno o ser rechazado.");
+    notes.push("El número de cola usado en este intento no se reutiliza: pudo quedar reclamado o cerrado. Un reenvío manual empezaría un turno nuevo y podría duplicar el turno o ser rechazado.");
   }
   if (sameDraft) {
     notes.push("La pregunta enviada sigue en el cuadro; puedes reenviarla manualmente, pero podría duplicar el turno o ser rechazada.");
@@ -1239,7 +1239,8 @@ function renderHome() {
     const available = answered && chatCapabilities?.context === true;
     const box = el("input", {type:"checkbox", id:`chat-context-field-${index}`, disabled:!available});
     const value = answered ? displayProfileValue(key, answer) : "sin responder en tu mapa";
-    chatOptions.appendChild(el("label", {className:"choice", htmlFor:`chat-context-field-${index}`}, [box, el("span", {}, `${CONTEXT_LABELS[key] || key}: ${value}`)]));
+    const label = CONTEXT_LABELS[key] || PROFILE_LABELS[key] || "Otro dato";
+    chatOptions.appendChild(el("label", {className:"choice", htmlFor:`chat-context-field-${index}`}, [box, el("span", {}, `${label}: ${value}`)]));
     return box;
   });
   const contextConsent = el("input", {type:"checkbox", id:"chat-context-consent", disabled:chatCapabilities?.context !== true});
@@ -1282,7 +1283,7 @@ function renderHome() {
     state.chatTicketQuery = null;
     submit.textContent = chatSubmitLabel();
     if (hadTicket) {
-      feedback.textContent = "La pregunta o el escenario cambiaron: el turno en cola anterior no se asociará a este contenido y su ticket queda descartado. No se reenvía automáticamente.";
+      feedback.textContent = "La pregunta o el escenario cambiaron: el turno en cola anterior no se asociará a este contenido y su número de cola queda descartado. No se reenvía automáticamente.";
       feedback.className = "chat-state warning-note";
     } else if (state.chatUncertain) {
       const status = chatInitialStatus();
@@ -1353,7 +1354,7 @@ function renderHome() {
           state.chatTicket = null;
           state.chatTicketQuery = null;
           submit.textContent = "Enviar pregunta";
-          feedback.textContent = "La pregunta cambió mientras se esperaba la cola. El turno anterior no se asociará a esta pregunta nueva y no se reenvía automáticamente; su ticket no se conserva aquí.";
+          feedback.textContent = "La pregunta cambió mientras se esperaba la cola. El turno anterior no se asociará a esta pregunta nueva y no se reenvía automáticamente; su número de cola no se conserva aquí.";
           feedback.className = "chat-state warning-note";
           return;
         }
@@ -1446,6 +1447,21 @@ function renderHome() {
               })
               : "Se ha omitido el texto del modelo porque no se pudo verificar localmente. No se presenta como dato.";
             feedback.appendChild(textElement("p", withheldNotice));
+            // `answer` en este estado NO es la prosa del modelo (el backend lo marca
+            // con `answer_origin: "app"`): es la respuesta que compone la app con las
+            // condiciones verificadas y, si hubo cálculo, la cuenta. Se pintaba solo
+            // la tarjeta y por eso el usuario veía «TAE: sin valor documentado» sin
+            // ninguna frase que le dijera qué hacer. La prosa del modelo sigue sin
+            // mostrarse: eso es lo que `withheld` significa.
+            const textoDeLaApp = result.answer_origin === "app"
+              && typeof result.answer === "string" && result.answer.trim();
+            if (textoDeLaApp) {
+              const propio = result.answer.replace(/\*\*(.+?)\*\*/g, "$1");
+              for (const trozo of propio.split(/\n\s*\n/)) {
+                const texto = trozo.replace(/^\s*#{1,6}\s*/gm, "").trim();
+                if (texto) feedback.appendChild(textElement("p", texto));
+              }
+            }
             // La tarjeta del catálogo pintaba «Productos encontrados (3)» y «TAE: sin
             // valor documentado» ENCIMA de la respuesta que ya compone el backend: el
             // volcado viejo duplicado. Pero las condiciones con su fuente sí hacen
@@ -2909,7 +2925,7 @@ function renderComparePage(focus = true) {
     loadComparison();
   }
   const { page, heading } = pageFrame("Compare · condiciones documentadas cuando existen", "Comparar candidatos", "Selecciona entre dos y cuatro candidatos distintos en la biblioteca. Las columnas siguen el mismo orden y muestran los campos que faltan.");
-  page.appendChild(callout("Comparación educativa. Solo se muestran cifras documentadas con fuente y fecha; «vencido», «en conflicto» o «sin dato» se enseñan tal cual. No es un ranking financiero.", "warning-note"));
+  page.appendChild(callout("Comparación educativa. Solo se muestran cifras documentadas con fuente y fecha; «vencido», «en conflicto» o «sin dato» se enseñan tal cual. No se ordenan candidatos de mejor a peor.", "warning-note"));
   const selection = el("section", { className: "paper-section" });
   selection.appendChild(el("h2", {}, "Tu selección"));
   const selected = el("div", { id: "compare-selection" });
@@ -2962,7 +2978,7 @@ function renderDiagnosis() {
     holder.appendChild(textElement("p", "El diagnóstico TAE para depósitos a 12 meses en EUR solo se ofrece si todos los candidatos seleccionados son depósitos. No se aplica a otras familias."));
     return;
   }
-  holder.appendChild(textElement("p", "Criterio consultado: TAE de depósito a 12 meses en EUR. No presupone que los candidatos tengan ese plazo; no es una oferta ni un ranking."));
+  holder.appendChild(textElement("p", "Criterio consultado: TAE de depósito a 12 meses en EUR. No presupone que los candidatos tengan ese plazo; no es una oferta ni una clasificación."));
   const d = state.diagnosis;
   holder.appendChild(button("Diagnosticar TAE a 12 meses en EUR", () => loadDiagnosis(), "button button-secondary", { disabled: d.busy }));
   if (d.busy) holder.appendChild(textElement("p", "Consultando el diagnóstico local…", "loading-state"));
@@ -3425,7 +3441,7 @@ function renderScenario() {
     const termNote = seed.source && seed.source.term_months && Number(seed.years) * 12 !== seed.source.term_months
       ? ` El plazo documentado es de ${seed.source.term_months} meses; el horizonte editable se redondea a ${seed.years} año(s) y no se presenta como plazo del producto.`
       : "";
-    page.appendChild(callout(`Supuesto importado de «${seed.name}»: tasa anual ${seed.rate} % y horizonte ${seed.years} año(s), ya escritos en el escenario A. Es una hipótesis editable, no una oferta ni una proyección.${termNote} La tasa, el tramo y la fuente se copian solo a este formulario local: el perfil no se incluye y no se envía al proveedor de IA.`, "info-note"));
+    page.appendChild(callout(`Supuesto importado de «${seed.name}»: tasa anual ${seed.rate} % y horizonte ${seed.years} año(s), ya escritos en el escenario A. Es una hipótesis editable, no una oferta ni una previsión.${termNote} La tasa, el tramo y la fuente se copian solo a este formulario local: el perfil no se incluye y no se envía al proveedor de IA.`, "info-note"));
   }
   page.appendChild(callout("Hipótesis del usuario · no predicción · bruto, sin fiscalidad ni costes de producto. El método compuesto convierte la tasa anual efectiva a mensual; en simple la tasa anual se divide entre 12. Aportaciones al final de cada mes.", "warning-note"));
   page.appendChild(el("p", {}, "Compara dos hipótesis independientes. Cada resultado muestra los valores nominales, reales y aportados del motor local."));

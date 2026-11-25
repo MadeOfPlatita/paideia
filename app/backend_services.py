@@ -1652,6 +1652,9 @@ class LocalChatService:
                 # Defensa en profundidad: si hubo datos de catálogo, la prosa no se entrega.
                 answer_text_state = ANSWER_TEXT_WITHHELD
                 result = {**result, "answer_text_state": ANSWER_TEXT_WITHHELD}
+            calculation = result.get("calculation")
+            if type(calculation) is not dict:
+                calculation = None
             if answer_text_state == ANSWER_TEXT_WITHHELD and catalogue.get("used") is True:
                 # La prosa del modelo no se entrega cuando hay datos de catálogo
                 # (su atribución no se puede validar contra la fuente). Pero un
@@ -1668,10 +1671,32 @@ class LocalChatService:
                     # prosa» sonaba a politica de estilo y no explicaba nada.
                     compuesta = pending_evidence_answer(catalogue)
                 answer_text = compuesta if compuesta is not None else CATALOGUE_WITHHELD_NOTE
+                # Si el turno TAMBIÉN calculó un escenario, la cuenta va en la misma
+                # respuesta. Antes se quedaba fuera: el usuario veía la ficha, la
+                # tarjeta con «TAE: sin valor documentado» y cuatro líneas de motor,
+                # pero ninguna frase que las uniera. Medido en pantalla con el
+                # escenario del estudiante.
+                if calculation is not None:
+                    cuenta = _calculation_answer(calculation)
+                    if cuenta:
+                        answer_text = (answer_text or "").strip() + "\n\n" + cuenta
+                # El estado sigue siendo WITHHELD a propósito: significa «la prosa del
+                # MODELO no se entrega», y eso es cierto. Pero `answer` lleva el texto
+                # compuesto por la app (fichas + cuenta), que sí se muestra. El
+                # frontend distingue las dos cosas; antes no pintaba `answer` en este
+                # estado y el usuario solo veía la tarjeta con «TAE: sin valor
+                # documentado» (medido en pantalla).
+                #
+                # `answer_origin` es la marca que permite al frontend saber que este
+                # texto NO es del modelo y puede pintarse sin romper la frontera.
+                if (answer_text or "").strip():
+                    result = {**result, "answer_origin": "app"}
             else:
                 answer_text = result["answer"] if answer_text_state != ANSWER_TEXT_WITHHELD else ""
-            if answer_text_state != ANSWER_TEXT_WITHHELD:
-                answer_text = answer_text or result["refusal"] or ""
+            # Solo se rellena si hay hueco: sobrescribir aquí la respuesta compuesta
+            # del catálogo la borraría y volvería el volcado.
+            if answer_text_state != ANSWER_TEXT_WITHHELD and not (answer_text or "").strip():
+                answer_text = result["refusal"] or ""
             # Un 200 con texto vacío no es una respuesta: es el proveedor sin
             # devolver contenido (finish_reason stop y mensaje vacío). Un texto
             # retenido por la frontera sí tiene motivo declarado y se entrega.

@@ -422,7 +422,7 @@ test('las razones de la comparación se filtran en lugar de romper el pintado', 
 
   const holder = new Node('section');
   assert.doesNotThrow(() => ui.ctx.renderComparisonResultBody(holder));
-  assert.match(plainText(holder), /Solo se comparan metadatos educativos/);
+  assert.match(plainText(holder), /Solo se comparan datos de identidad y condiciones documentadas/);
 });
 
 test('una referencia de fuente nula en el diagnóstico no rompe la vista', () => {
