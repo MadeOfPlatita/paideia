@@ -1,5 +1,19 @@
 # Despliegue de Paideia con Pai conectada (Render, plan gratuito)
 #
+# DECISIÓN DE PRODUCTO: esto se queda en el plan GRATUITO. No se sube a un plan de
+# pago. Si el tráfico supera lo que aguanta una instancia, el producto sigue en
+# gratis: se acepta la cola antes que la factura.
+#
+# Lo que el plan gratuito SÍ permite (medido el 25/11/2026 con 50 usuarios
+# simultáneos reales contra este servicio): 50/50 peticiones respondidas, 0
+# rechazadas, mediana 16,1 s, la más lenta 21,8 s. La concurrencia NO es el
+# problema del plan gratuito.
+#
+# Lo único que impone es el APAGADO por inactividad: tras 15 minutos sin tráfico
+# el servicio duerme, y el primero que entra espera 30-50 s. Se resuelve gratis con
+# una petición periódica a /api/status: ver `scripts/mantener_despierta.py` en el
+# perfil de Hermes y su tarea programada cada 10 minutos.
+#
 # La app es un servidor HTTP con estado (contador de llamadas, sesiones y
 # catálogo en memoria), no una función sin estado. Render ejecuta el proceso
 # tal cual, sin reescribir el backend ni exponer la clave en el navegador.
@@ -30,10 +44,16 @@ services:
         value: commandcode
       - key: PAIDEIA_GROQ_MODEL
         value: openai/gpt-oss-120b
-      - key: PAIDEIA_CALLS_PER_DAY
-        value: "300"
+      # Cupos del chat. El techo real del plan gratuito es la RAM (512 MB) y el
+      # proceso único, no estas cifras. Se ponen por encima de la sala esperada
+      # (50 alumnos preguntando varias veces en el mismo minuto ≈ 150) para que
+      # nadie reciba un rechazo por cupo mientras quede memoria.
+      # NO bajarlos: medido, con 10/min y 4 turnos simultáneos el usuario 5 de una
+      # sala de 50 recibía un rechazo inmediato.
       - key: PAIDEIA_CALLS_PER_MINUTE
-        value: "10"
+        value: "400"
+      - key: PAIDEIA_CALLS_PER_DAY
+        value: "40000"
       - key: GROQ_API_KEY
         sync: false
       - key: COMMANDCODE_API_KEY
