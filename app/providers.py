@@ -589,7 +589,11 @@ class GroqProvider:
     ):
         if (type(opt_in) is not bool or not callable(getattr(transport, "post", None))
                 or not model_is_allowed(model)
-                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 60.0
+                # El techo era 60 s y cortaba respuestas reales: con una sala de 50
+                # usuarios coincidiendo, el turno seguia vivo cuando el cliente ya
+                # habia saltado por timeout. Sube a 120 s, pero sigue acotado: una
+                # peticion colgada no puede ocupar un turno indefinidamente.
+                or type(timeout) not in {int, float} or not 0.1 <= timeout <= 120.0
                 or type(max_request_bytes) is not int
                 or not 1 <= max_request_bytes <= MAX_REQUEST_BYTES
                 or type(max_output_tokens) is not int

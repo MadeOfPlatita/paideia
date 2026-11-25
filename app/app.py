@@ -935,7 +935,33 @@ def create_server(host="127.0.0.1", port=8765, repository=None, *,
         raise ValueError("the local prototype binds only to 127.0.0.1")
     if isinstance(port, bool) or not isinstance(port, int) or not 0 <= port <= 65535:
         raise ValueError("port must be an integer from 0 through 65535")
-    httpd = ThreadingHTTPServer((host, port), _Handler)
+
+
+    class _ServidorDeAula(ThreadingHTTPServer):
+        """ThreadingHTTPServer con cola de escucha suficiente para una sala.
+
+        `socketserver.TCPServer.request_queue_size` vale 5 por defecto: es el
+        backlog de `listen()`, es decir, cuantas conexiones puede tener el sistema
+        operativo esperando a que las acepte el proceso. Con 50 alumnos entrando a
+        la vez, el resto se rechazaba en el kernel antes de llegar a la app, y el
+        usuario veia un error de red sin explicacion. Medido: 5.
+
+        `allow_reuse_address` evita ademas el "Address already in use" al
+        reiniciar el servicio.
+        """
+
+        request_queue_size = 128
+        allow_reuse_address = True
+
+        # Atributos que `create_server` inyecta después de construir el servidor.
+        # Se declaran aquí para que el analizador de tipos los conozca; en tiempo
+        # de ejecución los asigna `create_server`.
+        catalogue_repository: object = None
+        comparison_service: object = None
+        chat_service: object = None
+        conditions_service: object = None
+
+    httpd = _ServidorDeAula((host, port), _Handler)
     httpd.daemon_threads = True
     try:
         comparison = comparison_service if comparison_service is not None else CatalogueComparisonService()

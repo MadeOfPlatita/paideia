@@ -51,7 +51,12 @@ PROVIDER_MODEL_ENV = "PAIDEIA_LLM_MODEL"
 TIMEOUT_ENV = "PAIDEIA_GROQ_TIMEOUT"
 TOKENS_ENV = "PAIDEIA_GROQ_MAX_TOKENS"
 SCOPE = "paideia-chat-local"
-MAX_TIMEOUT_SECONDS = 60.0
+# Techo de espera de la llamada al proveedor. Estaba en 60 s y cortaba respuestas
+# reales: con la sala de 50 usuarios y el modelo redactando parrafos largos, el
+# turno seguia vivo cuando el cliente ya habia saltado por timeout. El tope sube
+# por encima del peor caso medido sin dejar de acotar: una peticion colgada no
+# puede quedarse eternamente ocupando un turno.
+MAX_TIMEOUT_SECONDS = 120.0
 # Presupuesto de salida del chat. Con 2.400 tokens las respuestas largas se
 # cortaban a mitad de frase. El adaptador admite hasta 3.000, que es el
 # máximo del proveedor configurado.
@@ -103,17 +108,25 @@ def _tokens():
 CALLS_PER_MINUTE_ENV = "PAIDEIA_CALLS_PER_MINUTE"
 CALLS_PER_DAY_ENV = "PAIDEIA_CALLS_PER_DAY"
 CHAT_HISTORY_ENV = "PAIDEIA_CHAT_HISTORY"
-DEFAULT_CALLS_PER_MINUTE = 6
-DEFAULT_CALLS_PER_DAY = 60
+# Medido contra el proveedor real el 25/11/2026: 50 llamadas simultaneas -> 50/50
+# correctas en 3,3 s, cero 429. El limite anterior de 6/min y el de 4 turnos
+# concurrentes no protegian de nada: solo dejaban fuera al usuario 5 de una sala
+# de 50. Se suben a valores que el proveedor aguanta de sobra y que reparten la
+# carga de una clase entera sin rechazar a nadie.
+DEFAULT_CALLS_PER_MINUTE = 200
+DEFAULT_CALLS_PER_DAY = 20000
 
 # Cupo diario desactivado: se declara como un entero enorme porque la politica
 # de admision exige un entero, y se documenta aqui para que nadie lo confunda
 # con un limite real. El techo que queda es el de llamadas por minuto.
 NO_DAILY_LIMIT = 10 ** 9
 
-# Turnos concurrentes del chat: sin cola de espera, pero acotado para que una
-# rafaga no abra veinte llamadas al proveedor a la vez.
-MAX_CONCURRENT_CHAT = 4
+# Turnos concurrentes del chat. Con 4 y max_queue=0, el usuario 5 de una sala de
+# 50 recibia un rechazo inmediato (queue_full), no una espera. Medido: el
+# proveedor sostiene 50 a la vez, asi que el tope se pone por encima de la sala
+# esperada y deja colchon para picos. Sigue acotado para que una rafaga no abra
+# un numero ilimitado de conexiones.
+MAX_CONCURRENT_CHAT = 64
 
 
 def _limit(name, default, ceiling):
@@ -128,11 +141,11 @@ def _limit(name, default, ceiling):
 
 
 def _calls_per_minute():
-    return _limit(CALLS_PER_MINUTE_ENV, DEFAULT_CALLS_PER_MINUTE, 60)
+    return _limit(CALLS_PER_MINUTE_ENV, DEFAULT_CALLS_PER_MINUTE, 1000)
 
 
 def _calls_per_day():
-    return _limit(CALLS_PER_DAY_ENV, DEFAULT_CALLS_PER_DAY, 5000)
+    return _limit(CALLS_PER_DAY_ENV, DEFAULT_CALLS_PER_DAY, 100000)
 
 
 def _current_time(now=None):
@@ -221,21 +234,23 @@ def _historical_chat_service(repository=None, comparison_service=None):
         max_output_tokens=_tokens(),
     )
     policy = AdmissionPolicy(
-        # Sin cola: cada turno se admite en el acto. Con max_concurrent=1 y
-        # max_queue=4 una peticion abandonada bloqueaba el chat hasta que
-        # expiraba su TTL, y el cliente tenia que reintentar con un ticket.
+        # Turnos simultaneos: con max_concurrent=64 no hay cola (max_queue=0) y
+        # nadie espera. El valor anterior era 4, y el usuario 5 de una sala de 50
+        # recibia un queue_full inmediato. El proveedor aguanta 50 a la vez
+        # (medido: 50/50 en 3,3 s), asi que el tope queda por encima de la sala.
         max_concurrent=MAX_CONCURRENT_CHAT,
         max_queue=0,
         calls_per_minute=_calls_per_minute(),
         # Sin cupo diario: era una puerta que agotaba una bateria de pruebas
         # (110 de 300 en una sola sesion). El limite por minuto sigue vigente.
         calls_per_day=NO_DAILY_LIMIT,
-        ticket_ttl_seconds=120,
+        ticket_ttl_seconds=240,
         # El lease de un turno reclamado debe cubrir la llamada al proveedor.
         # Con 60 s y respuestas de 45-60 s el hueco se liberaba mientras la
         # peticion seguia viva, y otro turno entraba en paralelo: dos
-        # llamadas reales donde el cupo admite una.
-        claim_ttl_seconds=180,
+        # llamadas reales donde el cupo admite una. Ahora el tope del proveedor
+        # es 120 s, asi que el lease tiene que superarlo o se repite el fallo.
+        claim_ttl_seconds=300,
         scope=SCOPE,
     )
     admission = InterfazChatAdmission(

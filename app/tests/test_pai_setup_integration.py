@@ -130,7 +130,7 @@ class SetupIntegrationTests(unittest.TestCase):
             self.assertFalse(service._test_only)
             self.assertTrue(service.status()['capabilities']['context'])
             self.assertTrue(service.status()['capabilities']['catalogue'])
-            self.assertEqual(service.quota()['calls_per_minute'], 6)
+            self.assertEqual(service.quota()['calls_per_minute'], 200)
             # Sin cupo diario; el techo que queda es por minuto.
             self.assertGreaterEqual(service.quota()['calls_per_day'], 10 ** 8)
             answer = service.chat({'message': PROMPT, 'consent': dict(CONSENT)})

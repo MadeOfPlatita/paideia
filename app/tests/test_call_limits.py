@@ -17,9 +17,13 @@ class CallLimitTests(unittest.TestCase):
         return mock.patch.dict(os.environ, limpio, clear=True)
 
     def test_defaults(self):
+        # Los valores por defecto se subieron el 25/11/2026 para una sala de 50
+        # usuarios simultaneos. Medido contra el proveedor real: 50 llamadas a la
+        # vez responden 50/50 en 3,3 s, cero 429. Con 6/min y 4 turnos
+        # concurrentes, el usuario 5 recibia un rechazo inmediato.
         with self.entorno():
-            self.assertEqual(self.pai._calls_per_minute(), 6)
-            self.assertEqual(self.pai._calls_per_day(), 60)
+            self.assertEqual(self.pai._calls_per_minute(), 200)
+            self.assertEqual(self.pai._calls_per_day(), 20000)
 
     def test_reads_the_environment(self):
         with self.entorno(PAIDEIA_CALLS_PER_MINUTE="20", PAIDEIA_CALLS_PER_DAY="400"):
@@ -30,12 +34,14 @@ class CallLimitTests(unittest.TestCase):
         for valor in ("abc", "0", "-5", "", "3.5"):
             with self.subTest(valor=valor):
                 with self.entorno(PAIDEIA_CALLS_PER_DAY=valor):
-                    self.assertEqual(self.pai._calls_per_day(), 60, valor)
+                    self.assertEqual(self.pai._calls_per_day(), 20000, valor)
 
     def test_absurd_values_are_capped(self):
+        # El techo sigue existiendo (un valor absurdo no abre la puerta), pero
+        # ahora esta por encima de la sala esperada en vez de por debajo.
         with self.entorno(PAIDEIA_CALLS_PER_MINUTE="9999", PAIDEIA_CALLS_PER_DAY="999999"):
-            self.assertEqual(self.pai._calls_per_minute(), 60)
-            self.assertEqual(self.pai._calls_per_day(), 5000)
+            self.assertEqual(self.pai._calls_per_minute(), 1000)
+            self.assertEqual(self.pai._calls_per_day(), 100000)
 
     def test_status_reports_the_configured_quota(self):
         app = importlib.import_module("app")

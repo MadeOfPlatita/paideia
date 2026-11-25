@@ -49,7 +49,14 @@ class ApiFailure extends Error {
   }
 }
 
-const API_TIMEOUT_MS = 45000;
+// Tiempo maximo que el navegador espera una respuesta del chat. Estaba en 45 s y
+// cortaba turnos que seguian vivos: el servidor y el proveedor continuaban
+// trabajando, pero el cliente ya habia abandonado y mostraba "no se sabe si el
+// turno llego a completarse". Con una sala de 50 usuarios coincidiendo en la misma
+// pregunta los turnos se encolan, asi que la espera se amplia por encima del
+// peor caso medido (una respuesta real tarda 15-60 s). No es un limite de uso:
+// es solo el punto en que el navegador deja de esperar.
+const API_TIMEOUT_MS = 120000;
 
 async function apiRequest(path, options = {}) {
   const request = { method: options.method || "GET", headers: { Accept: "application/json" } };
