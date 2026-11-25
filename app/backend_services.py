@@ -1502,7 +1502,24 @@ class LocalChatService:
                 if self.calls:
                     reserved = service._admission.reserve_provider_call(ticket)
                     if reserved.get("code") != "reserved":
-                        self.problem = ServiceProblem(429, "CHAT_QUOTA_EXHAUSTED", "No queda presupuesto para otra llamada; no hay reintento automático.")
+                        # El límite POR MINUTO no es un presupuesto agotado: se
+                        # repone solo. Medido en pantalla: probando varias preguntas
+                        # seguidas (6 llamadas/minuto y un turno con herramientas
+                        # consume 2) la app decía «No queda presupuesto para otra
+                        # llamada», que suena a que la app se ha roto para siempre
+                        # cuando en realidad basta esperar unos segundos. Mismo
+                        # código, dos situaciones distintas: se distinguen.
+                        if reserved.get("code") == "quota_exhausted":
+                            self.problem = ServiceProblem(
+                                429, "CHAT_QUOTA_EXHAUSTED",
+                                "Se ha alcanzado el límite de consultas por minuto. "
+                                "Espera unos segundos y vuelve a enviar la pregunta; "
+                                "no se ha perdido nada.")
+                        else:
+                            self.problem = ServiceProblem(
+                                503, "CHAT_ADMISSION_UNAVAILABLE",
+                                "El presupuesto de consultas no está disponible en este "
+                                "momento; no se ha enviado la pregunta.")
                         raise self.problem
                 self.calls += 1
                 try:
