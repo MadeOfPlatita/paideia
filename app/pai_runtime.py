@@ -184,12 +184,19 @@ class ToolChatRunner:
     @classmethod
     def _failure(cls, *, tool_events, sources, tool_failure=False, detail=None,
                  catalogue_used=False, catalogue_products=None, sources_total=None):
-        return cls._answer_dto(
+        dto = cls._answer_dto(
             "", _TOOL_FAILURE_MESSAGE if tool_failure else _FAILURE_MESSAGE,
             "tool_error" if tool_failure else "error",
             tool_events, sources, catalogue_used, catalogue_products,
             sources_total=sources_total,
         )
+        # El motivo viaja en el DTO. Sin esto el diagnóstico era imposible: el
+        # servicio lee `failure_detail` para publicarlo con PAIDEIA_TOOL_DEBUG=1 y
+        # el campo no existía nunca, así que todos los fallos se veían iguales.
+        # Es un código interno cerrado, nunca contenido del modelo ni del usuario.
+        if detail is not None:
+            dto["failure_detail"] = detail
+        return dto
 
     @staticmethod
     def _valid_definitions(definitions):

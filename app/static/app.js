@@ -900,6 +900,29 @@ function renderHome() {
   const CHAT_MONEY = /^-?\d{1,18}(?:\.\d{1,2})?$/;
   const CHAT_PERCENT = /^-?\d{1,4}(?:\.\d{1,4})?$/;
   const CHAT_CALC_METHODS = { simple: "simple", compound: "compuesto" };
+  // Limpia el markdown que el modelo deja y que en pantalla se lee como basura.
+  // Medido con la pregunta «¿qué es la TAE?»: salían a la vista «## La diferencia en
+  // una frase», «## Errores comunes 1. …», «*APR*», «*i*» y listas «- …». El usuario
+  // ve almohadillas y asteriscos, que es exactamente lo que hace que una respuesta
+  // parezca un volcado técnico y no una conversación.
+  function chatPlain(value) {
+    if (typeof value !== "string") return "";
+    return value
+      // Encabezados: «## Título» -> «Título», en su propia línea y en negrita.
+      .replace(/^[ \t]*#{1,6}[ \t]*(.+)$/gm, "\u0001$1\u0002")
+      // Negrita y cursiva.
+      .replace(/\*\*(.+?)\*\*/g, "$1")
+      .replace(/(^|[\s(])[*_]([^*_\n]+)[*_](?=[\s).,;:]|$)/g, "$1$2")
+      // Listas con guion o asterisco al principio de línea: se dejan como guion
+      // simple, que sí es legible.
+      .replace(/^[ \t]*[-*+][ \t]+/gm, "\u2022 ")
+      // Reglas horizontales y bloques de código sueltos.
+      .replace(/^[ \t]*([-*_])\1{2,}[ \t]*$/gm, "")
+      .replace(/```[a-zA-Z]*\n?/g, "")
+      // Los marcadores de encabezado se convierten en negrita real del navegador.
+      .replace(/\u0001(.+?)\u0002/g, "$1");
+  }
+
   function chatMoney(value) {
     if (typeof value !== "string" || !CHAT_MONEY.test(value)) return "";
     const negative = value.startsWith("-");
@@ -1456,9 +1479,8 @@ function renderHome() {
             const textoDeLaApp = result.answer_origin === "app"
               && typeof result.answer === "string" && result.answer.trim();
             if (textoDeLaApp) {
-              const propio = result.answer.replace(/\*\*(.+?)\*\*/g, "$1");
-              for (const trozo of propio.split(/\n\s*\n/)) {
-                const texto = trozo.replace(/^\s*#{1,6}\s*/gm, "").trim();
+              for (const trozo of chatPlain(result.answer).split(/\n\s*\n/)) {
+                const texto = trozo.trim();
                 if (texto) feedback.appendChild(textElement("p", texto));
               }
             }
@@ -1473,16 +1495,13 @@ function renderHome() {
             });
             if (calculation) renderChatCalculation(feedback, calculation);
           } else if (typeof result.answer === "string" && result.answer) {
-            // El modelo usa **negrita** markdown, pero aquí el texto se inserta
-            // literal: se quitan las marcas para no enseñar asteriscos.
-            const limpio = result.answer.replace(/\*\*(.+?)\*\*/g, "$1");
-            // Un solo <p> con 1.500 caracteres es un muro ilegible: medido en
-            // pantalla, la respuesta del asesor salía como un bloque compacto sin
-            // una sola pausa. Se separa por párrafos y se quitan los encabezados
-            // markdown crudos («## Qué hace un 2 %…») que el modelo deja y que en
-            // pantalla se leen como almohadillas.
-            for (const trozo of limpio.split(/\n\s*\n/)) {
-              const texto = trozo.replace(/^\s*#{1,6}\s*/gm, "").trim();
+            // El modelo usa markdown (negritas, encabezados, listas). Aquí el texto
+            // se inserta literal, así que hay que limpiarlo: medido en pantalla,
+            // salían «## La diferencia en una frase», «*APR*» y listas con guion.
+            // Un solo <p> con 1.500 caracteres es además un muro ilegible: se separa
+            // por párrafos para que la lectura respire.
+            for (const trozo of chatPlain(result.answer).split(/\n\s*\n/)) {
+              const texto = trozo.trim();
               if (texto) feedback.appendChild(textElement("p", texto));
             }
             if (calculation) renderChatCalculation(feedback, calculation);

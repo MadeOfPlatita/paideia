@@ -34,11 +34,15 @@ function setup() {
 
 test('la respuesta se parte en párrafos y no deja almohadillas markdown', () => {
   const { code } = setup();
-  // El render debe partir por \n\n y limpiar los encabezados.
+  // El render parte por línea en blanco y limpia el markdown con chatPlain, que es
+  // la función que quita encabezados, negritas y listas (probada con casos reales
+  // en b4_chat_markdown_clean.test.cjs).
   assert.match(code, /split\(\/\\n\\s\*\\n\//,
     'el render debe separar párrafos por línea en blanco');
-  assert.match(code, /replace\(\/\^\\s\*#\{1,6\}\\s\*\/gm, ""\)/,
-    'el render debe quitar los encabezados markdown crudos');
+  assert.match(code, /function chatPlain\(value\)/,
+    'debe existir la limpieza de markdown');
+  assert.match(code, /chatPlain\(result\.answer\)/,
+    'el render debe pasar la respuesta por chatPlain');
 });
 
 test('el texto del modelo llega con párrafos desde el backend', () => {
@@ -64,7 +68,7 @@ test('un encabezado markdown suelto no se convierte en un título con almohadill
 
 test('el cálculo va DESPUÉS de la prosa, no en medio', () => {
   const { code } = setup();
-  const i = code.indexOf('for (const trozo of limpio.split(');
+  const i = code.indexOf('for (const trozo of chatPlain(result.answer).split(');
   const j = code.indexOf('if (calculation) renderChatCalculation(feedback, calculation);', i);
   assert.ok(i > 0 && j > i,
     'la prosa se pinta primero y el cálculo detrás');
