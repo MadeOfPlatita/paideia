@@ -12,6 +12,7 @@ from pai_runtime import ANSWER_TEXT_SHOWN, ANSWER_TEXT_WITHHELD, ToolChatRunner
 from chat_context import NOTICE as CONTEXT_NOTICE, validate_context, validate_history, profile_echo
 from catalogue_facts import RULESET_VERSION, ComparisonSpec, evaluate_comparability
 from catalogue_answer import compose_catalogue_answer, pending_evidence_answer
+from catalogue_recommendation import recommended_product_id
 from financial_quality import FINANCIAL_EDUCATION_PROMPT, assess_financial_text, redact_financial_claims
 from structured_education import render_selection
 from structured_provider_adapter import StructuredProviderAdapter, FakeChatProvider, parse_selection
@@ -474,7 +475,191 @@ def _is_labelled_reference(piece):
     return False
 
 
-def _redact_unbacked_figures(text, strict=False):
+_MARKDOWN_HEADING_LINE = re.compile(r"^[ \t]{0,3}#{1,6}[ \t]+(\S.*?)[ \t]*#*[ \t]*$")
+# Un importe es una cifra PEGADA a su moneda. Un «12» suelto es un plazo, no un
+# importe, y no se exime por parecerse a un dato del usuario.
+_MONEY_TOKEN = re.compile(
+    r"(?P<before>\d[\d.,]*)\s*(?:€|\beur(?:os)?\b)"
+    r"|(?:€|\beur(?:os)?\b)\s*(?P<after>\d[\d.,]*)",
+    re.IGNORECASE,
+)
+# Todo lo que convierte una frase en ALGO MÁS que la cita de un importe del
+# usuario: una tasa, un resultado, un coste, un plazo con rendimiento, una
+# petición. Si aparece cualquiera de estos, la frase no se exime.
+_NOT_ONLY_A_QUOTE = re.compile(
+    r"%|por\s+ciento|porcentaje|\b(?:tae|tin|tasa|tipo|inter[eé]s|intereses|"
+    r"rentabilidad|remuneraci[oó]n|rendimiento|renta\w*|rinde\w*|"
+    r"anual\w*|mensual\w*|trimestral\w*|semestral\w*|diari[oa]s?|"
+    r"al\s+a[ñn]o|por\s+a[ñn]o|cada\s+a[ñn]o|al\s+mes|por\s+mes|cada\s+mes|"
+    r"saldo|resultado|total|capital|importe|montante|cifra|"
+    r"aportaci[oó]n(?:es)?|acaba\w*|acabar\w*|tendr[aá]s|tendr[íi]as|llegar[íi]as|"
+    r"queda\w*|quedar[íi]a|sobra\w*|falta\w*|gana\w*|ganar\w*|saca\w*|sacar|"
+    r"obtie\w*|obtener|recibe\w*|recibir|genera\w*|generar|produce\w*|producir|"
+    r"devenga\w*|abona\w*|paga\w*|"
+    r"comisi[oó]n(?:es)?|penalizaci[oó]n(?:es)?|coste(?:s)?|cuota(?:s)?|"
+    r"m[íi]nim[oa](?:s)?|m[áa]xim[oa](?:s)?|cobra\w*|cobrar|cargo|"
+    r"exig\w*|exigir|requier\w*|requerir|necesit\w*|necesitar|pide|piden|pedir|"
+    r"garantiz\w*|garantizar)\b",
+    re.IGNORECASE,
+)
+
+
+def _flatten_markdown_headings(text):
+    """Convierte «## Título» en «Título: cuerpo», sin almohadillas en la salida.
+
+    Medido EN PANTALLA en un turno de calculadora. El modelo responde con
+    encabezados markdown («## Qué hace un 2 % en tus cifras») y la redacción de
+    cifras parte el texto por frases. Un encabezado NO termina en punto, así que la
+    partición lo unía a la primera frase de su sección: si esa frase caía, caía el
+    título con ella y el razonamiento se quedaba sin su enunciado; y los títulos de
+    las secciones que sobrevivían quedaban pegados EN MEDIO de una frase
+    («…comisión. ## Qué sí encaja…»), donde el recorte del frontend —que solo mira
+    el principio de línea— ya no los quita. Lo que llegaba a la pantalla empezaba
+    por «## Qué hace un 2 % en tus cifras».
+
+    Aquí el título se une a su primera frase con dos puntos, igual que ya hace
+    `_flatten_headings` con los títulos sin markdown. Así el encabezado nunca viaja
+    solo: o sobrevive con su contenido, o cae con él, y nunca quedan almohadillas.
+    """
+    if type(text) is not str or "#" not in text:
+        return text
+    salida, titulo = [], None
+    for linea in text.splitlines():
+        marca = _MARKDOWN_HEADING_LINE.match(linea)
+        if marca is not None:
+            # Un título seguido de otro título: el primero se queda sin cuerpo y
+            # se publica como frase suelta (lo quitara `_drop_orphan_headings` si
+            # acaba solo).
+            if titulo:
+                salida.append(titulo)
+            titulo = marca.group(1).strip().rstrip(".:").strip()
+            continue
+        if titulo is None:
+            salida.append(linea)
+            continue
+        if not linea.strip():
+            continue
+        if linea.lstrip().startswith("|"):
+            # Una tabla no es una frase: el título se queda en su línea y la
+            # conversión de la tabla la hace `_strip_markdown_tables`.
+            salida.append(titulo)
+            titulo = None
+            salida.append(linea)
+            continue
+        if _NUMBERED_STEP.match(linea.strip()):
+            # Una lista numerada no es una frase que se pueda encadenar: el título
+            # se queda como enunciado y la lista empieza en su propia línea. Pegarlos
+            # producía «Qué sí encaja, por categoría: 1: una cuenta…», que se lee
+            # como una tabla rota.
+            salida.append(f"{titulo}.")
+            titulo = None
+            salida.append(linea)
+            continue
+        cuerpo = linea.strip()
+        if cuerpo[:1].isupper() and not cuerpo[:2].isupper():
+            cuerpo = cuerpo[:1].lower() + cuerpo[1:]
+        salida.append(f"{titulo}: {cuerpo}")
+        titulo = None
+    if titulo:
+        salida.append(titulo)
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(salida)).strip()
+
+
+def _canonical_amount(raw):
+    """«1.500», «1500» y «1.500,00» son el mismo importe: se comparan canonizados."""
+    texto = str(raw or "").strip()
+    if not texto:
+        return None
+    punto, coma = texto.rfind("."), texto.rfind(",")
+    if punto >= 0 and coma >= 0:
+        decimal, miles = (".", ",") if punto > coma else (",", ".")
+        texto = texto.replace(miles, "").replace(decimal, ".")
+    elif coma >= 0:
+        texto = texto.replace(",", ".") if len(texto) - coma - 1 != 3 else texto.replace(",", "")
+    elif punto >= 0:
+        texto = texto if len(texto) - punto - 1 != 3 else texto.replace(".", "")
+    try:
+        return f"{float(texto):.2f}"
+    except ValueError:
+        return None
+
+
+def _user_supplied_amounts(*textos):
+    """Importes que la PERSONA ha escrito en este turno o en los anteriores.
+
+    Son suyos, no del modelo: devolverlos citados no publica un dato inventado. Un
+    turno de calculadora sobre «tengo 2000 euros y un gasto de 1500» necesita poder
+    decir «no dejaría los 2.000 euros bloqueados»; sin esto, esa frase —que es el
+    razonamiento— caía por llevar una cifra.
+    """
+    importes = set()
+    for texto in textos:
+        if type(texto) is not str:
+            continue
+        for marca in _MONEY_TOKEN.finditer(texto):
+            canonico = _canonical_amount(marca.group("before") or marca.group("after"))
+            if canonico is not None:
+                importes.add(canonico)
+    return frozenset(importes)
+
+
+# Un número suelto que no es un importe solo pasa si es un PLAZO («a 12 meses») o
+# una enumeración. Cualquier otra cifra es una cifra del modelo, no una cita.
+_TERM_UNIT_AFTER_NUMBER = re.compile(
+    r"^\s*(?:mes|meses|año|años|ano|anos|día|días|dia|dias|semana|semanas|quincena|"
+    r"trimestre|trimestres|semestre|semestres)\b",
+    re.IGNORECASE,
+)
+
+
+def _has_foreign_number(text):
+    """¿Queda en `text` alguna cifra que no sea un plazo? (Ya sin los importes.)"""
+    for marca in re.finditer(r"\d[\d.,]*", text):
+        if _TERM_UNIT_AFTER_NUMBER.match(text[marca.end():]) is None:
+            return True
+    return False
+
+
+def _piece_only_quotes_user_amounts(piece, amounts):
+    """La frase cita importes de la persona y no afirma nada más.
+
+    Es la ÚNICA exención de la rama estricta, y es cerrada a propósito. Un importe
+    que la persona escribió y que la frase devuelve tal cual no puede atribuirse a
+    un producto ni al concepto equivocado: es su propio dato. En cuanto la frase
+    añade una tasa, un resultado, un coste, un sujeto de producto, una atribución,
+    una fecha, una cifra escrita con palabras o cualquier número que no sea uno de
+    sus importes, deja de ser una cita y se redacta como las demás.
+
+    Los dos fallos que esta lista cierra, medidos en el banco de pruebas: «puedes
+    sacar 1.500 euros al año» (importe del usuario + rendimiento) y «ganarás mil
+    euros con 1.500 euros» (palabra-número) se colaban con una exención que solo
+    miraba que los DÍGITOS estuvieran en los datos del usuario.
+    """
+    if not amounts or type(piece) is not str:
+        return False
+    if _NOT_ONLY_A_QUOTE.search(piece):
+        return False
+    if _SPELLED_NUMBER.search(piece) is not None:
+        return False
+    if _PRODUCT_SUBJECT.search(piece) is not None:
+        return False
+    if _ATTRIBUTION_SURFACE.search(piece) is not None:
+        return False
+    if _DATE_SURFACE.search(piece) is not None:
+        return False
+    importes = [marca.group("before") or marca.group("after")
+                for marca in _MONEY_TOKEN.finditer(piece)]
+    if not importes:
+        return False
+    if any(_canonical_amount(token) not in amounts for token in importes):
+        return False
+    # Un número suelto que NO es un importe: solo se admite si es un plazo
+    # («a 12 meses»). Cualquier otra cifra —«3.000», «2500», «1.030,00»— no es de
+    # la persona y tumba la frase.
+    return not _has_foreign_number(_MONEY_TOKEN.sub(" ", piece))
+
+
+def _redact_unbacked_figures(text, strict=False, user_text=""):
     """Quita solo las frases con cifras no respaldadas; conserva el resto del texto.
 
     La frontera es la misma de siempre (superficie, no semántica): no comprueba que
@@ -488,8 +673,23 @@ def _redact_unbacked_figures(text, strict=False):
     rota. Lo que hay que quitar es la frase que presenta un IMPORTE o una TASA, que
     es lo que se puede atribuir al motor; un plazo («en 12 meses») o una enumeración
     («dos cosas») son prosa y se quedan.
+
+    `user_text` son los textos de la persona (pregunta e historial). Solo se usa en
+    la rama estricta, para no tirar las frases que se limitan a repetir SUS importes:
+    «no dejaría los 2.000 euros bloqueados» es el razonamiento, no una cifra del
+    modelo. Cualquier afirmación añadida (tasa, resultado, coste, producto, fecha)
+    anula la exención.
     """
-    pieces = re.split(r"(?<=[.!?])\s+", text.strip())
+    if type(text) is not str:
+        return text, 0
+    # Las tablas se convierten en lista ANTES de partir por frases. Si se dejara
+    # para después, la partición pega cada fila a la frase anterior (el texto se
+    # vuelve a unir con espacios), la fila deja de empezar por «|» y el conversor
+    # de tablas ya no la reconoce: las tuberías llegaban a la pantalla. Medido en
+    # un turno de calculadora cuya respuesta traía una tabla bajo un encabezado.
+    texto = _strip_markdown_tables(_flatten_markdown_headings(text))
+    cantidades = _user_supplied_amounts(user_text) if strict else frozenset()
+    pieces = re.split(r"(?<=[.!?])\s+", texto.strip())
     kept, removed = [], 0
     for piece in pieces:
         if not piece.strip():
@@ -511,6 +711,9 @@ def _redact_unbacked_figures(text, strict=False):
                       or _FIGURE_WITH_NUMBER.search(piece) is not None)
         if figura:
             if _is_labelled_reference(piece):
+                kept.append(piece.strip())
+                continue
+            if _piece_only_quotes_user_amounts(piece, cantidades):
                 kept.append(piece.strip())
                 continue
             removed += 1
@@ -539,12 +742,17 @@ def _redact_unbacked_figures(text, strict=False):
         # No había nada que quitar: el texto se devuelve íntegro. Devolver "" aquí
         # hacía que el llamador lo interpretara como «todo redactado» y retuviera
         # la respuesta entera.
-        return text.strip(), 0
+        return texto.strip(), 0
     if not parcial:
         return "", removed
-    # El aplanado de encabezados NO se hace aquí: cada llamador decide cuándo. Si se
-    # hiciera antes de quitar las tablas markdown, el encabezado se fusionaría con
-    # la tabla y dejaría un «|» suelto en el texto.
+    # Un título que se quedó sin su frase es peor que no tenerlo: se cae antes de
+    # devolver el texto, para que la respuesta no empiece por una etiqueta suelta.
+    parcial = _drop_orphan_headings(_flatten_headings(parcial))
+    if not parcial:
+        return "", removed
+    # El aplanado de encabezados NO se hace antes de quitar las tablas markdown: si
+    # se hiciera, el encabezado se fusionaría con la tabla y dejaría un «|» suelto
+    # en el texto. Cada llamador decide cuándo llamar a `_strip_markdown_tables`.
     return _renumber(parcial), removed
 
 
@@ -689,13 +897,18 @@ def _renumber(text):
     return "".join(salida)
 
 
-def _catalogue_explanation(text):
+def _catalogue_explanation(text, user_text=""):
     """Prosa del modelo apta para acompanar a los datos: sin cifras ni atribuciones.
 
     Cuando el turno uso el catalogo, la prosa se descartaba entera y el usuario
     solo veia el listado: correcto pero poco util. Aqui se conserva lo que no
     puede convertirse en un dato falso. Se recorta a 1.200 caracteres para que
     la respuesta no se eternice detras del listado.
+
+    `user_text` son los textos de la persona. Solo sirve para una cosa: no tirar la
+    frase que se limita a repetir SUS importes («no dejaría los 2.000 euros
+    bloqueados»). No exime tasas, resultados ni costes: ver
+    `_piece_only_quotes_user_amounts`.
     """
     if type(text) is not str or not text.strip():
         return None
@@ -706,7 +919,7 @@ def _catalogue_explanation(text):
         text = _strip_tool_attempts(text)
         if not text.strip():
             return None
-    limpio, _quitadas = _redact_unbacked_figures(text.strip(), strict=True)
+    limpio, _quitadas = _redact_unbacked_figures(text.strip(), strict=True, user_text=user_text)
     if not limpio or not limpio.strip():
         return None
     limpio = _strip_markdown_tables(limpio.strip())
@@ -715,8 +928,11 @@ def _catalogue_explanation(text):
     # lo que hace que el texto se lea como un fragmento y no como una respuesta.
     limpio = _trim_to_sentence(limpio, 1200)
     # El aplanado de encabezados va AQUÍ, sobre el texto ya sin tablas: si se hace
-    # antes, el encabezado se fusiona con la tabla y deja un «|» suelto.
-    limpio = _flatten_headings(limpio)
+    # antes, el encabezado se fusiona con la tabla y deja un «|» suelto. El aplanado
+    # de los encabezados MARKDOWN («## Título») ya lo hizo la redacción, antes de
+    # partir por frases: si se dejara para aquí, el título habría viajado pegado a
+    # media frase y este paso ya no lo reconocería.
+    limpio = _drop_orphan_headings(_flatten_headings(limpio))
     return limpio or None
 
 
@@ -766,7 +982,13 @@ def _strip_markdown_tables(text):
     return "\n".join(salida)
 
 
-def _withhold_unbacked_claim(result, text, text_state, calculation=None):
+def _withhold_unbacked_claim(result, text, text_state, calculation=None, user_text=""):
+    """Decide qué parte del texto del modelo se entrega y en qué estado.
+
+    `user_text` (pregunta e historial de la persona) se pasa a la redacción para no
+    tirar las frases que solo repiten SUS importes. No se usa para publicar nada
+    nuevo: solo para conservar el razonamiento que las cita.
+    """
     if text_state == ANSWER_TEXT_WITHHELD:
         updated = dict(result)
         updated.setdefault("withheld_reason", "catalogue_evidence")
@@ -780,7 +1002,7 @@ def _withhold_unbacked_claim(result, text, text_state, calculation=None):
         if not allowed and reason != "figure":
             return _withhold_text(result, reason)
         if not allowed or _NUMBER.search(text) is not None or _SPELLED_NUMBER.search(text) is not None:
-            partial, removed = _redact_unbacked_figures(text, strict=True)
+            partial, removed = _redact_unbacked_figures(text, strict=True, user_text=user_text)
             if partial:
                 updated = dict(result)
                 notes = [note for note in (updated.get("limitations") or []) if type(note) is str][:6]
@@ -1692,13 +1914,16 @@ class LocalChatService:
             calculation = result.get("calculation")
             if type(calculation) is not dict:
                 calculation = None
+            # Los textos de la PERSONA (pregunta e historial): la redacción los usa
+            # solo para no tirar las frases que repiten sus propios importes.
+            texto_usuario = " ".join([pregunta] + [c for c in contexto_previo if isinstance(c, str)])
             if answer_text_state == ANSWER_TEXT_WITHHELD and catalogue.get("used") is True:
                 # La prosa del modelo no se entrega cuando hay datos de catálogo
                 # (su atribución no se puede validar contra la fuente). Pero un
                 # hueco tampoco sirve, y una nota fija que no contesta la pregunta
                 # menos: se compone la respuesta con las condiciones verificadas
                 # del DTO, cada una con su fuente citada.
-                explicacion = _catalogue_explanation(result.get("answer"))
+                explicacion = _catalogue_explanation(result.get("answer"), user_text=texto_usuario)
                 compuesta = compose_catalogue_answer(catalogue, explanation=explicacion,
                                                      question=pregunta,
                                                      previous_questions=contexto_previo)
@@ -1750,8 +1975,11 @@ class LocalChatService:
             calculation = result.get("calculation")
             if type(calculation) is not dict:
                 calculation = None
+            # Los textos de la PERSONA (pregunta e historial): la redacción los usa
+            # solo para no tirar las frases que repiten sus propios importes.
+            texto_usuario = " ".join([pregunta] + [c for c in contexto_previo if isinstance(c, str)])
             answer_text, answer_text_state, provenance_source = _withhold_unbacked_claim(
-                result, answer_text, answer_text_state, calculation)
+                result, answer_text, answer_text_state, calculation, user_text=texto_usuario)
             # Si la prosa se retuvo —o el modelo no escribió ninguna— y el usuario se
             # quedaría con un hueco, pero el motor calculó algo, se entrega el cálculo.
             # Medido: «Me ofrecen un deposito al 4 % a 18 meses, ¿es buena idea?»
@@ -1764,7 +1992,7 @@ class LocalChatService:
                 # El usuario se quedaría sin el razonamiento, y lo único que vería
                 # sería la tabla del motor. Primero se intenta conservar la prosa
                 # conceptual del modelo (sin sus cifras): hablar es el objetivo.
-                solo_prosa = _catalogue_explanation(result.get("answer"))
+                solo_prosa = _catalogue_explanation(result.get("answer"), user_text=texto_usuario)
                 compuesta = _calculation_answer(calculation)
                 if solo_prosa and compuesta:
                     answer_text = solo_prosa.strip() + "\n\n" + compuesta
@@ -1809,6 +2037,18 @@ class LocalChatService:
                     "provider_mode": "test_only" if self._test_only else "external",
                     "external_sent": not self._test_only,
                     "answer_text_state": answer_text_state,
+                    # `answer_origin: "app"` es la marca que dice al frontend que el
+                    # texto NO es del modelo y puede pintarse aunque el estado sea
+                    # «withheld». Se ponía en `result` pero NO en el DTO, así que nunca
+                    # llegaba: medido en producción, la pantalla se quedaba con la
+                    # tarjeta y enseñaba un producto distinto del que el JSON daba.
+                    "answer_origin": result.get("answer_origin"),
+                    # El producto que la app recomienda, para que la tarjeta enseñe
+                    # ESE y no el primero del array. Medido: a «¿qué TAE tiene el
+                    # depósito de EBN Banco?» el JSON daba 3,10 % (EBN) y la pantalla
+                    # 2,4 % (Sinycon), porque la tarjeta tomaba `products[0]`.
+                    "recommended_product_id": recommended_product_id(
+                        catalogue, question=pregunta, previous_questions=contexto_previo),
                     "catalogue": catalogue,
                     "calculation": calculation,
                     "tool_events": result["tool_events"], "sources": result["sources"],

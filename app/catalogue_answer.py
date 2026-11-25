@@ -247,6 +247,25 @@ def _question_intent(question):
                                      "qué ofreces", "que ofreces", "qué tienes",
                                      "que tienes", "lista", "enumera")):
         return "list"
+    # «¿Qué DEPÓSITOS hay?», «¿qué cuentas tienes?», «¿qué fondos ofrecéis?»: el
+    # plural se mete entre el «qué» y el verbo, así que los patrones de arriba no lo
+    # veían y la pregunta caía en «general», que pedía el importe antes de listar.
+    # Medido: «¿Qué depósitos hay?» respondía «me falta un dato, ¿cuánto dinero
+    # tienes?» en vez de decir qué hay.
+    if re.search(r"\bqu[eé]\s+[\wáéíóúñ]+\s+(?:hay|tienes|tiene|ofreces|ofrece|"
+                 r"ten[eé]is|ofrec[eé]is|existen|hay\s+disponibles)\b", text):
+        # Pero «¿qué TAE tiene el depósito de X?» NO es un listado: pregunta por una
+        # cifra de un producto concreto. Solo cuenta si el sustantivo es una familia
+        # del catálogo, no una métrica.
+        familia = re.search(r"\bqu[eé]\s+([\wáéíóúñ]+)\s+", text)
+        if familia is None or familia.group(1) in {
+                "productos", "depósitos", "depositos", "cuentas", "fondos", "etf",
+                "letras", "instrumentos", "opciones", "ofertas", "cosas", "más", "mas"}:
+            return "list"
+    if re.search(r"\b(?:qu[eé]|cu[aá]les)\s+(?:productos|dep[oó]sitos|cuentas|fondos|"
+                 r"etf|letras|instrumentos|opciones)\b", text) and not re.search(
+                 r"\b(?:tae|tin|tasa|inter[eé]s|interes|comisi|plazo|m[ií]nim|riesgo)\b", text):
+        return "list"
     if any(word in text for word in ("tae", "tasa", "interés", "interes", "rentabilidad", "remuner")):
         return "rate"
     if any(word in text for word in ("comisi", "ter", "coste", "barato", "caro")):
@@ -519,7 +538,11 @@ def _mentions_issuer(product, text):
     if not isinstance(text, str) or not text.strip():
         return False
     pregunta = text.casefold()
-    emisor = product.get("issuer")
+    # El emisor viaja en `provider` en el DTO real; `issuer` se acepta por las
+    # fichas antiguas. Con solo `issuer`, la comparación nunca coincidía y el filtro
+    # por banco no se aplicaba: medido, a «¿qué TAE tiene el depósito de Sinycon?»
+    # se contestaba con el depósito de EBN Banco porque tenía la tasa más alta.
+    emisor = product.get("provider") or product.get("issuer")
     if isinstance(emisor, str) and emisor.strip():
         # «EBN Banco» → también vale «ebn». Se compara la primera palabra
         # significativa para no exigir el nombre completo.
@@ -527,12 +550,27 @@ def _mentions_issuer(product, text):
         if limpio and limpio in pregunta:
             return True
         primera = limpio.split()[0] if limpio.split() else ""
-        if len(primera) >= 3 and primera in pregunta:
-            return True
+        # Se exige una palabra de al menos 3 letras y que no sea genérica: «banco»
+        # o «deposito» aparecen en casi cualquier pregunta y harían que TODOS los
+        # productos coincidieran, que es el fallo contrario.
+        if len(primera) >= 3 and primera not in {"banco", "bank", "deposito", "depósito",
+                                                  "cuenta", "fondo", "letra", "tesoro"}:
+            if primera in pregunta:
+                return True
     nombre = product.get("name")
     if isinstance(nombre, str) and nombre.strip():
-        if nombre.strip().casefold() in pregunta:
+        completo = nombre.strip().casefold()
+        if completo and completo in pregunta:
             return True
+        # «Depósito a 12 meses Self Bank» → vale «self bank»: la marca sola, que es
+        # como la escribe una persona.
+        for marca in re.findall(r"[a-záéíóúñ][a-záéíóúñ0-9&.\-]{2,}",
+                                nombre.casefold()):
+            if marca in {"deposito", "depósito", "cuenta", "fondo", "letra", "meses",
+                         "plazo", "ahorro", "nuevo", "nueva", "para", "este", "esta"}:
+                continue
+            if len(marca) >= 4 and marca in pregunta:
+                return True
     return False
 
 

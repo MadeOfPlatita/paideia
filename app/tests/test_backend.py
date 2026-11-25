@@ -106,9 +106,13 @@ class CatalogueApiTests(unittest.TestCase):
         })
         self.assertTrue(all(item["publication_ready"] is False for item in body["items"]))
         # El estado ya no es siempre «pending»: las fichas transcritas con fuente lo dicen.
+        # `documented_not_current` es la ficha documentada cuya tasa promocional ya
+        # venció: la lista no puede presentarla como vigente (ACC-01, ACC-03, ACC-04,
+        # DEP-01, DEP-03), igual que ya hacía el chat para los mismos productos.
         estados = {item["conditions_state"] for item in body["items"]}
-        self.assertTrue(estados <= {"pending", "documented", "partial"}, estados)
+        self.assertTrue(estados <= {"pending", "documented", "documented_not_current", "partial"}, estados)
         self.assertIn("documented", estados)
+        self.assertIn("documented_not_current", estados)
         self.assertNotIn("available_fields", body_text)
         self.assertNotIn("promo_tae", body_text)
         self.assertNotIn("2,50 %", body_text)

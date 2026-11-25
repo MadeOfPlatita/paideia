@@ -90,9 +90,24 @@ class CatalogueWithConditions:
 
     @staticmethod
     def _conditions_state(conditions, reference_date):
-        """Solo se anuncia `documented` con valor conocido, fuente citada y fecha de referencia."""
+        """Estado de la ficha: `documented`, `documented_not_current` o `pending`.
+
+        Antes esta función solo sabía decir `documented` o `pending`, y `documented`
+        se decidía mirando si *alguna* condición estaba vigente. En una ficha con
+        diez condiciones permanentes y la tasa promocional ya vencida (ACC-01,
+        ACC-03, ACC-04, DEP-01, DEP-03, ACC-02) eso daba `documented`: la lista del
+        catálogo presentaba como vigente una oferta caducada, mientras el chat y las
+        herramientas del mismo producto decían `documented_not_current`. Dos
+        superficies del mismo dato en desacuerdo enseñan a desconfiar de las dos.
+
+        La regla ahora es la del proyector de herramientas: si hay algo vencido o en
+        conflicto, la ficha se declara documentada pero no vigente.
+        """
         if reference_date is None:
             return "pending"
+        for condition in conditions:
+            if condition.get("state") in {"stale", "conflict"}:
+                return "documented_not_current"
         for condition in conditions:
             if (condition.get("state") != "known" or condition.get("value") is None
                     or not condition.get("source_ids")):

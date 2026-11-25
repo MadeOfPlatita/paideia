@@ -460,7 +460,8 @@ class ToolDispatcher:
                 or not _is_repository_url(primary_url)
                 or (as_of is not None and (type(as_of) is not str or not _valid_moment(as_of)))
                 or raw_product.get("publication_ready") is not False
-                or raw_product.get("conditions_state") not in {"pending", "documented"}
+                or raw_product.get("conditions_state") not in {
+                    "pending", "documented", "documented_not_current"}
                 or type(conflicts) is not list or not all(type(item) is str for item in conflicts)
                 or type(unknown_fields) is not list or not all(type(item) is str for item in unknown_fields)):
             raise _ToolFailure("REPOSITORY_ERROR", "El catálogo local devolvió metadatos no válidos.")
@@ -898,11 +899,19 @@ def _resolve_condition_sources(source_ids, source_hints, source_refs=None):
     return resolved_sources, resolution, source_class, limitations
 
 
+MAX_RATE_TIERS = 12
+# Tope estructural, no de negocio: un depósito publica un tramo por plazo y alguno
+# llega a ocho (DEP-04, EBN Sinycon Plus: 1, 3, 6, 12, 18, 24, 36 y 48 meses). Con
+# el tope anterior de 6 el producto entero se marcaba `invalid` y la ficha se
+# quedaba sin ningún tramo, aunque los ocho estuvieran transcritos con su URL.
+# Se conserva un límite para que un informe corrupto no infle la respuesta.
+
+
 def project_rate_tiers(raw_tiers):
     """Valida tramos sin reinterpretarlos: si la forma o la aritmética no cuadra, no se muestran."""
     if raw_tiers is None:
         return [], "absent"
-    if type(raw_tiers) is not list or len(raw_tiers) > 6:
+    if type(raw_tiers) is not list or len(raw_tiers) > MAX_RATE_TIERS:
         return [], "invalid"
     if not raw_tiers:
         return [], "absent"

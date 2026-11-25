@@ -48,10 +48,17 @@ class DocumentedMetricsTests(unittest.TestCase):
                     self.assertTrue(condition["source_ids"], metric)
                     self.assertIn("https://", condition["source_ids"][0])
 
-    def test_a_value_the_source_does_not_publish_gets_no_row(self):
-        # ACC-01 dice que no hay saldo máximo, pero no da cifra: no se emite.
+    def test_a_value_the_source_does_not_publish_is_declared_not_invented(self):
+        # ACC-01 dice que no hay saldo máximo, pero no da cifra. El contrato cambió:
+        # antes no había fila (el hueco quedaba indistinguible de un campo que nadie
+        # transcribió) y ahora se emite `unknown` con su motivo. Lo que sigue
+        # prohibido es rellenar una cifra.
         cuenta = conditions_for("ACC-01")
-        self.assertNotIn("maximum_eur", cuenta)
+        self.assertIn("maximum_eur", cuenta)
+        self.assertEqual(cuenta["maximum_eur"]["state"], "unknown")
+        self.assertIsNone(cuenta["maximum_eur"]["value"])
+        self.assertEqual(cuenta["maximum_eur"]["reason"], "CURATED_NOT_PUBLISHED")
+        self.assertTrue(cuenta["maximum_eur"]["notes"])
 
     def test_raw_transcription_labels_do_not_leak_as_metrics(self):
         etf = conditions_for("ETF-01")

@@ -40,9 +40,12 @@ class ConditionsStateTests(unittest.TestCase):
         catalogo = self.get("/api/catalogue")
         return next(i for i in catalogo["items"] if i["id"] == product_id)
 
-    def test_a_documented_product_is_no_longer_pending(self):
+    def test_a_documented_product_whose_promo_expired_says_so(self):
+        # DEP-01 trae sus catorce condiciones con fuente, pero «Condiciones válidas
+        # hasta el 18/11/2026» ya pasó: la lista no puede llamarla vigente. Antes
+        # esta prueba exigía `documented`, que era justo el fallo.
         deposito = self.item("DEP-01")
-        self.assertEqual(deposito["conditions_state"], "documented")
+        self.assertEqual(deposito["conditions_state"], "documented_not_current")
 
     def test_unknown_labels_already_documented_disappear(self):
         desconocidos = self.item("DEP-01")["unknown_fields"]
@@ -63,7 +66,7 @@ class ConditionsStateTests(unittest.TestCase):
 
     def test_the_detail_view_uses_the_same_state(self):
         ficha = self.get("/api/products/DEP-01")["product"]
-        self.assertEqual(ficha["conditions_state"], "documented")
+        self.assertEqual(ficha["conditions_state"], "documented_not_current")
         self.assertNotIn("plazos disponibles", ficha["unknown_fields"])
 
     def test_a_label_without_a_rule_is_never_removed(self):

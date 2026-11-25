@@ -465,7 +465,7 @@ class _Handler(BaseHTTPRequestHandler):
         # así que forzar `partial` por «no hay rate» mentía. Se respeta lo que ya
         # viene calculado y solo se ajusta cuando falta.
         actual = item.get("conditions_state")
-        if actual in {"documented", "partial", "pending"}:
+        if actual in {"documented", "documented_not_current", "partial", "pending"}:
             updated["conditions_state"] = actual
         else:
             updated["conditions_state"] = "documented" if "rate" in fields else "partial"

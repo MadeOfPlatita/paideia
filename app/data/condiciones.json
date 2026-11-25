@@ -41,11 +41,11 @@
           "metric": "tin",
           "value": "2.73",
           "unit": "PERCENT",
-          "literal": "3,25% TAE y 3,22% TIN anual con tu nómina o un ingreso mensual",
+          "literal": "3,25% TAE y 3,22% TIN anual con tu nómina o un ingreso mensual de al menos 900€ ... 2,75% TAE y 2,73% TIN anual sin tener que domiciliar nada",
           "source_url": "https://www.openbank.es/deposito-a-plazo-fijo",
           "source_title": "Openbank — Depósito a Plazo Fijo 6 meses",
           "accessed": "2026-11-06",
-          "note": "TIN del tramo sin nómina (2,75 % TAE); el 3,22 % corresponde al tramo con nómina."
+          "note": "Se toma el TIN del tramo sin nómina (2,73 %) porque la fila base es la del tramo sin requisito; el 3,22 % corresponde al tramo con nómina y vive en su propio tramo."
         },
         {
           "metric": "liquidacion",
@@ -281,12 +281,13 @@
         },
         {
           "metric": "promocion_ventana_alta",
-          "value": "Oferta válida hasta el 30/11/2026",
+          "value": null,
           "unit": "TEXT",
           "literal": "Oferta válida hasta el 30/11/2026",
           "source_url": "https://pibank.es/deposito-bancario-plazo-fijo",
           "source_title": "Pibank — Depósito a 12 meses",
-          "accessed": "2026-11-06"
+          "accessed": "2026-11-06",
+          "note": "La transcripción leyó «válida hasta el 30/11/2026» y el campo valid_to de la misma ficha dice 2026-10-31: dos fechas distintas para la misma oferta, sobre la misma URL. No se elige una; el estado se deriva del valid_to documentado (vencida) y esta discrepancia queda declarada."
         }
       ]
     },
@@ -476,8 +477,13 @@
         {
           "condition": "sin_requisito",
           "condition_label": "Sin vinculación adicional",
-          "tae": "2.75",
-          "tin": "2.72"
+          "tae": "2.50",
+          "tin": "2.47"
+        },
+        {
+          "condition": "nuevos_clientes_o_dinero_nuevo",
+          "condition_label": "Para nuevos clientes y nuevos saldos",
+          "tae": "2.75"
         }
       ],
       "documented": [
@@ -617,9 +623,8 @@
       "tiers": [
         {
           "condition": "sin_requisito",
-          "condition_label": "Condición publicada",
-          "tae": "2.61",
-          "tin": "3"
+          "condition_label": "Promoción para nuevos clientes, contratable hasta el 18/11/2026",
+          "tae": "2.61"
         }
       ],
       "documented": [
@@ -1212,7 +1217,7 @@
           "source_title": "Pibank — Cuenta Remunerada Pibank",
           "accessed": "2026-11-05",
           "effective_to": null,
-          "note": "La página no publica cifra: dice 'desde el primer euro'. Se codifica 0 = sin mínimo exigido, no un importe de 0 €."
+          "note": "La página publica «desde el primer euro»: no exige importe mínimo, por eso el mínimo documentado es 0 €. No es una cifra inventada ni una ausencia de dato."
         },
         {
           "metric": "importe_maximo",
@@ -2042,14 +2047,14 @@
         },
         {
           "metric": "nominal_adjudicado",
-          "value": "75169000000",
-          "unit": "millones EUR",
+          "value": "751690000",
+          "unit": "EUR",
           "literal": "Nominal adjudicado | 751,69",
           "source_url": "https://www.tesoro.es/deuda-publica/subastas/resultado-ultimas-subastas/letras-del-tesoro",
           "source_title": "Tesoro Público — Resultado de últimas subastas: Letras del Tesoro",
           "accessed": "2026-11-05",
           "effective_to": null,
-          "note": "La tabla del Tesoro publica el nominal adjudicado en millones de euros."
+          "note": "La tabla del Tesoro publica el nominal adjudicado en millones de euros (751,69 M € = 751.690.000 €)."
         }
       ]
     },
@@ -2167,13 +2172,13 @@
         },
         {
           "metric": "nominal_adjudicado",
-          "value": "186555000000",
+          "value": "1865550000",
           "unit": "EUR",
           "literal": "Nominal adjudicado 1.865,55",
           "source_url": "https://www.tesoro.es/deuda-publica/subastas/resultados-subastas-anteriores",
           "source_title": "Tesoro Público — Resultados de subasta de Letras a 6 meses (04/08/2026)",
           "accessed": "2026-11-06",
-          "note": "La tabla del Tesoro publica el nominal adjudicado en millones de euros."
+          "note": "La tabla del Tesoro publica el nominal adjudicado en millones de euros (1.865,55 M € = 1.865.550.000 €)."
         }
       ]
     },
@@ -2291,7 +2296,7 @@
         },
         {
           "metric": "nominal_adjudicado",
-          "value": "209744000000",
+          "value": "2097440000",
           "unit": "EUR",
           "literal": "Nominal adjudicado 2.097,44",
           "source_url": "https://www.tesoro.es/deuda-publica/subastas/resultados-subastas-anteriores",
@@ -2415,7 +2420,7 @@
         },
         {
           "metric": "nominal_adjudicado",
-          "value": "229711000000",
+          "value": "2297110000",
           "unit": "EUR",
           "literal": "Nominal adjudicado 2.297,11",
           "source_url": "https://www.tesoro.es/deuda-publica/subastas/resultados-subastas-anteriores",

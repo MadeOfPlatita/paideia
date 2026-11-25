@@ -592,6 +592,14 @@ def _documented_conditions(record: dict, product_id: str, family, already_known=
     Se emiten solo cuando la transcripción trae un valor; si la fuente no lo publica,
     no hay fila y la ficha lo sigue diciendo en su lista de desconocidos. Nunca se
     deduce un valor a partir de otro.
+
+    Una fila con `value: null` y su `note` es la forma en que la transcripción
+    declara «la fuente no publica esto» (ACC-01 no da cifra de saldo máximo,
+    ACC-03/ACC-04 declaran «sin límite» sin importe, DEP-03 no fija una sola
+    ventana). Antes se descartaba en silencio y la declaración no llegaba nunca a
+    la ficha: el usuario veía una ausencia sin motivo, indistinguible de un dato
+    que nadie transcribió. Ahora se emite como `unknown` con su motivo: no se
+    rellena ninguna cifra, se declara el hueco.
     """
     emitted = set(already_known) | {"annual_rate_percent", "term_months"}
     salida = []
@@ -605,10 +613,21 @@ def _documented_conditions(record: dict, product_id: str, family, already_known=
         if metric in emitted:
             continue
         raw = item.get("value")
-        if raw is None or raw == "":
-            continue
         url = item.get("source_url")
         note = item.get("note")
+        if raw is None or raw == "":
+            # Declaración explícita de dato no publicado: se conserva el motivo.
+            motivo = str(note).strip() if isinstance(note, str) and note.strip() \
+                else "La fuente no publica este dato; no se infiere."
+            salida.append(Condition(
+                product_id, family, metric, None, unit, "unknown", "CURATED_NOT_PUBLISHED",
+                source_ids=(str(url),) if url else (),
+                source_refs=((str(url), item.get("source_title"), item.get("accessed")),) if url else (),
+                retrieved_at=item.get("accessed"),
+                notes=(motivo[:200],),
+            ))
+            emitted.add(metric)
+            continue
         salida.append(Condition(
             product_id, family, metric, str(raw), unit, "known", "CURATED_DOCUMENTED",
             source_ids=(str(url),) if url else (),

@@ -244,7 +244,13 @@ function identityKind(product) {
 }
 
 function conditionsLabel(product) {
-  return product && product.conditions_state === "pending" ? "Condiciones pendientes" : "Condiciones no validadas para publicar";
+  const state = product && product.conditions_state;
+  if (state === "documented_not_current") return "Documentadas, no vigentes";
+  if (state === "documented") return "Documentadas con fuente";
+  if (state === "documented_unattributed") return "Documentadas sin fuente atribuible";
+  if (state === "conditions_unknown") return "Condiciones desconocidas";
+  if (state === "identity_only") return "Solo identidad, sin condiciones";
+  return "Condiciones pendientes";
 }
 
 // Un ETF no tiene TAE: su dato de referencia es el TER. Antes la tarjeta decia
@@ -1072,9 +1078,17 @@ function renderHome() {
       box.appendChild(textElement("p", `Productos encontrados (${validos.length}): ${nombres.join(" · ")}${resto > 0 ? ` · y ${resto} más` : ""}.`, "field-help"));
     }
 
-    // Del primero (el que el servidor recomienda) sí se dan los datos clave, pero
-    // un máximo de tres: lo que hace falta para decidir.
-    const principal = validos[0];
+    // Del producto que el SERVIDOR recomienda sí se dan los datos clave, pero un
+    // máximo de tres: lo que hace falta para decidir.
+    //
+    // Antes se tomaba `validos[0]`, el primero del array, que NO es el recomendado:
+    // medido en producción, a «¿qué TAE tiene el depósito de EBN Banco?» el JSON daba
+    // 3,10 % (EBN) y la pantalla enseñaba 2,4 % (Sinycon, el primero del array). Dos
+    // superficies del mismo turno daban productos distintos.
+    const pedido = opciones && typeof opciones.recommendedProductId === "string"
+      ? opciones.recommendedProductId : "";
+    const elegido = pedido ? validos.find(p => p.id === pedido) : null;
+    const principal = elegido || validos[0];
     const condiciones = Array.isArray(principal.conditions) ? principal.conditions : [];
     const CLAVE = ["annual_rate_percent", "term_months", "ter_percent", "management_fee_percent",
                    "minimum_eur", "risk_scale", "maturity_date", "withholding_percent"];
@@ -1499,7 +1513,8 @@ function renderHome() {
             // que se quita es el ENCABEZADO de plantilla, que es lo que se leía como
             // tabla. El texto compuesto por el servidor va aparte, en `answer`.
             if (catalogueUsed && catalogue) renderChatCatalogue(feedback, catalogue, {
-              omitirResumen: typeof result.answer === "string" && result.answer.trim().length > 0
+              omitirResumen: typeof result.answer === "string" && result.answer.trim().length > 0,
+              recommendedProductId: result.recommended_product_id
             });
             if (calculation) renderChatCalculation(feedback, calculation);
           } else if (typeof result.answer === "string" && result.answer) {

@@ -74,6 +74,9 @@ print(json.dumps([domain.calculate_scenario({**item, "years": int(item["years"])
 }
 
 const INPUT_A = { principal: '1000', annual_rate_percent: '2.75', years: '1', monthly_contribution: '20', inflation_percent: '2', method: 'simple' };
+// DEP-SELF-12 publica 2,47 % TIN / 2,50 % TAE. Tiene su propia constante porque
+// INPUT_A sirve a DEP-02, cuya tasa documentada si es 2,75.
+const INPUT_SELF = { principal: '1000', annual_rate_percent: '2.47', years: '1', monthly_contribution: '20', inflation_percent: '2', method: 'simple' };
 const INPUT_B = { principal: '0', annual_rate_percent: '0', years: '1', monthly_contribution: '0', inflation_percent: '0', method: 'compound' };
 
 function snapshotWith(sourceA, sourceB) {
@@ -153,9 +156,18 @@ test('B6 copiar A a B conserva una procedencia independiente', () => {
   const copied = provenance.copySource(source);
   assert.deepEqual(copied, source);
   assert.notEqual(copied, source);
-  assert.equal(provenance.sourceAfterEdit(copied, { ...INPUT_B, annual_rate_percent: '2.75', principal: '500' }), copied);
+  // El dato real de DEP-SELF-12 es 2,47 % TIN / 2,50 % TAE. Antes este test fijaba
+  // 2,75 %, que no aparece en ningun literal del producto: era un valor inventado
+  // que la auditoria del catalogo retiro. El contrato que el test protege —copiar A a
+  // B conserva una procedencia independiente— no cambia.
+  // DEP-SELF-12 publica 2,50 % TAE (2,47 % TIN). Antes este test fijaba 2,75 %,
+  // que solo aparece en el tramo promocional para nuevos clientes y se servia como
+  // si fuera la tasa base: un valor que la auditoria del catalogo retiro por no
+  // estar en el literal de la ficha. El contrato que el test protege —copiar A a B
+  // conserva una procedencia independiente— no cambia.
+  assert.equal(provenance.sourceAfterEdit(copied, { ...INPUT_B, annual_rate_percent: '2.5', principal: '500' }), copied);
   assert.equal(provenance.sourceAfterEdit(copied, { ...INPUT_B, annual_rate_percent: '2.76' }), null);
-  assert.equal(source.condition.value, '2.75');
+  assert.equal(source.condition.value, '2.5');
 });
 
 test('B6 el fallo de condiciones se distingue de la falta de dato y permite reintentar', () => {

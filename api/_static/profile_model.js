@@ -555,6 +555,14 @@
     return `${formatDecimalEuros(range.min_eur)}–${formatDecimalEuros(range.max_eur)}`;
   }
 
+  function formatPeriodicity(value) {
+    return ({ semanal: "cada semana", cada_14_dias: "cada 14 días", dos_veces_al_mes: "dos veces al mes", mensual: "al mes", anual: "al año" })[value] || "periodicidad sin indicar";
+  }
+
+  function formatCommitmentHorizon(value) {
+    return ({ menos_3_meses: "Menos de 3 meses", "3_6_meses": "3–6 meses", "6_12_meses": "6–12 meses", fecha_no_clara: "Fecha no clara" })[value] || "Plazo sin precisar";
+  }
+
   function formatState(answer) {
     if (!answer || !answer.estado) return "Sin respuesta";
     if (answer.estado === "no_se") return "No lo sé";
@@ -574,20 +582,20 @@
       case "capacity":
         return findOptionLabel(question, value.impacto) || "Declarado";
       case "experience": {
-        const level = findOptionLabel(question, value.nivel) || value.nivel;
+        const level = findOptionLabel(question, value.nivel) || "Con experiencia";
         const topics = value.temas_interes.map((topic) => findOptionLabel(question, topic)).filter(Boolean);
         return topics.length ? `${level} · Temas: ${topics.join(", ")}` : level;
       }
       case "amount":
         return formatNestedAmount(answer);
       case "flow":
-        return `${formatNestedAmount({ estado: "declarado", valor: value.importe })} · ${value.periodicidad}`;
+        return `${formatNestedAmount({ estado: "declarado", valor: value.importe })} · ${formatPeriodicity(value.periodicidad)}`;
       case "debt":
         if (value.situacion === "sin_deuda") return "No tengo deuda declarada";
-        return `Con deuda · saldo: ${formatNestedAmount(value.saldo_eur)} · cuota: ${value.cuota.estado === "declarado" ? `${formatNestedAmount({ estado: "declarado", valor: value.cuota.valor.importe })} / ${value.cuota.valor.periodicidad}` : formatState(value.cuota)} · coste anual: ${formatPercentAnswer(value.coste_anual_pct)}`;
+        return `Con deuda · saldo: ${formatNestedAmount(value.saldo_eur)} · cuota: ${value.cuota.estado === "declarado" ? `${formatNestedAmount({ estado: "declarado", valor: value.cuota.valor.importe })} / ${formatPeriodicity(value.cuota.valor.periodicidad)}` : formatState(value.cuota)} · coste anual: ${formatPercentAnswer(value.coste_anual_pct)}`;
       case "commitments":
         if (value.hay_compromiso === false) return "No preveo un compromiso";
-        return `Sí · total: ${formatNestedAmount(value.total_eur)} · plazo: ${({ menos_3_meses: "Menos de 3 meses", "3_6_meses": "3–6 meses", "6_12_meses": "6–12 meses", fecha_no_clara: "Fecha no clara" })[value.plazo]}`;
+        return `Sí · total: ${formatNestedAmount(value.total_eur)} · plazo: ${formatCommitmentHorizon(value.plazo)}`;
       default:
         return "Declarado";
     }

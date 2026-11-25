@@ -45,11 +45,14 @@ class CompareConditionsTests(unittest.TestCase):
         estado, datos = self.compare(["DEP-01", "ETF-01"])
         self.assertEqual(estado, 200)
         por_id = {item["id"]: item for item in datos["items"]}
-        self.assertEqual(por_id["DEP-01"]["conditions_state"], "documented")
+        # DEP-01 trae sus catorce condiciones con fuente, pero la promoción venció
+        # el 18/11/2026: la ficha se declara documentada y no vigente. Llamarla
+        # «documented» era presentar como actual una oferta caducada.
+        self.assertEqual(por_id["DEP-01"]["conditions_state"], "documented_not_current")
         self.assertTrue(por_id["DEP-01"]["conditions"], "DEP-01 debe llevar sus condiciones")
         self.assertTrue(any(c.get("metric") == "annual_rate_percent"
                             for c in por_id["DEP-01"]["conditions"]))
-        self.assertIn(por_id["ETF-01"]["conditions_state"], {"documented", "partial"})
+        self.assertIn(por_id["ETF-01"]["conditions_state"], {"documented", "documented_not_current"})
 
     def test_comparison_stays_educational_for_mixed_families(self):
         estado, datos = self.compare(["DEP-01", "ETF-01"])
