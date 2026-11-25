@@ -38,7 +38,7 @@ CALCULO_REAL = {
     "not_prediction": True,
     "currency": "EUR",
     "assumptions": {
-        "principal": "5000.00",
+        "principal": "5.000,00",
         "monthly_contribution": "0.00",
         "annual_rate_percent": "3",
         "inflation_percent": "0",
@@ -50,10 +50,10 @@ CALCULO_REAL = {
         "fees_included": False,
     },
     "summary": {
-        "contributions": "5000.00",
-        "final_balance": "5300.00",
-        "interest": "300.00",
-        "inflation_adjusted": "5300.00",
+        "contributions": "5.000,00",
+        "final_balance": "5.300,00",
+        "interest": "300,00",
+        "inflation_adjusted": "5.300,00",
     },
     "disclaimer": ("Escenario hipotético calculado por el motor determinista local; "
                    "no es una predicción ni una oferta."),
@@ -66,18 +66,22 @@ class CalculationFallbackTests(unittest.TestCase):
         self.assertIsNotNone(respuesta, "el DTO real de producción debe componer respuesta")
         assert respuesta is not None
         # Las cifras que el usuario necesita.
-        self.assertIn("5300.00", respuesta)
-        self.assertIn("300.00", respuesta)
+        self.assertIn("5.300,00", respuesta)
+        self.assertIn("300,00", respuesta)
         # Y de dónde salen.
         self.assertIn("motor local", respuesta)
-        self.assertIn("Capital final", respuesta)
-        self.assertIn("Intereses", respuesta)
+        # Se cuenta en una frase, no con las etiquetas «Capital final:» /
+        # «Intereses:» en líneas sueltas: medido en pantalla, eso es exactamente lo
+        # que se lee como una tabla y no como una respuesta.
+        self.assertIn("acabas con 5.300,00 €", respuesta)
+        self.assertIn("300,00 € de intereses", respuesta)
+        self.assertNotIn("Capital final:", respuesta)
 
     def test_the_assumptions_travel_with_the_result(self):
         respuesta = _calculation_answer(CALCULO_REAL)
         assert respuesta is not None
-        self.assertIn("5000.00", respuesta)
-        self.assertIn("3 %", respuesta)
+        self.assertIn("5.000,00", respuesta)
+        self.assertIn("3,00 %", respuesta)
         self.assertIn("2 años", respuesta)
 
     def test_the_disclaimer_is_kept(self):
@@ -97,11 +101,11 @@ class CalculationFallbackTests(unittest.TestCase):
 
     def test_a_compound_calculation_also_works(self):
         compuesto = dict(CALCULO_REAL)
-        compuesto["summary"] = {"contributions": "5000.00", "final_balance": "5304.50",
-                                "interest": "304.50", "inflation_adjusted": "5304.50"}
+        compuesto["summary"] = {"contributions": "5.000,00", "final_balance": "5.304,50",
+                                "interest": "304.50", "inflation_adjusted": "5.304,50"}
         respuesta = _calculation_answer(compuesto)
         assert respuesta is not None
-        self.assertIn("5304.50", respuesta)
+        self.assertIn("5.304,50", respuesta)
 
 
 if __name__ == "__main__":

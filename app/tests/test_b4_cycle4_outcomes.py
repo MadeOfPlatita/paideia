@@ -114,7 +114,8 @@ class CalculatorEngineOutcomeTests(unittest.TestCase):
         # retenida, pero las cifras del motor (que no dependen de el) se muestran.
         self.assertNotEqual(body["answer"].strip(), "",
                             "el resultado del motor no puede perderse")
-        self.assertIn("motor local", body["answer"])
+        self.assertIn("motor local", body["answer"],
+                      "el aviso debe declarar de donde sale la cifra")
         self.assertEqual(body["answer_text_state"], "shown_unverified",
                          "el texto mostrado son datos locales del motor, no prosa del modelo")
         # `withheld_reason` sigue siendo «calculation»: dice POR QUE se retuvo la
@@ -149,7 +150,8 @@ class CalculatorEngineOutcomeTests(unittest.TestCase):
                 self.assertEqual(status, 200, body)
                 # El resultado del motor se entrega; la PROSA del modelo no.
                 self.assertNotEqual(body["answer"].strip(), "", text)
-                self.assertIn("motor local", body["answer"])
+                self.assertIn("motor local", body["answer"],
+                      "el aviso debe declarar de donde sale la cifra")
                 raw = json.dumps(body, ensure_ascii=False)
                 self.assertNotIn(text, raw)
                 self.assertNotIn("1.000,00 euros", raw)

@@ -306,35 +306,82 @@ def _calculation_answer(calculation):
     resumen = calculation.get("summary")
     if type(resumen) is not dict:
         return None
-    partes = []
-    for etiqueta, clave in (("Capital final", "final_balance"),
-                            ("Intereses", "interest"),
-                            ("Total aportado", "contributions"),
-                            ("Valor ajustado por inflación", "inflation_adjusted")):
-        valor = resumen.get(clave)
-        if type(valor) in {int, float} or (type(valor) is str and valor.strip()):
-            partes.append(f"- {etiqueta}: {valor}")
-    if not partes:
-        return None
-    cabecera = ("El cálculo se ha hecho con el motor local, que es determinista y "
-                "no depende del modelo:")
+    # Los importes llegan en formato máquina («2040.00»): se formatean a español.
+    def _euros(valor):
+        if type(valor) in {int, float}:
+            valor = f"{valor:.2f}"
+        if type(valor) is not str or not valor.strip():
+            return None
+        try:
+            return f"{float(valor.strip().replace(',', '.')):,.2f}".replace(",", "\u00a0").replace(".", ",").replace("\u00a0", ".")
+        except (TypeError, ValueError):
+            return valor.strip()
+
+    final = _euros(resumen.get("final_balance"))
+    interes = _euros(resumen.get("interest"))
+    aportado = _euros(resumen.get("contributions"))
+    real = _euros(resumen.get("inflation_adjusted"))
     supuestos = calculation.get("assumptions")
+    tipo = anios = None
     if type(supuestos) is dict:
-        interes = supuestos.get("annual_rate_percent")
+        tipo = _euros(supuestos.get("annual_rate_percent"))
         anios = supuestos.get("years")
-        capital = supuestos.get("principal")
-        detalle = []
-        if capital not in (None, ""):
-            detalle.append(f"capital {capital}")
-        if interes not in (None, ""):
-            detalle.append(f"tipo {interes} %")
-        if anios not in (None, ""):
-            detalle.append(f"{anios} años")
-        if detalle:
-            cabecera += " Supuestos: " + ", ".join(detalle) + "."
+    if final is None and interes is None:
+        return None
+
+    # Una frase, no una lista con guiones. Medido EN PANTALLA: «Capital final: …»,
+    # «Intereses: …», «Total aportado: …» en cuatro líneas es exactamente lo que se
+    # lee como una tabla. La misma información, contada:
+    if tipo and anios:
+        plazo = "un año" if anios == 1 else f"{anios} años"
+        texto = f"Si dejas {aportado or final} € al {tipo} % durante {plazo}"
+        if final is not None and interes is not None:
+            texto += f", acabas con {final} €: {interes} € de intereses."
+        elif final is not None:
+            texto += f", acabas con {final} €."
+        else:
+            texto += "."
+    elif final is not None:
+        texto = f"El resultado es {final} €"
+        texto += f", de los que {interes} € son intereses." if interes else "."
+    else:
+        texto = f"Los intereses son {interes} €."
+
+    if real is not None and aportado is not None:
+        try:
+            real_num = float(str(resumen.get("inflation_adjusted")).replace(",", "."))
+            aportado_num = float(str(resumen.get("contributions")).replace(",", "."))
+            final_num = float(str(resumen.get("final_balance")).replace(",", "."))
+        except (TypeError, ValueError):
+            real_num = aportado_num = final_num = None
+        if real_num is not None and aportado_num is not None:
+            if real_num < aportado_num:
+                texto += (f" Con la inflación aplicada, ese dinero compra lo que hoy "
+                          f"{real} €: menos de lo que pusiste, así que en términos "
+                          f"reales pierdes parte del capital.")
+            elif real_num <= aportado_num:
+                texto += (f" Con la inflación aplicada, ese dinero compra lo que hoy "
+                          f"{real} €: lo que ganas con el interés se lo come la subida "
+                          f"de precios, así que en términos reales te quedas igual.")
+            elif final_num is not None and real_num < final_num:
+                texto += (f" Con la inflación aplicada, ese dinero compra lo que hoy "
+                          f"{real} €: ganas en términos reales, aunque menos de los "
+                          f"intereses que parece.")
+            else:
+                # Sin inflación aplicada (el ajuste no cambia el saldo): no se
+                # inventa una conclusión que el dato no sostiene.
+                texto += (f" Con la inflación aplicada, ese dinero compra lo que hoy "
+                          f"{real} €.")
+
+    # De dónde sale la cifra, en la misma frase: el usuario no tiene por qué saber
+    # qué es «el motor local» si no se le dice, y la trazabilidad no puede depender
+    # de que el DTO traiga un aviso.
+    if "motor local" not in texto:
+        texto += " La cuenta la hace el motor local de la app, no la he estimado yo."
+
     aviso = calculation.get("disclaimer")
     cierre = f"\n\n{aviso}" if type(aviso) is str and aviso.strip() else ""
-    return cabecera + "\n\n" + "\n".join(partes) + cierre
+    return texto + cierre
 
 
 _EDUCATIONAL_REFERENCE = re.compile(

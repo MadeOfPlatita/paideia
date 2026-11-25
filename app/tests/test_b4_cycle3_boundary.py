@@ -241,7 +241,7 @@ class CalculatorBoundaryTests(unittest.TestCase):
         # mandaba en `calculation` y el usuario no veia nada. Ahora se compone la
         # respuesta con las cifras del motor, que no dependen del modelo.
         self.assertNotEqual(body["answer"].strip(), "", "el resultado debe entregarse")
-        self.assertIn("1030.00", body["answer"], "con la cifra del motor")
+        self.assertIn("1.030,00", body["answer"], "con la cifra del motor, formateada")
         self.assertIn("motor local", body["answer"], "y diciendo de donde sale")
         self.assertEqual(body["answer_text_state"], "shown_unverified")
         self.assertEqual(body["answer_provenance"]["text_validation"], "not_performed")
@@ -269,7 +269,8 @@ class CalculatorBoundaryTests(unittest.TestCase):
         # El resultado del motor se entrega: antes el usuario se quedaba con un hueco.
         self.assertNotEqual(body["answer"].strip(), "",
                             "el resultado del motor no puede perderse")
-        self.assertIn("motor local", body["answer"])
+        self.assertIn("motor local", body["answer"],
+                      "el aviso debe declarar de donde sale la cifra")
         self.assertEqual(body["answer_text_state"], "shown_unverified")
         self.assertEqual(body["calculation"]["summary"]["final_balance"], "1030.00")
 
@@ -285,7 +286,8 @@ class CalculatorBoundaryTests(unittest.TestCase):
         # El resultado del motor se entrega: antes el usuario se quedaba con un hueco.
         self.assertNotEqual(body["answer"].strip(), "",
                             "el resultado del motor no puede perderse")
-        self.assertIn("motor local", body["answer"])
+        self.assertIn("motor local", body["answer"],
+                      "el aviso debe declarar de donde sale la cifra")
         self.assertEqual(body["answer_text_state"], "shown_unverified")
         self.assertNotIn(SENTINEL, json.dumps(body, ensure_ascii=False))
         self.assertEqual(body["calculation"]["summary"]["final_balance"], "1030.00")
@@ -308,7 +310,8 @@ class CalculatorBoundaryTests(unittest.TestCase):
                 # la cifra inventada del texto no puede aparecer nunca.
                 self.assertNotEqual(body["answer"].strip(), "",
                                     "el resultado del motor se entrega")
-                self.assertIn("motor local", body["answer"])
+                self.assertIn("motor local", body["answer"],
+                      "el aviso debe declarar de donde sale la cifra")
                 self.assertNotIn("9999.00", json.dumps(body, ensure_ascii=False))
                 self.assertNotIn("2500.00", body["answer"],
                                  "la cifra inventada por el modelo no se publica")
@@ -325,7 +328,8 @@ class CalculatorBoundaryTests(unittest.TestCase):
         # El resultado del motor se entrega: antes el usuario se quedaba con un hueco.
         self.assertNotEqual(body["answer"].strip(), "",
                             "el resultado del motor no puede perderse")
-        self.assertIn("motor local", body["answer"])
+        self.assertIn("motor local", body["answer"],
+                      "el aviso debe declarar de donde sale la cifra")
         self.assertEqual(body["answer_text_state"], "shown_unverified")
 
     def test_concept_calculator_prose_keeps_its_text_and_the_result(self):
