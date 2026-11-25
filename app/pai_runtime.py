@@ -84,9 +84,18 @@ def _is_retryable_transport(error):
     """True si el fallo es de red y repetir no duplica ningun efecto."""
     return getattr(error, "code", None) in _RETRYABLE_TRANSPORT
 
+
+# Un texto con algo más que espacios cuenta como respuesta del modelo. El umbral es
+# deliberadamente bajo: aquí solo se decide si hay prosa que entregar en vez de un
+# hueco, no si la prosa es buena. La guarda de monosílabos vive en el servicio.
 ANSWER_TEXT_SHOWN = "shown_unverified"
 ANSWER_TEXT_WITHHELD = "withheld_catalogue_evidence"
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
+
+
+def _usable_text(value):
+    """¿Hay prosa que entregar? No mide calidad, solo que no sea un hueco."""
+    return type(value) is str and bool(value.strip())
 
 
 class ToolChatRunner:
@@ -1195,7 +1204,17 @@ class ToolChatRunner:
                                         tool_events, sources, catalogue_used, catalogue_products,
                                         calculation=calculation, sources_total=sources_total)
             if not with_tools and result.tool_calls:
-                # Sin herramientas anunciadas, una llamada es una respuesta inválida.
+                # Sin herramientas anunciadas la llamada NO se ejecuta: esa defensa se
+                # mantiene. Pero tirar además el texto que el modelo sí escribió deja
+                # al usuario con un 502 y la respuesta ya redactada en la basura. Se
+                # entrega el texto y las llamadas constan como rechazadas.
+                for call in result.tool_calls:
+                    tool_events.append(self._event(call, state="rejected", status="rejected"))
+                if _usable_text(result.answer):
+                    return self._answer_dto(result.answer, None, result.finish_reason,
+                                            tool_events, sources, catalogue_used,
+                                            catalogue_products, calculation=calculation,
+                                            sources_total=sources_total)
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True,
                                      detail="tool_call_without_tools", catalogue_used=catalogue_used,
                                      catalogue_products=catalogue_products, sources_total=sources_total)
@@ -1208,6 +1227,13 @@ class ToolChatRunner:
                 self._debug("round_limit")
                 for call in result.tool_calls:
                     tool_events.append(self._event(call, state="rejected", status="rejected"))
+                # El límite de rondas es una defensa legítima contra el bucle, pero no
+                # obliga a perder lo que el modelo ya escribió: si el turno trae prosa,
+                # se entrega con las llamadas marcadas como rechazadas.
+                if _usable_text(result.answer):
+                    return self._answer_dto(result.answer, None, "stop", tool_events, sources,
+                                            catalogue_used, catalogue_products,
+                                            calculation=calculation, sources_total=sources_total)
                 return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, detail="round_limit", catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
 
             # El turno se valida entero antes de ejecutar nada: si una llamada no es
@@ -1246,9 +1272,27 @@ class ToolChatRunner:
                 posicion, codigo = rechazo
                 self._debug(codigo)
                 # Ninguna llamada del lote se ejecuta: todas constan como rechazadas.
+                # Esa defensa se mantiene entera (nada a medias).
                 for call in result.tool_calls:
                     tool_events.append(self._event(call, state="rejected", status="rejected"))
-                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True, detail="round_limit", catalogue_used=catalogue_used, catalogue_products=catalogue_products, sources_total=sources_total)
+                # El motivo reportado era SIEMPRE «round_limit», aunque el rechazo
+                # fuera por argumentos inválidos o herramienta no anunciada: el
+                # diagnóstico mentía y mandaba a mirar el límite de rondas.
+                detalle = f"batch_rejected:{codigo}"
+                # Y si el turno ya tenía prosa o datos locales, se entregan: un 502
+                # aquí tira trabajo ya hecho y deja al usuario sin nada.
+                if _usable_text(result.answer):
+                    return self._answer_dto(result.answer, None, "stop", tool_events, sources,
+                                            catalogue_used, catalogue_products,
+                                            calculation=calculation, sources_total=sources_total)
+                if catalogue_used or calculation is not None:
+                    return self._answer_dto("", None, "stop", tool_events, sources,
+                                            catalogue_used, catalogue_products,
+                                            calculation=calculation, sources_total=sources_total)
+                return self._failure(tool_events=tool_events, sources=sources, tool_failure=True,
+                                     detail=detalle, catalogue_used=catalogue_used,
+                                     catalogue_products=catalogue_products,
+                                     sources_total=sources_total)
 
             assistant_calls = []
             tool_messages = []

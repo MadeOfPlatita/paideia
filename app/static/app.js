@@ -908,13 +908,21 @@ function renderHome() {
   function chatPlain(value) {
     if (typeof value !== "string") return "";
     return value
-      // Encabezados: «## Título» -> «Título», en su propia línea y en negrita.
+      // Encabezados al principio de línea: «## Título» -> «Título».
       .replace(/^[ \t]*#{1,6}[ \t]*(.+)$/gm, "\u0001$1\u0002")
+      // Y encabezados PEGADOS al texto anterior («…cosas distintas.## Errores
+      // comunes»), que es como llegan de verdad desde el proveedor: sin salto de
+      // línea, así que el patrón de línea no los ve. Medido en pantalla: quedaban 4
+      // almohadillas visibles por este caso exacto.
+      .replace(/([.!?:;])\s*#{1,6}[ \t]*/g, "$1 ")
+      .replace(/([a-záéíóúñ])\s*#{1,6}[ \t]*(?=[A-ZÁÉÍÓÚÑ])/g, "$1. ")
+      // Cualquier almohadilla que sobreviva: no puede llegar a la pantalla.
+      .replace(/#{1,6}[ \t]*/g, "")
       // Negrita y cursiva.
       .replace(/\*\*(.+?)\*\*/g, "$1")
       .replace(/(^|[\s(])[*_]([^*_\n]+)[*_](?=[\s).,;:]|$)/g, "$1$2")
-      // Listas con guion o asterisco al principio de línea: se dejan como guion
-      // simple, que sí es legible.
+      // Listas con guion o asterisco al principio de línea: se dejan como viñeta,
+      // que sí es legible.
       .replace(/^[ \t]*[-*+][ \t]+/gm, "\u2022 ")
       // Reglas horizontales y bloques de código sueltos.
       .replace(/^[ \t]*([-*_])\1{2,}[ \t]*$/gm, "")

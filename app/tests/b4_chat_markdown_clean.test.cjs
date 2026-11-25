@@ -82,6 +82,24 @@ test('la numeración de una lista se conserva', () => {
   assert.ok(limpio.includes('2. Comparar TIN con TAE'), limpio);
 });
 
+test('un encabezado pegado al texto anterior tampoco deja almohadillas', () => {
+  // Es como llega de verdad desde el proveedor: sin salto de línea antes del «##».
+  // Medido en pantalla: 4 almohadillas visibles por este caso exacto.
+  const chatPlain = cargarChatPlain();
+  const pegados = [
+    'dos productos.## Errores comunes 1. Creer que la TAE sube.',
+    'cosas distintas.### La diferencia',
+    'el TIN.##TAE: la tasa anual equivalente',
+  ];
+  for (const texto of pegados) {
+    const limpio = chatPlain(texto);
+    assert.ok(!limpio.includes('#'), `quedan almohadillas en ${JSON.stringify(texto)}: ${limpio}`);
+  }
+  // Y el texto de los encabezados se conserva, no se borra.
+  const limpio = chatPlain('dos productos.## Errores comunes');
+  assert.ok(limpio.includes('Errores comunes'), limpio);
+});
+
 test('no se come el texto normal ni los importes', () => {
   const chatPlain = cargarChatPlain();
   const limpio = chatPlain('Si dejas 2.000,00 € al 2,00 % acabas con 2.040,00 €.');

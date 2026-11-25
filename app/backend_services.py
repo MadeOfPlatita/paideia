@@ -688,6 +688,13 @@ def _catalogue_explanation(text):
     """
     if type(text) is not str or not text.strip():
         return None
+    # Una llamada escrita como texto no es prosa: el XML no se publica ni se pega a
+    # la ficha. Medido en la respuesta compuesta del catálogo: la explicación llegaba
+    # con `<tool_call>{...}</tool_call>` dentro y el bloque se colaba hasta la pantalla.
+    if _looks_like_tool_attempt(text):
+        text = _strip_tool_attempts(text)
+        if not text.strip():
+            return None
     limpio, _quitadas = _redact_unbacked_figures(text.strip(), strict=True)
     if not limpio or not limpio.strip():
         return None
@@ -1124,7 +1131,7 @@ def _too_short_to_help(answer_text):
     return len(limpio) < _MIN_USEFUL_ANSWER_CHARS
 
 
-def _financial_checked(text):
+def _financial_checked(text, *, has_local_data=False):
     """Quita las frases que prometen riesgo cero; solo falla si no queda nada.
 
     Antes se rechazaba el turno entero. Medido: una sola frase con una formula que
@@ -1139,12 +1146,22 @@ def _financial_checked(text):
     Aqui se quitan tambien las llamadas a herramienta escritas COMO TEXTO: si el
     modelo escribe `<tool_call>{...}</tool_call>` en vez de llamar, ese XML no puede
     llegar al usuario.
+
+    `has_local_data` (catalogo o resultado del motor en el turno): cuando el turno
+    ya tiene datos verificados que mostrar, quedarse sin prosa NO es un fallo que
+    merezca 502. Medido: «Me ofrecen un deposito al 4 % a 18 meses» ejecuto el
+    calculo y la prosa entera cayó por la guarda, y el usuario recibio un 502
+    teniendo el resultado del motor en la mano. Sin datos locales el 502 sigue:
+    ahí un turno sin texto no tiene nada que enseñar.
     """
     if _looks_like_tool_attempt(text):
         restante = _strip_tool_attempts(text)
         if not restante.strip():
             # El turno entero era una llamada escrita como texto: la busqueda no se
-            # ejecuto. Decirselo al usuario es mejor que un 502 o que enseñarle XML.
+            # ejecuto. Decirselo al usuario es mejor que un 502 o que enseñarle XML,
+            # salvo que haya datos locales: entonces se muestran y no hace falta el aviso.
+            if has_local_data:
+                return ""
             raise ServiceProblem(
                 502, "CHAT_TOOL_CALL_AS_TEXT",
                 "El modelo intentó consultar el catálogo pero no llegó a ejecutar la "
@@ -1154,8 +1171,11 @@ def _financial_checked(text):
     # Un texto vacio que LLEGA vacio no es un problema de calidad: es un turno sin
     # prosa (el de calculadora, por ejemplo, donde la respuesta son los datos del
     # motor). Antes se devolvia tal cual; ahora tambien. El 502 solo tiene sentido
-    # cuando la guarda ha tenido que quitar algo y no queda nada.
+    # cuando la guarda ha tenido que quitar algo y no queda nada, y no hay datos
+    # locales que entregar en su lugar.
     if not limpio and text and text.strip():
+        if has_local_data:
+            return ""
         raise ServiceProblem(502, "CHAT_FINANCIAL_QUALITY_REJECTED", "La respuesta del proveedor solo contenía afirmaciones financieras problemáticas; no se ha mostrado y no hay reintento automático.")
     return limpio
 
@@ -1408,7 +1428,7 @@ class LocalChatService:
             raise ServiceProblem(502, "CHAT_EMPTY_ANSWER",
                 "El proveedor devolvió un turno sin texto; vuelve a preguntar o reformula. "
                 "No hay reintento automático.")
-        return _profile_applied({"answer": _financial_checked(answer_text),
+        return _profile_applied({"answer": _financial_checked(answer_text, has_local_data=False),
                 "refused": bool(result.refusal), "truncated": result.finish_reason == "length",
                 "provider_mode": "test_only" if self._test_only else "external",
                 "external_sent": not self._test_only,
@@ -1747,7 +1767,12 @@ class LocalChatService:
                     if nota not in notas:
                         notas.insert(0, nota)
                     provenance_source["limitations"] = notas
-            return _profile_applied({"answer": _financial_checked(answer_text),
+            # La guarda financiera corre la última, cuando ya se sabe si el turno tiene
+            # datos locales. Si los tiene (catálogo o motor), quedarse sin prosa no es
+            # un 502: se entregan los datos. Sin datos, el 502 se mantiene.
+            return _profile_applied({"answer": _financial_checked(
+                        answer_text,
+                        has_local_data=catalogue.get("used") is True or calculation is not None),
                     "refused": bool(result["refusal"]), "truncated": result["finish_reason"] == "length",
                     "provider_mode": "test_only" if self._test_only else "external",
                     "external_sent": not self._test_only,
