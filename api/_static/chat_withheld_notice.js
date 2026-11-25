@@ -15,11 +15,17 @@
   const CALCULATION = 'La cuenta la ha hecho la calculadora de la app con los datos que me diste; no la he estimado yo.';
   const GENERIC = 'No puedo darte esto como dato comprobado; lo que sigue es orientación, no una cifra verificada.';
   const REASONS = Object.freeze({
-    figure: 'Se ha omitido el texto del modelo: contenía una cifra, un importe o un porcentaje sin datos locales que lo respalden. No se presenta como prosa verificada y, si el turno no aportó datos del motor o del catálogo, no se muestra ninguna cifra.',
-    attribution: 'Se ha omitido el texto del modelo: atribuía una fuente, una vigencia o una confirmación sin datos locales que la respalden. No se presenta como dato verificado.',
-    identifier: 'Se ha omitido el texto del modelo: nombraba un identificador de producto sin datos locales que lo respalden. Los identificadores solo se muestran desde el catálogo local.',
-    invalid: 'Se ha omitido el texto del modelo porque no tiene una forma que la frontera local pueda comprobar; no se presenta como dato verificado.'
+    figure: 'Se han quitado del texto las frases con cifras que no puedo respaldar; el resto del razonamiento es del modelo, no un dato verificado.',
+    attribution: 'Se han quitado del texto las frases que atribuían una fuente, una vigencia o una confirmación sin datos locales que las respalden.',
+    identifier: 'Se han quitado del texto los nombres de producto o identificadores que no puedo respaldar con el catálogo local.',
+    invalid: 'El texto del modelo no tiene una forma que pueda comprobar; no se presenta como dato verificado.'
   });
+
+  // Cuando NO se ha quitado nada, no hay nada que declarar: decir «se ha omitido el
+  // texto del modelo» en un turno donde la prosa sí se muestra es una contradicción
+  // visible en pantalla (medido: el bloque de trazabilidad decía «se ha omitido»
+  // justo debajo de la prosa mostrada).
+  const NONE = '';
 
   function notice(input) {
     const value = input && typeof input === 'object' ? input : {};

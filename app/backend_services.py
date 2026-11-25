@@ -1633,6 +1633,13 @@ class LocalChatService:
                 if answer_text:
                     answer_text_state = ANSWER_TEXT_SHOWN
                     provenance_source = dict(provenance_source)
+                    # El motivo de retención deja de aplicar cuando la prosa SÍ se
+                    # muestra: sin esto la trazabilidad decía «se ha omitido el
+                    # texto del modelo» justo debajo del texto mostrado (medido en
+                    # pantalla). `calculation` se conserva: no describe una
+                    # retención, describe de dónde sale la cifra.
+                    if provenance_source.get("withheld_reason") != "calculation":
+                        provenance_source["withheld_reason"] = None
                     notas = [n for n in (provenance_source.get("limitations") or []) if type(n) is str][:6]
                     nota = ("Las cifras concretas se han quitado del texto porque podían atribuirse "
                             "al concepto equivocado; el razonamiento y el resultado del motor se mantienen.")
