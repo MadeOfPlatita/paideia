@@ -44,6 +44,15 @@ test('el saldo vivo se escribe con separador de miles y su unidad', () => {
   assert.match(salida, /M€/, `debe declarar la unidad: ${salida}`);
 });
 
+test('el saldo vivo también se formatea con el código de unidad del servidor', () => {
+  // El servidor proyecta `saldo_vivo` como MILLION_EUR (antes TEXT, que impedía
+  // formatearlo: medido en pantalla salía «Saldo en circulación 8780.5»).
+  const f = cargarComparisonValue();
+  const salida = f({ metric: 'outstanding_balance', value: '8780.5', unit: 'MILLION_EUR', state: 'known' });
+  assert.match(salida, /8\.780,5\s*M€/, salida);
+  assert.ok(!salida.includes('8780.5'), salida);
+});
+
 test('un porcentaje con unidad compuesta se formatea como porcentaje', () => {
   const f = cargarComparisonValue();
   const salida = f({ metric: 'precio_medio', value: '99.339', unit: '% del nominal', state: 'known' });

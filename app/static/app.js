@@ -2918,7 +2918,7 @@ function comparisonValue(condition) {
   // valor y de la unidad, no por una lista cerrada de nombres.
   const unidad = typeof unit === "string" ? unit.trim() : "";
   const esPorcentaje = unit === "PERCENT" || /^\s*%/.test(unidad) || /porcentaje/i.test(unidad);
-  const esMillones = /mill(?:o|ó)n/i.test(unidad);
+  const esMillones = /mill(?:o|ó)n/i.test(unidad) || /^MILLION/i.test(unidad);
   const esEuros = unit === "EUR" || /^eur/i.test(unidad) || /euros?/i.test(unidad);
   const numero = Number(texto);
   // `Intl` no agrupa los números de cuatro cifras por defecto en algunos entornos, y

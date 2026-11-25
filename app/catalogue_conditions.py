@@ -82,7 +82,11 @@ DOCUMENTED_METRICS = {
     "elegibilidad": ("eligibility", "TEXT"),
     "disponibilidad": ("availability", "TEXT"),
     "domicilio": ("account_domicile", "TEXT"),
-    "saldo_vivo": ("outstanding_balance", "TEXT"),
+    # `saldo_vivo` NO es texto: el Tesoro lo publica en millones de euros y el
+    # valor es un número («8780.5»). Mapeado a TEXT, el frontend no podía formatearlo
+    # y salía «Saldo en circulación 8780.5» con punto decimal inglés, sin unidad y
+    # sin separador de miles. Medido en pantalla con dos Letras del Tesoro.
+    "saldo_vivo": ("outstanding_balance", "MILLION_EUR"),
     "fecha_lanzamiento": ("launch_date", "DATE"),
     "cancelacion_anticipada": ("early_cancellation", "TEXT"),
     "base_calculo_intereses": ("interest_basis", "TEXT"),

@@ -47,7 +47,11 @@ from catalogue_conditions import DOCUMENTED_METRICS as _DOCUMENTED_METRICS
 
 # La proyección al modelo usa las mismas unidades que el catálogo. Cualquier
 # unidad no prevista se trata como texto: nunca se inventa un tipo.
-_UNIDADES_CONOCIDAS = {"PERCENT", "MONTHS", "YEARS", "EUR", "DATE", "SCALE", "TEXT"}
+_UNIDADES_CONOCIDAS = {"PERCENT", "MONTHS", "YEARS", "EUR", "DATE", "SCALE", "TEXT",
+                       # Millones de euros: el Tesoro publica así el saldo vivo de las
+                       # letras («8780.5» millones). Como TEXT no se podía formatear y
+                       # en pantalla salía con punto decimal inglés y sin unidad.
+                       "MILLION_EUR"}
 PROJECTED_METRIC_UNITS = {
     metric: (unit if unit in _UNIDADES_CONOCIDAS else "TEXT")
     for metric, unit in _DOCUMENTED_METRICS.values()
@@ -70,7 +74,7 @@ def _valid_scale(value):
 
 def _valid_projected_value(unit, value):
     """Valida el literal segun su unidad; nada se acepta por parecido."""
-    if unit in {"PERCENT", "MONTHS", "YEARS", "EUR"}:
+    if unit in {"PERCENT", "MONTHS", "YEARS", "EUR", "MILLION_EUR"}:
         return type(value) is str and DECIMAL_TEXT.fullmatch(value) is not None
     if unit == "DATE":
         return type(value) is str and ISO_DATE.fullmatch(value) is not None and _valid_moment(value)
