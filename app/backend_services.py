@@ -99,17 +99,28 @@ _SPELLED_NUMBER = re.compile(
     re.IGNORECASE,
 )
 _NUMBER_NEAR_RATE = re.compile(
-    r"(?:tae|tin|tasa|tipo|inter[eé]s|rentabilidad|remuneraci[oó]n|euros?|eur|"
-    r"anual(?:es)?|mensual(?:es)?|trimestral(?:es)?|semestral(?:es)?|"
-    r"paga|abona|remunera|devenga|rinde|renta|ofrece|"
-    r"al\s+año|cada\s+año|cada\s+mes)"
-    r"[^.!?]{0,40}?\d"
-    r"|\d[^.!?]{0,40}?(?:tae|tin|tasa|tipo|inter[eé]s|rentabilidad|remuneraci[oó]n|euros?|eur|"
-    r"anual(?:es)?|mensual(?:es)?|trimestral(?:es)?|semestral(?:es)?|"
-    r"paga|abona|remunera|devenga|rinde|renta|ofrece|"
-    r"al\s+año|cada\s+año|cada\s+mes)",
+    # Una cifra PEGADA a una unidad de tasa: «3 %», «3,10 % TAE», «2,5 por ciento».
+    r"\d[\d.,]*\s*(?:%|por\s+ciento|porcentaje)"
+    r"|(?:%|por\s+ciento)\s*\d"
+    # Un verbo de rendimiento seguido de una cifra: «paga 3,25», «rinde 3,25 al año».
+    # Es una tasa aunque no lleve el símbolo, y sin esta rama se publicaba.
+    r"|\b(?:paga|abona|remunera|devenga|rinde|renta|ofrece|cobra|aplica)\b"
+    r"[^.!?:]{0,20}?\d"
+    # Una métrica de tasa seguida de una cifra, en ventana corta.
+    r"|\b(?:tae|tin|tasa|inter[eé]s|rentabilidad|remuneraci[oó]n)\b[^.!?:]{0,15}?\d"
+    r"|\d[^.!?:]{0,15}?\b(?:tae|tin)\b"
+    # Una cifra con unidad de tiempo al lado: «3,25 al año», «1,2 mensual». Un rango
+    # como «6-12 meses» queda fuera porque la cifra es un RANGO, no un tipo; y
+    # «12 meses» sin más es un plazo, que es prosa y se conserva.
+    r"|\d[\d.,]*\s*(?:al\s+año|anual(?:es)?|mensual(?:es)?|trimestral(?:es)?|semestral(?:es)?)",
     re.IGNORECASE,
 )
+# Palabras de PERIODICIDAD («anual», «mensual», «trimestral») ya no forman parte del
+# patrón: no son una tasa, son una unidad de tiempo. Incluirlas hacía que «Letras del
+# Tesoro a 6-12 meses» se leyera como una cifra financiera y la frase se borrara
+# entera; medido en pantalla, eso rompía una lista numerada dejando «1. Cuenta… 3.
+# Fondo» y un paso suelto en medio. Una tasa de verdad lleva «%», «TAE», «TIN» o
+# «interés» al lado, que es lo que el patrón exige ahora.
 _ATTRIBUTION_SURFACE = re.compile(
     r"\b(?:oficial(?:es)?|oficialmente|vigente(?:s)?|vigencia|en\s+vigor|"
     r"confirm(?:a|an|as|ado|ada|ados|adas|ar|[oó])|"
@@ -689,26 +700,44 @@ def _redact_unbacked_figures(text, strict=False, user_text=""):
     # un turno de calculadora cuya respuesta traía una tabla bajo un encabezado.
     texto = _strip_markdown_tables(_flatten_markdown_headings(text))
     cantidades = _user_supplied_amounts(user_text) if strict else frozenset()
-    pieces = re.split(r"(?<=[.!?])\s+", texto.strip())
+    # Los puntos de la NUMERACIÓN de una lista no son finales de frase. `re.split`
+    # partía «1. Cuenta remunerada: liquidez inmediata» en «1.» + «Cuenta…», y
+    # entonces cada trozo dejaba de reconocerse como paso de lista y la frase con
+    # cifras se borraba a medias: medido en pantalla, una lista de tres pasos salía
+    # «1. Cuenta… 3. Fondo» con un paso suelto en medio. Se protege el «N.» antes de
+    # partir y se restaura después.
+    protegido = _NUMBERED_STEP.sub(lambda m: f"\x01{m.group(1)}\x02", texto)
+    pieces = re.split(r"(?<=[.!?])\s+", protegido.strip())
     kept, removed = [], 0
     for piece in pieces:
         if not piece.strip():
             continue
-        figura = (_FIGURE_MARKER.search(piece) is not None
-                  or _NUMBER_NEAR_RATE.search(piece) is not None
-                  or _DATE_SURFACE.search(piece) is not None
+        piece = piece.replace("\x01", "").replace("\x02", ". ")
+        # El número de un PASO DE LISTA («1. Cuenta remunerada», «2. Letras del
+        # Tesoro a 6-12 meses») no es una cifra financiera: es la numeración del
+        # propio modelo. Sin esto, el «2.» del principio marcaba la frase como cifra
+        # y se borraba entera: medido en pantalla, la lista quedaba «1. Cuenta… 3.
+        # Fondo» y el paso 2 desaparecía, dejando una frase suelta («La rentabilidad
+        # depende del resultado de la subasta») que ya no era de la lista.
+        cuerpo = piece
+        paso = _NUMBERED_STEP.match(piece.strip())
+        if paso:
+            cuerpo = _NUMBERED_STEP.sub("", piece, count=1)
+        figura = (_FIGURE_MARKER.search(cuerpo) is not None
+                  or _NUMBER_NEAR_RATE.search(cuerpo) is not None
+                  or _DATE_SURFACE.search(cuerpo) is not None
                   # Una frase que adjudica un dato local sin fuente se trata
                   # igual que una cifra suelta: se quita la frase, no la
                   # respuesta entera, y se declara.
-                  or _attribution_piece_is_unbacked(piece))
+                  or _attribution_piece_is_unbacked(cuerpo))
         if strict and not figura:
             # Solo se quita la frase que presenta una CIFRA concreta: un importe
             # («1.000 €», «500 euros») o un porcentaje («3 %», «un 3 % anual»). La
             # mera mención del término «TAE» o «TIN» no es una cifra: «La TAE sí
             # incorpora comisiones» es una definición y se conserva. Antes se
             # borraban tres frases de una explicación que solo tenía una cifra.
-            figura = (_MONEY_FIGURE.search(piece) is not None
-                      or _FIGURE_WITH_NUMBER.search(piece) is not None)
+            figura = (_MONEY_FIGURE.search(cuerpo) is not None
+                      or _FIGURE_WITH_NUMBER.search(cuerpo) is not None)
         if figura:
             if _is_labelled_reference(piece):
                 kept.append(piece.strip())
