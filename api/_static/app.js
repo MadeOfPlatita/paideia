@@ -232,7 +232,7 @@ function setStatusChip(text, kind = "") {
 }
 
 function familyLabel(family) {
-  return FAMILIES[family] || (family ? String(family).replaceAll("_", " ") : "Familia no indicada");
+  return FAMILIES[family] || (family ? "Otra familia" : "Familia no indicada");
 }
 
 function identityLabel(product) {
@@ -399,16 +399,16 @@ function chatFailureNotice(error) {
   }
   if (error.code === "CHAT_TIMEOUT" || error.status === 504) {
     const stateText = error.sendState === "not_started"
-      ? "La petición terminó con un timeout del proveedor (504). El último intento de transporte consta como no iniciado, pero ese dato no demuestra que el turno completo no se enviara al proveedor."
+      ? "La petición terminó con un tiempo de espera agotado del proveedor (504). El último intento de transporte consta como no iniciado, pero ese dato no demuestra que el turno completo no se enviara al proveedor."
       : error.sendState === "completed"
-        ? "La petición terminó con un timeout del proveedor (504). El último intento de transporte consta como completado, pero eso no confirma que el proveedor aceptara ni procesara el turno completo."
+        ? "La petición terminó con un tiempo de espera agotado del proveedor (504). El último intento de transporte consta como completado, pero eso no confirma que el proveedor aceptara ni procesara el turno completo."
         : "El proveedor agotó el tiempo de espera (504) y no está confirmado si el turno llegó a completarse; la petición pudo llegar al proveedor.";
     return { uncertain: true, text: stateText + " No hay reintento automático." };
   }
   if (error.code === "CHAT_RATE_LIMITED") {
     return {
       uncertain: false,
-      text: "El proveedor rechazó la llamada por límite de uso (429); no es un timeout. No hay reintento automático; espera antes de volver a enviar."
+      text: "El proveedor rechazó la llamada por límite de uso (429); no es un tiempo de espera agotado. No hay reintento automático; espera antes de volver a enviar."
     };
   }
   /* Cupo global de intentos reales: la petición no llegó a salir hacia el proveedor
@@ -561,7 +561,7 @@ function appendPrimarySource(parent, product) {
     line.appendChild(el("a", { href: source, target: "_blank", rel: "noopener noreferrer" }, source));
     line.appendChild(document.createTextNode(" · Se abre solo si eliges el enlace."));
   } else {
-    line.appendChild(document.createTextNode("Fuente primaria: no hay una URL HTTPS segura en este registro."));
+    line.appendChild(document.createTextNode("Fuente primaria: no hay una URL HTTPS segura en esta ficha."));
   }
   parent.appendChild(line);
   return line;
@@ -572,11 +572,11 @@ function renderContext(route) {
     inicio: ["La ruta empieza por una pregunta", "Puedes explorar sin compartir perfil. Si haces un mapa, será una referencia editable, no un test."],
     perfil: ["Tu mapa no te puntúa", "Cada respuesta es opcional. Omitir y «No lo sé» quedan diferenciados en el resumen."],
     biblioteca: ["Identidad no es oferta", "La ficha separa quién es el candidato de las condiciones que todavía no se han validado."],
-    comparar: ["Comparar también es ver lo que falta", "Aquí se alinean metadatos. No hay ranking, cifras de rendimiento ni recomendación personal."],
+    comparar: ["Comparar también es ver lo que falta", "Aquí se ponen los datos uno al lado del otro. No hay clasificación, cifras de rendimiento ni recomendación personal."],
     escenarios: ["Una hipótesis a la vez", "El cálculo usa los supuestos que introduzcas. No predice el comportamiento de ningún candidato."],
     simulacion: ["Ensayo, no contratación", "Se conserva una referencia identificativa real del catálogo; la cantidad del ejercicio es ficticia y local."],
     glosario: ["Palabras antes que promesas", "Las definiciones orientan la lectura; no sustituyen las condiciones de un producto."],
-    privacidad: ["Tú marcas el alcance", "La vista previa de contexto se compone aquí, en el navegador. No se envía a una IA ni a una API."]
+    privacidad: ["Tú marcas el alcance", "La vista previa de contexto se compone aquí, en el navegador. No se envía a ninguna IA ni a ningún servidor."]
   }[route] || ["Acompañamiento de Pai", "Explora con calma y separa los datos de los supuestos."];
   const aside = document.getElementById("context-panel");
   const head = el("div", { className: "context-heading" });
@@ -1009,7 +1009,8 @@ function renderHome() {
       "Es un cálculo con esos supuestos, sin impuestos ni comisiones; no es una predicción.",
       "field-help"));
   }
-  function renderChatCatalogue(container, catalogue) {
+  function renderChatCatalogue(container, catalogue, opciones) {
+    const omitirResumen = Boolean(opciones && opciones.omitirResumen);
     const products = catalogue && Array.isArray(catalogue.products) ? catalogue.products : [];
     const box = el("div", { className: "chat-catalogue" });
     if (!products.length) {
@@ -1032,7 +1033,13 @@ function renderHome() {
     }
     const nombres = validos.slice(0, 6).map(p => chatText(p.name, 120) || p.id).filter(Boolean);
     const resto = validos.length - nombres.length;
-    box.appendChild(textElement("p", `Productos encontrados (${validos.length}): ${nombres.join(" · ")}${resto > 0 ? ` · y ${resto} más` : ""}.`, "field-help"));
+    // «Productos encontrados (3): …» es el prefijo de plantilla que se leía como
+    // cabecera de tabla, justo encima de la respuesta conversacional. Cuando el
+    // servidor ya compuso una respuesta, el resumen sobra: el nombre del producto
+    // recomendado ya está en esa respuesta.
+    if (!omitirResumen) {
+      box.appendChild(textElement("p", `Productos encontrados (${validos.length}): ${nombres.join(" · ")}${resto > 0 ? ` · y ${resto} más` : ""}.`, "field-help"));
+    }
 
     // Del primero (el que el servidor recomienda) sí se dan los datos clave, pero
     // un máximo de tres: lo que hace falta para decidir.
@@ -1105,8 +1112,11 @@ function renderHome() {
     if (enlace) {
       const parrafo = el("p", { className: "field-help" });
       parrafo.appendChild(document.createTextNode("Fuente: "));
-      parrafo.appendChild(el("a", { href: enlace, textContent: enlace, rel: "noopener noreferrer",
-        target: "_blank" }));
+      // `el` recibe el texto como TERCER argumento. Con `textContent` en los
+      // atributos, el enlace se pintaba VACÍO y en pantalla se leía «Fuente:» y
+      // nada más (medido en la respuesta del estudiante).
+      parrafo.appendChild(el("a", { href: enlace, rel: "noopener noreferrer",
+        target: "_blank" }, enlace));
       box.appendChild(parrafo);
     }
     if (validos.length > 1) {
@@ -1183,7 +1193,7 @@ function renderHome() {
     const detalles = el("details", { className: "chat-limitations" });
     detalles.appendChild(el("summary", {}, "Cómo se ha elaborado esta respuesta"));
     if (!notes.length) {
-      detalles.appendChild(textElement("p", "El texto del modelo no se valida semánticamente contra las fuentes.", "field-help"));
+      detalles.appendChild(textElement("p", "El texto del modelo no se comprueba palabra por palabra contra las fuentes.", "field-help"));
     }
     for (const note of notes.slice(0, 6)) {
       detalles.appendChild(textElement("p", note, "field-help"));
@@ -1317,7 +1327,7 @@ function renderHome() {
     }
     submit.disabled = true;
     state.chatBusy = true;
-    feedback.textContent = "Intentando contactar el endpoint local /api/chat…";
+    feedback.textContent = "Contactando con el servicio local…";
     try {
       const payload = { message: query, consent: { notice_version: "paideia-chat-remote-v1", accepted_chat_processing: true, purpose: "free_chat", approved_fields: [] } };
       if (includeContext || includeHistory) {
@@ -1436,7 +1446,15 @@ function renderHome() {
               })
               : "Se ha omitido el texto del modelo porque no se pudo verificar localmente. No se presenta como dato.";
             feedback.appendChild(textElement("p", withheldNotice));
-            if (catalogueUsed && catalogue) renderChatCatalogue(feedback, catalogue);
+            // La tarjeta del catálogo pintaba «Productos encontrados (3)» y «TAE: sin
+            // valor documentado» ENCIMA de la respuesta que ya compone el backend: el
+            // volcado viejo duplicado. Pero las condiciones con su fuente sí hacen
+            // falta (hay tests que las exigen), así que la tarjeta se pinta igual y lo
+            // que se quita es el ENCABEZADO de plantilla, que es lo que se leía como
+            // tabla. El texto compuesto por el servidor va aparte, en `answer`.
+            if (catalogueUsed && catalogue) renderChatCatalogue(feedback, catalogue, {
+              omitirResumen: typeof result.answer === "string" && result.answer.trim().length > 0
+            });
             if (calculation) renderChatCalculation(feedback, calculation);
           } else if (typeof result.answer === "string" && result.answer) {
             // El modelo usa **negrita** markdown, pero aquí el texto se inserta
@@ -2205,7 +2223,7 @@ function productCard(product) {
     for (const field of unknownFields) review.appendChild(textElement("p", field.slice(0, 120), "small muted"));
   }
   if (!conflicts.length && !unknownFields.length) {
-    review.appendChild(textElement("p", "La respuesta de API no enumera conflictos ni campos desconocidos; eso no equivale a que no existan.", "small muted"));
+    review.appendChild(textElement("p", "La respuesta del servicio no enumera conflictos ni campos desconocidos; eso no equivale a que no existan.", "small muted"));
   }
   review.appendChild(textElement("p", "Identidad y condiciones se muestran por separado; los huecos no se completan.", "small muted"));
   card.appendChild(review);
@@ -2255,7 +2273,7 @@ function renderCatalogueResultsBody(results) {
       : textElement("p", conditionsNotice.message, "loading-state"));
   }
   const countText = state.library.count === 1 ? "1 candidato" : `${state.library.count} candidatos`;
-  results.appendChild(textElement("p", `${countText} devueltos por la API · Todos son metadatos de investigación interna.`, "small muted"));
+  results.appendChild(textElement("p", `${countText} encontrados · Todos son datos de identidad de investigación interna.`, "small muted"));
   if (!state.library.items.length) {
     const empty = el("div", { className: "info-note", role: "status" });
     empty.appendChild(textElement("p", "No hay resultados con estos filtros."));
@@ -2286,7 +2304,7 @@ function renderCatalogueResultsBody(results) {
   const conTasa = conditionsReady ? todos.filter((product) => withRate(product.id)) : [];
   if (conditionsReady) {
     results.appendChild(textElement("p",
-      `${conTasa.length} de ${todos.length} con tasa documentada · ${conDatos.length} con alguna condición documentada. El resto solo aporta metadatos de identidad.`,
+      `${conTasa.length} de ${todos.length} con tasa documentada · ${conDatos.length} con alguna condición documentada. El resto solo aporta datos de identidad.`,
       "small muted"));
   } else {
     results.appendChild(textElement("p",
@@ -2298,7 +2316,7 @@ function renderCatalogueResultsBody(results) {
   }
   const visibles = conditionsReady && state.library.onlyDocumented === true ? conTasa : todos;
   if (!visibles.length) {
-    results.appendChild(callout("Ningún candidato de esta búsqueda tiene una tasa documentada. Quita el filtro para ver los metadatos disponibles.", "info-note"));
+    results.appendChild(callout("Ningún candidato de esta búsqueda tiene una tasa documentada. Quita el filtro para ver los datos disponibles.", "info-note"));
     return;
   }
   const list = el("div", { className: "result-list" });
@@ -2363,7 +2381,7 @@ function loadProductDetail(id) {
   renderProductDetail();
   apiRequest(`${API.product}${encodeURIComponent(id)}`).then((data) => {
     if (state.detail.requestId !== seq) return;
-    if (!data.product || typeof data.product !== "object") throw new ApiFailure("La respuesta no incluyó los metadatos del producto.", 200, "INVALID_PRODUCT", false);
+    if (!data.product || typeof data.product !== "object") throw new ApiFailure("La respuesta no incluyó los datos del producto.", 200, "INVALID_PRODUCT", false);
     state.detail.product = data.product;
     if (typeof data.product.id === "string") state.catalogueCache.set(data.product.id, data.product);
   }).catch((error) => {
@@ -2402,11 +2420,11 @@ function renderProductDetail() {
   holder.replaceChildren();
   holder.setAttribute("tabindex", "-1");
   holder.setAttribute("aria-busy", String(state.detail.loading));
-  holder.appendChild(textElement("p", "Ficha abierta · detalle consultado a la API", "eyebrow"));
+  holder.appendChild(textElement("p", "Ficha abierta · detalle consultado en el servicio local", "eyebrow"));
   if (state.detail.loading) { holder.appendChild(textElement("p", "Cargando el detalle del candidato…", "loading-state")); return; }
   if (state.detail.error) { holder.appendChild(errorBox(apiErrorText(state.detail.error), () => loadProductDetail(state.detail.id))); return; }
   const product = state.detail.product;
-  if (!product) { holder.appendChild(textElement("p", "Elige «Ver detalle» en una ficha para consultar sus metadatos.")); return; }
+  if (!product) { holder.appendChild(textElement("p", "Elige «Ver detalle» en una ficha para consultar sus datos.")); return; }
   const title = textElement("h2", productName(product));
   holder.appendChild(title);
   const chips = el("div", { className: "badge-row" }, [badge(identityLabel(product), identityKind(product)), badge(conditionsLabel(product), "pending")]);
@@ -2415,11 +2433,11 @@ function renderProductDetail() {
   const pairs = [
     ["Familia", familyLabel(product.family)],
     ["Emisor / marca", issuerLabel(product)],
-    ["ISIN", product.isin || "No indicado en los metadatos"],
-    ["Fecha efectiva del producto", productEffectiveDate(product) || "No consta una fecha efectiva del producto en los metadatos."],
+    ["ISIN", product.isin || "No indicado en la ficha"],
+    ["Fecha efectiva del producto", productEffectiveDate(product) || "No consta una fecha efectiva del producto en la ficha."],
     ["Consulta de la condición", conditionsFailed ? "No disponible: fallo al cargar las condiciones documentadas." : (conditionConsultedAt(product.id) || "No consta fecha de consulta de la condición.")],
     ["Vigencia de la condición", conditionsFailed ? "No disponible: fallo al cargar las condiciones documentadas." : conditionValidityText(product.id)],
-    ["Publicación", product.publication_ready === true ? "Estado indicado por API" : "No listo para publicar"],
+    ["Publicación", product.publication_ready === true ? "Dato indicado por el servicio local" : "No listo para publicar"],
     ["Alcance", "Identidad de candidato; no acredita condiciones vigentes, elegibilidad ni disponibilidad"]
   ];
   const dl = el("dl", { className: "detail-list" });
@@ -2487,10 +2505,10 @@ function renderProductDetail() {
     holder.appendChild(block);
   }
   const conflicts = section("Conflictos que siguen abiertos", "No se resuelven ni se corrigen en silencio.", "data-panel");
-  appendList(conflicts, product.conflicts, "La respuesta de API no enumera conflictos.");
+  appendList(conflicts, product.conflicts, "La respuesta del servicio no enumera conflictos.");
   holder.appendChild(conflicts);
   const unknown = section("Datos que siguen desconocidos", "La ausencia de un campo no equivale a cero ni a ausencia de riesgo.", "data-panel");
-  appendList(unknown, product.unknown_fields, "La respuesta de API no enumera campos desconocidos.");
+  appendList(unknown, product.unknown_fields, "La respuesta del servicio no enumera campos desconocidos.");
   holder.appendChild(unknown);
   holder.appendChild(callout(allConditionsDocumented && conditionEntry && conditionEntry.source && isSafePrimaryUrl(conditionEntry.source.url)
     ? "Las condiciones mostradas constan en la fuente citada; no acreditan disponibilidad, elegibilidad ni que la oferta siga abierta. Ningún dato se completa por inferencia."
@@ -2512,7 +2530,7 @@ function renderLibrary() {
   page.appendChild(callout("Solo se muestran tasas documentadas con fuente y fecha. «Oferta vencida», «conflicto entre fuentes» o «sin tasa documentada» se muestran tal cual: no se completan huecos ni se convierten en ofertas publicables.", "warning-note"));
   const controls = el("div", { className: "catalogue-controls" });
   const search = el("input", { type: "search", id: "catalogue-search", maxlength: 100, autocomplete: "off", value: state.library.query, "aria-describedby": "catalogue-search-error" });
-  controls.appendChild(field("Buscar por nombre o emisor", search, "La consulta se envía solo a la API local.", search.id));
+  controls.appendChild(field("Buscar por nombre o emisor", search, "La búsqueda se hace en el servicio local.", search.id));
   controls.appendChild(el("p", { id: "catalogue-search-error", className: "form-error", role: "status" }));
   const select = el("select", { id: "catalogue-family" });
   select.appendChild(el("option", { value: "" }, "Todas las familias"));
@@ -2851,7 +2869,7 @@ function renderComparisonResult() {
 
 function renderComparisonResultBody(holder) {
   holder.setAttribute("aria-busy", String(state.compareBusy));
-  if (state.compareBusy) { holder.appendChild(textElement("p", "Alineando metadatos del servicio local…", "loading-state")); return; }
+  if (state.compareBusy) { holder.appendChild(textElement("p", "Comparando los datos del servicio local…", "loading-state")); return; }
   if (state.compareError) { holder.appendChild(errorBox(apiErrorText(state.compareError), () => loadComparison())); return; }
   const conditionsNotice = window.PaideiaConditionsLoad.comparisonNotice(state.conditions);
   if (conditionsNotice) {
@@ -2862,22 +2880,22 @@ function renderComparisonResultBody(holder) {
   }
   if (!state.compareResult || JSON.stringify(state.compareIds) !== JSON.stringify(state.selectedIds)) return;
   const result = state.compareResult;
-  if (!Array.isArray(result.items)) { holder.appendChild(callout("La API no devolvió los metadatos comparables esperados.", "error-note")); return; }
+  if (!Array.isArray(result.items)) { holder.appendChild(callout("El servicio local no devolvió datos comparables.", "error-note")); return; }
   const columns = el("div", { className: "comparison-columns" });
   result.items.filter(safeComparisonProduct).forEach((product) => columns.appendChild(comparisonCard(product)));
   holder.appendChild(columns);
   const message = Array.isArray(result.reasons) && result.reasons.length
     ? result.reasons.filter((reason) => typeof reason === "string").join(" ")
-    : "Solo se comparan metadatos educativos.";
+    : "Solo se comparan datos de identidad y condiciones documentadas.";
   holder.appendChild(callout(`${message} No se ordenan candidatos ni se calcula una recomendación.`, "info-note"));
   const documentedRates = result.items.filter(safeComparisonProduct).filter((product) => rateSummary(product.id).kind === "verified").length;
   let comparisonNote;
   if (result.quantitative_ready === true) {
-    comparisonNote = "La API marca quantitative_ready=true para el criterio documentado; la comparación se limita a esa métrica y no es una oferta ni una recomendación.";
+    comparisonNote = "El servicio local da este criterio por comparable; la comparación se limita a esa cifra y no es una oferta ni una recomendación.";
   } else if (documentedRates) {
-    comparisonNote = `Se muestran ${documentedRates} ${documentedRates === 1 ? "tasa documentada" : "tasas documentadas"} con fuente y fecha. La API no emite un ranking cuantitativo completo (quantitative_ready=false): no se ordenan ni se calcula una recomendación. Los huecos no se rellenan con ceros ni con NAV.`;
+    comparisonNote = `Se muestran ${documentedRates} ${documentedRates === 1 ? "tasa documentada" : "tasas documentadas"} con fuente y fecha. El servicio local no ofrece una comparación completa de todas ellas: no se ordenan ni se calcula una recomendación. Los huecos no se rellenan con ceros ni con el valor liquidativo.`;
   } else {
-    comparisonNote = "No consta una tasa documentada que mostrar en esta comparación. La API no emite un ranking cuantitativo (quantitative_ready=false) y los huecos no se rellenan con ceros ni con NAV.";
+    comparisonNote = "No consta una tasa documentada que mostrar en esta comparación. El servicio local no ofrece una comparación de cifras y los huecos no se rellenan con ceros ni con el valor liquidativo.";
   }
   holder.appendChild(callout(comparisonNote, "warning-note"));
   const concepts = el("p", {}, "Conceptos de la comparación: ");
@@ -3438,7 +3456,7 @@ function renderScenarioPanel(page, scenario, suffix, name) {
   const principal = numberField(`scenario-principal${suffix}`, "Capital inicial (€)", "Importe que tú introduces. No es un mínimo contractual.", { min: "0" });
   const rate = numberField(`scenario-rate${suffix}`, "Tasa anual supuesta (%)", "No procede de la biblioteca ni de una oferta. Introduce un supuesto; puede ser negativo.", { min: "-99.9999", max: "1000", step: "0.0001" });
   const years = numberField(`scenario-years${suffix}`, "Horizonte (años)", "Número entero entre 1 y 40.", { min: "1", max: "40", step: "1" });
-  const contribution = numberField(`scenario-contribution${suffix}`, "Aportación mensual (€)", "El backend la coloca al final de cada mes.", { min: "0" });
+  const contribution = numberField(`scenario-contribution${suffix}`, "Aportación mensual (€)", "Se suma al final de cada mes.", { min: "0" });
   const inflation = numberField(`scenario-inflation${suffix}`, "Inflación anual supuesta (%)", "Supuesto separado; no representa una previsión de inflación.", { min: "-99.9999", max: "1000", step: "0.0001" });
   const method = el("select", { id: `scenario-method${suffix}` }, [el("option", { value: "compound" }, "Compuesto"), el("option", { value: "simple" }, "Simple")]);
   const methodField = field("Método", method, "Convención definida por el cálculo local.", method.id);
@@ -3602,9 +3620,9 @@ function fillSimulationCandidates(holder) {
   if (state.simulation.loading) { holder.appendChild(textElement("p", "Cargando candidatos del catálogo local…", "loading-state")); return; }
   if (state.simulation.error) { holder.appendChild(errorBox(apiErrorText(state.simulation.error), () => loadSimulationCatalogue())); return; }
   if (!state.simulation.loaded) { holder.appendChild(textElement("p", "Aún no se ha cargado el catálogo.", "loading-state")); return; }
-  if (!state.simulation.products.length) { holder.appendChild(callout("La API no devolvió candidatos. No hay una ficha de referencia para ensayar.", "info-note")); return; }
+  if (!state.simulation.products.length) { holder.appendChild(callout("El servicio local no devolvió candidatos. No hay una ficha de referencia para ensayar.", "info-note")); return; }
   const select = el("select", { id: "simulation-product" });
-  select.appendChild(el("option", { value: "" }, "Elige un candidato de la API"));
+  select.appendChild(el("option", { value: "" }, "Elige un candidato"));
   state.simulation.products.forEach((product) => select.appendChild(el("option", { value: product.id, selected: state.simulation.chosenId === product.id }, `${product.name || product.id} — ${familyLabel(product.family)}`)));
   holder.appendChild(field("Producto de referencia", select, "Solo referencia identificativa; no implica disponibilidad ni contratación.", select.id));
   const feedback = textElement("p", "", "form-error");
@@ -3687,7 +3705,7 @@ function simulationProductReview(parent, product) {
     badge(simulationConditionsLabel(product), conditionStates.some((state) => state !== "known") || !conditionStates.length ? "pending" : "verified")
   ]));
   const details = el("dl", { className: "detail-list" });
-  details.append(el("dt", {}, "ISIN"), el("dd", {}, product.isin || "No indicado en los metadatos"));
+  details.append(el("dt", {}, "ISIN"), el("dd", {}, product.isin || "No indicado en la ficha"));
   details.append(el("dt", {}, "Fecha asociada"), el("dd", {}, product.as_of || "No consta una fecha efectiva inequívoca"));
   details.append(el("dt", {}, "Disponibilidad"), el("dd", {}, "No acreditada por la identidad del candidato."));
   details.append(el("dt", {}, "Condiciones contractuales"), el("dd", {}, conditionList.length && hasDocumentedConditionsSource(conditionEntry)
@@ -3893,7 +3911,7 @@ function buildReceiptDocument() {
     ["Denominación", productName(producto)],
     ["Familia", familyLabel(producto.family)],
     ["Entidad de referencia", issuerLabel(producto)],
-    ["ISIN", producto.isin || "No indicado en el metadato"],
+    ["ISIN", producto.isin || "No indicado en la ficha"],
     ["Identidad", identityLabel(producto)],
     ["Fuente de identidad", isSafePrimaryUrl(producto.primary_url) ? producto.primary_url : "Sin URL utilizable"],
   ] : [["Producto", "No consta"]];
@@ -4013,7 +4031,7 @@ function renderSimulation() {
     const panel = el("section", { className: "paper-section" });
     panel.appendChild(el("h2", {}, "2. Revisa qué se sabe y qué no"));
     if (state.simulation.product) simulationProductReview(panel, state.simulation.product);
-    panel.appendChild(callout("La respuesta del catálogo aporta metadatos de identidad, no una oferta. El ensayo no convertirá campos pendientes en condiciones.", "warning-note"));
+    panel.appendChild(callout("La respuesta del catálogo aporta datos de identidad, no una oferta. El ensayo no convertirá campos pendientes en condiciones.", "warning-note"));
     panel.appendChild(el("div", { className: "button-row" }, [button("Volver", simulationBack, "button button-secondary"), button("Continuar con el importe ficticio", () => { state.simulation.step = 2; render(); }, "button button-primary")]));
     page.appendChild(panel);
   } else if (state.simulation.step === 2) {
@@ -4022,7 +4040,7 @@ function renderSimulation() {
     const form = el("form", { novalidate: true });
     const amount = el("input", { type: "number", id: "simulation-amount", min: "0.01", step: "0.01", required: true, inputmode: "decimal", "aria-describedby": "simulation-amount-help" });
     if (state.simulation.amount) amount.value = state.simulation.amount;
-    form.appendChild(field("Importe imaginado (€)", amount, "Solo se conserva en esta pestaña para el justificante. No se transmite al backend.", amount.id));
+    form.appendChild(field("Importe imaginado (€)", amount, "Solo se conserva en esta pestaña para el justificante. No se envía a ningún servidor.", amount.id));
     const help = form.querySelector(".field-help");
     help.id = "simulation-amount-help";
     const error = textElement("p", "", "form-error");
@@ -4052,7 +4070,7 @@ function renderSimulation() {
       render();
     });
     panel.appendChild(form);
-    panel.appendChild(callout("Este importe no se usa para calcular un rendimiento ni se envía a /api/calculate.", "info-note"));
+    panel.appendChild(callout("Este importe no se usa para calcular un rendimiento ni se envía al servicio local.", "info-note"));
     page.appendChild(panel);
   } else if (state.simulation.step === 3) {
     const panel = el("section", { className: "paper-section" });
@@ -4198,7 +4216,7 @@ function renderPrivacy() {
   page.appendChild(callout("Alcance del borrado: «Revocar y borrar copia» elimina solo la copia local del mapa y las versiones anteriores. No borra el historial del chat de esta pestaña ni los mensajes o consultas ya enviados al proveedor; el historial se elimina aparte con «Borrar historial de esta pestaña» y lo ya enviado queda fuera de este navegador.", "info-note"));
 
   const preview = section("Vista previa local de contexto", "Elige exactamente qué campos incluirías en una explicación futura. El valor mostrado solo se lee desde la memoria de esta pestaña.", "paper-section");
-  preview.appendChild(callout("Sin conexión a IA. Confirmar aquí no envía datos ni activa ningún chat. /api/context-preview se reserva para fixtures sintéticas; esta interfaz no lo llama.", "warning-note"));
+  preview.appendChild(callout("Sin conexión a IA. Confirmar aquí no envía datos ni activa ningún chat. Esta vista previa se queda en el navegador.", "warning-note"));
   const fields = el("div", { className: "privacy-field-list" });
   PREVIEW_FIELDS.forEach((key) => {
     const id = `preview-${key}`;
@@ -4231,7 +4249,7 @@ function renderPrivacy() {
   const confirm = button("Confirmar solo para esta sesión", () => {
     if (!ack.checked) return;
     state.previewAcknowledged = true;
-    result.textContent = "Decisión recordada solo en memoria. No se ha enviado nada y no se ha llamado a /api/context-preview.";
+    result.textContent = "Decisión recordada solo en memoria. No se ha enviado nada fuera de esta pestaña.";
   }, "button button-secondary", { disabled: !ack.checked });
   confirm.id = "preview-confirm";
   ack.addEventListener("change", () => { confirm.disabled = !ack.checked; state.previewAcknowledged = false; result.textContent = "Sin confirmación. No se ha enviado nada."; });
