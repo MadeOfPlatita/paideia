@@ -270,7 +270,13 @@ function headlineMetric(productId) {
     if (!texto) continue;
     const etiqueta = metric === "annual_rate_percent" ? "TAE documentada"
       : (metric === "ter_percent" ? "TER documentado" : "Comisión de gestión documentada");
-    return { kind: "verified", text: `${etiqueta}: ${texto}`, retry: false };
+    // La fecha acompaña SIEMPRE a la cifra. El criterio del producto es «fuente y
+    // fecha»: la tarjeta decía «TAE documentada: 3,10 %» y «Documentadas con fuente»
+    // sin decir de cuándo, así que el dato no se podía situar en el tiempo. Medido
+    // en pantalla recorriendo la biblioteca: 22 fichas, 25 fuentes, 0 fechas.
+    const cuando = condicion.retrieved_at || (condicion.source && condicion.source.retrieved_at);
+    const fecha = typeof cuando === "string" && cuando ? `, consultada el ${cuando}` : ", sin fecha de consulta";
+    return { kind: "verified", text: `${etiqueta}: ${texto}${fecha}`, retry: false };
   }
   return null;
 }
