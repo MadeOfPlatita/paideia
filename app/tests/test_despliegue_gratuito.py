@@ -8,7 +8,12 @@ Y los cupos del chat NO se bajan: medido con 50 usuarios simultáneos reales, el
 plan gratuito responde 50/50 con 0 rechazos. Lo que rompía la experiencia no era la
 falta de plan, eran los límites artificiales (4 turnos, 10 llamadas/min).
 
-Estos tests fijan las dos cosas para que un cambio descuidado no las deshaga.
+El arranque en frío del plan gratuito (30-50 s tras 15 minutos sin tráfico) NO se
+mitiga: es una decisión explícita de producto. Se acepta esa espera en el primer
+visitante antes que pagar un plan o mantener un keepalive. No añadir un ping
+periódico "por si acaso": ya se valoró y se descartó.
+
+Estos tests fijan lo que sí importa para que un cambio descuidado no lo deshaga.
 """
 from __future__ import annotations
 
@@ -63,28 +68,29 @@ class PlanGratuitoTest(unittest.TestCase):
             f"el cupo diario ({por_dia}) tiene que cubrir una jornada de clase")
 
     def test_el_apagon_por_inactividad_queda_documentado(self):
-        """Quien lea el blueprint tiene que saber que el servicio duerme y cómo se evita."""
-        self.assertIn("mantener_despierta", self.texto,
-                      "el blueprint debe remitir al keepalive que evita el arranque en frío")
+        """Quien lea el blueprint tiene que saber que el servicio duerme."""
         self.assertRegex(self.texto, r"15 minutos|arranque en fr[ií]o",
                          "el blueprint debe explicar el apagado por inactividad")
 
+    def test_no_se_anade_un_keepalive(self):
+        """El arranque en frío se acepta: no se reintroduce un ping periódico.
 
-class KeepaliveExisteTest(unittest.TestCase):
-    """El script que evita el arranque en frío tiene que existir y ser usable."""
-
-    def test_el_script_del_keepalive_existe(self):
-        ruta = os.path.join(
-            os.path.expanduser("~"), "AppData", "Local", "hermes", "profiles",
-            "trabajos", "scripts", "mantener_despierta.py")
-        if not os.path.exists(ruta):
-            self.skipTest("el script vive fuera del repositorio (perfil de Hermes)")
-        with open(ruta, encoding="utf-8") as fichero:
-            codigo = fichero.read()
-        self.assertIn("/api/status", codigo,
-                      "el keepalive tiene que llamar a un endpoint que no gaste IA")
-        self.assertNotIn("/api/chat", codigo,
-                         "el keepalive no puede gastar llamadas al proveedor")
+        Se busca una IMPLEMENTACIÓN (una variable de entorno que active un ping, o
+        un script), no la palabra en un comentario: el propio blueprint menciona el
+        keepalive para dejar constancia de que se descartó.
+        """
+        self.assertNotRegex(
+            self.texto, r"- key: PAIDEIA_KEEPALIVE|keepalive\.py|ping\.py",
+            "no reintroducir un mecanismo que evite el apagado: se descartó")
+        # Tampoco debe haber una tarea programada apuntando al servicio.
+        perfiles = os.path.join(os.path.expanduser("~"), "AppData", "Local",
+                                "hermes", "profiles", "trabajos")
+        cron = os.path.join(perfiles, "cron", "jobs.json")
+        if os.path.exists(cron):
+            with open(cron, encoding="utf-8") as fichero:
+                contenido = fichero.read()
+            self.assertNotIn("mantener_despierta", contenido,
+                             "quedó una tarea programada de keepalive: bórrala")
 
 
 if __name__ == "__main__":

@@ -10,9 +10,9 @@
 # problema del plan gratuito.
 #
 # Lo único que impone es el APAGADO por inactividad: tras 15 minutos sin tráfico
-# el servicio duerme, y el primero que entra espera 30-50 s. Se resuelve gratis con
-# una petición periódica a /api/status: ver `scripts/mantener_despierta.py` en el
-# perfil de Hermes y su tarea programada cada 10 minutos.
+# el servicio duerme, y el primero que entra espera 30-50 s de arranque en frío.
+# ESO SE ACEPTA. Es una decisión de producto: no se paga un plan y no se mantiene
+# un ping periódico para evitarlo. Quien lea esto, que no lo "arregle".
 #
 # La app es un servidor HTTP con estado (contador de llamadas, sesiones y
 # catálogo en memoria), no una función sin estado. Render ejecuta el proceso
